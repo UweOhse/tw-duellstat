@@ -91,11 +91,23 @@ TWDS.main = function main () {
   console.log('duellstat active')
 }
 
+TWDS.preMain = function () {
+  if (typeof $ === 'undefined') {
+    window.setTimeout(TWDS.preMain, 100)
+    return
+  }
+  if (typeof window.wman === 'undefined') {
+    window.setTimeout(TWDS.preMain, 100)
+    return
+  }
+  TWDS.main()
+}
+
 TWDS.waitready = function () {
   if (document.attachEvent ? document.readyState === 'complete' : document.readyState !== 'loading') {
-    TWDS.main()
+    TWDS.preMain()
   } else {
-    document.addEventListener('DOMContentLoaded', TWDS.main())
+    document.addEventListener('DOMContentLoaded', TWDS.preMain())
   }
 }
 TWDS.waitready()

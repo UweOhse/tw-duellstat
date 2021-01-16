@@ -253,48 +253,6 @@ TWDS.appendSubtable = function (container, dd, other) {
 TWDS.activatePeopleTab = function () {
   TWDS.activateTab('people')
 }
-$(document).on('click', '#TWDS_peoplelist_delete', function () {
-  if (window.confirm(TWDS._('PROMPT_DELETE_DUEL_DATA', 'really delete the duel data?'))) {
-    console.log('yes, delete')
-    TWDS.clearDuels()
-    document.getElementById('TWDS_people').innerHTML = ''
-  }
-})
-$(document).on('click', '#TWDS_peoplelist_import', function () {
-  document.getElementById('TWDS_people_info')
-    .textContent = TWDS._('PEOPLE_WAITINFO', 'This runs in the background and takes some time. Please wait.')
-  TWDS.readDuels()
-  TWDS.activatePeopleTab()
-})
-$(document).on('click', '#TWDS_people thead tr.sortTriggerRow th', function () {
-  const key = this.dataset.field
-  if (typeof key !== 'undefined') {
-    TWDS.peopleSort(null, key)
-  }
-})
-$(document).on('click', '#TWDS_people_subtab .openreport', function () {
-  const hash = this.dataset.hash
-  const id = this.dataset.report_id
-  ReportWindow.open(id, hash, 0)
-})
-$(document).on('click', '#TWDS_people .datarow [data-field="name"]', function () {
-  // this is the th.name
-  const key = 'TWDS_p_' + this.textContent
-  let d = window.localStorage.getItem(key)
-  if (!d) return
-  d = JSON.parse(d)
-  const dr = this.closest('.datarow')
-  const id = 'TWDS_people_subtab'
-  const ele = document.getElementById(id)
-  if (ele) ele.parentNode.removeChild(ele)
-  const tr = document.createElement('tr')
-  tr.id = id
-  const td = document.createElement('td')
-  td.setAttribute('colspan', 11)
-  tr.appendChild(td)
-  dr.insertAdjacentElement('afterend', tr)
-  TWDS.appendSubtable(td, d, this.textContent)
-})
 
 TWDS.registerStartFunc(function () {
   TWDS.registerTab('people',
@@ -302,4 +260,46 @@ TWDS.registerStartFunc(function () {
     TWDS.getPeopleContent,
     TWDS.activatePeopleTab,
     true)
+  $(document).on('click', '#TWDS_peoplelist_delete', function () {
+    if (window.confirm(TWDS._('PROMPT_DELETE_DUEL_DATA', 'really delete the duel data?'))) {
+      console.log('yes, delete')
+      TWDS.clearDuels()
+      document.getElementById('TWDS_people').innerHTML = ''
+    }
+  })
+  $(document).on('click', '#TWDS_peoplelist_import', function () {
+    document.getElementById('TWDS_people_info')
+      .textContent = TWDS._('PEOPLE_WAITINFO', 'This runs in the background and takes some time. Please wait.')
+    TWDS.readDuels()
+    TWDS.activatePeopleTab()
+  })
+  $(document).on('click', '#TWDS_people thead tr.sortTriggerRow th', function () {
+    const key = this.dataset.field
+    if (typeof key !== 'undefined') {
+      TWDS.peopleSort(null, key)
+    }
+  })
+  $(document).on('click', '#TWDS_people_subtab .openreport', function () {
+    const hash = this.dataset.hash
+    const id = this.dataset.report_id
+    ReportWindow.open(id, hash, 0)
+  })
+  $(document).on('click', '#TWDS_people .datarow [data-field="name"]', function () {
+    // this is the th.name
+    const key = 'TWDS_p_' + this.textContent
+    let d = window.localStorage.getItem(key)
+    if (!d) return
+    d = JSON.parse(d)
+    const dr = this.closest('.datarow')
+    const id = 'TWDS_people_subtab'
+    const ele = document.getElementById(id)
+    if (ele) ele.parentNode.removeChild(ele)
+    const tr = document.createElement('tr')
+    tr.id = id
+    const td = document.createElement('td')
+    td.setAttribute('colspan', 11)
+    tr.appendChild(td)
+    dr.insertAdjacentElement('afterend', tr)
+    TWDS.appendSubtable(td, d, this.textContent)
+  })
 })

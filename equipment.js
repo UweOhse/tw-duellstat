@@ -485,11 +485,6 @@ TWDS.getEquipmentContent = function () {
   TWDS.fillEquipmentTab(tab)
   return div
 }
-$(document).on('click', '#TWDS_equipment_takeover', function () {
-  window.localStorage.setItem(this.dataset.key, this.dataset.edata)
-  TWDS.activateEquipmentTab()
-  this.parentNode.removeChild(this)
-})
 TWDS.activateEquipmentTab = function () {
   TWDS.activateTab('equipment')
 }
@@ -500,6 +495,11 @@ TWDS.registerStartFunc(function () {
     TWDS.getEquipmentContent,
     TWDS.activateEquipmentTab,
     false)
+  $(document).on('click', '#TWDS_equipment_takeover', function () {
+    window.localStorage.setItem(this.dataset.key, this.dataset.edata)
+    TWDS.activateEquipmentTab()
+    this.parentNode.removeChild(this)
+  })
   $(document).on('click', '.TWDS_wear', function () {
     const tr = this.closest('tr')
     const key = tr.dataset.key
