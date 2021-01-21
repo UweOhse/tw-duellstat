@@ -135,13 +135,13 @@ TWDS.readDuels = function () {
     if (!other) return
     other = other[1]
 
-    lohn = lohn.replaceAll('.', '')
+    lohn = lohn.replace(/\./g, '')
     lohn = parseInt(lohn)
-    sch1 = sch1.replaceAll('.', '')
+    sch1 = sch1.replace(/\./g, '')
     sch1 = parseInt(sch1)
-    sch2 = sch2.replaceAll('.', '')
+    sch2 = sch2.replace(/\./g, '')
     sch2 = parseInt(sch2)
-    xp = xp.replaceAll('.', '')
+    xp = xp.replace(/\./g, '')
     xp = parseInt(xp)
 
     const key = 'TWDS_p_' + other
