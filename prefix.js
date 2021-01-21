@@ -6,7 +6,7 @@
 // @include https://*.the-west.*/game.php*
 // @include https://*.tw.innogames.*/game.php*
 
-// @version     0.0.30
+// @version     0.0.31
 // @grant       none
 // ==/UserScript==
 
@@ -19,6 +19,7 @@
 // 0.0.28 people tab: import now pauses like clothcalc (RIP, you are missed) does.
 // 0.0.29 equipment import button, fix duel ordering, german translation of duel tab.
 // 0.0.30 fix the next firefox problem. That hackish kind of script injection should solve it. Greasemonkey, WTF is that?
+// 0.0.31 new: clothcache, jobtab, settings. fix one rounding problem.
 
 (function(fn) {
   var script = document.createElement('script');

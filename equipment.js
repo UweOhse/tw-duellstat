@@ -1,3 +1,94 @@
+TWDS.describeItemCombo = function (singleItems) {
+  const setsInUse = {}
+  const setNames = []
+  const names = []
+  const setlist = west.storage.ItemSetManager._setList
+  for (let i = 0; i < singleItems.length; i++) {
+    if (typeof singleItems[i] === 'number') {
+      const ii = singleItems[i]
+      let obj = ItemManager.get(ii)
+      if (typeof obj === 'undefined') {
+        // work around clothcalc
+        if (typeof ItemManager.__twdb__get === 'function') {
+          obj = ItemManager.__twdb__get(ii)
+        }
+      }
+      if (typeof obj === 'undefined') {
+        continue
+      }
+      singleItems[i] = obj
+    }
+  }
+  for (let i = 0; i < singleItems.length; i++) {
+    const item = singleItems[i]
+    const set = item.set
+    if (!(set in setlist)) continue
+    if (!(set in setsInUse)) {
+      setsInUse[set] = []
+    }
+    setsInUse[set].push(item.item_base_id)
+  }
+
+  const numDuelWeaponsInSet = function (set) {
+    const setItems = setlist[set].items
+    let numDuelweaponsContained = 0
+    for (let i = 0; i < setItems.length; i++) {
+      const item = ItemManager.getByBaseId(setItems[i])
+      if (item.type === 'right_arm' || item.type === 'left_arm') {
+        numDuelweaponsContained++
+      }
+    }
+    return numDuelweaponsContained
+  }
+
+  for (const i in setsInUse) {
+    const setItemCount = setlist[i].items.length
+    const setItemsWorn = setsInUse[i].length
+    if (setItemsWorn === 1) {
+      continue
+    }
+    const nd = numDuelWeaponsInSet(i)
+    let name = ''
+    if (setItemCount !== setItemsWorn) {
+      if (nd > 1 && setItemsWorn === setItemCount - 1) {
+        name = setlist[i].name
+      } else {
+        name = setlist[i].name + ' (' + setItemsWorn + '/' + setItemCount + ')'
+      }
+    } else {
+      name = setlist[i].name
+    }
+    if (nd > 0) {
+      if (Wear.wear.right_arm.obj.sub_type === 'shot') {
+        name += TWDS._('SHORT_SHOTWEAPON', ' (shot)')
+      } else if (Wear.wear.right_arm.obj.sub_type !== 'shot') {
+        name += TWDS._('SHORT_MELEEWEAPON', ' (melee)')
+      }
+    }
+    names.push(name)
+  }
+  setNames.sort()
+
+  for (let i = 0; i < singleItems.length; i++) {
+    const item = singleItems[i]
+    const set = item.set
+    if (!(set in setsInUse) || setsInUse[set].length < 2) {
+      names.push(item.name)
+    }
+  }
+
+  names.sort()
+  let is = ''
+  for (let i = 0; i < setNames.length; i++) {
+    if (is > '') { is += ', ' }
+    is += setNames[i]
+  }
+  for (let i = 0; i < names.length; i++) {
+    if (is > '') { is += ', ' }
+    is += names[i]
+  }
+  return is
+}
 // reading the current skill values, and the items
 TWDS.getEquipmentData = function () {
   const getOne = function (s) {

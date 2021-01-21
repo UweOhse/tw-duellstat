@@ -1,16 +1,23 @@
-CHECK_SOURCES=start.js css.js de.json translation.js bonuscalc.js equipment.js readduels.js peopletab.js main.js
+CHECK_SOURCES=start.js css.js de.json translation.js bonuscalc.js equipment.js readduels.js peopletab.js jobtab.js \
+   settingstab.js \
+   list_jobdata.js main.js
+CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
 
 GLOBALS=--global Game --global TWDS --global Character --global wman --global Bag \
 	--global JobList --global CharacterSkills --global west --global Wear \
 	--global $$ --global ItemManager --global Ajax --global MessagesWindow \
-	--global Premium --global Inventory --global ReportWindow
+	--global Premium --global Inventory --global ReportWindow --global tw2widget \
+	--global JobCalculator --global JobWindow --global UserMessage --global JobsModel
 all: precheck tw-duellstat.user.js
 
-precheck: $(CHECK_SOURCES)
-	for i in $^ ; do standard --fix $(GLOBALS) $$i || exit 1; done
+%.stamp: %.js
+	@echo standardizing/fixing $^
+	@standard --fix $(GLOBALS) $^
+	@touch $@
 	
-tw-duellstat.user.js: $(ALL_SOURCES)
+precheck: $(CHECK_STAMPS)
+	
+tw-duellstat.user.js: $(ALL_SOURCES) Makefile
 	cat $(ALL_SOURCES) >$@.t
-	#standard $(GLOBALS) $@.t
 	mv $@.t $@

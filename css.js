@@ -1,5 +1,7 @@
 TWDS.insertStyles = function () {
   const css = `
+    #TWDS_job .hasMousePopup,
+    #TWDS_job [title],
     #TWDS_equipment .hasMousePopup,
     #TWDS_equipment [title],
     #TWDS_bonuslist .hasMousePopup,
@@ -33,7 +35,7 @@ TWDS.insertStyles = function () {
     #TWDS_equipment tr, #TWDS_equipment td, #TWDS_table th { border:1px solid #888;}
     #TWDS_equipment td, #TWDS_equipment th { padding:1px 2px;}
     .TWDS_tabcontent {
-      margin-top:1em;
+      margin:1em 0;
     }
     #TWDS_people { border-collapse: collapse; width:100%;}
     #TWDS_people tr, #TWDS_people td, #TWDS_people th { border:1px solid #888;}
@@ -112,6 +114,60 @@ TWDS.insertStyles = function () {
     }
     #TWDS_attr_skill td {
       text-align:center;
+    }
+    #TWDB_job p {
+       text-align:right;
+    }
+    #TWDS_jobs {
+      margin-bottom:1em;
+      border-collapse: collapse
+    }
+    #TWDS_jobs tr, #TWDS_jobs td, #TWDS_jobs th { border:1px solid #888;}
+    #TWDS_jobs td { text-align:right;}
+    #TWDS_jobs td[data-field=name] { text-align:left; padding:1px 2px; }
+    #TWDS_jobs th[data-field=danger] { color: red}
+    #TWDS_jobs th[data-field=luck] { color: green}
+
+    div.item span.TWDS_itemusageinfo {
+      top:0;
+      right:0;
+      display:block;
+      background-color:#8888;
+      color:white;
+      box-shadow: 1px 1px 2px #000000;
+    }
+    .TWDS_joblist_stars {
+      opacity:0.5;
+      color:green;
+      text-shadow: 0 0 0px black;
+    }
+    .TWDS_joblist_stars.TWDS_joblist_stage_gold {
+      color:gold;
+    }
+    .TWDS_joblist_stars.TWDS_joblist_stage_silver {
+      color:silver;
+    }
+    .TWDS_joblist_stars.TWDS_joblist_stage_bronze {
+      color:#cd7f32;
+    }
+    .TWDS_job_negative {
+      color:red;
+    }
+    .TWDS_job_less {
+      color:orange;
+    }
+    #TWDS_job p {
+      text-align:right
+    }
+    #TWDS_job tr.hidden {
+      display:none
+    }
+    #TWDS_job_filtergroup {
+      margin-right:2em;
+      display:inline-block;
+    }
+    #TWDS_job_filterx {
+      border-radius:5px;
     }
   `
   const sty = document.createElement('style')

@@ -177,7 +177,7 @@ TWDS.initJobDisplay = function (container, serverdata) {
 
     const tr = document.createElement('tr')
     tab.appendChild(tr)
-    tr.dataset.jobid=jobId
+    tr.dataset.jobid = jobId
     let td
     let bestNetto
     let bestBrutto
@@ -279,7 +279,7 @@ TWDS.initJobDisplay = function (container, serverdata) {
       if (charPremium) luck2 *= 1.5
       td.title += '<br>' + Math.round(luck2) + ' -' + Math.round(luck2 * 3) + ' in best clothes'
     }
-    td.title += "<br>"+serverdata.jobs[jobId].durations[0].luck + '/' +
+    td.title += '<br>' + serverdata.jobs[jobId].durations[0].luck + '/' +
       serverdata.jobs[jobId].durations[1].luck + '/' +
       serverdata.jobs[jobId].durations[2].luck +
       ' luck mod. in 15s/10m/1h'
@@ -297,7 +297,7 @@ TWDS.initJobDisplay = function (container, serverdata) {
       if (charPremium) dang *= 0.8
       else dang *= 0.9
     }
-    td.textContent = dang
+    td.textContent = Math.round(dang * 10) / 10
     td.title = dang + '% chance of injury'
     if (best !== null) {
       let dang2 = TWDS.TWDBcalcDanger(bestBrutto, difficulty, TWDS.jobData['job_' + jobId].job_danger, mot, 1)
@@ -305,10 +305,11 @@ TWDS.initJobDisplay = function (container, serverdata) {
         if (charPremium) dang2 *= 0.8
         else dang2 *= 0.9
       }
+      dang2 = Math.round(dang2 * 10) / 10
       td.title += '<br>' + dang2 + '% chance of injury in best clothes'
     }
     const mh = Character.getMaxHealth()
-    const maxInj = (TWDS.jobData['job_' + jobId].job_maxdmg) / 100 * mh
+    const maxInj = Math.round((TWDS.jobData['job_' + jobId].job_maxdmg) / 100 * mh)
     const h = Character.health
     td.title += '<br>An injury costs up to ' + maxInj + ' health points (' + TWDS.jobData['job_' + jobId].job_maxdmg + '% of max. health).'
 
@@ -352,7 +353,7 @@ TWDS.initJobDisplay = function (container, serverdata) {
     tr.appendChild(th)
     th.dataset.field = 'date'
     th.textContent = TWDS._('JOBLIST_DATE', 'Date')
-    th.title="The date the 'best' clothes were calculated."
+    th.title = "The date the 'best' clothes were calculated."
 
     th = document.createElement('th')
     tr.appendChild(th)
@@ -383,7 +384,7 @@ TWDS.initJobDisplay = function (container, serverdata) {
     tr.appendChild(th)
     th.dataset.field = 'luck'
     // th.textContent = TWDS._('JOBLIST_LUCK', 'luck')
-    th.innerHTML="&#9752;"
+    th.innerHTML = '&#9752;'
 
     th = document.createElement('th')
     tr.appendChild(th)
@@ -394,7 +395,7 @@ TWDS.initJobDisplay = function (container, serverdata) {
     tr.appendChild(th)
     th.dataset.field = 'danger'
     // th.textContent = TWDS._('JOBLIST_DANGER', 'Danger')
-    th.innerHTML="&#9829;"
+    th.innerHTML = '&#9829;'
 
     th = document.createElement('th')
     tr.appendChild(th)
@@ -486,17 +487,17 @@ TWDS.getJobContent = function () {
 
   const fig = document.createElement('span')
   p.appendChild(fig)
-  fig.id="TWDS_job_filtergroup"
+  fig.id = 'TWDS_job_filtergroup'
 
   const input = document.createElement('input')
   fig.appendChild(input)
   input.id = 'TWDS_job_filter'
-  input.placeholder="search"
+  input.placeholder = 'search'
 
   const button = document.createElement('button')
   fig.appendChild(button)
   button.id = 'TWDS_job_filterx'
-  button.textContent="x"
+  button.textContent = 'x'
 
   const sel = document.createElement('select')
   p.appendChild(sel)
@@ -618,29 +619,28 @@ TWDS.jobStartFunction = function () {
     }
   })
   $(document).on('click', '#TWDS_job_filterx', function (ev) {
-    document.querySelector('#TWDS_job_filter').value=""
-    $('#TWDS_job_filter').trigger("change")
+    document.querySelector('#TWDS_job_filter').value = ''
+    $('#TWDS_job_filter').trigger('change')
   })
   $(document).on('change', '#TWDS_job_filter', function (ev) {
     const fi = document.querySelector('#TWDS_job_filter')
-    const rows= document.querySelectorAll('#TWDS_jobs tbody tr')
-    if (!JobsModel.Jobs.length)
-      JobsModel.initJobs();
+    const rows = document.querySelectorAll('#TWDS_jobs tbody tr')
+    if (!JobsModel.Jobs.length) { JobsModel.initJobs() }
 
-    let search=fi.value.trim()
-    if (search === "") {
-      for (let row of Object.values(rows)) {
-        row.classList.remove("hidden")
+    const search = fi.value.trim()
+    if (search === '') {
+      for (const row of Object.values(rows)) {
+        row.classList.remove('hidden')
       }
     } else {
-      var m=JobsModel.searchJobsByPattern(fi.value)
-      for (let row of Object.values(rows)) {
-        row.classList.add("hidden")
+      const m = JobsModel.searchJobsByPattern(fi.value)
+      for (const row of Object.values(rows)) {
+        row.classList.add('hidden')
       }
-      for (let found of Object.values(m)) {
-        let id=found.id
-        let ele=document.querySelector('#TWDS_jobs tbody tr[data-jobid="'+id+'"]')
-        ele.classList.remove("hidden")
+      for (const found of Object.values(m)) {
+        const id = found.id
+        const ele = document.querySelector('#TWDS_jobs tbody tr[data-jobid="' + id + '"]')
+        ele.classList.remove('hidden')
       }
     }
   })
