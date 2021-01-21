@@ -3,7 +3,7 @@ CHECK_SOURCES=start.js css.js de.json translation.js bonuscalc.js equipment.js r
    list_jobdata.js main.js
 CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
-V=`git describe --tags --long --dirty --always --broken`
+VGET=`git describe --tags --long --dirty --always --broken`
 
 GLOBALS=--global Game --global TWDS --global Character --global wman --global Bag \
 	--global JobList --global CharacterSkills --global west --global Wear \
@@ -21,8 +21,15 @@ precheck: $(CHECK_STAMPS)
 	
 tw-duellstat.user.js: $(ALL_SOURCES) Makefile
 	cat $(ALL_SOURCES) >$@.t
-	sed -i s/@REPLACEMYVERSION@/$V/ $@.t
+	sed -i s/@REPLACEMYVERSION@/$(VGET)/ $@.t
 	mv $@.t $@
 
 version:
 	echo $V
+
+set-version:
+	echo git tag -a v'$(V)' -m 'Version $(V)'
+
+help:
+	@echo '- version numbering: V=0.0.32 make set-version'
+	@echo "- pushing the tags: git push origin --tags"

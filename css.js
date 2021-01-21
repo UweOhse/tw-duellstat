@@ -1,5 +1,10 @@
 TWDS.insertStyles = function () {
   const css = `
+    .TWDS_VERSIONINFO {
+      color: #333;
+      text-align: right;
+      padding: 0 2px 5px 0;
+    }
     #TWDS_job .hasMousePopup,
     #TWDS_job [title],
     #TWDS_equipment .hasMousePopup,

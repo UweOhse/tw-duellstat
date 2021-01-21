@@ -1,3 +1,7 @@
+2021-01-21 0.0.33
+- add version number display to the settings tab
+- add automatical version numbering
+
 2021-01-21 0.0.32
 - fix firefox incompatibilities:
 -- '123'.replaceAll('.','') results in '' (seems the '.' is taken as a regex, even if MDN says otherwise. oh well).

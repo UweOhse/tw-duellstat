@@ -1,5 +1,11 @@
 
 TWDS.getSettingsContent = function () {
+  const createVersionThing = function () {
+    const thing = document.createElement('p')
+    thing.classList.add('TWDS_VERSIONINFO')
+    thing.textContent = 'Version: @REPLACEMYVERSION@'
+    return thing
+  }
   const createCacheThing = function () {
     const thing = document.createElement('div')
     const times = {
@@ -70,6 +76,7 @@ TWDS.getSettingsContent = function () {
   }
   const div = document.createElement('div')
   div.id = 'TWDS_settings'
+  div.appendChild(createVersionThing())
   div.appendChild(createCacheThing())
   return div
 }
