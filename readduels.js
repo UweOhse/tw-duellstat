@@ -96,6 +96,7 @@ TWDS.readDuels = function () {
   // this is a really bad localization, but i hope it's enough. Otherwise we need another translation...
   const mangleDate = function (d) {
     const rxToday = TWDS._('REGEX_DUELREPORT_TODAY', ':')
+    d = d.replace(/\./g, '')
     if (!(d.match(rxToday))) return d
     return new Date().toLocaleDateString('de', { year: '2-digit', month: 'short', day: 'numeric' })
   }
