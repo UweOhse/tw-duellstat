@@ -28,7 +28,7 @@ version:
 	echo $V
 
 set-version:
-	echo git tag -a v'$(V)' -m 'Version $(V)'
+	git tag -a v'$(V)' -m 'Version $(V)'
 
 help:
 	@echo '- version numbering: V=0.0.32 make set-version'
