@@ -1,4 +1,4 @@
-TWDS.getWearBonus = function () {
+TWDS.getComboBonus = function (combo) {
   const usedSets = {}
   const allBonus = {}
   let needRound = {}
@@ -23,8 +23,7 @@ TWDS.getWearBonus = function () {
       }
       allBonus[name][0] += value
       allBonus[name][1].push([value, source])
-      console.log('updated', name, ' with +', value,
-        'to', allBonus[name], 'for', source)
+      // console.log('updated', name, ' with +', value, 'to', allBonus[name], 'for', source)
     }
   }
 
@@ -75,17 +74,22 @@ TWDS.getWearBonus = function () {
       } else {
         needRound[realtype] = true
       }
+    } else if (rounding === 'round') {
+      if (doRound) { // not in the stages of a set bonus
+        value = Math.round(value)
+      } else {
+        needRound[realtype] = true
+      }
     } else if (typeof rounding === 'undefined') {
       // no rounding
     } else {
-      console.log('unknown rounding method', rounding, source)
+      console.log('unknown rounding method', rounding, 'in', source)
       return false
     }
     allBonus[realtype][0] += value
     allBonus[realtype][1].push([value, source])
     if (value) {
-      console.log('updated', realtype, ' with +', value,
-        'to', allBonus[realtype], source)
+      // console.log('updated', realtype, ' with +', value, 'to', allBonus[realtype], source)
     }
     return true
   }
@@ -96,7 +100,7 @@ TWDS.getWearBonus = function () {
     const ilv = item.item_level
     if (item.type === 'right_arm') wtype = 1
     if (item.type === 'left_arm') wtype = 2
-    console.log('ITEM', item, wtype)
+    // console.log('ITEM', item, wtype)
     for (let j = 0; j < bo.item.length; j++) {
       handleOneBonusThing(bo.item[j], true, wtype, item.name, ilv)
     }
@@ -109,19 +113,22 @@ TWDS.getWearBonus = function () {
     handleOneGoldenBonusThing('damage/sector', bo.fortbattlesector.damage, item.name)
   }
 
+  for (const [k, v] of Object.entries(combo)) {
+    if (typeof v === 'number') {
+      combo[k] = ItemManager.get(v)
+    }
+  }
+
   const setlist = west.storage.ItemSetManager._setList
-  for (const item of Object.values(Wear.wear)) {
-    handleOneItem(item.obj)
-    const set = item.obj.set
+  for (const item of combo) { // this is item.obj!
+    handleOneItem(item)
+    const set = item.set
     if (!(set in setlist)) continue
     if (!(set in usedSets)) {
       usedSets[set] = []
     }
-    usedSets[set].push(item.obj.item_base_id)
-    console.log('bonus after item', item.obj.short, ':', allBonus)
+    usedSets[set].push(item.item_base_id)
   }
-  console.log('bonus after all items', allBonus)
-  console.log('usedSets', usedSets)
 
   // setbonus
   for (const setcode in usedSets) {
@@ -143,10 +150,16 @@ TWDS.getWearBonus = function () {
     for (const field of Object.keys(needRound)) {
       allBonus[field][0] = Math.ceil(allBonus[field][0])
     }
-    console.log('bonus after set', setcode, ':', allBonus)
   }
   console.log('total bonus', allBonus)
   return allBonus
+}
+TWDS.getWearBonus = function () {
+  const list = []
+  for (const item of Object.values(Wear.wear)) {
+    list.push(item.obj)
+  }
+  return TWDS.getComboBonus(list)
 }
 TWDS.initBonusDisplay = function (container) {
   const ele = function (tr, what, t) {
@@ -329,3 +342,5 @@ TWDS.bonusStartFunction = function () {
     true)
 }
 TWDS.registerStartFunc(TWDS.bonusStartFunction)
+
+// vim: tabstop=2 shiftwidth=2 expandtab
