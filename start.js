@@ -1,6 +1,7 @@
 const TWDS = { }
 
 TWDS.window = null
+TWDS.settings = null
 TWDS.lfd = 0
 TWDS.baseURL = 'https://ohse.de/uwe/tw-duellstat/'
 

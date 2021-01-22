@@ -8,69 +8,94 @@ TWDS.getSettingsContent = function () {
   }
   const createCacheThing = function () {
     const thing = document.createElement('div')
-    const times = {
-      0: 'Off',
-      300: '5m',
-      600: '10m',
-      1800: '30m',
-      3600: '1h',
-      7200: '2h',
-      21600: '6h',
-      42000: '12h',
-      86400: '1d',
-      172800: '2d',
-      604800: '1w',
-      2592000: '30d'
-    }
-    const h = document.createElement('h2')
+    let button
+    let p
+    let h
+
+    h = document.createElement('h2')
     thing.appendChild(h)
     h.textContent = 'Clothes cache'
 
-    let p = document.createElement('p')
-    p.textContent = 'How long shall work calculations be cached?'
+    p = document.createElement('p')
     thing.appendChild(p)
-    const sel = document.createElement('select')
-    sel.id = 'TWDS_setting_jobCacheSeconds'
-    thing.appendChild(sel)
-    for (const [s, t] of Object.entries(times)) {
-      const opt = document.createElement('option')
-      opt.value = s
-      opt.textContent = t
-      if (TWDS.jobCacheSecondsSetting === parseInt(s)) {
-        opt.selected = 'selected'
-        opt.setAttribute('selected', 'selected')
-      }
-      sel.appendChild(opt)
-    }
+    p.textContent = 'Results of work cloth calculations are stored in a cache, and can be re-used in the job window. Here you can clear, fill or update many jobs at once, though re-calculating all jobs will take quite a bit of time on slow computers.'
 
+    p = document.createElement('p')
     const info = document.createElement('p')
     info.id = 'TWDS_job_reload_info'
     thing.appendChild(info)
+    TWDS.clothcacheInfo(info)
+
+    p = document.createElement('p')
+    thing.appendChild(p)
+    button = document.createElement('button')
+    p.appendChild(button)
+    button.textContent = 'Clear cloth cache'
+    button.onclick = TWDS.clothcacheClear
 
     p = document.createElement('p')
     thing.appendChild(p)
     p.textContent = 'Reload/fill the cache?'
 
-    let button = document.createElement('button')
+    button = document.createElement('button')
     thing.appendChild(button)
     button.textContent = TWDS._('JOB_RELOAD_ALL', 'all')
-    button.title = TWDS._('JOB_RELOAD_ALL_MOUSEOVER', 'Reload all jobs')
+    button.title = TWDS._('JOB_RELOAD_ALL_MOUSEOVER', 'Reload the cloth cache for all jobs')
     button.classList.add('TWDS_job_reload')
     button.dataset.reloadmode = 'all'
 
     button = document.createElement('button')
     thing.appendChild(button)
+    button.textContent = TWDS._('JOB_RELOAD_MISSING', 'missing')
+    button.title = TWDS._('JOB_RELOAD_MISSING_MOUSEOVER', 'Fills the cloth cache for all jobs not having one')
+    button.classList.add('TWDS_job_reload')
+    button.dataset.reloadmode = 'missing'
+
+    button = document.createElement('button')
+    thing.appendChild(button)
     button.textContent = TWDS._('JOB_RELOAD_1D', '1d')
-    button.title = TWDS._('JOB_RELOAD_ALL_MOUSEOVER', 'Reload all jobs older than 1 day')
+    button.title = TWDS._('JOB_RELOAD_ALL_MOUSEOVER', 'Reload the cloth cache for all jobs where it is older than one day')
     button.classList.add('TWDS_job_reload')
     button.dataset.reloadmode = '1d'
 
-    p = document.createElement('p')
-    thing.appendChild(p)
     button = document.createElement('button')
     thing.appendChild(button)
-    button.textContent = 'Clear cloth cache'
-    button.onclick = TWDS.clearJobItemCache
+    button.textContent = TWDS._('JOB_RELOAD_1D', '1w')
+    button.title = TWDS._('JOB_RELOAD_ALL_MOUSEOVER', 'Reload the cloth cache for all jobs where it is older than one week')
+    button.classList.add('TWDS_job_reload')
+    button.dataset.reloadmode = '1w'
+
+    button = document.createElement('button')
+    thing.appendChild(button)
+    button.textContent = TWDS._('JOB_RELOAD_1D', '30d')
+    button.title = TWDS._('JOB_RELOAD_ALL_MOUSEOVER', 'Reload the cloth cache for all jobs where it is older than 30 days')
+    button.classList.add('TWDS_job_reload')
+    button.dataset.reloadmode = '30d'
+
+    h = document.createElement('h2')
+    thing.appendChild(h)
+    h.textContent = 'Misc. settings'
+    for (const x of TWDS.settingList.values()) {
+      const mode = x[0]
+      const name = x[1]
+      const text = x[2]
+      const div = document.createElement('div')
+      div.className = 'TWDS_settingline'
+      thing.appendChild(div)
+      if (mode === 'bool') {
+        const c = document.createElement('input')
+        c.setAttribute('type', 'checkbox')
+        c.setAttribute('value', '1')
+        c.classList.add('TWDS_setting_bool')
+        c.classList.add('TWDS_setting')
+        c.dataset.settingName = name
+        if (TWDS.settings[name]) { c.setAttribute('checked', 'checked') }
+        div.appendChild(c)
+        const span = document.createElement('span')
+        span.textContent = text
+        div.appendChild(span)
+      }
+    }
 
     return thing
   }
@@ -91,42 +116,27 @@ TWDS.settingsStartFunction = function () {
     TWDS.activateSettingsTab,
     true)
 
-  $(document).on('change', '#TWDS_setting_jobCacheSeconds', function () {
-    TWDS.jobCacheSecondsSetting = parseInt(this.value)
-    window.localStorage.setItem('TWDS_setting_jobCacheSeconds', this.value)
+  $(document).on('change', '.TWDS_setting', function () {
+    const name = this.dataset.settingName
+    let v = this.value
+    if (this.type === 'checkbox') {
+      if (!this.checked) { v = false } else { v = true }
+    }
+    TWDS.settings[name] = v
+    console.log('changed setting', name, 'to', v)
+    window.localStorage.setItem('TWDS_settings', JSON.stringify(TWDS.settings))
   })
   const t = window.localStorage.getItem('TWDS_setting_jobCacheSeconds')
   if (t !== null) { TWDS.jobCacheSecondsSetting = parseInt(t) }
 
   $(document).on('click', '.TWDS_job_reload', function () {
-    const mode = this.dataset.reloadmode
-    const jl = JobList.getSortedJobs()
-    const that = this
-    const info = document.querySelector('#TWDS_job_reload_info')
-    for (const job of jl) {
-      const old = TWDS.getJobBestFromCache(job.id)
-      console.log('calc', job.id, job.name, mode, old)
-      if (old !== null) {
-        const ts = old.timestamp
-        if (mode === '1d') {
-          if (ts > new Date().getTime() - 1 * 86400 * 1000) { continue }
-        }
-        if (mode === '1w') {
-          if (ts > new Date().getTime() - 7 * 86400 * 1000) { continue }
-        }
-        if (mode === '30d') {
-          if (ts > new Date().getTime() - 30 * 86400 * 1000) { continue }
-        }
-      }
-      const out = TWDS.getBestSetWrapper(job.skills, job.id, true)
-      info.textContent = job.id + '/' + jl.length + ' ' +
-        out.name + ' ' + TWDS.describeItemCombo(out.items)
-      setTimeout(function () { $(that).trigger('click') }, 500)
-      return
+    let mode = this.dataset.reloadmode
+    if (mode === 'all') {
+      TWDS.clothcacheClear()
+      mode = 'missing'
     }
-    TWDS.recalcItemUsage()
-    TWDS.activateSettingsTab()
-    info.textContent = ''
+    TWDS.clothcacheReload(mode)
   })
 }
 TWDS.registerStartFunc(TWDS.settingsStartFunction)
+// vim: tabstop=2 shiftwidth=2 expandtab

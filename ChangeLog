@@ -1,3 +1,7 @@
+2021-01-21 0.0.34
+- new option to block auctions and sales of best equipment and managed sets
+- add a button in the work window to get the best items from the cache.
+
 2021-01-21 0.0.33
 - add version number display to the settings tab
 - add automatical version numbering

@@ -174,6 +174,24 @@ TWDS.insertStyles = function () {
     #TWDS_job_filterx {
       border-radius:5px;
     }
+
+    .job_bestwearbutton {
+      top:-5px
+    }
+    .job_bestwearbutton .twdb_bestwear {
+      position:absolute;
+      top:0;
+    }
+    .job_bestwearbutton .TWDS_getbestwear {
+      position:absolute;
+      top:0;
+      position: absolute;
+      top: 40px;
+      left: 48px;
+      background-color:#444;
+      color:white;
+      border-color:888;
+    }
   `
   const sty = document.createElement('style')
   sty.textContent = css
