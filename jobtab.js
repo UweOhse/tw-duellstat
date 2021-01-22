@@ -1,98 +1,5 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 
-// JobList.getJobById(145) liefert name, skills, yield, leve, malus.
-// new west.job.Model(JobList.getJobById(145)) liefert dasselbe
-// Ajax.remoteCallMode("work", "index", {},function(x) {console.log(x)})  // liefert motivation
-
-// JobsModel.initJobs(), dann ist JobsModel.Beans[145] nicht mehr undefined.
-// JobsModel.Beans[145] nach initJobs und Öffnen des Jobs:
-// Ajax.remoteCallMode("job", "job", {jobId: 123, x:456, y:789}
-// motivation, xp, money, stage, stars, malus, jobpoints, malus, luck,
-
-// JobsModel.Beans[145]:
-// -erstmal leer
-// -JobsModel.initJobs() -> rudimentär gefüllt (name, workpoints = malus+1), skills
-// -JOb öffnen (sein Fenster) -> dito
-// -new JobWindow(id, x,y) -> ziemlich vollständige Daten, braucht aber x/y.
-// FUCK.
-
-// job=obList.getJobById(x)
-// lpBrutto=job.calcJobPoints() (==sp)
-// lpNetto=lpBrutto-job.malus-1 (==laborpoints.current
-// 15sec Base=.1 10m base=0.47 1h base=1
-
-// hacken: nirgends
-// luck:
-//
-
-// well, this is a hack.
-// Wear.carry() talks to the server, 10 times, therefore triggering the DOS protection, and it also
-// causes the server to use the (temporary) clothes to calculate job results if a job ends in that time.
-
-TWDS.setWear = function (ids) {
-  for (const i of ids) {
-    const b = Bag.getItemByItemId(Number(i))
-    if (b) {
-      Wear.carry(b)
-    }
-  }
-}
-TWDS.getWear = function () {
-  const a = []
-  for (const slot of Wear.slots) {
-    const o = Wear.wear[slot].obj
-    a.push(o.item_id)
-  }
-  return a
-}
-TWDS.getJobBestFromCache = function (id) {
-  const k = 'TWDS_j_' + id
-  let d = window.localStorage.getItem(k)
-  if (d !== null) {
-    d = JSON.parse(d)
-    return d
-  }
-  return null
-}
-TWDS.jobCacheSecondsSetting = 3600 // 1h
-TWDS.getBestSetWrapper = function (skills, id, returnFull = false) {
-  const k = 'TWDS_j_' + id
-
-  const old = window.localStorage.getItem(k)
-  if (old !== null) {
-    const d = JSON.parse(old)
-    const cacheSeconds = TWDS.jobCacheSecondsSetting
-    const stich = new Date().getTime() - cacheSeconds * 1000
-    if (d.timestamp >= stich) {
-      if (returnFull) { return d }
-      const c = new west.item.ItemSetContainer()
-      c.items = d.cache.items
-      for (const v of Object.values(d.cache.sets)) {
-        c.sets.push(new west.item.ItemSet(v))
-        // c.sets.push(Object.assign(new west.item.ItemSet, v))
-      }
-      return c
-    }
-  }
-
-  const best = west.item.Calculator._TWDS_backup_getBestSet(skills, id)
-  const one = {
-    timestamp: new Date().getTime(),
-    id: id,
-    level: Character.level,
-    cache: best
-  }
-  one.items = [...best.items] // clone that
-  for (let i = 0; i < best.sets.length; i++) {
-    for (let j = 0; j < best.sets[i].items.length; j++) {
-      one.items.push(best.sets[i].items[j])
-    }
-  }
-  window.localStorage.setItem(k, JSON.stringify(one))
-  TWDS.recalcItemUsage()
-  if (returnFull) { return one }
-  return best
-}
 TWDS.debug = 0
 TWDS.calcBruttoJobPoints = function (jobId, items) {
   const job = JobList.getJobById(jobId)
@@ -531,46 +438,6 @@ TWDS.getJobContent = function () {
 TWDS.activateJobTab = function () {
   TWDS.activateTab('job')
 }
-TWDS.recalcItemUsage = function () {
-  const items = {}
-  const add2item = function (item, key, num) {
-    if (!(item in items)) {
-      items[item] = {
-        job: [],
-        eq: [],
-        ds: []
-      }
-    }
-    items[item][key].push(num)
-  }
-  const jl = JobList.getSortedJobs()
-  for (const job of jl) {
-    const b = TWDS.getJobBestFromCache(job.id)
-    if (b === null) continue // should not happen
-    for (const item of b.items) {
-      add2item(item, 'job', job.id)
-    }
-  }
-  window.localStorage.setItem('TWDS_itemusage', JSON.stringify(items))
-  Ajax.remoteCallMode('inventory', 'show_equip', {}, function (data) {
-    const eql = data.data
-    for (const [idx, eq] of Object.entries(eql)) {
-      for (const slot of Wear.slots) {
-        const it = eq[slot]
-        add2item(it, 'eq', idx)
-      }
-    }
-    window.localStorage.setItem('TWDS_itemusage', JSON.stringify(items))
-  })
-}
-TWDS.clearJobItemCache = function () {
-  const jl = JobList.getSortedJobs()
-  for (const job of jl) {
-    const k = 'TWDS_j_' + job.id
-    window.localStorage.removeItem(k)
-  }
-  TWDS.recalcItemUsage()
-}
 
 TWDS.jobStartFunction = function () {
   TWDS.registerTab('job',
@@ -644,35 +511,5 @@ TWDS.jobStartFunction = function () {
       }
     }
   })
-
-  west.item.Calculator._TWDS_backup_getBestSet = west.item.Calculator.getBestSet
-  west.item.Calculator.getBestSet = TWDS.getBestSetWrapper
-
-  tw2widget.InventoryItem.prototype._TWDS_backup_initDisplay = tw2widget.InventoryItem.prototype.initDisplay
-  tw2widget.InventoryItem.prototype.initDisplay = function () {
-    tw2widget.InventoryItem.prototype._TWDS_backup_initDisplay.apply(this, arguments)
-
-    let iu = window.localStorage.getItem('TWDS_itemusage')
-    if (iu === null) return
-    iu = JSON.parse(iu)
-
-    const ii = this.obj.item_id
-    if (!(ii in iu)) return
-    iu = iu[ii]
-
-    const span = document.createElement('span')
-    span.classList.add('TWDS_itemusageinfo')
-    this.divMain[0].appendChild(span)
-    span.textContent = 'iu'
-    let t = ''
-    if (iu.job.length) {
-      t = t + iu.job.length + ' jobs'
-    }
-    if (iu.eq.length) {
-      if (t > '') t += ', '
-      t = t + iu.eq.length + ' equiment sets'
-    }
-    span.title = t
-  }
 }
 TWDS.registerStartFunc(TWDS.jobStartFunction)
