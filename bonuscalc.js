@@ -27,10 +27,24 @@ TWDS.getComboBonus = function (combo) {
     }
   }
 
+  const handleRounding = function (value, method) {
+    switch (method) {
+      case 'ceil':
+        return Math.ceil(value)
+      case 'floatceil':
+        return Math.ceil(100 * value) / 100
+      case 'floor':
+        return Math.floor(value)
+      case 'round':
+        return Math.round(value)
+      default:
+        return value
+    }
+  }
+
   const handleOneBonusThing = function (entry, doRound, wtype, source, ilv = 0) {
     let realtype
     let value
-    const rounding = entry.roundingMethod
     if (entry.type === 'character') {
       realtype = entry.bonus.name
       if (typeof realtype === 'undefined') {
@@ -68,24 +82,7 @@ TWDS.getComboBonus = function (combo) {
       }
     }
     value = pimp(ilv, value)
-    if (rounding === 'ceil') {
-      if (doRound) { // not in the stages of a set bonus
-        value = Math.ceil(value)
-      } else {
-        needRound[realtype] = true
-      }
-    } else if (rounding === 'round') {
-      if (doRound) { // not in the stages of a set bonus
-        value = Math.round(value)
-      } else {
-        needRound[realtype] = true
-      }
-    } else if (typeof rounding === 'undefined') {
-      // no rounding
-    } else {
-      console.log('unknown rounding method', rounding, 'in', source)
-      return false
-    }
+    value = handleRounding(value, entry.roundingMethod)
     allBonus[realtype][0] += value
     allBonus[realtype][1].push([value, source])
     if (value) {
