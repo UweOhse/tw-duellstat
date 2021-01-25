@@ -33,10 +33,14 @@ TWDS.wearItemsHandler = function (ids) {
     let isMin = false
     let isCreated = false
     if (Inventory !== null) {
-      isMin = wman.isMinimized(Inventory.uid)
-      isCreated = wman.isWindowCreated(Inventory.uid)
+      isMin = wman.isMinimized(Inventory.uid) === true
+      isCreated = wman.isWindowCreated(Inventory.uid) === true
     }
-    Wear.open()
+    if (!wman.isWindowCreated(Wear.uid)) {
+      Wear.open()
+    } else if (wman.isMinimized(Wear.uid)) {
+      wman.reopen(Wear.uid)
+    }
     if (!isCreated) {
       wman.close(Inventory.uid)
     } else if (isMin) {
