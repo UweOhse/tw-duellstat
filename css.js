@@ -5,6 +5,12 @@ TWDS.insertStyles = function () {
       text-align: right;
       padding: 0 2px 5px 0;
     }
+    .TWDS .tw2gui_scrollpane {
+      margin:1em 0;
+    }
+    .TWDS_tabcontent {
+      padding-bottom:1em;
+    }
     #TWDS_job .hasMousePopup,
     #TWDS_job [title],
     #TWDS_equipment .hasMousePopup,
@@ -39,9 +45,6 @@ TWDS.insertStyles = function () {
     #TWDS_equipment .other { color: #800;}
     #TWDS_equipment tr, #TWDS_equipment td, #TWDS_table th { border:1px solid #888;}
     #TWDS_equipment td, #TWDS_equipment th { padding:1px 2px;}
-    .TWDS_tabcontent {
-      margin:1em 0;
-    }
     #TWDS_people { border-collapse: collapse; width:100%;}
     #TWDS_people tr, #TWDS_people td, #TWDS_people th { border:1px solid #888;}
     #TWDS_people tbody td {
