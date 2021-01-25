@@ -254,6 +254,7 @@ TWDS.fillEquipmentTab = function (tab) {
     }
   }
   TWDS.highlightEquipmentTable(tab)
+  return l.length
 }
 TWDS.highlightEquipmentTable = function (tab) {
   const rows = $('.datarow', tab)
@@ -516,43 +517,43 @@ TWDS.add1ToTab = function (tab, i, key, o) {
   // appOne(tr,o.refl,        "refl");
   // appOne(tr,o.hp,          "hp");
 }
-TWDS.initEquipmentTab = function (tab) {
-  const appOne = function (tr, ti, mo = null) {
-    const td = document.createElement('td')
-    td.textContent = ti
-    if (mo != null) td.title = mo
-    tr.appendChild(td)
-  }
-  const tr = document.createElement('tr')
-  tr.className = 'headrow'
-  tab.appendChild(tr)
-  appOne(tr, TWDS._('NAME', 'Name'))
-  appOne(tr, TWDS._('WEAR', ''))
-  appOne(tr, TWDS._('MENU_LEVEL_SHORT', 'Lv'),
-    TWDS._('MENU_LEVEL_LONG', 'The character level at the moment the calculations were done.<br>If you open the script again, with this equipment worn, the values will be updated.'))
-  appOne(tr, TWDS._('MENU_AIM_SHORT', 'Aim'),
-    TWDS._('MENU_AIM_LONG', 'Aiming'))
-  appOne(tr, TWDS._('MENU_APPEARANCE_SHORT', 'App.'),
-    TWDS._('MENU_APPEARANCE_LONG', "The appearance skill. If it's larger than the defenders tactics skill, the attacker will get a aiming bonus (possibly the full difference)"))
-  appOne(tr, TWDS._('MENU_DMGBON_SHORT', 'DmgMod'),
-    TWDS._('MENU_DMGBON_LONG', 'The damage bonus: Either vigor or shooting.'))
-  appOne(tr, TWDS._('MENU_DODGING_SHORT', 'Dodge'),
-    TWDS._('MENU_DODGING_LONG', 'Dodging'))
-  appOne(tr, TWDS._('MENU_TACTICS_SHORT', 'Tactics'),
-    TWDS._('MENU_TACTICS_LONG', "The tactics skill. If it's larger than the attackers appearance, the defender will get a aiming bonus (possibly the full difference)."))
-  appOne(tr, TWDS._('MENU_RES_MELEE_SHORT', 'MeeleRes'),
-    TWDS._('MENU_RES_MELEE_LONG',
-      'The resistance against melee damage (toughness plus 25% of reflex).'))
-  appOne(tr, TWDS._('MENU_RES_SHOT_SHORT', 'ShotRes'),
-    TWDS._('MENU_RES_MELEE_LONG',
-      'The resistance against shot damage (reflex plus 25% of tough).'))
-  appOne(tr, TWDS._('MENU_DAMAGE_SHORT', 'Dmg'),
-    TWDS._('MENU_DAMAGE_LONG',
-      'The average damage done.'))
-  appOne(tr, TWDS._('MENU_DELETE_SHORT', ''))
-}
 
 TWDS.getEquipmentContent = function () {
+  const addHeadRow = function (tab) {
+    const appOne = function (tr, ti, mo = null) {
+      const td = document.createElement('td')
+      td.textContent = ti
+      if (mo != null) td.title = mo
+      tr.appendChild(td)
+    }
+    const tr = document.createElement('tr')
+    tr.className = 'headrow'
+    tab.appendChild(tr)
+    appOne(tr, TWDS._('NAME', 'Name'))
+    appOne(tr, TWDS._('WEAR', ''))
+    appOne(tr, TWDS._('MENU_LEVEL_SHORT', 'Lv'),
+      TWDS._('MENU_LEVEL_LONG', 'The character level at the moment the calculations were done.<br>If you open the script again, with this equipment worn, the values will be updated.'))
+    appOne(tr, TWDS._('MENU_AIM_SHORT', 'Aim'),
+      TWDS._('MENU_AIM_LONG', 'Aiming'))
+    appOne(tr, TWDS._('MENU_APPEARANCE_SHORT', 'App.'),
+      TWDS._('MENU_APPEARANCE_LONG', "The appearance skill. If it's larger than the defenders tactics skill, the attacker will get a aiming bonus (possibly the full difference)"))
+    appOne(tr, TWDS._('MENU_DMGBON_SHORT', 'DmgMod'),
+      TWDS._('MENU_DMGBON_LONG', 'The damage bonus: Either vigor or shooting.'))
+    appOne(tr, TWDS._('MENU_DODGING_SHORT', 'Dodge'),
+      TWDS._('MENU_DODGING_LONG', 'Dodging'))
+    appOne(tr, TWDS._('MENU_TACTICS_SHORT', 'Tactics'),
+      TWDS._('MENU_TACTICS_LONG', "The tactics skill. If it's larger than the attackers appearance, the defender will get a aiming bonus (possibly the full difference)."))
+    appOne(tr, TWDS._('MENU_RES_MELEE_SHORT', 'MeeleRes'),
+      TWDS._('MENU_RES_MELEE_LONG',
+        'The resistance against melee damage (toughness plus 25% of reflex).'))
+    appOne(tr, TWDS._('MENU_RES_SHOT_SHORT', 'ShotRes'),
+      TWDS._('MENU_RES_MELEE_LONG',
+        'The resistance against shot damage (reflex plus 25% of tough).'))
+    appOne(tr, TWDS._('MENU_DAMAGE_SHORT', 'Dmg'),
+      TWDS._('MENU_DAMAGE_LONG',
+        'The average damage done.'))
+    appOne(tr, TWDS._('MENU_DELETE_SHORT', ''))
+  }
   const newstuff = TWDS.getEquipmentData()
   const key = newstuff[0]
   const data = newstuff[1]
@@ -572,8 +573,9 @@ TWDS.getEquipmentContent = function () {
   const tab = document.createElement('table')
   div.appendChild(tab)
   tab.id = 'TWDS_equipment'
-  TWDS.initEquipmentTab(tab)
-  TWDS.fillEquipmentTab(tab)
+  addHeadRow(tab)
+  const n = TWDS.fillEquipmentTab(tab)
+  if (n >= 12) { addHeadRow(tab) }
   return div
 }
 TWDS.activateEquipmentTab = function () {
