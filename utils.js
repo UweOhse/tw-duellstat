@@ -70,3 +70,32 @@ TWDS.wearItemsHandler = function (ids) {
   }
   Inventory.showCustomItems(result)
 }
+
+TWDS.createElement = function (kind, par = {}) {
+  const thing = document.createElement(kind)
+  for (const [k, v] of Object.entries(par)) {
+    if (k === 'dataSet') {
+      for (const [k2, v2] of Object.entries(v)) {
+        thing.dataset[k2] = v2
+      }
+      continue
+    }
+    if (k === 'classList') {
+      for (const add of v) {
+        thing.classList.add(add)
+      }
+      continue
+    }
+    thing[k] = v
+  }
+  return thing
+}
+TWDS.createEle = TWDS.createElement
+TWDS.createButton = function (text, par) {
+  if (text !== null && text !== '') {
+    par.textContent = text
+  }
+  if (!('classList' in par)) par.classList = []
+  par.classList.push('TWDS_button')
+  return TWDS.createEle('button', par)
+}
