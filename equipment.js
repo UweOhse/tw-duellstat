@@ -576,8 +576,167 @@ TWDS.getEquipmentContent = function () {
   addHeadRow(tab)
   const n = TWDS.fillEquipmentTab(tab)
   if (n >= 12) { addHeadRow(tab) }
+
+  TWDS.getEquipmentContent.specialButtons(div)
   return div
 }
+TWDS.getEquipmentContent.specialButtons = function (div) {
+  const but = function (text, key1, key2) {
+    return TWDS.createButton(text, {
+      classList: ['TWDS_specialequipment_button'],
+      dataSet: {
+        key1: key1,
+        key2: key2
+      }
+    })
+  }
+  const appendOneBlock = function (container, specials, classAdd = '', doTranslate = true, doSort = true) {
+    if (doTranslate) {
+      for (let i = 0; i < specials.length; i++) {
+        specials[i][1] = TWDS._(specials[i][0], specials[i][1])
+      }
+    }
+    if (doSort) {
+      specials.sort(function (a, b) {
+        return a[1].localeCompare(b[1])
+      })
+    }
+    let p
+    if (container.nodeName === 'TABLE') {
+      p = TWDS.createEle('tr', { className: classAdd })
+    } else {
+      p = TWDS.createEle('p', { className: classAdd })
+    }
+    container.appendChild(p)
+    for (let i = 0; i < specials.length; i++) {
+      const b = but(specials[i][1], specials[i][2], specials[i][3])
+      if (container.nodeName === 'TABLE') {
+        const td = TWDS.createEle('td')
+        p.appendChild(td)
+        td.appendChild(b)
+      } else {
+        p.appendChild(b)
+      }
+    }
+  }
+
+  let h = document.createElement('h3')
+  h.textContent = TWDS._('SPECIAL_EQUIPMENT_HELPER', 'Special Equipment Helper')
+  div.appendChild(h)
+
+  let p = document.createElement('p')
+  p.textContent = TWDS._('SPECIAL_EQUIPMENT_INFO', 'To calculate an equipment combination with good bonus values please on the following buttons. On a slow computers this might a long time, especially if you habe many sets.')
+  div.appendChild(p)
+
+  h = document.createElement('h4')
+  h.textContent = TWDS._('SPECIAL_BONUS', 'Bonus')
+  div.appendChild(h)
+
+  const specials = [
+    ['SPECIAL_BUTTON_SPEED', 'Speed', 'special', 'speed'],
+    ['SPECIAL_BUTTON_XP', 'XP', 'special', 'xp'],
+    ['SPECIAL_BUTTON_REGEN', 'Regeneration', 'special', 'regen'],
+    ['SPECIAL_BUTTON_LUCK', 'Luck', 'special', 'luck'],
+    ['SPECIAL_BUTTON_PRAY', 'Pray', 'special', 'pray'],
+    ['SPECIAL_BUTTON_DOLLAR', 'Dollar', 'special', 'dollar'],
+    ['SPECIAL_BUTTON_DROP', 'Drop', 'special', 'drop']
+  ]
+  appendOneBlock(div, specials, 'TWDS_SPEC_spec')
+
+  h = document.createElement('h4')
+  h.textContent = TWDS._('SPECIAL_SKILLS', 'Skills')
+  div.appendChild(h)
+
+  const tab = TWDS.createEle('table', { className: 'TWDS_SPEC_SKILLS' })
+  div.appendChild(tab)
+  for (const a of CharacterSkills.allAttrKeys.values()) {
+    const skills = []
+    for (const b of CharacterSkills.getSkillKeys4Attribute(a).values()) {
+      const c = CharacterSkills.getSkill(b)
+      const d = {}
+      d[b] = 1
+      skills.push(['', c.name, 'skill', JSON.stringify(d)])
+    }
+    appendOneBlock(tab, skills, 'TWDS_spec_' + a, false, false)
+  }
+
+  h = document.createElement('h4')
+  h.textContent = TWDS._('SPECIAL_DUELS', 'Duels')
+  div.appendChild(h)
+
+  p = document.createElement('p')
+  p.textContent = TWDS._('SPECIAL_DUELS_INFO', "These functions search for a more-or-less acceptable equipment set, but they do not replace thinking, and they cannot find the 'best' equipment (they do not know your opponents).")
+  div.appendChild(p)
+
+  h = document.createElement('h5')
+  h.textContent = TWDS._('SPECIAL_DUELS_DMG', 'Damaging')
+  div.appendChild(h)
+  let skills = [
+    ['SPECIAL_DUELS_DMG_R_A', 'Range Dueler, att.', 'range',
+      JSON.stringify({ aim: 3, appearance: 1, shot: 3, dodge: 2 })],
+    ['SPECIAL_DUELS_DMG_R_D', 'Range Dueler, def.', 'range',
+      JSON.stringify({ aim: 3, tactic: 1, shot: 3, dodge: 2 })],
+    ['SPECIAL_DUELS_DMG_M_A', 'Melee Dueler, att.', 'melee',
+      JSON.stringify({ aim: 3, appearance: 1, tough: 3, dodge: 2 })],
+    ['SPECIAL_DUELS_DMG_M_D', 'Melee Dueler, def.', 'melee',
+      JSON.stringify({ aim: 3, tactic: 1, tough: 3, dodge: 2 })]
+  ]
+  appendOneBlock(div, skills, 'TWDS_SPEC_duel_dmg', true, false)
+
+  h = document.createElement('h5')
+  h.textContent = TWDS._('SPECIAL_DUELS_DODGING', 'Dodging')
+  div.appendChild(h)
+  skills = [
+    ['SPECIAL_DUELS_DODGE_R_A', 'Range Dueler, att.', 'range',
+      JSON.stringify({ aim: 2, appearance: 1, shot: 1, dodge: 4 })],
+    ['SPECIAL_DUELS_DODGE_R_D', 'Range Dueler, def.', 'range',
+      JSON.stringify({ aim: 2, tactic: 1, shot: 1, dodge: 4 })],
+    ['SPECIAL_DUELS_DODGE_M_A', 'Melee Dueler, att.', 'melee',
+      JSON.stringify({ aim: 2, appearance: 1, tough: 1, dodge: 4 })],
+    ['SPECIAL_DUELS_DODGE_M_D', 'Melee Dueler, def.', 'melee',
+      JSON.stringify({ aim: 2, tactic: 1, tough: 1, dodge: 4 })]
+  ]
+  appendOneBlock(div, skills, 'TWDS_SPEC_duel_dodge', true, false)
+
+  h = document.createElement('h5')
+  h.textContent = TWDS._('SPECIAL_DUELS_RES', 'Resistance')
+  div.appendChild(h)
+  skills = [
+    ['SPECIAL_DUELS_RES_AR_A', 'Att. against a range dueller', 'skill',
+      JSON.stringify({ aim: 1, appearance: 1, reflex: 4, tough: 1 })],
+    ['SPECIAL_DUELS_RES_AR_D', 'Def. against a range dueller', 'skill',
+      JSON.stringify({ aim: 1, tactic: 1, reflex: 4, tough: 1 })],
+    ['SPECIAL_DUELS_RES_AM_A', 'Att. against a melee dueller', 'skill',
+      JSON.stringify({ aim: 1, appearance: 1, reflex: 1, tough: 4 })],
+    ['SPECIAL_DUELS_RES_AM_D', 'Def. against a melee dueller', 'skill',
+      JSON.stringify({ aim: 1, tactic: 1, reflex: 1, tough: 4 })],
+    ['SPECIAL_DUELS_RES_D', 'Defending against a dueller', 'skill',
+      JSON.stringify({ aim: 1, tactic: 1, reflex: 4, tough: 4 })]
+  ]
+  appendOneBlock(div, skills, 'TWDS_SPEC_duel_res', true, false)
+
+  h = document.createElement('h4')
+  h.textContent = TWDS._('SPECIAL_FB', 'Fort battles')
+  div.appendChild(h)
+
+  p = document.createElement('p')
+  p.textContent = TWDS._('SPECIAL_FB_INFO',
+    "These functions search for a more-or-less acceptable equipment set, but can't take fort battle bonuses into account. Therefore they will almost never find the 'perfect' equipment.")
+  div.appendChild(p)
+
+  skills = [
+    ['SPECIAL_FB_TANK_ATT', 'Tank, att.', 'fbtank',
+      JSON.stringify({ health: 0.4, dodge: 0.15, hide: 0.25, aim: 0.10, pitfall: 0.00, leadership: 0.1 })],
+    ['SPECIAL_FB_TANK_DEF', 'Tank, def.', 'fbtank',
+      JSON.stringify({ health: 0.4, dodge: 0.15, hide: 0.00, aim: 0.10, pitfall: 0.25, leadership: 0.1 })],
+    ['SPECIAL_FB_DMG_ATT', 'Damager, att.', 'fbdamager',
+      JSON.stringify({ health: -0.1, dodge: 0.10, hide: 0.30, aim: 0.30, pitfall: 0.00, leadership: 0.4 })],
+    ['SPECIAL_FB_DMG_DEF', 'Damager, def.', 'fbdamager',
+      JSON.stringify({ health: -0.1, dodge: 0.10, hide: 0.00, aim: 0.30, pitfall: 0.30, leadership: 0.4 })]
+  ]
+  appendOneBlock(div, skills, 'TWDS_SPEC_duel_dmg', true, false)
+}
+
 TWDS.activateEquipmentTab = function () {
   TWDS.activateTab('equipment')
 }
@@ -592,6 +751,47 @@ TWDS.registerStartFunc(function () {
     window.localStorage.setItem(this.dataset.key, this.dataset.edata)
     TWDS.activateEquipmentTab()
     this.parentNode.removeChild(this)
+  })
+  $(document).on('click', '.TWDS_specialequipment_button', function () {
+    const key1 = this.dataset.key1
+    const key2 = this.dataset.key2
+    let items
+    if (key1 === 'special') {
+      if (key2 === 'speed') items = TWDS.speedCalc()
+      else if (key2 === 'xp') items = TWDS.genCalc({ experience: 1 }, {})
+      else if (key2 === 'regen') items = TWDS.genCalc({ regen: 1 }, { health: 0.01 })
+      else if (key2 === 'luck') items = TWDS.genCalc({ luck: 1 }, {})
+      else if (key2 === 'pray') items = TWDS.genCalc({ pray: 1 }, {})
+      else if (key2 === 'dollar') items = TWDS.genCalc({ dollar: 1 }, {})
+      else if (key2 === 'drop') items = TWDS.genCalc({ drop: 1 }, {})
+    } else if (key1 === 'skill') {
+      const p = JSON.parse(key2)
+      items = TWDS.genCalc({}, p)
+    } else if (key1 === 'fbtank') {
+      const p = JSON.parse(key2)
+      items = TWDS.genCalc({
+        fboffense: 0.1,
+        fbdefense: 2.0,
+        fbdamage: 0.1,
+        fbresistance: 0.3
+      }, p)
+    } else if (key1 === 'fbdamager') {
+      const p = JSON.parse(key2)
+      items = TWDS.genCalc({
+        fboffense: 2.0,
+        fbdefense: 0.1,
+        fbdamage: 0.3,
+        fbresistance: 0.1
+      }, p)
+    } else if (key1 === 'range') {
+      const p = JSON.parse(key2)
+      items = TWDS.genCalc({ range: 1 }, p)
+    } else if (key1 === 'melee') {
+      const p = JSON.parse(key2)
+      items = TWDS.genCalc({ melee: 1 }, p)
+    }
+
+    TWDS.wearItemsHandler(items)
   })
   $(document).on('click', '.TWDS_wear', function () {
     const tr = this.closest('tr')
@@ -616,3 +816,5 @@ TWDS.registerStartFunc(function () {
     }
   })
 })
+
+// vim: tabstop=2 shiftwidth=2 expandtab

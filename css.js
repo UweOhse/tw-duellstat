@@ -45,6 +45,45 @@ TWDS.insertStyles = function () {
     #TWDS_equipment .other { color: #800;}
     #TWDS_equipment tr, #TWDS_equipment td, #TWDS_table th { border:1px solid #888;}
     #TWDS_equipment td, #TWDS_equipment th { padding:1px 2px;}
+    .TWDS_button {
+      min-width:4em;
+      margin:0.2em 0.5em;
+      border-color:#2B1C19;
+      background-color:#4F210D;
+      color:white;
+      border-width:4px;
+      border-style:inset;
+    }
+    .TWDS_SPEC_spec {
+      display:flex;
+      justify-content:space-between;
+    }
+    .TWDS_SPEC_SKILLS {
+      width:100%;
+    }
+    .TWDS_SPEC_SKILLS td {
+      text-align:center;
+    }
+    .TWDS_SPEC_SKILLS button {
+      min-width:100px;
+    }
+    .TWDS_spec_strength {
+      background-color:#8003;
+      border-color:red;
+    }
+    .TWDS_spec_flexibility {
+      background-color:#0803;
+      border-color:green;
+    }
+    .TWDS_spec_dexterity {
+      background-color:#0083;
+      border-color:blue;
+    }
+    .TWDS_spec_charisma {
+      background-color:#8803;
+      border-color:yellow;
+    }
+
     #TWDS_people { border-collapse: collapse; width:100%;}
     #TWDS_people tr, #TWDS_people td, #TWDS_people th { border:1px solid #888;}
     #TWDS_people tbody td {
@@ -72,6 +111,7 @@ TWDS.insertStyles = function () {
     #TWDS_attr_skill {
       border-collapse: collapse;
     }
+
     #TWDS_attr_skill .bonus-strength1 {
       border-left:2px solid red;
       border-top:2px solid red;

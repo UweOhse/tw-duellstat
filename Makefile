@@ -1,5 +1,6 @@
 CHECK_SOURCES=start.js utils.js css.js de.json translation.js bonuscalc.js equipment.js \
-   readduels.js peopletab.js jobtab.js settingstab.js clothcache.js \
+   readduels.js peopletab.js jobtab.js settingstab.js clothcache.js speedcalc.js \
+   gencalc.js \
    list_jobdata.js main.js
 CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
