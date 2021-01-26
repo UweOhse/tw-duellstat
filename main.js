@@ -1,4 +1,4 @@
-TWDS.createButton = function () {
+TWDS.createSideButton = function () {
   const d = document.createElement('div')
   d.classList.add('menulink')
   d.onClick = 'TWDS.open();'
@@ -86,8 +86,7 @@ TWDS.main = function main () {
   for (const fn of Object.values(TWDS.startFunctions)) {
     fn()
   }
-  console.log('duellstat main before the createButton')
-  TWDS.createButton()
+  TWDS.createSideButton()
   console.log('duellstat active')
 }
 
