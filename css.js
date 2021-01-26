@@ -47,12 +47,14 @@ TWDS.insertStyles = function () {
     #TWDS_equipment td, #TWDS_equipment th { padding:1px 2px;}
     .TWDS_button {
       min-width:4em;
-      margin:0.2em 0.5em;
       border-color:#2B1C19;
       background-color:#4F210D;
       color:white;
       border-width:4px;
       border-style:inset;
+    }
+    .TWDS_specialequipment_button {
+      margin:0.2em 0.5em;
     }
     .TWDS_SPEC_spec {
       display:flex;
@@ -219,7 +221,7 @@ TWDS.insertStyles = function () {
     }
 
     .job_bestwearbutton {
-      top:-5px
+      top:-10px !important;
     }
     .job_bestwearbutton .twdb_bestwear {
       position:absolute;
@@ -231,9 +233,6 @@ TWDS.insertStyles = function () {
       position: absolute;
       top: 40px;
       left: 48px;
-      background-color:#444;
-      color:white;
-      border-color:888;
     }
   `
   const sty = document.createElement('style')

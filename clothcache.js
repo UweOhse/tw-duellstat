@@ -263,10 +263,18 @@ TWDS.clothcacheStartFunction = function () {
         agestr = Math.round(age / (60 * 1000)) + 'm'
       }
 
+      const but = TWDS.createButton(
+        TWDS._('CLOTHCACHE_BUTTON', 'cached [$agestr$]', { agestr: agestr }), {
+          classList: ['TWDS_getbestwear'],
+          title: TWDS._('CLOTHCACHE_BUTTON_MOUSEOVER', 'Use a previously calculated coth set')
+        }
+      )
+      /*
       const but = document.createElement('button')
       but.className = 'TWDS_getbestwear'
       but.textContent = 'cached [' + agestr + ']'
       but.title = 'Use a previously calculated coth set'
+      */
 
       jw[0].appendChild(but) // jw is a jQuery.
       but.onclick = function (e) {

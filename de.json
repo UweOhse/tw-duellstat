@@ -139,5 +139,8 @@ TWDS.translation_de = {
   SPECIAL_FB_DMG_ATT: 'Schadensmacher, Att.',
   SPECIAL_FB_DMG_DEF: 'Schadensmacher, Def.',
 
+  CLOTHCACHE_BUTTON: 'Gemerkt [$agestr$]',
+  CLOTHCACHE_BUTTON_MOUSEOVER: 'Die zuletzt berechnete Ausrüstung anlegen',
+
   DUMMY: 'Dummy'
 }

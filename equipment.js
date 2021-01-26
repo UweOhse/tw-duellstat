@@ -406,13 +406,13 @@ TWDS.add1ToTab = function (tab, i, key, o) {
 
   // Spalte 2: Anziehen
   let td = document.createElement('td')
-  let span = document.createElement('button')
-  span.textContent = TWDS._('EQ_SET_WEAR', 'wear')
-  span.title = TWDS._('EQ_SET_WEAR_MOUSEOVER', 'Switch to this equipment set')
-  span.classList.add('TWDS_wear')
-  td.appendChild(span)
-
   tr.appendChild(td)
+  let but = TWDS.createButton(
+    TWDS._('EQ_SET_WEAR', 'wear'), {
+      title: TWDS._('EQ_SET_WEAR_MOUSEOVER', 'Switch to this equipment set'),
+      classList: ['TWDS_wear']
+    })
+  td.appendChild(but)
 
   let aimChanceText = ''
 
@@ -505,17 +505,13 @@ TWDS.add1ToTab = function (tab, i, key, o) {
 
   // Spalte 12: Löschen
   td = document.createElement('td')
-  span = document.createElement('button')
-  span.textContent = TWDS._('EQ_SET_REMOVE', 'remove')
-  span.classList.add('TWDS_delete')
-  span.title = TWDS._('EQ_SET_REMOVE_MOUSEOVER', 'Remove this equipment set from the list')
-  td.appendChild(span)
-
   tr.appendChild(td)
-
-  // appOne(tr,o.zaeh,        "zaeh");
-  // appOne(tr,o.refl,        "refl");
-  // appOne(tr,o.hp,          "hp");
+  but = TWDS.createButton(
+    TWDS._('EQ_SET_REMOVE', 'remove'), {
+      title: TWDS._('EQ_SET_REMOVE_MOUSEOVER', 'Remove this equipment set from the list'),
+      classList: ['TWDS_delete']
+    })
+  td.appendChild(but)
 }
 
 TWDS.getEquipmentContent = function () {
@@ -562,11 +558,16 @@ TWDS.getEquipmentContent = function () {
   if (window.localStorage.getItem(key) !== null) {
     window.localStorage.setItem(key, data) // update it.
   } else {
-    const b = document.createElement('button')
-    b.id = 'TWDS_equipment_takeover'
-    b.textContent = TWDS._('EQUIPMENT_TAKEOVER_BUTTON', 'Add current equipment')
-    b.dataset.key = key
-    b.dataset.edata = data // json
+    const b = TWDS.createButton(
+      TWDS._('EQUIPMENT_TAKEOVER_BUTTON', 'Add current equipment'),
+      {
+        classList: ['TWDS_specialequipment_button'],
+        id: 'TWDS_equipment_takeover',
+        dataSet: {
+          key: key,
+          edata: data
+        }
+      })
     div.appendChild(b)
   }
 
