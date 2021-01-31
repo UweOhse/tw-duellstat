@@ -148,7 +148,7 @@ TWDS.getComboBonus = function (combo) {
       allBonus[field][0] = Math.ceil(allBonus[field][0])
     }
   }
-  console.log('total bonus', allBonus)
+  // console.log('total bonus', allBonus)
   return allBonus
 }
 TWDS.getWearBonus = function () {
