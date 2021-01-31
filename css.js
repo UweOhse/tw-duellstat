@@ -53,6 +53,9 @@ TWDS.insertStyles = function () {
       border-width:4px;
       border-style:inset;
     }
+    .TWDS_button_small {
+      min-width:auto;
+    }
     .TWDS_specialequipment_button {
       margin:0.2em 0.5em;
     }
@@ -178,6 +181,17 @@ TWDS.insertStyles = function () {
     #TWDS_jobs th[data-field=danger] { color: red}
     #TWDS_jobs th[data-field=luck] { color: green}
 
+    #TWDS_jobtab_filter_container {
+      text-align:left;
+    }
+    #TWDS_jobtab_filter_container fieldset {
+      display:inline-block;
+      max-width:12em;
+    }
+    #TWDS_jobtab_filter_container select {
+      display:block;
+    }
+
     div.item span.TWDS_itemusageinfo {
       top:0;
       right:0;
@@ -234,9 +248,56 @@ TWDS.insertStyles = function () {
       top: 40px;
       left: 48px;
     }
+    #TWDS_storage_list {
+      border-collapse:collapse;
+    }
+    #TWDS_storage_list tr, 
+    #TWDS_storage_list td, 
+    #TWDS_storage_list th {
+      border:1px solid #888;
+    }
+    #TWDS_storage_list .TWDS_storage_image img {
+      max-height:43px;
+    }
+    #TWDS_storage_list .TWDS_storage_name .TWDS_joblist_openbutton {
+      margin-right:4px;
+    }
+    #TWDS_storage_list .TWDS_storage_percent {
+      text-align:right;
+    }
+    #TWDS_storage_list .TWDS_storage_count {
+      text-align:right;
+    }
+    #TWDS_storage_list .TWDS_storage_countinput {
+      width:5em;
+      text-align:right;
+    }
+
+    #TWDS_storage_select {
+      border:1px solid #888;
+      display:none;
+    }
+    #TWDS_storage_select.active {
+      display:block;
+    }
+
+    .jobgroupicon .item-job,
+    .job .item-job {
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      font-size:130%;
+      color:white;
+      background-color:#2B1C19;
+      border:2px solid #4F210D;
+      border-radius:10px;
+      top: -20px;
+      left: +20px;
+    }
   `
   const sty = document.createElement('style')
   sty.textContent = css
   document.body.appendChild(sty)
 }
 TWDS.insertStyles() // no reason to wait with that.
+// vim: tabstop=2 shiftwidth=2 expandtab
