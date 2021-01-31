@@ -1,7 +1,8 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 
-TWDS.debug = 0
-TWDS.calcBruttoJobPoints = function (jobId, items) {
+TWDS.jobdebug = 0
+TWDS.jobtab = {}
+TWDS.jobtab.calcBruttoJobPoints = function (jobId, items) {
   const job = JobList.getJobById(jobId)
   const bo = TWDS.getComboBonus(items)
   let jp = 0
@@ -10,32 +11,32 @@ TWDS.calcBruttoJobPoints = function (jobId, items) {
     let v = 0
     if (skillName in bo) {
       v += bo[skillName][0]
-      if (TWDS.debug) console.log(skillName, 'wear bonus', bo[skillName][0], '=>', v)
+      if (TWDS.jobdebug) console.log(skillName, 'wear bonus', bo[skillName][0], '=>', v)
     }
     v += sk.points
-    if (TWDS.debug) console.log(skillName, 'char skill', sk.points, '=>', v)
+    if (TWDS.jobdebug) console.log(skillName, 'char skill', sk.points, '=>', v)
     if (sk.attr_key in bo) {
       v += bo[sk.attr_key][0]
-      if (TWDS.debug) console.log(skillName, 'char attr', bo[sk.attr_key][0], '=>', v)
+      if (TWDS.jobdebug) console.log(skillName, 'char attr', bo[sk.attr_key][0], '=>', v)
     }
     v *= mult
     jp += v
-    if (TWDS.debug) console.log('after', skillName, 'mult', mult, 'v', v, 'jp', jp)
+    if (TWDS.jobdebug) console.log('after', skillName, 'mult', mult, 'v', v, 'jp', jp)
   }
   if ('job_all' in bo) {
     jp += bo.job_all[0]
-    if (TWDS.debug) console.log('after', 'job_all', '=', bo.job_all[0], 'jp', jp)
+    if (TWDS.jobdebug) console.log('after', 'job_all', '=', bo.job_all[0], 'jp', jp)
   }
   const t = 'job_' + jobId
   if (t in bo) {
     jp += bo[t][0]
-    if (TWDS.debug) console.log('after', t, '=', bo[t][0], 'jp', jp)
+    if (TWDS.jobdebug) console.log('after', t, '=', bo[t][0], 'jp', jp)
   }
   return jp
 }
-TWDS.calcNettoJobPoints = function (jobId, items) {
+TWDS.jobtab.calcNettoJobPoints = function (jobId, items) {
   const job = JobList.getJobById(jobId)
-  const jp = TWDS.calcBruttoJobPoints(jobId, items)
+  const jp = TWDS.jobtab.calcBruttoJobPoints(jobId, items)
   return jp - job.malus - 1
 }
 
@@ -72,9 +73,9 @@ TWDS.TWDBcalcExp = function (pts, mal, magic, mot, fac) {
 TWDS.TWDBcalcDanger = function (pts, mal, magic, mot, fac) {
   return TWDS.TWDBcalcStepFormula('round', 'round', function (lp) { return Math.pow(lp, -0.2) }, pts, mal, magic, 100, fac, true)
 }
-TWDS.initJobDisplay = function (container, serverdata) {
+TWDS.jobtab.initDisplay = function (container, serverdata) {
   const charPremium = Number(Premium.hasBonus('character'))
-  const duration = TWDS.curJobDuration
+  const duration = TWDS.jobtab.curJobDuration
   let durationIdx = 0
   if (duration === 600) durationIdx = 1
   if (duration === 3600) durationIdx = 2
@@ -91,7 +92,7 @@ TWDS.initJobDisplay = function (container, serverdata) {
     const difficulty = jobdata.malus
     const mot = serverdata.jobs[jobId].motivation * 100
     if (best !== null) {
-      bestNetto = TWDS.calcNettoJobPoints(jobId, best.items)
+      bestNetto = TWDS.jobtab.calcNettoJobPoints(jobId, best.items)
       bestBrutto = bestNetto + jobdata.malus + 1
     }
 
@@ -117,7 +118,9 @@ TWDS.initJobDisplay = function (container, serverdata) {
     if (best !== null) {
       const dt = new Date(best.timestamp)
       if (dt.toLocaleDateString() === new Date().toLocaleDateString()) {
-        td.textContent = dt.toLocaleTimeString(Game.locale.replace('_', '-'))
+        let lc = Game.locale.replace('_', '-')
+        if (lc === 'en-DK') lc = 'en-GB' // en-dk: 16.52.04, en-GB: 16:52:04
+        td.textContent = dt.toLocaleTimeString(lc)
       } else {
         td.textContent = dt.toLocaleDateString(Game.locale.replace('_', '-'))
       }
@@ -226,17 +229,14 @@ TWDS.initJobDisplay = function (container, serverdata) {
     td = document.createElement('td')
     tr.appendChild(td)
 
+    td.innerHTML += MinimapWindow.getQuicklink(jobdata.name, 'task-finish-job')
+    const b = TWDS.jobOpenButton(jobId)
+    if (b != null) {
+      td.innerHTML += b.outerHTML
+    }
     if (Premium.hasBonus('automation')) {
-      let but
-      but = document.createElement('button')
-      but.textContent = 'open'
-      but.classList.add('TWDS_joblist_openbutton')
-      but.dataset.jobid = jobId
-      but.title = 'Open a window to start the job at the nearest possible position'
-      td.appendChild(but)
-
-      but = document.createElement('button')
-      but.textContent = 'start'
+      const but = document.createElement('button')
+      but.textContent = '>>'
       but.classList.add('TWDS_joblist_startbutton')
       but.dataset.jobid = jobId
       but.title = 'Start the job at the nearest possible position'
@@ -321,7 +321,7 @@ TWDS.initJobDisplay = function (container, serverdata) {
   }
 }
 
-TWDS.jobSort = function (tab, key) {
+TWDS.jobtab.sort = function (tab, key) {
   if (tab == null) { // for ease of debugging
     tab = document.querySelector('#TWDS_jobs')
   }
@@ -362,7 +362,7 @@ TWDS.jobSort = function (tab, key) {
         return a.sortval - b.sortval
       }
     })
-    tab.dataset.cursort = ''
+    tab.dataset.cursort = '-' + key
   } else {
     rows.sort(function (a, b) {
       if (key === 'name') {
@@ -382,10 +382,10 @@ TWDS.jobSort = function (tab, key) {
   }
 }
 
-TWDS.curJobDuration = 15
-TWDS.getJobContent = function () {
+TWDS.jobtab.curJobDuration = 15
+TWDS.jobtab.getContent = function () {
   const x = window.localStorage.getItem('TWDS_job_duration')
-  if (x !== null) { TWDS.curJobDuration = parseInt(x) }
+  if (x !== null) { TWDS.jobtab.curJobDuration = parseInt(x) }
 
   const div = document.createElement('div')
   div.id = 'TWDS_job'
@@ -396,14 +396,18 @@ TWDS.getJobContent = function () {
   p.appendChild(fig)
   fig.id = 'TWDS_job_filtergroup'
 
+  const sig = document.createElement('span')
+  p.appendChild(sig)
+  sig.id = 'TWDS_job_searchgroup'
+
   const input = document.createElement('input')
-  fig.appendChild(input)
-  input.id = 'TWDS_job_filter'
+  sig.appendChild(input)
+  input.id = 'TWDS_job_search'
   input.placeholder = 'search'
 
   const button = document.createElement('button')
-  fig.appendChild(button)
-  button.id = 'TWDS_job_filterx'
+  sig.appendChild(button)
+  button.id = 'TWDS_job_searchx'
   button.textContent = 'x'
 
   const sel = document.createElement('select')
@@ -414,45 +418,208 @@ TWDS.getJobContent = function () {
   sel.appendChild(opt)
   opt.setAttribute('value', 15)
   opt.textContent = '15s'
-  if (TWDS.curJobDuration === 15) opt.setAttribute('selected', 'selected')
+  if (TWDS.jobtab.curJobDuration === 15) opt.setAttribute('selected', 'selected')
 
   opt = document.createElement('option')
   sel.appendChild(opt)
   opt.setAttribute('value', 600)
   opt.textContent = '10m'
-  if (TWDS.curJobDuration === 600) opt.setAttribute('selected', 'selected')
+  if (TWDS.jobtab.curJobDuration === 600) opt.setAttribute('selected', 'selected')
 
   opt = document.createElement('option')
   sel.appendChild(opt)
   opt.setAttribute('value', 3600)
   opt.textContent = '1h'
-  if (TWDS.curJobDuration === 3600) opt.setAttribute('selected', 'selected')
+  if (TWDS.jobtab.curJobDuration === 3600) opt.setAttribute('selected', 'selected')
 
   Ajax.remoteCallMode('work', 'index', {}, function (x) {
-    TWDS.jobCurrentList = x
-    TWDS.initJobDisplay(div, x)
+    TWDS.jobtab.currentList = x
+    TWDS.jobtab.initDisplay(div, x)
+    fig.appendChild(TWDS.jobtab.addFilters())
+    TWDS.jobtab.refilter(div)
+    const oldsort = window.localStorage.getItem('TWDS_job_cursort')
+    if (oldsort !== null) {
+      const tab = document.querySelector('#TWDS_jobs')
+      const key = window.localStorage.getItem('TWDS_job_cursort')
+      if (key !== null) {
+        if (key[0] === '-') {
+          TWDS.jobtab.sort(tab, key.subString(1))
+          TWDS.jobtab.sort(tab, key.subString(1))
+        } else {
+          TWDS.jobtab.sort(tab, key)
+        }
+      }
+    }
   })
 
   return div
 }
-TWDS.activateJobTab = function () {
+TWDS.jobtab.activate = function () {
   TWDS.activateTab('job')
 }
+TWDS.jobtab.refilter = function (main) {
+  if (typeof main === 'undefined') { main = document }
+  const tab = main.querySelector('#TWDS_jobs')
+  const rowColl = tab.querySelectorAll('tbody tr')
+  for (let i = 0; i < rowColl.length; i++) {
+    const tr = rowColl[i]
+    tr.classList.remove('hidden')
+  }
 
-TWDS.jobStartFunction = function () {
+  const container = main.querySelector('#TWDS_jobtab_filter_container')
+  const opsels = container.querySelectorAll('.TWDS_jobtab_filter_op')
+  for (let opidx = 0; opidx < opsels.length; opidx++) {
+    const opsel = opsels[opidx]
+    const key = opsel.dataset.key
+    const valsel = opsel.parentNode.querySelector('.TWDS_jobtab_filter_val')
+    const op = opsel.value
+    let cmpVal = valsel.value
+    if (op === '' || cmpVal === '') continue
+    cmpVal = parseInt(cmpVal)
+    for (let i = 0; i < rowColl.length; i++) {
+      const tr = rowColl[i]
+      const td = tr.querySelector('[data-field=' + key + ']')
+      let v
+      if ('sortval' in td.dataset) {
+        v = parseFloat(td.dataset.sortval)
+      } else {
+        v = parseFloat(td.textContent)
+      }
+      let good = false
+      if (op === 'gte') {
+        if (v >= cmpVal) good = true
+      }
+      if (op === 'gt') {
+        if (v > cmpVal) good = true
+      }
+      if (op === 'eq') {
+        if (v === cmpVal) good = true
+      }
+      if (op === 'lt') {
+        if (v < cmpVal) good = true
+      }
+      if (op === 'lte') {
+        if (v <= cmpVal) good = true
+      }
+      if (!good) { tr.classList.add('hidden') }
+    }
+  }
+}
+TWDS.jobtab.addFilters = function () {
+  const tab = document.querySelector('#TWDS_jobs')
+  const minmax = function (tab, key) {
+    let min = 9999999
+    let max = -9999999
+    const rowColl = tab.querySelectorAll('tbody tr')
+    for (let i = 0; i < rowColl.length; i++) {
+      const row = rowColl[i]
+      const td = row.querySelector('[data-field=' + key + ']')
+      let v
+      if ('sortval' in td.dataset) {
+        v = parseFloat(td.dataset.sortval)
+      } else {
+        v = parseFloat(td.textContent)
+      }
+      if (v > max) max = v
+      if (v < min) min = v
+    }
+    return [min, max]
+  }
+  const keys = [
+    ['lp', 'lp'],
+    ['xp', 'xp'],
+    ['money', '$'],
+    ['luck', 'luck'],
+    ['motivation', 'motiv.'],
+    ['danger', 'danger']
+  ]
+  const container = TWDS.createElement({
+    nodeName: 'div',
+    id: 'TWDS_jobtab_filter_container'
+  })
+  for (const key of keys) {
+    const opkey = 'obtab_filter_op_' + key[0]
+    const valkey = 'obtab_filter_value_' + key[0]
+    const mm = minmax(tab, key[0])
+    const curop = TWDS.settings[opkey] || 'gte'
+    const curval = TWDS.settings[valkey] || 0
+
+    const fs = TWDS.createElement({
+      nodeName: 'fieldset',
+      childNodes: [
+        {
+          nodeName: 'legend',
+          textContent: key[1]
+        },
+        {
+          nodeName: 'select',
+          className: 'TWDS_jobtab_filter_op',
+          dataset: { key: key[0] },
+          childNodes: [
+            {
+              nodeName: 'option',
+              selected: curop === 'gte',
+              value: 'gte',
+              textContent: '>='
+            },
+            {
+              nodeName: 'option',
+              selected: curop === 'gt',
+              value: 'gt',
+              textContent: '>'
+            },
+            {
+              nodeName: 'option',
+              selected: curop === 'eq',
+              value: 'eq',
+              textContent: '='
+            },
+            {
+              nodeName: 'option',
+              selected: curop === 'lt',
+              value: 'lt',
+              textContent: '<'
+            },
+            {
+              nodeName: 'option',
+              selected: curop === 'lte',
+              value: 'lte',
+              textContent: '<='
+            }
+          ]
+        },
+        {
+          nodeName: 'input',
+          type: 'number',
+          className: 'TWDS_jobtab_filter_val',
+          dataset: { key: key[0] },
+          value: curval,
+          min: mm[0],
+          max: mm[1]
+        }
+      ]
+    })
+    container.appendChild(fs)
+  }
+  return container
+}
+
+TWDS.jobtab.startFunction = function () {
   TWDS.registerTab('job',
     TWDS._('TABNAME_JOB', 'Jobs'),
-    TWDS.getJobContent,
-    TWDS.activateJobTab,
+    TWDS.jobtab.getContent,
+    TWDS.jobtab.activate,
     true)
   $(document).on('click', '#TWDS_jobs thead th', function () {
     const key = this.dataset.field
     if (typeof key !== 'undefined') {
-      TWDS.jobSort(null, key)
+      const tab = document.querySelector('#TWDS_jobs')
+      TWDS.jobtab.sort(tab, key)
+      window.localStorage.setItem('TWDS_job_cursort', tab.dataset.cursort)
     }
   })
   $(document).on('click', '.TWDS_joblist_openbutton', function (ev) {
-    const id = this.dataset.jobid
+    const id = this.dataset.job_id
     if (!id || !Premium.hasBonus('automation')) { return false }
     Ajax.remoteCall('work', 'get_nearest_job', {
       job_id: id
@@ -473,24 +640,41 @@ TWDS.jobStartFunction = function () {
     })
   })
   $(document).on('change', '#TWDS_job_duration', function (ev) {
-    if (typeof TWDS.jobCurrentList !== 'undefined') {
+    if (typeof TWDS.jobtab.currentList !== 'undefined') {
       const ele = document.querySelector('#TWDS_job_duration')
-      TWDS.curJobDuration = parseInt(ele.value)
-      window.localStorage.setItem('TWDS_job_duration', TWDS.curJobDuration)
+      TWDS.jobtab.curJobDuration = parseInt(ele.value)
+      window.localStorage.setItem('TWDS_job_duration', TWDS.jobtab.curJobDuration)
 
       const t = document.querySelector('#TWDS_jobs')
       const pa = t.parentNode
       pa.removeChild(t)
 
-      TWDS.initJobDisplay(pa, TWDS.jobCurrentList)
+      TWDS.jobtab.initDisplay(pa, TWDS.jobtab.currentList)
     }
   })
-  $(document).on('click', '#TWDS_job_filterx', function (ev) {
-    document.querySelector('#TWDS_job_filter').value = ''
-    $('#TWDS_job_filter').trigger('change')
+  $(document).on('click', '#TWDS_job_filter', function (ev) {
+    TWDS.jobtab.handleFilter()
   })
-  $(document).on('change', '#TWDS_job_filter', function (ev) {
-    const fi = document.querySelector('#TWDS_job_filter')
+  $(document).on('change', '.TWDS_jobtab_filter_op', function (ev) {
+    const key = this.dataset.key
+    const opkey = 'obtab_filter_op_' + key
+    TWDS.settings[opkey] = this.value
+    TWDS.saveSettings()
+    TWDS.jobtab.refilter()
+  })
+  $(document).on('change', '.TWDS_jobtab_filter_val', function (ev) {
+    const key = this.dataset.key
+    const valkey = 'obtab_filter_value_' + key
+    TWDS.settings[valkey] = this.value
+    TWDS.saveSettings()
+    TWDS.jobtab.refilter()
+  })
+  $(document).on('click', '#TWDS_job_searchx', function (ev) {
+    document.querySelector('#TWDS_job_search').value = ''
+    $('#TWDS_job_search').trigger('change')
+  })
+  $(document).on('change', '#TWDS_job_search', function (ev) {
+    const fi = document.querySelector('#TWDS_job_search')
     const rows = document.querySelectorAll('#TWDS_jobs tbody tr')
     if (!JobsModel.Jobs.length) { JobsModel.initJobs() }
 
@@ -512,4 +696,4 @@ TWDS.jobStartFunction = function () {
     }
   })
 }
-TWDS.registerStartFunc(TWDS.jobStartFunction)
+TWDS.registerStartFunc(TWDS.jobtab.startFunction)
