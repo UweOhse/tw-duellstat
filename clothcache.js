@@ -13,25 +13,6 @@ TWDS.jobCacheSecondsSetting = 3600 // 1h
 TWDS.getBestSetWrapper = function (skills, id, returnFull = false) {
   const k = 'TWDS_j_' + id
 
-  /*
-  const old = window.localStorage.getItem(k)
-  if (old !== null) {
-    const d = JSON.parse(old)
-    const cacheSeconds = TWDS.jobCacheSecondsSetting
-    const stich = new Date().getTime() - cacheSeconds * 1000
-    if (d.timestamp >= stich) {
-      if (returnFull) { return d }
-      const c = new west.item.ItemSetContainer()
-      c.items = d.cache.items
-      for (const v of Object.values(d.cache.sets)) {
-        c.sets.push(new west.item.ItemSet(v))
-        // c.sets.push(Object.assign(new west.item.ItemSet, v))
-      }
-      return c
-    }
-  }
-*/
-
   const best = west.item.Calculator._TWDS_backup_getBestSet(skills, id)
   const one = {
     timestamp: new Date().getTime(),
