@@ -1,16 +1,22 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 TWDS.settingList = []
-TWDS.registerSetting = function (mode, name, text, def) {
+TWDS.saveSettings = function () {
+  window.localStorage.setItem('TWDS_settings', JSON.stringify(TWDS.settings))
+}
+TWDS.loadSettings = function () {
+  try {
+    const x = window.localStorage.getItem('TWDS_settings')
+    if (x) {
+      TWDS.settings = JSON.parse(x)
+    }
+  } catch (e) {
+    console.log('failed to get settings', e)
+  }
+}
+TWDS.registerSetting = function (mode, name, text, def, callBack) {
   TWDS.settingList.push(arguments)
   if (TWDS.settings === null) {
-    try {
-      const x = window.localStorage.getItem('TWDS_settings')
-      if (x) {
-        TWDS.settings = JSON.parse(x)
-      }
-    } catch (e) {
-      console.log('failed to get settings', e)
-    }
+    TWDS.loadSettings()
     if (TWDS.settings === null) {
       TWDS.settings = {}
     }
@@ -18,6 +24,7 @@ TWDS.registerSetting = function (mode, name, text, def) {
   if (!(mode in TWDS.settings)) {
     TWDS.settings[name] = def
   }
+  if (callBack) { callBack(TWDS.settings[name]) }
 }
 TWDS.wearItemsHandler = function (ids) {
   if (!Bag.loaded) {
@@ -71,10 +78,10 @@ TWDS.wearItemsHandler = function (ids) {
   Inventory.showCustomItems(result)
 }
 
-TWDS.createElement = function (kind, par = {}) {
-  const thing = document.createElement(kind)
+TWDS.createElement = function (par = {}) {
+  const thing = document.createElement(par.nodeName)
   for (const [k, v] of Object.entries(par)) {
-    if (k === 'dataSet') {
+    if (k === 'dataset' || k === 'dataSet') {
       for (const [k2, v2] of Object.entries(v)) {
         thing.dataset[k2] = v2
       }
@@ -83,6 +90,13 @@ TWDS.createElement = function (kind, par = {}) {
     if (k === 'classList') {
       for (const add of v) {
         thing.classList.add(add)
+      }
+      continue
+    }
+    if (k === 'childNodes' || k === 'children') {
+      for (const c of Object.values(v)) {
+        const ce = TWDS.createElement(c)
+        thing.appendChild(ce)
       }
       continue
     }
@@ -97,5 +111,45 @@ TWDS.createButton = function (text, par) {
   }
   if (!('classList' in par)) par.classList = []
   par.classList.push('TWDS_button')
-  return TWDS.createEle('button', par)
+  par.nodeName = 'button'
+  return TWDS.createEle(par)
+}
+
+TWDS.jobOpenButton = function (id) {
+  if (Premium.hasBonus('automation')) {
+    return TWDS.createElement({
+      nodeName: 'span',
+      classList: ['TWDS_joblist_openbutton'],
+      dataset: { job_id: id },
+      title: 'Open a window to start the job at the nearest possible position',
+      childNodes: [
+        {
+          nodeName: 'img',
+          src: 'https://westde.innogamescdn.com/images/icons/hammer.png',
+          alt: ''
+        }
+      ]
+    })
+  }
+  return null
+}
+TWDS.itemBidButton = function (id) {
+  const it = ItemManager.get(id)
+  if (!it) return null
+
+  if (!it.auctionable) return null
+
+  return TWDS.createElement({
+    nodeName: 'span',
+    title: 'buy on market',
+    className: 'TWDS_storage_market_button',
+    dataset: { item_id: id },
+    childNodes: [
+      {
+        nodeName: 'img',
+        src: 'https://westde.innogamescdn.com/images/icons/bid.png',
+        alt: ''
+      }
+    ]
+  })
 }
