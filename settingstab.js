@@ -125,6 +125,13 @@ TWDS.settingsStartFunction = function () {
     TWDS.settings[name] = v
     console.log('changed setting', name, 'to', v)
     window.localStorage.setItem('TWDS_settings', JSON.stringify(TWDS.settings))
+    for (const x of TWDS.settingList.values()) {
+      const n = x[1]
+      if (name === n) {
+        const cb = x[4]
+        cb(v)
+      }
+    }
   })
   const t = window.localStorage.getItem('TWDS_setting_jobCacheSeconds')
   if (t !== null) { TWDS.jobCacheSecondsSetting = parseInt(t) }
