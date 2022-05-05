@@ -277,7 +277,7 @@ TWDS.insertStyles = function () {
       border:1px solid #888;
       display:none;
     }
-    #TWDS_storage_select.active {
+    #TWDS_storage_select.visible {
       display:block;
     }
 
@@ -293,6 +293,9 @@ TWDS.insertStyles = function () {
       border-radius:10px;
       top: -20px;
       left: +20px;
+    }
+    .market-buy img[alt="report"] {
+      margin-left:5px;
     }
   `
   const sty = document.createElement('style')
