@@ -60,6 +60,7 @@ TWDS.storage.startSearch = function (name) {
   const lowToSearch = name.toLowerCase()
   TWDS.storage.reload()
   ssc.innerHTML = '<tr><th><th>Name<th>Count<th>ID<th>'
+  let count = 0
 
   for (const it of Object.values(all)) {
     if (it.item_level !== 0) continue
@@ -91,7 +92,14 @@ TWDS.storage.startSearch = function (name) {
         ]
       })
       ssc.appendChild(tr)
+      count++
     }
+  }
+  const ss = document.getElementById('TWDS_storage_select')
+  if (count) {
+    ss.classList.add('visible')
+  } else {
+    ss.classList.remove('visible')
   }
 }
 
