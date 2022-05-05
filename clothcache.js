@@ -27,20 +27,20 @@ TWDS.getBestSetWrapper = function (skills, id, returnFull = false) {
     }
   }
   window.localStorage.setItem(k, JSON.stringify(one))
-  TWDS.clothcacheRecalcItemUsage()
+  TWDS.clothcache.recalcItemUsage()
   if (returnFull) { return one }
   return best
 }
-
-TWDS.clothcacheClear = function () {
+TWDS.clothcache = {}
+TWDS.clothcache.clear = function () {
   const jl = JobList.getSortedJobs()
   for (const job of jl) {
     const k = 'TWDS_j_' + job.id
     window.localStorage.removeItem(k)
   }
-  TWDS.RecalcItemUsage()
+  TWDS.clothcache.recalcItemUsage()
 }
-TWDS.clothcacheInfo = function (ele) {
+TWDS.clothcache.info = function (ele) {
   const jl = JobList.getSortedJobs()
   let total = 0
   let found = 0
@@ -70,7 +70,7 @@ TWDS.clothcacheInfo = function (ele) {
   ele.textContent = t
 }
 
-TWDS.clothcacheReload = function (mode) {
+TWDS.clothcache.reload = function (mode) {
   const jl = JobList.getSortedJobs()
   const info = document.querySelector('#TWDS_job_reload_info')
   for (const job of jl) {
@@ -95,16 +95,16 @@ TWDS.clothcacheReload = function (mode) {
     const out = TWDS.getBestSetWrapper(job.skills, job.id, true)
     info.textContent = job.id + '/' + jl.length + ' ' +
     job.name + ' ' + TWDS.describeItemCombo(out.items)
-    TWDS.clothcacheRecalcItemUsage()
-    setTimeout(function () { TWDS.clothcacheReload(mode) }, 500)
+    TWDS.clothcache.recalcItemUsage()
+    setTimeout(function () { TWDS.clothcache.reload(mode) }, 500)
     return
   }
-  TWDS.clothcacheRecalcItemUsage()
+  TWDS.clothcache.recalcItemUsage()
   TWDS.activateSettingsTab() // layering violation
   info.textContent = ''
 }
 
-TWDS.clothcacheRecalcItemUsage = function () {
+TWDS.clothcache.recalcItemUsage = function () {
   const items = {}
   const add2item = function (item, key, num) {
     if (!(item in items)) {
@@ -155,7 +155,7 @@ TWDS.registerSetting('bool', 'saleProtection',
   TWDS._('CLOTHCACHE_PROTECT', 'Make the best items for any job, and the items of managed sets (game, tw-calc, tw-duellstat)  unsalable and unauctionable.'),
   true)
 
-TWDS.clothcacheStartFunction = function () {
+TWDS.clothcache.startFunction = function () {
   try {
     west.item.Calculator._TWDS_backup_getBestSet = west.item.Calculator.getBestSet
     west.item.Calculator.getBestSet = TWDS.getBestSetWrapper
@@ -269,4 +269,4 @@ TWDS.clothcacheStartFunction = function () {
   } catch (e) {
   }
 }
-TWDS.registerStartFunc(TWDS.clothcacheStartFunction)
+TWDS.registerStartFunc(TWDS.clothcache.startFunction)
