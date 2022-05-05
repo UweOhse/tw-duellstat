@@ -24,14 +24,14 @@ TWDS.getSettingsContent = function () {
     const info = document.createElement('p')
     info.id = 'TWDS_job_reload_info'
     thing.appendChild(info)
-    TWDS.clothcacheInfo(info)
+    TWDS.clothcache.info(info)
 
     p = document.createElement('p')
     thing.appendChild(p)
     button = document.createElement('button')
     p.appendChild(button)
     button.textContent = 'Clear cloth cache'
-    button.onclick = TWDS.clothcacheClear
+    button.onclick = TWDS.clothcache.clear
 
     p = document.createElement('p')
     thing.appendChild(p)
@@ -139,10 +139,10 @@ TWDS.settingsStartFunction = function () {
   $(document).on('click', '.TWDS_job_reload', function () {
     let mode = this.dataset.reloadmode
     if (mode === 'all') {
-      TWDS.clothcacheClear()
+      TWDS.clothcache.clear()
       mode = 'missing'
     }
-    TWDS.clothcacheReload(mode)
+    TWDS.clothcache.reload(mode)
   })
 }
 TWDS.registerStartFunc(TWDS.settingsStartFunction)
