@@ -141,6 +141,7 @@ TWDS.translation_de = {
 
   CLOTHCACHE_BUTTON: 'Gemerkt [$agestr$]',
   CLOTHCACHE_BUTTON_MOUSEOVER: 'Die zuletzt berechnete Ausrüstung anlegen',
+  CLOTHCACHE_PROTECT: 'Markiere die beste Ausrüstung für alle Jobs und die Gegenstände aus den gemanagten Sets (Spiel, tw-calc, tw-duellstat) als nicht verkauf- und nicht auktionierbar. Nach Änderung muß die Seite neu geladen werden'),
 
   DUMMY: 'Dummy'
 }
