@@ -152,7 +152,7 @@ TWDS.clothcache.recalcItemUsage = function () {
 }
 
 TWDS.registerSetting('bool', 'saleProtection',
-  TWDS._('CLOTHCACHE_PROTECT', 'Make the best items for any job, and the items of managed sets (game, tw-calc, tw-duellstat)  unsalable and unauctionable.'),
+  TWDS._('CLOTHCACHE_PROTECT', 'Mark the best items for any job, and the items of managed sets (game, tw-calc, tw-duellstat) unsalable and unauctionable. Page reload needed'),
   true)
 
 TWDS.clothcache.startFunction = function () {
