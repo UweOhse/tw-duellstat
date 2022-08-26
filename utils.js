@@ -21,11 +21,12 @@ TWDS.registerSetting = function (mode, name, text, def, callBack) {
       TWDS.settings = {}
     }
   }
-  if (!(mode in TWDS.settings)) {
+  if (!(name in TWDS.settings)) {
     TWDS.settings[name] = def
   }
   if (callBack) { callBack(TWDS.settings[name]) }
 }
+
 TWDS.wearItemsHandler = function (ids) {
   if (!Bag.loaded) {
     EventHandler.listen('inventory_loaded', function () {
