@@ -131,20 +131,6 @@ TWDS.jobwindow.initView = function () {
   }
 }
 
-TWDS.registerSetting('bool', 'fixCompost',
-  TWDS._('COMPOST_RECIPE_FIX', 'Fix the display of the compost recipe.'),
-    true, function(val) {
-      let old=document.getElementById("TWDS_fix_compost_css")
-      if (old) old.parentNode.removeChild(old)
-      if (val) {
-        const sty = document.createElement('style')
-        sty.id="TWDS_fix_compost_css"
-        sty.textContent = "#TWCalcRecipe_51621000 .recipe_resources .item { zoom:0.92}"
-        sty.textContent+= "#recipe_resources_content_51621000 .item { zoom:0.92}"
-        document.body.appendChild(sty)
-      }
-    })
-
 TWDS.registerStartFunc(function () {
   MarketWindow.Buy._TWDS_backup_updateCategory = MarketWindow.Buy.updateCategory
   MarketWindow.Buy.updateCategory = TWDS.market.updateCategory
