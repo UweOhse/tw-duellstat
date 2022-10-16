@@ -156,5 +156,11 @@ TWDS.jobData = {
   job_157: { job_wages: 59.25, job_exp: 54.80, job_luck: 87, job_danger: 87, job_maxdmg: 25 },
   job_158: { job_wages: 58.32, job_exp: 52.93, job_luck: 110, job_danger: 76, job_maxdmg: 30 },
   job_159: { job_wages: 60.59, job_exp: 56.93, job_luck: 56, job_danger: 94, job_maxdmg: 50 },
-  job_160: { job_wages: 59.74, job_exp: 55.68, job_luck: 110, job_danger: 89, job_maxdmg: 70 }
+  job_160: { job_wages: 59.74, job_exp: 55.68, job_luck: 110, job_danger: 89, job_maxdmg: 70 },
+  /* ab hier selbst kalkuliert. */
+  job_161: { job_wages: 62.8, job_luck: 127, job_danger: 73, job_maxdmg: 0.5 },
+  job_162: { job_wages: 61.3, job_luck: 67.11, job_danger: 33, job_maxdmg: 0.8 },
+  job_163: { job_wages: 60.2, job_luck: 50, job_danger: 25, job_maxdmg: 0.4 },
+  job_164: { job_wages: 61.9, job_luck: 80, job_danger: 50, job_maxdmg: 0.8 },
+  job_165: { job_wages: 61, job_luck: 75, job_danger: 48.21, job_maxdmg: 0.14 }
 }
