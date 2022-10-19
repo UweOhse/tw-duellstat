@@ -1,7 +1,6 @@
 TWDS.getComboBonus = function (combo) {
   const usedSets = {}
   const allBonus = {}
-  let needRound = {}
 
   const pimp = function (level, value) {
     let plus
@@ -131,21 +130,32 @@ TWDS.getComboBonus = function (combo) {
   for (const setcode in usedSets) {
     const setHas = setlist[setcode].items.length
     const weHave = usedSets[setcode].length
-    needRound = {}
+    const addup = {}
     for (let numThings = 1; numThings <= Math.min(setHas, weHave); numThings++) {
       const bonuslist = setlist[setcode].bonus[numThings]
       if (typeof bonuslist === 'undefined') {
         continue
       }
-      // console.log("setdata",set,setlist[set]);
-      // console.log("bonusdata",weHave,setlist[set].bonus[weHave]);
       for (let i = 0; i < bonuslist.length; i++) {
-        handleOneBonusThing(bonuslist[i], false, 0,
-          `${setlist[setcode].name} (#${numThings})`)
+        const one = bonuslist[i]
+        if (one.key === 'level') {
+          if (!(one.bonus.name in addup)) {
+            addup[one.bonus.name] = Object.assign({}, one)
+            // Object.assign makes shallow clones, so...
+            addup[one.bonus.name].bonus = Object.assign({}, one.bonus)
+            addup[one.bonus.name].things = bonuslist.length
+          } else {
+            addup[one.bonus.name].bonus.value += one.bonus.value
+          }
+        } else {
+          handleOneBonusThing(bonuslist[i], false, 0,
+            `${setlist[setcode].name} (#${numThings})`)
+        }
       }
     }
-    for (const field of Object.keys(needRound)) {
-      allBonus[field][0] = Math.ceil(allBonus[field][0])
+    for (const one of Object.values(addup)) {
+      handleOneBonusThing(one, false, 0,
+          `${setlist[setcode].name} (#${one.things})`)
     }
   }
   // console.log('total bonus', allBonus)
