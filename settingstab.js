@@ -95,6 +95,18 @@ TWDS.getSettingsContent = function () {
         span.textContent = text
         div.appendChild(span)
       }
+      if (mode === 'int') {
+        const c = document.createElement('input')
+        c.setAttribute('type', 'number')
+        c.setAttribute('value', TWDS.settings[name])
+        c.classList.add('TWDS_setting_bool')
+        c.classList.add('TWDS_setting')
+        c.dataset.settingName = name
+        div.appendChild(c)
+        const span = document.createElement('span')
+        span.textContent = text
+        div.appendChild(span)
+      }
     }
 
     return thing
