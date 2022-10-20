@@ -1,7 +1,7 @@
-CHECK_SOURCES=start.js utils.js css.js de.json translation.js bonuscalc.js equipment.js \
+CHECK_SOURCES=start.js list_jobdata.js utils.js css.js de.json translation.js bonuscalc.js equipment.js \
    readduels.js peopletab.js jobtab.js settingstab.js clothcache.js speedcalc.js \
-   gencalc.js storage.js misc.js \
-   list_jobdata.js main.js
+   gencalc.js storage.js misc.js minimap.js \
+   main.js
 CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
 VGET=`git describe --tags --long --dirty --always --broken`
@@ -12,7 +12,8 @@ GLOBALS=--global Game --global TWDS --global Character --global wman --global Ba
 	--global Premium --global Inventory --global ReportWindow --global tw2widget \
 	--global JobCalculator --global JobWindow --global UserMessage --global JobsModel \
 	--global EventHandler --global ItemPopup --global MinimapWindow \
-	--global MarketWindow --global CharacterWindow --global Crafting
+	--global MarketWindow --global CharacterWindow --global Crafting \
+	--global TaskQueue --global GameInject --global jQuery --global Blob
 all: precheck tw-duellstat.user.js
 
 %.stamp: %.js
