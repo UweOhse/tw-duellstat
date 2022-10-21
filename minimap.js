@@ -256,7 +256,7 @@ TWDS.minimap.export = function () {
     let dt = (new Date()).toISOString()
     dt = dt.replaceAll(/[^0-9]/, '')
 
-    const fn = 'bonusjobs_' + Game.worldName.replaceAll(' ', '_') + '_' + desc +
+    const fn = 'bonusjobs_' + Game.worldName.replace(/ /g, '_') + '_' + desc +
         '_' + dt + '.txt'
 
     const a = document.createElement('a')
