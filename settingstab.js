@@ -99,7 +99,19 @@ TWDS.getSettingsContent = function () {
         const c = document.createElement('input')
         c.setAttribute('type', 'number')
         c.setAttribute('value', TWDS.settings[name])
-        c.classList.add('TWDS_setting_bool')
+        c.classList.add('TWDS_setting_int')
+        c.classList.add('TWDS_setting')
+        c.dataset.settingName = name
+        div.appendChild(c)
+        const span = document.createElement('span')
+        span.textContent = text
+        div.appendChild(span)
+      }
+      if (mode === 'string') {
+        const c = document.createElement('input')
+        c.setAttribute('type', 'text')
+        c.setAttribute('value', TWDS.settings[name])
+        c.classList.add('TWDS_setting_string')
         c.classList.add('TWDS_setting')
         c.dataset.settingName = name
         div.appendChild(c)
