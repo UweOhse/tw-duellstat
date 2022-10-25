@@ -1,5 +1,21 @@
 TWDS.insertStyles = function () {
   const css = `
+    .TWDS_blinking {
+      animation: blinker 0.5s linear 120
+    }
+    @keyframes blinker {
+      50% {
+        opacity: 0;
+      }
+    }
+    .TWDS_chat_highlight {
+      background-color: black;
+      color:white;
+      border-left:2px solid red;
+      border-right:2px solid red;
+      text-decoration: underline red;
+    }
+
     .TWDS_VERSIONINFO {
       color: #333;
       text-align: right;
@@ -168,9 +184,32 @@ TWDS.insertStyles = function () {
     #TWDS_attr_skill td {
       text-align:center;
     }
-    #TWDB_job p {
+    #TWDS_job p {
        text-align:right;
+       display:grid;
     }
+    #TWDS_job_filtergroup {
+      grid-column:1;
+      grid-row: 1 / span 3
+    }
+    #TWDS_job_modearea {
+      grid-column:2;
+      grid-row: 1;
+    }
+    #TWDS_job_searchgroup {
+      grid-column:2;
+      grid-row: 2;
+    }
+    #TWDS_job_duration {
+      grid-column:2;
+      grid-row: 3;
+      justify-self: end;
+      min-width:5em;
+    }
+    #TWDS_jobtab_filter_container {
+      text-align:left;
+    }
+
     #TWDS_jobs {
       margin-bottom:1em;
       border-collapse: collapse
@@ -181,9 +220,6 @@ TWDS.insertStyles = function () {
     #TWDS_jobs th[data-field=danger] { color: red}
     #TWDS_jobs th[data-field=luck] { color: green}
 
-    #TWDS_jobtab_filter_container {
-      text-align:left;
-    }
     #TWDS_jobtab_filter_container fieldset {
       display:inline-block;
       max-width:12em;
@@ -279,6 +315,16 @@ TWDS.insertStyles = function () {
     }
     #TWDS_storage_select.visible {
       display:block;
+    }
+    .TWDS_lp_hint {
+      position: absolute;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      background-color: #432;
+      border: 2px ridge #976;
+      border-radius: 11px;
+      background-blend-mode: soft-light;
     }
 
     .jobgroupicon .item-job,
