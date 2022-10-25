@@ -383,7 +383,7 @@ TWDS.minimap.init = function () {
       MinimapWindow.refreshWindow = function () {
         try {
           MinimapWindow._twds_minimap_refreshWindow()
-          TWDS.minimap.updateIfOpen()
+          TWDS.minimap.updateWhenOpen()
         } catch (e) {
           console.error(e, 'MinimapWindow.refreshWindow')
         }
