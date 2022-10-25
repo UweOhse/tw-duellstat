@@ -80,6 +80,11 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
   if (duration === 600) durationIdx = 1
   if (duration === 3600) durationIdx = 2
 
+  let useBest = 0
+  if (TWDS.settings.jobtab_modecheckbox) {
+    useBest = 1
+  }
+
   const row = function (tab, jobId, best) {
     const jobdata = JobList.getJobById(jobId)
 
@@ -91,13 +96,17 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
     let bestBrutto
     const difficulty = jobdata.malus
     const mot = serverdata.jobs[jobId].motivation * 100
+    let curNetto = serverdata.jobs[jobId].workpoints - 1
+    let curBrutto = serverdata.jobs[jobId].jobSkillPoints
+
     if (best !== null) {
       bestNetto = TWDS.jobtab.calcNettoJobPoints(jobId, best.items)
       bestBrutto = bestNetto + jobdata.malus + 1
+      if (useBest) {
+        curNetto = bestNetto
+        curBrutto = bestBrutto
+      }
     }
-
-    const curNetto = serverdata.jobs[jobId].workpoints - 1
-    const curBrutto = serverdata.jobs[jobId].jobSkillPoints
 
     let jc = new JobCalculator(curBrutto, jobdata.malus + 1)
     jc.calcStars((curBrutto / (jobdata.malus + 1)))
@@ -396,6 +405,22 @@ TWDS.jobtab.getContent = function () {
   p.appendChild(fig)
   fig.id = 'TWDS_job_filtergroup'
 
+  const modearea = document.createElement('span')
+  p.appendChild(modearea)
+  modearea.id = 'TWDS_job_modearea'
+
+  const modecheckbox = document.createElement('input')
+  modearea.appendChild(modecheckbox)
+  modecheckbox.id = 'TWDS_job_modecheckbox'
+  modecheckbox.type = 'checkbox'
+  if (TWDS.settings.jobtab_modecheckbox) {
+    modecheckbox.checked = true
+  }
+
+  const modetext = document.createElement('span')
+  modearea.appendChild(modetext)
+  modetext.textContent = 'assume best clothes'
+
   const sig = document.createElement('span')
   p.appendChild(sig)
   sig.id = 'TWDS_job_searchgroup'
@@ -404,6 +429,7 @@ TWDS.jobtab.getContent = function () {
   sig.appendChild(input)
   input.id = 'TWDS_job_search'
   input.placeholder = 'search'
+  input.type = 'search'
 
   const button = document.createElement('button')
   sig.appendChild(button)
@@ -672,6 +698,15 @@ TWDS.jobtab.startFunction = function () {
   $(document).on('click', '#TWDS_job_searchx', function (ev) {
     document.querySelector('#TWDS_job_search').value = ''
     $('#TWDS_job_search').trigger('change')
+  })
+  $(document).on('change', '#TWDS_job_modecheckbox', function (ev) {
+    const valkey = 'jobtab_modecheckbox'
+    TWDS.settings[valkey] = this.value
+    TWDS.saveSettings()
+    const tab = document.querySelector('#TWDS_tab_job')
+    tab.innerHTML = ''
+    tab.appendChild(TWDS.jobtab.getContent())
+    // TWDS.jobtab.refilter()
   })
   $(document).on('change', '#TWDS_job_search', function (ev) {
     const fi = document.querySelector('#TWDS_job_search')
