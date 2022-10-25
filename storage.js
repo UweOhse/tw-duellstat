@@ -59,48 +59,62 @@ TWDS.storage.startSearch = function (name) {
   const all = ItemManager.getAll()
   const lowToSearch = name.toLowerCase()
   TWDS.storage.reload()
-  ssc.innerHTML = '<tr><th><th>Name<th>Count<th>ID<th>'
-  let count = 0
+  if (name > '') {
+    ssc.innerHTML = '<tr><th><th>Name<th>Count<th>ID<th>'
+    let count = 0
 
-  for (const it of Object.values(all)) {
-    if (it.item_level !== 0) continue
-    if (it.item_id in TWDS.storage.data) continue
+    for (const it of Object.values(all)) {
+      if (it.item_level !== 0) continue
+      if (it.item_id in TWDS.storage.data) continue
 
-    if (it.name.toLowerCase().indexOf(lowToSearch) >= 0) {
-      ssc.classList.add('active')
-      const popup = new ItemPopup(it, {}).popup.getXHTML()
+      if (it.name.toLowerCase().indexOf(lowToSearch) >= 0) {
+        ssc.classList.add('active')
+        const popup = new ItemPopup(it, {}).popup.getXHTML()
 
-      const tr = TWDS.createElement({
-        nodeName: 'tr',
-        dataSet: { item_id: it.item_id },
-        childNodes: [
-          {
-            nodeName: 'td',
-            childNodes: [
-              { nodeName: 'img', className: 'tw_item inventory_item', src: it.image, alt: it.name, title: popup }
-            ]
-          },
-          { nodeName: 'td', textContent: it.name, title: popup },
-          { nodeName: 'td', textContent: Bag.getItemCount(it.item_id) },
-          { nodeName: 'td', textContent: it.item_id },
-          {
-            nodeName: 'td',
-            childNodes: [
-              { nodeName: 'button', textContent: 'add this', classList: ['TWDS_button', 'TWDS_storage_addthis'] }
-            ]
-          }
-        ]
-      })
-      ssc.appendChild(tr)
-      count++
+        const tr = TWDS.createElement({
+          nodeName: 'tr',
+          dataSet: { item_id: it.item_id },
+          childNodes: [
+            {
+              nodeName: 'td',
+              childNodes: [
+                { nodeName: 'img', className: 'tw_item inventory_item', src: it.image, alt: it.name, title: popup }
+              ]
+            },
+            { nodeName: 'td', textContent: it.name, title: popup },
+            { nodeName: 'td', textContent: Bag.getItemCount(it.item_id) },
+            { nodeName: 'td', textContent: it.item_id },
+            {
+              nodeName: 'td',
+              childNodes: [
+                { nodeName: 'button', textContent: 'add this', classList: ['TWDS_button', 'TWDS_storage_addthis'] }
+              ]
+            }
+          ]
+        })
+        ssc.appendChild(tr)
+        count++
+      }
     }
-  }
-  const ss = document.getElementById('TWDS_storage_select')
-  if (count) {
-    ss.classList.add('visible')
+    const ss = document.getElementById('TWDS_storage_select')
+    if (count) {
+      ss.classList.add('visible')
+    } else {
+      ss.classList.remove('visible')
+    }
   } else {
-    ss.classList.remove('visible')
+    document.getElementById('TWDS_storage_select').innerHTML = ''
   }
+  // and now for the main list
+  $('#TWDS_storage_list .datarow').each(function (idx, row) {
+    const iid = row.dataset.item_id
+    const item = ItemManager.get(iid)
+    if (item.name.toLowerCase().indexOf(lowToSearch) >= 0) {
+      row.style.display = 'table-row'
+    } else {
+      row.style.display = 'none'
+    }
+  })
 }
 
 TWDS.storage.sortList = function (key) {
@@ -268,6 +282,8 @@ TWDS.storage.initSearchArea = function (container) {
   const nameInput = new west.gui.Textfield('TWDS_storage_search_name').setSize(10).setClass4Input('input_layout')
   div.appendChild(nameInput.getMainDiv()[0])
   div.querySelector('#TWDS_storage_search_name').placeholder = 'search for items'
+  div.querySelector('#TWDS_storage_search_name').type = 'search'
+  div.querySelector('#TWDS_storage_search_name').style.boxSizing = 'content-box'
   div.appendChild(TWDS.createElement({
     nodeName: 'button',
     id: 'TWDS_storage_export',
@@ -330,7 +346,7 @@ TWDS.storageStartFunction = function () {
     true)
   $(document).on('change', '#TWDS_storage_search_name', function () {
     const v = this.value.trim()
-    if (v !== '') { TWDS.storage.startSearch(v) }
+    TWDS.storage.startSearch(v)
   })
   $(document).on('click', '#TWDS_storage_select_container button.TWDS_storage_addthis', function () {
     const tr = this.closest('tr')
