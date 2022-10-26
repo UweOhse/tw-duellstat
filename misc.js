@@ -48,7 +48,6 @@ TWDS.market.handleFilterChange = function () {
   const m = id.match(/^mpb_(.*)/)
   let combo = document.getElementById('TWDS_market_filters_value')
   if (combo && m) {
-    console.log('combo', combo, combo.value)
     const col1 = document.getElementById('buyFilterIsCollect')
     const col2 = document.getElementById('buyFilterIsCollect2')
     if (col1) col1.guiElement.setSelected(false, true)
@@ -107,9 +106,6 @@ TWDS.market.updateCategory = function (category, data) {
 TWDS.jobwindow = {}
 TWDS.jobwindow.initView = function () {
   this._TWDS_backup_initView()
-  console.log('iv1', this)
-  console.log('iv2', this.window)
-  console.log('iv3', this.window.divMain)
   const d = this.window.divMain
   const id = this.jobId
   const x = TWDS.jobData['job_' + id]
