@@ -21,7 +21,6 @@ TWDS.createSideButton = function () {
   ib.style.backgroundImage = 'none !important'
   ib.classList.add('test')
   ib.onclick = function () {
-    console.log('click')
     if (typeof (wman.getById('TWDS')) === 'undefined') {
       TWDS.window = null
     }
@@ -45,7 +44,6 @@ TWDS.createSideButton = function () {
       TWDS.window = null
     }
   }
-  console.log('ib', ib)
 }
 
 window.TWDS = TWDS
@@ -82,12 +80,10 @@ TWDS.main = function main () {
     window.localStorage.removeItem(key)
     tr.remove()
   })
-  console.log('duellstat main before the sf loop')
   for (const fn of Object.values(TWDS.startFunctions)) {
     fn()
   }
   TWDS.createSideButton()
-  console.log('duellstat active')
 }
 
 TWDS.preMain = function () {
@@ -110,5 +106,3 @@ TWDS.waitready = function () {
   }
 }
 TWDS.waitready()
-
-console.log('duellstat loaded')
