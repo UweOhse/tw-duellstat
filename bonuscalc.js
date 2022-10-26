@@ -192,7 +192,7 @@ TWDS.initBonusDisplay = function (container) {
 
   const intro = document.createElement('p')
   intro.textContent = TWDS._('BONUS_INTRO',
-    'This page shows the bonus values of the current equipment, with your attributes and skills.')
+    'This page shows the bonus values of the current equipment, without your attributes and skills.')
   container.appendChild(intro)
 
   let h1 = document.createElement('h1')
