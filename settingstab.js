@@ -75,10 +75,18 @@ TWDS.getSettingsContent = function () {
     h = document.createElement('h2')
     thing.appendChild(h)
     h.textContent = 'Misc. settings'
+    let lastgroup = ''
     for (const x of TWDS.settingList.values()) {
       const mode = x[0]
       const name = x[1]
       const text = x[2]
+      const group = x[5]
+      if (group !== lastgroup && group !== '') {
+        const h3 = document.createElement('h3')
+        thing.appendChild(h3)
+        h3.textContent = group
+        lastgroup = group
+      }
       const div = document.createElement('div')
       div.className = 'TWDS_settingline'
       thing.appendChild(div)
