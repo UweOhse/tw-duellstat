@@ -393,7 +393,7 @@ TWDS.minimap.init = function () {
     console.error(t, 'manipulate MinimapWindow.refreshWindow')
   }
 }
-TWDS.minimap.uiinit = function (v) {
+TWDS.minimap.uiinit = function () {
   const simplebutton = function (text, title, css, cb) {
     const label = $('<label />')
     const sel = $('<span>' + text + '</span>')
@@ -416,48 +416,108 @@ TWDS.minimap.uiinit = function (v) {
     return label
   }
 
-  $('#TWDS_minimap_ui').remove()
-  if (!v) {
-    return
+  $('#TWDS_minimap_silvergold').remove()
+  if (TWDS.settings.minimap_silvergold) {
+    const container = $("<div id='TWDS_minimap_silvergold' />")
+    $('#mmap_cbbox_jobs').before(container)
+    container.css({
+      display: 'inline-block',
+      float: 'right',
+      'margin-right': '8px'
+    })
+
+    container.append(simplebutton('#', 'show/hide coordinates', {
+      'background-color': 'white'
+    }, function () {
+      let n=$('.display-tile-coords');
+      if (n.length) {
+        Map.hideCoords();
+      } else {
+        Map.showCoords();
+      }
+    }))
+
+    container.append(simplebutton('x', 'clear the silver jobs', {
+      'background-color': 'silver'
+    }, function () {
+      if (window.confirm('clear the stored silver job data?')) {
+        TWDS.minimap.deletefromcache(true, false)
+        TWDS.minimap.savecache()
+        TWDS.minimap.updateIfOpen()
+      }
+    }))
+    container.append(simplebutton('x', 'clear the gold jobs', {
+      'background-color': 'gold'
+    }, function () {
+      if (window.confirm('clear the stored gold job data?')) {
+        TWDS.minimap.deletefromcache(false, true)
+        TWDS.minimap.savecache()
+        TWDS.minimap.updateIfOpen()
+      }
+    }))
+
+    container.append(simplebutton('export', 'export the gold and silver jobs', {
+      'background-color': 'white'
+    }, function () {
+      TWDS.minimap.export()
+    }))
+
+    container.append(simplebutton('import', 'import the gold and silver jobs', {
+      'background-color': 'white'
+    }, function () {
+      TWDS.minimap.import()
+    }))
   }
-  const container = $("<div id='TWDS_minimap_ui' />")
-  $('#mmap_cbbox_jobs').before(container)
-  container.css({
-    display: 'inline-block',
-    float: 'right',
-    'margin-right': '8px'
-  })
-
-  container.append(simplebutton('x', 'clear the silver jobs', {
-    'background-color': 'silver'
-  }, function () {
-    if (window.confirm('clear the stored silver job data?')) {
-      TWDS.minimap.deletefromcache(true, false)
-      TWDS.minimap.savecache()
-      TWDS.minimap.updateIfOpen()
-    }
-  }))
-  container.append(simplebutton('x', 'clear the gold jobs', {
-    'background-color': 'gold'
-  }, function () {
-    if (window.confirm('clear the stored gold job data?')) {
-      TWDS.minimap.deletefromcache(false, true)
-      TWDS.minimap.savecache()
-      TWDS.minimap.updateIfOpen()
-    }
-  }))
-
-  container.append(simplebutton('export', 'export the gold and silver jobs', {
-    'background-color': 'white'
-  }, function () {
-    TWDS.minimap.export()
-  }))
-
-  container.append(simplebutton('import', 'import the gold and silver jobs', {
-    'background-color': 'white'
-  }, function () {
-    TWDS.minimap.import()
-  }))
+  $("#TWDS_minimap_coordwrapper").remove();
+  if (TWDS.settings.minimap_coordinput) {
+    $(".tw2gui_jobsearch_string").on("keyup",function(e) {
+      if (e.keyCode===13) {
+        let inp=e.target;
+        const rx=/^\s*(\d+)\s*[-,x]\s*(\d+)\s*$/
+        let found=inp.value.match(rx);
+        if (null!==found) {
+          let x=found[1];
+          let y=found[2];
+          window.Map.center(x, y);
+          inp.value="";
+        }
+        const rx2=/^\s*(\d+)\s*$/
+        found=inp.value.match(rx2);
+        if (null!==found) {
+          let county=parseInt(found[1]);
+          if (county>0 && county<=15) {
+            county--;
+            let x=county*6635+3317;
+            let y=5088;
+            if (county>7) {
+              x=x-7*6635;
+              y+=10176;
+            }
+            if (county===14) { // center
+              x=3*county*6635+3317;
+              y=10176;
+            }
+            window.Map.center(x, y);
+            inp.value="";
+          }
+        }
+        const rx3=/^\s*(ghost|g|indian|i|center|c|home|h)\s*$/i
+        found=inp.value.toLowerCase().match(rx3);
+        if (null!==found) {
+          if (found[1]==="ghost" || found[1]==="g")
+            window.Map.center(1920, 2176);
+          if (found[1]==="indian" || found[1]==="i")
+            window.Map.center(28060, 16768);
+          if (found[1]==="center" || found[1]==="c")
+            window.Map.center(3.5*6635, 10176);
+          if (found[1]==="home" || found[1]==="h")
+            window.Map.center(Character.homeTown.x, Character.homeTown.y);
+          inp.value="";
+          $(".tw2gui_jobsearchbar_results").hide();
+        }
+      }
+    });
+  }
 }
 
 TWDS.registerStartFunc(function () {
@@ -474,8 +534,15 @@ TWDS.registerStartFunc(function () {
 
   TWDS.registerSetting('bool', 'minimap_silvergold',
     'show known silver/gold jobs on the minimap.', defaultval, function (v) {
-      TWDS.minimap.uiinit(v)
-    }
+      TWDS.minimap.uiinit()
+    },
+    'Minimap'
+  )
+  TWDS.registerSetting('bool', 'minimap_coordinput',
+    'Abuse the job input field as coordinate input.', defaultval, function (v) {
+      TWDS.minimap.uiinit()
+    },
+    'Minimap'
   )
 })
 
