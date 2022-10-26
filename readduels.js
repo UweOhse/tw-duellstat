@@ -137,6 +137,7 @@ TWDS.readDuels = function () {
     other = other[1]
 
     lohn = lohn.replace(/\./g, '')
+    lohn = lohn.replace(/,/g, '')
     lohn = parseInt(lohn)
     sch1 = sch1.replace(/\./g, '')
     sch1 = parseInt(sch1)
