@@ -38,7 +38,7 @@ TWDS.injuryWarningHandler = function () {
     maxinj += maxdmg / 100.0 * maxHP
     expinj += dang / 100 * maxdmg / 100.0 * maxHP / 4 // assume that the average injury is 25% of the maxinj.
 
-    console.log('jid', jid, 'dang', dang, 'maxdmg', maxdmg, 'maxinj', maxinj, 'expinj', expinj)
+    // console.log('jid', jid, 'dang', dang, 'maxdmg', maxdmg, 'maxinj', maxinj, 'expinj', expinj)
 
     let flag = 0
     let msg = ''
