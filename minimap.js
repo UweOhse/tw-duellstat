@@ -147,7 +147,7 @@ TWDS.minimap.updateReal = function () {
     const str = "<div class='TWDS_mm_markethack' style='" + style + ' />'
     const ele = $(str)
     ele.addMousePopup('<div style="min-width:60px;text-align:center">' +
-        a+" items" + '</div>')
+        a + ' items' + '</div>')
     ele[0].dataset.posx = x
     ele[0].dataset.posy = y
 
@@ -195,14 +195,14 @@ TWDS.minimap.updateReal = function () {
 
   $('#minimap_worldmap .TWDS_mm_markethack').remove()
   if (TWDS.settings.minimap_worldmapmarket_active) {
-    let mmapdata=window.localStore4Minimap.minimapData;
+    const mmapdata = window.localStore4Minimap.minimapData
     if (mmapdata) {
-      let marketdata=mmapdata.market_locations;
+      const marketdata = mmapdata.market_locations
       if (marketdata) {
-        for (let i in marketdata) {
-          if (!Object.prototype.hasOwnProperty.call(marketdata, i)) continue;
-          let x=marketdata[i].x;
-          let y=marketdata[i].y;
+        for (const i in marketdata) {
+          if (!Object.prototype.hasOwnProperty.call(marketdata, i)) continue
+          const x = marketdata[i].x
+          const y = marketdata[i].y
           handleonemarketposition(x, y, marketdata[i].amount)
         }
       }
@@ -472,11 +472,11 @@ TWDS.minimap.uiinit = function () {
     container.append(simplebutton('#', 'show/hide coordinates', {
       'background-color': 'white'
     }, function () {
-      let n=$('.display-tile-coords');
+      const n = $('.display-tile-coords')
       if (n.length) {
-        Map.hideCoords();
+        Map.hideCoords()
       } else {
-        Map.showCoords();
+        Map.showCoords()
       }
     }))
 
@@ -511,75 +511,71 @@ TWDS.minimap.uiinit = function () {
       TWDS.minimap.import()
     }))
   }
-  $("#TWDS_minimap_worldmapmarketcontainer").remove();
+  $('#TWDS_minimap_worldmapmarketcontainer').remove()
   if (TWDS.settings.minimap_use_worldmapmarket) {
-    let v=TWDS.settings.minimap_worldmapmarket_active
-    if (v==="undefined") v=0
-    let checked = (v ? "checked" : "");
+    let v = TWDS.settings.minimap_worldmapmarket_active
+    if (v === 'undefined') v = 0
+    const checked = (v ? 'checked' : '')
     const style = 'display:inline-block; width:4px; height:4px; margin:0 5px;' +
               'background-color: blue; ' +
               'border:1px solid black;'
     const str = "<div style='" + style + "'></div>"
-    let e=$("<span id='TWDS_minimap_worldmapmarketcontainer' class='hasMousePopup' style='display:block'>"
-           +"<input type='checkbox' value='1' "+checked+">"
-       + str
-       + "Market items on world map</span>");
-    $(".mmap_others").append(e);
-    $("#TWDS_minimap_worldmapmarketcontainer input").change(function(e) {
-      TWDS.settings.minimap_worldmapmarket_active=this.checked ? 1 : 0
-      TWDS.saveSettings();
+    const e = $("<span id='TWDS_minimap_worldmapmarketcontainer' class='hasMousePopup' style='display:block'>" +
+           "<input type='checkbox' value='1' " + checked + '>' +
+       str +
+       'Market items on world map</span>')
+    $('.mmap_others').append(e)
+    $('#TWDS_minimap_worldmapmarketcontainer input').change(function (e) {
+      TWDS.settings.minimap_worldmapmarket_active = this.checked ? 1 : 0
+      TWDS.saveSettings()
       TWDS.minimap.updateIfOpen()
-    });
+    })
   }
 
   if (TWDS.settings.minimap_coordinput) {
-    $(".tw2gui_jobsearch_string").on("keyup",function(e) {
-      if (e.keyCode===13) {
-        let inp=e.target;
-        const rx=/^\s*(\d+)\s*[-,x]\s*(\d+)\s*$/
-        let found=inp.value.match(rx);
-        if (null!==found) {
-          let x=found[1];
-          let y=found[2];
-          window.Map.center(x, y);
-          inp.value="";
+    $('.tw2gui_jobsearch_string').on('keyup', function (e) {
+      if (e.keyCode === 13) {
+        const inp = e.target
+        const rx = /^\s*(\d+)\s*[-,x]\s*(\d+)\s*$/
+        let found = inp.value.match(rx)
+        if (found !== null) {
+          const x = found[1]
+          const y = found[2]
+          window.Map.center(x, y)
+          inp.value = ''
         }
-        const rx2=/^\s*(\d+)\s*$/
-        found=inp.value.match(rx2);
-        if (null!==found) {
-          let county=parseInt(found[1]);
-          if (county>0 && county<=15) {
-            county--;
-            let x=county*6635+3317;
-            let y=5088;
-            if (county>7) {
-              x=x-7*6635;
-              y+=10176;
+        const rx2 = /^\s*(\d+)\s*$/
+        found = inp.value.match(rx2)
+        if (found !== null) {
+          let county = parseInt(found[1])
+          if (county > 0 && county <= 15) {
+            county--
+            let x = county * 6635 + 3317
+            let y = 5088
+            if (county > 7) {
+              x = x - 7 * 6635
+              y += 10176
             }
-            if (county===14) { // center
-              x=3*county*6635+3317;
-              y=10176;
+            if (county === 14) { // center
+              x = 3 * county * 6635 + 3317
+              y = 10176
             }
-            window.Map.center(x, y);
-            inp.value="";
+            window.Map.center(x, y)
+            inp.value = ''
           }
         }
-        const rx3=/^\s*(ghost|g|indian|i|center|c|home|h)\s*$/i
-        found=inp.value.toLowerCase().match(rx3);
-        if (null!==found) {
-          if (found[1]==="ghost" || found[1]==="g")
-            window.Map.center(1920, 2176);
-          if (found[1]==="indian" || found[1]==="i")
-            window.Map.center(28060, 16768);
-          if (found[1]==="center" || found[1]==="c")
-            window.Map.center(3.5*6635, 10176);
-          if (found[1]==="home" || found[1]==="h")
-            window.Map.center(Character.homeTown.x, Character.homeTown.y);
-          inp.value="";
-          $(".tw2gui_jobsearchbar_results").hide();
+        const rx3 = /^\s*(ghost|g|indian|i|center|c|home|h)\s*$/i
+        found = inp.value.toLowerCase().match(rx3)
+        if (found !== null) {
+          if (found[1] === 'ghost' || found[1] === 'g') { window.Map.center(1920, 2176) }
+          if (found[1] === 'indian' || found[1] === 'i') { window.Map.center(28060, 16768) }
+          if (found[1] === 'center' || found[1] === 'c') { window.Map.center(3.5 * 6635, 10176) }
+          if (found[1] === 'home' || found[1] === 'h') { window.Map.center(Character.homeTown.x, Character.homeTown.y) }
+          inp.value = ''
+          $('.tw2gui_jobsearchbar_results').hide()
         }
       }
-    });
+    })
   }
 }
 
