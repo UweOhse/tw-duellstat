@@ -1,3 +1,5 @@
+// vim: tabstop=2 shiftwidth=2 expandtab
+
 TWDS.market = {}
 TWDS.market.hasBonus = function (item) {
   const bonusExtractor = new west.item.BonusExtractor(Character, item.getItemLevel())
