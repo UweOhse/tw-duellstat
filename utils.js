@@ -13,7 +13,7 @@ TWDS.loadSettings = function () {
     console.log('failed to get settings', e)
   }
 }
-TWDS.registerSetting = function (mode, name, text, def, callBack) {
+TWDS.registerSetting = function (mode, name, text, def, callBack, group) {
   TWDS.settingList.push(arguments)
   if (TWDS.settings === null) {
     TWDS.loadSettings()
