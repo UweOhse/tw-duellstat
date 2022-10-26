@@ -17,7 +17,6 @@ TWDS.injuryWarningHandler = function () {
   const warnAvg = parseInt(TWDS.settings.taskqueue_warn_avg_injury_knockout)
 
   let expinj = 0
-  let maxinj = 0
   const maxHP = Character.maxHealth
   const curHP = Character.health
 
@@ -35,7 +34,6 @@ TWDS.injuryWarningHandler = function () {
     const dang = TWDS.TWDBcalcDanger(jp + malus - 1, malus - 1, jd.job_danger, 100, 1)
     const maxdmg = jd.job_maxdmg
 
-    maxinj += maxdmg / 100.0 * maxHP
     expinj += dang / 100 * maxdmg / 100.0 * maxHP / 4 // assume that the average injury is 25% of the maxinj.
 
     // console.log('jid', jid, 'dang', dang, 'maxdmg', maxdmg, 'maxinj', maxinj, 'expinj', expinj)
