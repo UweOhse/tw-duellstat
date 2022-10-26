@@ -182,7 +182,7 @@ TWDS.clothcache.startFunction = function () {
         }
         if (iu.eq.length) {
           if (title > '') title += ', '
-          title = title + iu.eq.length + ' equiment sets'
+          title = title + iu.eq.length + ' equipment sets'
           count += iu.eq.length
         }
         if (iu.ds.length) {
