@@ -187,7 +187,7 @@ TWDS.clothcache.startFunction = function () {
         }
         if (iu.ds.length) {
           if (title > '') title += ', '
-          title = title + iu.ds.length + ' tw-duellstat equiment sets'
+          title = title + iu.ds.length + ' tw-duellstat equipment sets'
           count += iu.ds.length
         }
       }
@@ -202,7 +202,7 @@ TWDS.clothcache.startFunction = function () {
         }
         if (wcnt) {
           if (title > '') title += ', '
-          title = title + wcnt + ' TW-Calc equiment sets'
+          title = title + wcnt + ' TW-Calc equipment sets'
           count += wcnt
         }
       }
