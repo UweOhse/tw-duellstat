@@ -91,7 +91,7 @@ TWDS.clothcache.reload = function (mode) {
       }
       if (mode === 'missing') { continue }
     }
-    console.log('calc', job.id, job.name, mode, old)
+    // console.log('calc', job.id, job.name, mode, old)
     const out = TWDS.getBestSetWrapper(job.skills, job.id, true)
     info.textContent = job.id + '/' + jl.length + ' ' +
     job.name + ' ' + TWDS.describeItemCombo(out.items)
