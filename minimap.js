@@ -101,12 +101,9 @@ TWDS.minimap.updateIfOpen = function () {
   TWDS.minimap.updateReal()
 }
 TWDS.minimap.updateReal = function () {
-  if (!TWDS.settings.minimap_silvergold) {
-    return
-  }
   TWDS.minimap.uiinit(true)
 
-  const handleone = function (x, y, withgold, a) {
+  const handleonebonusposition = function (x, y, withgold, a) {
     const o = 0.00513
     const x1 = parseInt(x * o, 10) - 3
     const y1 = parseInt(y * o, 10) + 2
@@ -134,35 +131,81 @@ TWDS.minimap.updateReal = function () {
     })
     $('#minimap_worldmap').append(ele)
   }
+  const handleonemarketposition = function (x, y, a) {
+    const o = 0.00513
+    const x1 = parseInt(x * o, 10) - 3
+    const y1 = parseInt(y * o, 10) + 2
+    let mayrotate = ''
+    if (a > 1) {
+      mayrotate = 'transform:rotate(45deg);'
+    }
+    const style = 'z-index:7 ;position:absolute; display:block; width:4px; height:4px; ' +
+              'background-color:' + 'blue' +
+               ';left:' + x1 + 'px;top:' + y1 + 'px;' + mayrotate + 'border:1px solid ' +
+               'black' + ";'"
+
+    const str = "<div class='TWDS_mm_markethack' style='" + style + ' />'
+    const ele = $(str)
+    ele.addMousePopup('<div style="min-width:60px;text-align:center">' +
+        a + ' items' + '</div>')
+    ele[0].dataset.posx = x
+    ele[0].dataset.posy = y
+
+    ele.click(function (e, t) {
+      window.Map.center(
+        e.target.dataset.posx,
+        e.target.dataset.posy
+      )
+    })
+    $('#minimap_worldmap').append(ele)
+  }
 
   // $("#minimap_worldmap").css("position","relative"); not good, messes up map
   $('#minimap_worldmap .TWDS_bonusjob').remove()
-  for (const oneposkey in TWDS.minimap.cache) {
-    const oneposdata = TWDS.minimap.cache[oneposkey]
-    const a = []
-    let x = -1
-    let y = -1
-    let withgold = false
-    for (const onejobkey in oneposdata) {
-      const onejob = oneposdata[onejobkey]
-      x = onejob.x
-      y = onejob.y
-      // let silver=onejob.silver
-      const gold = onejob.gold
-      const jid = onejob.job_id
-      const job = JobList.getJobById(jid)
-      if (gold) withgold = true
-      let str = "<div style='min-width:60px;text-align:center' >"
-      str += "<span style='font-weight:bold;display:block;'>" + job.name + '</span>' +
-             "<div class='job' style='position:relative;left:50%;margin:10px -25px;'>" +
-             "<div class='featured " + (gold ? 'gold' : 'silver') + "'></div>" +
-             "<img src='" + Game.cdnURL + '/images/jobs/' + job.shortname + ".png' class='job_icon' >" +
-             '</div>'
-      str += '</div>'
-      a.push(str)
+  if (TWDS.settings.minimap_silvergold) {
+    for (const oneposkey in TWDS.minimap.cache) {
+      const oneposdata = TWDS.minimap.cache[oneposkey]
+      const a = []
+      let x = -1
+      let y = -1
+      let withgold = false
+      for (const onejobkey in oneposdata) {
+        const onejob = oneposdata[onejobkey]
+        x = onejob.x
+        y = onejob.y
+        // let silver=onejob.silver
+        const gold = onejob.gold
+        const jid = onejob.job_id
+        const job = JobList.getJobById(jid)
+        if (gold) withgold = true
+        let str = "<div style='min-width:60px;text-align:center' >"
+        str += "<span style='font-weight:bold;display:block;'>" + job.name + '</span>' +
+               "<div class='job' style='position:relative;left:50%;margin:10px -25px;'>" +
+               "<div class='featured " + (gold ? 'gold' : 'silver') + "'></div>" +
+               "<img src='" + Game.cdnURL + '/images/jobs/' + job.shortname + ".png' class='job_icon' >" +
+               '</div>'
+        str += '</div>'
+        a.push(str)
+      }
+      if (a.length > 0) {
+        handleonebonusposition(x, y, withgold, a)
+      }
     }
-    if (a.length > 0) {
-      handleone(x, y, withgold, a)
+  }
+
+  $('#minimap_worldmap .TWDS_mm_markethack').remove()
+  if (TWDS.settings.minimap_worldmapmarket_active) {
+    const mmapdata = window.localStore4Minimap.minimapData
+    if (mmapdata) {
+      const marketdata = mmapdata.market_locations
+      if (marketdata) {
+        for (const i in marketdata) {
+          if (!Object.prototype.hasOwnProperty.call(marketdata, i)) continue
+          const x = marketdata[i].x
+          const y = marketdata[i].y
+          handleonemarketposition(x, y, marketdata[i].amount)
+        }
+      }
     }
   }
 }
@@ -429,11 +472,11 @@ TWDS.minimap.uiinit = function () {
     container.append(simplebutton('#', 'show/hide coordinates', {
       'background-color': 'white'
     }, function () {
-      let n=$('.display-tile-coords');
+      const n = $('.display-tile-coords')
       if (n.length) {
-        Map.hideCoords();
+        Map.hideCoords()
       } else {
-        Map.showCoords();
+        Map.showCoords()
       }
     }))
 
@@ -468,55 +511,72 @@ TWDS.minimap.uiinit = function () {
       TWDS.minimap.import()
     }))
   }
-  $("#TWDS_minimap_coordwrapper").remove();
+  $('#TWDS_minimap_worldmapmarketcontainer').remove()
+  if (TWDS.settings.minimap_use_worldmapmarket) {
+    let v = TWDS.settings.minimap_worldmapmarket_active
+    if (v === 'undefined') v = 0
+    const checked = (v ? 'checked' : '')
+    const style = 'display:inline-block; width:4px; height:4px; margin:0 5px;' +
+              'background-color: blue; ' +
+              'border:1px solid black;'
+    const str = "<div style='" + style + "'></div>"
+    const e = $("<span id='TWDS_minimap_worldmapmarketcontainer' class='hasMousePopup' style='display:block'>" +
+           "<input type='checkbox' value='1' " + checked + '>' +
+       str +
+       'Market items on world map</span>')
+    $('.mmap_others').append(e)
+    $('#TWDS_minimap_worldmapmarketcontainer input').change(function (e) {
+      console.log('change', this, e)
+      TWDS.settings.minimap_worldmapmarket_active = this.checked ? 1 : 0
+      TWDS.saveSettings()
+      TWDS.minimap.updateIfOpen()
+    })
+  }
+
   if (TWDS.settings.minimap_coordinput) {
-    $(".tw2gui_jobsearch_string").on("keyup",function(e) {
-      if (e.keyCode===13) {
-        let inp=e.target;
-        const rx=/^\s*(\d+)\s*[-,x]\s*(\d+)\s*$/
-        let found=inp.value.match(rx);
-        if (null!==found) {
-          let x=found[1];
-          let y=found[2];
-          window.Map.center(x, y);
-          inp.value="";
+    $('.tw2gui_jobsearch_string').on('keyup', function (e) {
+      if (e.keyCode === 13) {
+        const inp = e.target
+        const rx = /^\s*(\d+)\s*[-,x]\s*(\d+)\s*$/
+        let found = inp.value.match(rx)
+        if (found !== null) {
+          const x = found[1]
+          const y = found[2]
+          window.Map.center(x, y)
+          inp.value = ''
         }
-        const rx2=/^\s*(\d+)\s*$/
-        found=inp.value.match(rx2);
-        if (null!==found) {
-          let county=parseInt(found[1]);
-          if (county>0 && county<=15) {
-            county--;
-            let x=county*6635+3317;
-            let y=5088;
-            if (county>7) {
-              x=x-7*6635;
-              y+=10176;
+        const rx2 = /^\s*(\d+)\s*$/
+        found = inp.value.match(rx2)
+        if (found !== null) {
+          let county = parseInt(found[1])
+          if (county > 0 && county <= 15) {
+            county--
+            let x = county * 6635 + 3317
+            let y = 5088
+            if (county > 7) {
+              x = x - 7 * 6635
+              y += 10176
             }
-            if (county===14) { // center
-              x=3*county*6635+3317;
-              y=10176;
+            if (county === 14) { // center
+              x = 3 * county * 6635 + 3317
+              y = 10176
             }
-            window.Map.center(x, y);
-            inp.value="";
+            window.Map.center(x, y)
+            inp.value = ''
           }
         }
-        const rx3=/^\s*(ghost|g|indian|i|center|c|home|h)\s*$/i
-        found=inp.value.toLowerCase().match(rx3);
-        if (null!==found) {
-          if (found[1]==="ghost" || found[1]==="g")
-            window.Map.center(1920, 2176);
-          if (found[1]==="indian" || found[1]==="i")
-            window.Map.center(28060, 16768);
-          if (found[1]==="center" || found[1]==="c")
-            window.Map.center(3.5*6635, 10176);
-          if (found[1]==="home" || found[1]==="h")
-            window.Map.center(Character.homeTown.x, Character.homeTown.y);
-          inp.value="";
-          $(".tw2gui_jobsearchbar_results").hide();
+        const rx3 = /^\s*(ghost|g|indian|i|center|c|home|h)\s*$/i
+        found = inp.value.toLowerCase().match(rx3)
+        if (found !== null) {
+          if (found[1] === 'ghost' || found[1] === 'g') { window.Map.center(1920, 2176) }
+          if (found[1] === 'indian' || found[1] === 'i') { window.Map.center(28060, 16768) }
+          if (found[1] === 'center' || found[1] === 'c') { window.Map.center(3.5 * 6635, 10176) }
+          if (found[1] === 'home' || found[1] === 'h') { window.Map.center(Character.homeTown.x, Character.homeTown.y) }
+          inp.value = ''
+          $('.tw2gui_jobsearchbar_results').hide()
         }
       }
-    });
+    })
   }
 }
 
@@ -540,6 +600,12 @@ TWDS.registerStartFunc(function () {
   )
   TWDS.registerSetting('bool', 'minimap_coordinput',
     'Abuse the job input field as coordinate input.', defaultval, function (v) {
+      TWDS.minimap.uiinit()
+    },
+    'Minimap'
+  )
+  TWDS.registerSetting('bool', 'minimap_use_worldmapmarket',
+    'Add a checkbox allowing to show the market items on the mini world map.', true, function (v) {
       TWDS.minimap.uiinit()
     },
     'Minimap'
