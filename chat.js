@@ -16,29 +16,22 @@ TWDS.chatInit = function () {
     if (n.nodeType === 3) {
       if (!n.textContent.match(rx)) return
 
-      console.log('got textNode with match', n)
       const e = document.createElement('span')
       n.parentNode.insertBefore(e, n)
       n.remove()
-      console.log('created e', e)
 
       const s = n.textContent.split(rx)
-      console.log('split is', s)
       for (let i = 0; i < s.length; i++) {
         const t = s[i]
         let f
-        console.log('handling split #', i, t)
         if (t.match(rx2)) {
           f = document.createElement('span')
           f.className = 'TWDS_blinking TWDS_chat_highlight' // blinks for 60 seconds
           f.textContent = t
-          console.log('  created a color span')
         } else {
           f = document.createTextNode(t)
-          console.log('  created a text node')
         }
         e.appendChild(f)
-        console.log('appended f', f)
       }
     } else if (n.nodeType === 1) {
       for (let i = 0; i < n.childNodes.length; i++) {
@@ -54,7 +47,6 @@ TWDS.chatInit = function () {
     rx2 = new RegExp('^(' + tohighlight + ')$', 'i')
     chatobserver.disconnect()
     mutations.forEach(function (mut) {
-      console.log('mutation', mut)
       if (mut.type !== 'childList') return
       if (mut.addedNodes.length === 0) return
       for (let i = 0; i < mut.addedNodes.length; i++) {
@@ -82,7 +74,6 @@ TWDS.chatInit = function () {
   }
   const windowsobserver = new window.MutationObserver(function (mutations) {
     mutations.forEach(function (mut) {
-      console.log('windows-mutation', mut)
       if (mut.type !== 'childList') return
       for (let i = 0; i < mut.addedNodes.length; i++) {
         const n = mut.addedNodes[i]
@@ -91,7 +82,6 @@ TWDS.chatInit = function () {
           if (n.classList[i].substring(0, 5) === 'chat_') {
             chatcontainer = n
             chatobserver.observe(n, chatcfg)
-            console.log('started to observe', n)
           }
         }
       }
@@ -101,7 +91,6 @@ TWDS.chatInit = function () {
         for (i = 0; i < n.classList.length; i++) {
           if (n.classList[i].substring(0, 5) === 'chat_') {
             chatobserver.disconnect(n)
-            console.log('stopped to observe', n)
           }
         }
       }
