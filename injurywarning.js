@@ -66,11 +66,13 @@ TWDS.injuryWarningHandler = function () {
     }
     if (warnSuboptimal) {
       const best = TWDS.getJobBestFromCache(jid)
-      const bestnetto = TWDS.jobtab.calcNettoJobPoints(jid, best.items)
-      if (bestnetto > jp) {
-        if (flag === 0) flag = 1
-        anyWarning = true
-        msg = msg + 'not the best equipment (currently ' + jp + ' points, best has ' + bestnetto + ')\n'
+      if (best !== null) {
+        const bestnetto = TWDS.jobtab.calcNettoJobPoints(jid, best.items)
+        if (bestnetto > jp) {
+          if (flag === 0) flag = 1
+          anyWarning = true
+          msg = msg + 'not the best equipment (currently ' + jp + ' points, best has ' + bestnetto + ')\n'
+        }
       }
     }
     if (flag > 0) {
