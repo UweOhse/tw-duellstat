@@ -141,10 +141,10 @@ TWDS.clothcache.recalcItemUsage = function () {
 
   Ajax.remoteCallMode('inventory', 'show_equip', {}, function (data) {
     const eql = data.data
-    for (const [idx, eq] of Object.entries(eql)) {
+    for (const eq of Object.values(eql)) {
       for (const slot of Wear.slots) {
         const it = eq[slot]
-        add2item(it, 'eq', idx)
+        add2item(it, 'eq', eq.name)
       }
     }
     window.localStorage.setItem('TWDS_itemusage', JSON.stringify(items))
