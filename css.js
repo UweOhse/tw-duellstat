@@ -343,6 +343,18 @@ TWDS.insertStyles = function () {
     .market-buy img[alt="report"] {
       margin-left:5px;
     }
+    #TWDS_wuw_table {
+      border-collapse: collapse;
+    }
+    #TWDS_wuw td,
+    #TWDS_wuw th {
+      border-bottom:1px dotted #888;
+      padding:2px;
+    }
+    #TWDS_wuw td {
+      border-left:1px dotted #888;
+    }
+
   `
   const sty = document.createElement('style')
   sty.textContent = css
