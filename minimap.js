@@ -13,29 +13,32 @@ TWDS.minimap.savecache = function () {
   window.localStorage.setItem('TWDS_silvergold', JSON.stringify(x))
 }
 TWDS.minimap.loadcache = function () {
-  const stored = window.localStorage.getItem('TWDS_silvergold')
-  const data = JSON.parse(stored).data
-  // i thought the invalidation date was 01:30 UTC, but clothcalc uses 1:15.
-  // clothcache got many things right, so use that.
-  const cmp = new Date()
-  cmp.setUTCHours(1)
-  cmp.setMinutes(15)
-  cmp.setSeconds(0)
-  cmp.setMilliseconds(0)
-  let stich = cmp.getTime()
-  if (window.get_server_date < stich) {
-    stich = stich - 86400 * 1000 // back one day
-  }
   TWDS.minimap.cache = {}
-  for (const oneposkey in data) {
-    const oneposdata = data[oneposkey]
-    for (const onejobkey in oneposdata) {
-      const onejobdata = oneposdata[onejobkey]
-      if (onejobdata.silver) {
-        if (onejobdata.time < stich) { continue }
+  const stored = window.localStorage.getItem('TWDS_silvergold')
+  if (stored) {
+    const data = JSON.parse(stored).data
+    // i thought the invalidation date was 01:30 UTC, but clothcalc uses 1:15.
+    // clothcache got many things right, so use that.
+    const cmp = new Date()
+    cmp.setUTCHours(1)
+    cmp.setMinutes(15)
+    cmp.setSeconds(0)
+    cmp.setMilliseconds(0)
+    let stich = cmp.getTime()
+    if (window.get_server_date < stich) {
+      stich = stich - 86400 * 1000 // back one day
+    }
+    TWDS.minimap.cache = {}
+    for (const oneposkey in data) {
+      const oneposdata = data[oneposkey]
+      for (const onejobkey in oneposdata) {
+        const onejobdata = oneposdata[onejobkey]
+        if (onejobdata.silver) {
+          if (onejobdata.time < stich) { continue }
+        }
+        if (!(oneposkey in TWDS.minimap.cache)) { TWDS.minimap.cache[oneposkey] = {} }
+        TWDS.minimap.cache[oneposkey][onejobkey] = onejobdata
       }
-      if (!(oneposkey in TWDS.minimap.cache)) { TWDS.minimap.cache[oneposkey] = {} }
-      TWDS.minimap.cache[oneposkey][onejobkey] = onejobdata
     }
   }
 }
