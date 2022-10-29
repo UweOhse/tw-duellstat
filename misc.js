@@ -133,7 +133,7 @@ TWDS.duelprotection.updateMouseover = function () {
     })
   } else {
     TWDS.duelprotection.hack.css({
-      'background-color': '#7776'
+      'background-color': '#4a43'
     })
   }
   if (vgl !== -1) {
@@ -155,7 +155,7 @@ TWDS.duelprotection.updateMouseover = function () {
   str += '<td><meter min="0" low="0" optimum="1" high="1" max="1" value="' + mot2 + '"></meter>'
   str += '<td>' + parseInt(100 * mot2)
   str += '</table>'
-  str += '<p>The NPC duel motivation is valid after you opened the duels menu. Unfortunately the data is not updated earlier.</p>'
+  str += '<p>The duel motivation is valid after you opened the duels menu. Unfortunately the data is not updated earlier.</p>'
   TWDS.duelprotection.hack.addMousePopup(str)
 }
 TWDS.duelprotection.init = function (active) {
@@ -165,10 +165,9 @@ TWDS.duelprotection.init = function (active) {
       TWDS.duelprotection.interval = 0
     }
     if (TWDS.duelprotection.hack !== null) {
+      TWDS.duelprotection.hack.removeMousePopup()
       TWDS.duelprotection.hack.remove()
     }
-    TWDS.duelprotection.hack.removeMousePopup()
-    TWDS.duelprotection.hack.remove()
     return
   }
 
