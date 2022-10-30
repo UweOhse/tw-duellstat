@@ -354,6 +354,12 @@ TWDS.insertStyles = function () {
     #TWDS_wuw td {
       border-left:1px dotted #888;
     }
+    input[type=number][size="2"] {
+      width:3em;
+    }
+    input[type=number][size="7"] {
+      width:8em;
+    }
 
   `
   const sty = document.createElement('style')
