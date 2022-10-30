@@ -79,12 +79,39 @@ TWDS.wearItemsHandler = function (ids) {
   Inventory.showCustomItems(result)
 }
 
-TWDS.createElement = function (par = {}) {
+TWDS.q1 = function (sel, pa) {
+  if (pa) {
+    if (pa instanceof Node) {
+      return pa.querySelector(sel)
+    }
+    if (pa instanceof jQuery) {
+      if (pa.length) { return pa[0].querySelector(sel) }
+      return null
+    }
+    const x = TWDS.q1(pa)
+    if (!x) return null
+    return x.querySelector(sel)
+  }
+  return document.querySelector(sel)
+}
+
+TWDS.createElement = function (par = {}, par2 = null) {
+  if (typeof par === 'string' && typeof par2 === 'object' && par2 !== null) {
+    par2.nodeName = par
+    par = par2
+  }
   const thing = document.createElement(par.nodeName)
   for (const [k, v] of Object.entries(par)) {
+    if (k === 'nodeName') continue
     if (k === 'dataset' || k === 'dataSet') {
       for (const [k2, v2] of Object.entries(v)) {
         thing.dataset[k2] = v2
+      }
+      continue
+    }
+    if (k === 'style' || k === 'css') {
+      for (const [k2, v2] of Object.entries(v)) {
+        thing.style[k2] = v2
       }
       continue
     }
@@ -96,12 +123,21 @@ TWDS.createElement = function (par = {}) {
     }
     if (k === 'childNodes' || k === 'children') {
       for (const c of Object.values(v)) {
-        const ce = TWDS.createElement(c)
-        thing.appendChild(ce)
+        if (c instanceof Node) {
+          thing.appendChild(c)
+        } else {
+          const ce = TWDS.createElement(c)
+          thing.appendChild(ce)
+        }
       }
       continue
     }
     thing[k] = v
+    /*
+    if (!(k in thing) || thing.list !== v) {
+      thing.setAttribute(k, v)
+    }
+    */
   }
   return thing
 }
