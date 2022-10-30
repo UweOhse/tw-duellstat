@@ -1,6 +1,6 @@
 CHECK_SOURCES=start.js list_jobdata.js utils.js css.js de.json translation.js bonuscalc.js equipment.js \
-   readduels.js peopletab.js jobtab.js settingstab.js clothcache.js speedcalc.js \
-   gencalc.js storage.js chat.js injurywarning.js misc.js minimap.js jobwindow.js wuw.js \
+   readduels.js peopletab.js jobtab.js settingstab.js clothcache.js speedcalc.js auction.js \
+   gencalc.js storage.js chat.js injurywarning.js banking.js misc.js minimap.js jobwindow.js quest.js wuw.js \
    main.js
 CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
@@ -13,7 +13,8 @@ GLOBALS=--global Game --global TWDS --global Character --global wman --global Ba
 	--global JobCalculator --global JobWindow --global UserMessage --global JobsModel \
 	--global EventHandler --global ItemPopup --global MinimapWindow \
 	--global MarketWindow --global CharacterWindow --global Crafting \
-	--global TaskQueue --global GameInject --global jQuery --global Blob
+	--global TaskQueue --global GameInject --global jQuery --global Blob --global Quest \
+	--global Node --global BankWindow
 all: precheck tw-duellstat.user.js
 
 %.stamp: %.js
