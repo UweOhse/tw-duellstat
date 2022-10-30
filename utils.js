@@ -162,7 +162,7 @@ TWDS.jobOpenButton = function (id) {
       childNodes: [
         {
           nodeName: 'img',
-          src: 'https://westde.innogamescdn.com/images/icons/hammer.png',
+          src:  Game.cdnURL+'/images/icons/hammer.png',
           alt: ''
         }
       ]
@@ -184,7 +184,7 @@ TWDS.itemBidButton = function (id) {
     childNodes: [
       {
         nodeName: 'img',
-        src: 'https://westde.innogamescdn.com/images/icons/bid.png',
+        src:  Game.cdnURL+'/images/icons/bid.png',
         alt: ''
       }
     ]

@@ -176,7 +176,7 @@ TWDS.duelprotection.init = function (active) {
     const hack = $("<div id='TWDS_duelprotection_hack' />")
     hack.css({
       position: 'relative',
-      background: "url('https://westen.innogamescdn.com/images/interface/dock_icons.png?4')",
+      background: "url('" + Game.cdnURL + "/images/interface/dock_icons.png?4')",
       width: '52px',
       height: '52px',
       cursor: 'pointer',
@@ -201,5 +201,3 @@ TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'misc_duelprotection_display',
     'Show a duel protection overlay on your image', true, TWDS.duelprotection.init)
 })
-
-// vim: tabstop=2 shiftwidth=2 expandtab
