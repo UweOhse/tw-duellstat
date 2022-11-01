@@ -360,7 +360,60 @@ TWDS.insertStyles = function () {
     input[type=number][size="7"] {
       width:8em;
     }
+    #TWDS_tab_itemsets {
+      height:340px;
+      overflow-y: auto !important;
+      overflow-x: auto !important;
+    }
 
+    #TWDS_tab_itemsets thead{
+      position:sticky;
+      top:0;
+      background-color: wheat;
+    }
+    #TWDS_itemset_table {
+      border-collapse: collapse;
+    }
+    #TWDS_itemset_table td.perlevel {
+      font-style: italic;
+    }
+    #TWDS_itemset_table td,
+    #TWDS_itemset_table tbody th {
+      border:1px solid #888;
+      padding:2px;
+      font-size:inherit;
+    }
+    #TWDS_itemset_table thead th {
+      border:1px solid #888;
+      padding:2px;
+      font-size:inherit;
+    }
+    #TWDS_itemset_table thead tr.colspanrow th {
+      border-top:none;
+    }
+    #TWDS_itemset_table.with-twx tbody th.setname {
+      cursor:pointer;
+    }
+    #TWDS_itemsettable_butplus,
+    #TWDS_itemsettable_butminus {
+      min-width:2em;
+      margin-right:0.5em;
+    }
+    #TWDS_tab_updates dt {
+      margin-left:2px;
+      margin-top:1em;
+      font-weight:bold;
+    }
+    #TWDS_tab_updates dd {
+      margin-left:1em;
+    }
+    #TWDS_tab_updates dd::before {
+      content: "*";
+      margin-right:2px;
+    }
+    #TWDS_tab_updates dd ul {
+      margin-left:2em;
+    }
   `
   const sty = document.createElement('style')
   sty.textContent = css
