@@ -261,7 +261,7 @@ TWDS.marketwindow.showwrapper = function () {
 }
 
 TWDS.registerSetting('bool', 'marketwindow_enhancements',
-  'Enhance the market offering window', true, null, 'Market')
+  'Enhance the market offering window', false, null, 'Market')
 
 console.log('auction.js running')
 TWDS.registerStartFunc(function () {
