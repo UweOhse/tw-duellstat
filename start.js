@@ -4,6 +4,7 @@ TWDS.window = null
 TWDS.settings = null
 TWDS.lfd = 0
 TWDS.baseURL = 'https://ohse.de/uwe/tw-duellstat/'
+TWDS.version = '@REPLACEMYVERSION@'
 
 // a hash function. Source: https://stackoverflow.com/a/52171480
 // doesn't work with IE11. Too bad.
@@ -60,3 +61,11 @@ TWDS.startFunctions = []
 TWDS.registerStartFunc = function (x) {
   TWDS.startFunctions.push(x)
 }
+// this is a hack for the developer.
+TWDS.reload = function (x) {
+  $.getScript(TWDS.baseURL + 'dev/' + x + '.js', function () {
+    console.log('getScript', x, 'done')
+  })
+}
+
+// vim: tabstop=2 shiftwidth=2 expandtab
