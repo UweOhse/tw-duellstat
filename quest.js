@@ -30,7 +30,7 @@ TWDS.quest.render = function (requirement, clsFinish) {
 }
 
 TWDS.registerSetting('bool', 'quest_show_itemcount',
-  'In the questwindow show the amount of items in your inventory ', true, null, 'Quests')
+  'In the questwindow show the amount of items in your inventory ', false, null, 'Quests')
 TWDS.registerSetting('bool', 'questtracker_show_itemcount',
   'In the questtracker show the amount of items in your inventory', false, null, 'Quests')
 
