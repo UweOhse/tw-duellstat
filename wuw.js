@@ -158,7 +158,7 @@ TWDS.initWUWDisplay = function (container) {
       if (checked) {
         const jid = this.dataset.jid
         const jd = JobList.getJobById(jid)
-        const html = '<img class="jobimg" title="' + this.dataset.name + '" src="'+ Game.cdnURL+'/images/jobs/' + jd.shortname + '.png" />'
+        const html = '<img class="jobimg" title="' + this.dataset.name + '" src="' + Game.cdnURL + '/images/jobs/' + jd.shortname + '.png" />'
         this.innerHTML = html
       } else {
         this.textContent = this.dataset.name
