@@ -1,3 +1,4 @@
+// vim: tabstop=2 shiftwidth=2 expandtab
 TWDS.createSideButton = function () {
   const d = document.createElement('div')
   d.classList.add('menulink')
@@ -38,6 +39,12 @@ TWDS.createSideButton = function () {
         TWDS.window.appendToContentPane(sp.getMainDiv())
         if (tabData.isDefault && defaultTab === '') { defaultTab = tabData.key }
       }
+      const lastseen = window.localStorage.TWDS_last_seen || ''
+      if (lastseen !== TWDS.version) {
+        defaultTab = 'updates'
+        window.localStorage.TWDS_last_seen = TWDS.version
+      }
+
       TWDS.activateTab(defaultTab)
     } else {
       wman.close('TWDS')
@@ -106,3 +113,5 @@ TWDS.waitready = function () {
   }
 }
 TWDS.waitready()
+
+// vim: tabstop=2 shiftwidth=2 expandtab
