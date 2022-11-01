@@ -1,7 +1,7 @@
 CHECK_SOURCES=start.js list_jobdata.js utils.js css.js de.json translation.js bonuscalc.js equipment.js \
-   readduels.js peopletab.js jobtab.js settingstab.js clothcache.js speedcalc.js auction.js \
+   readduels.js peopletab.js jobtab.js settingstab.js clothcache.js speedcalc.js auction.js itemsettab.js \
    gencalc.js storage.js chat.js injurywarning.js banking.js misc.js minimap.js jobwindow.js quest.js wuw.js \
-   main.js
+   updatetab.js main.js
 CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
 VGET=`git describe --tags --long --dirty --always --broken`
@@ -25,7 +25,9 @@ all: precheck tw-duellstat.user.js
 precheck: $(CHECK_STAMPS)
 	
 tw-duellstat.user.js: $(ALL_SOURCES) Makefile
-	cat $(ALL_SOURCES) >$@.t
+	cat $(ALL_SOURCES) \
+	| awk '/@REPLACEUPDATEINFO@/{file="updateinfo.html";while ((getline<file) > 0) {print} next} {print}' \
+		>$@.t
 	sed -i s/@REPLACEMYVERSION@/$(VGET)/ $@.t
 	mv $@.t $@
 
