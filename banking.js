@@ -8,10 +8,10 @@ TWDS.banking.deposithelper = function (t) {
     .setSize(10).setValue(window.Character.money).getMainDiv()
   window.BankWindow.Balance.add()
 }
-TWDS.banking.deposit = function () {
+TWDS.banking.depositinit = function () {
   const deposit = TWDS.q1('#deposit')
   if (deposit) {
-    if (TWDS.settings.banking_enhancement1) {
+    if (TWDS.settings.banking_deposit_button) {
       $(deposit).addMousePopup('Deposit your cash.')
       deposit.onclick = function (e) {
         if (Character.money <= 0) {
@@ -50,7 +50,7 @@ TWDS.banking.autohome_toggle = function (v) {
 }
 TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'banking_deposit_button',
-    'Clicking on the bank deposit opens a dialogue to deposit your cash.', true, TWDS.banking.deposit,
+    'Clicking on the bank account in the top row opens a dialogue to deposit your cash.', true, TWDS.banking.depositinit,
     'Banking'
   )
   TWDS.registerSetting('bool', 'banking_auto_hometown',
