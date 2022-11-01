@@ -94,6 +94,21 @@ TWDS.q1 = function (sel, pa) {
   }
   return document.querySelector(sel)
 }
+TWDS.q = function (sel, pa) {
+  if (pa) {
+    if (pa instanceof Node) {
+      return pa.querySelectorAll(sel)
+    }
+    if (pa instanceof jQuery) {
+      if (pa.length) { return pa[0].querySelectorAll(sel) }
+      return null
+    }
+    const x = TWDS.q1(pa)
+    if (!x) return null
+    return x.querySelectorAll(sel)
+  }
+  return document.querySelectorAll(sel)
+}
 
 TWDS.createElement = function (par = {}, par2 = null) {
   if (typeof par === 'string' && typeof par2 === 'object' && par2 !== null) {
@@ -162,7 +177,7 @@ TWDS.jobOpenButton = function (id) {
       childNodes: [
         {
           nodeName: 'img',
-          src:  Game.cdnURL+'/images/icons/hammer.png',
+          src: Game.cdnURL + '/images/icons/hammer.png',
           alt: ''
         }
       ]
@@ -184,9 +199,48 @@ TWDS.itemBidButton = function (id) {
     childNodes: [
       {
         nodeName: 'img',
-        src:  Game.cdnURL+'/images/icons/bid.png',
+        src: Game.cdnURL + '/images/icons/bid.png',
         alt: ''
       }
     ]
   })
+}
+
+// logic from
+// https://stackoverflow.com/questions/15547198/export-html-table-to-csv-using-vanilla-javascript
+TWDS.download_table = function (name, selector, sep = ',') {
+  let rows
+  if (selector instanceof Node) {
+    rows = TWDS.q('tr', selector)
+  } else {
+    rows = TWDS.q(selector + ' tr')
+  }
+
+  const csv = []
+  for (let i = 0; i < rows.length; i++) {
+    const row = []; const cols = rows[i].querySelectorAll('td, th')
+    for (let j = 0; j < cols.length; j++) {
+      // Clean innertext to remove multiple spaces and jumpline (break csv)
+      let data = cols[j].innerText.replace(/(\r\n|\n|\r)/gm, '').replace(/(\s\s)/gm, ' ')
+      // Escape double-quote with double-double-quote (see https://stackoverflow.com/questions/17808511/properly-escape-a-double-quote-in-csv)
+      data = data.replace(/"/g, '""')
+      // Push escaped string
+      row.push('"' + data + '"')
+    }
+    csv.push(row.join(sep))
+  }
+  // Download it
+  const filename = 'twds_' + name + '_' + new Date().toLocaleDateString() + '.csv'
+  const link = TWDS.createEle({
+    nodeName: 'a',
+    style: {
+      display: 'none'
+    },
+    href: 'data:text/csv;charset=utf-8,' + window.encodeURIComponent(csv.join('\n')),
+    target: '_blank',
+    download: filename
+  })
+  document.body.appendChild(link)
+  link.click()
+  document.body.removeChild(link)
 }
