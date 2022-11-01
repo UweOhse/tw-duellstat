@@ -1,5 +1,6 @@
 TWDS.translation = {}
 TWDS.lang = null
+TWDS.trans_warned = {}
 // this once read the translation, now it just links.
 TWDS.fixTranslation = function fixTranslation () {
   let l = Game.locale
@@ -8,8 +9,8 @@ TWDS.fixTranslation = function fixTranslation () {
   const s = 'translation_' + l
   if (s in TWDS) {
     TWDS.translation = TWDS[s]
-    TWDS.lang = l
   }
+  TWDS.lang = l
 }
 TWDS._ = function _ (s, def, para) {
   let work
@@ -21,7 +22,10 @@ TWDS._ = function _ (s, def, para) {
   } else {
     work = def
     if (TWDS.lang !== 'en') {
-      console.log('_', 'using default translation for ', s, '=', def)
+      if (!(s in TWDS.trans_warned)) {
+        console.log('_', 'using default translation for ', s, '=', def)
+        TWDS.trans_warned[s] = true
+      }
     }
   }
   if (typeof para !== 'undefined') {
@@ -31,3 +35,5 @@ TWDS._ = function _ (s, def, para) {
   }
   return work
 }
+
+// vim: tabstop=2 shiftwidth=2 expandtab
