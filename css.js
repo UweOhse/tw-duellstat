@@ -437,6 +437,8 @@ TWDS.insertStyles = function () {
       vertical-align:middle;
       text-align:right;
       padding: 0 4px;
+      min-width:200px;
+      max-width:400px;
     }
     .TWDS_fbs_basestats_content p {
       margin-bottom:0.5em;
