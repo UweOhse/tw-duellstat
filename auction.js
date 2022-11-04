@@ -118,10 +118,12 @@ TWDS.marketwindow.enhanceit = function (thing) {
   document.querySelector('#TWDS_marketwindow_select_base_min').onchange = function () {
     changebaseprice(this, '#market_min_bid')
     $('#market_min_bid').change()
+    $('#market_min_bid').keyup()
   }
   document.querySelector('#TWDS_marketwindow_select_base_max').onchange = function () {
     changebaseprice(this, '#market_max_price')
     $('#market_max_price').change()
+    $('#market_max_price').keyup()
   }
 
   const mindefault = window.localStorage.TWDS_marketwindow_min || ''
@@ -178,12 +180,14 @@ TWDS.marketwindow.enhanceit = function (thing) {
       const stack = document.querySelector('#market_sell_itemStack')
       const count = stack.value
       const max = document.querySelector('#market_max_price')
-      if (max) {
+      if (max && parseInt(max.value) > 0) {
         max.value = max.value * count
+        $(max).keyup()
       }
       const min = document.querySelector('#market_min_bid')
-      if (min) {
+      if (min && parseInt(min.value.trim) > 0) {
         min.value = min.value * count
+        $(min).keyup()
       }
     }
     e[0].parentNode.parentNode.appendChild(x)
@@ -263,9 +267,7 @@ TWDS.marketwindow.showwrapper = function () {
 TWDS.registerSetting('bool', 'marketwindow_enhancements',
   'Enhance the market offering window', false, null, 'Market')
 
-console.log('auction.js running')
 TWDS.registerStartFunc(function () {
-  console.log('auction.js startfunc running')
   MarketWindow._TWDS_backup_createMarketOffer = MarketWindow.createMarketOffer
   MarketWindow.createMarketOffer = TWDS.marketwindow.createMarketOffer
   west.gui.Dialog.prototype._TWDS_marketwindow_backup_show = west.gui.Dialog.prototype.show
@@ -295,5 +297,12 @@ TWDS.registerStartFunc(function () {
   })
   document.body.appendChild(datalist)
 })
+
+// used when reloading, so the update code will be used.
+if ('_TWDS_backup_createMarketOffer' in MarketWindow) {
+  MarketWindow.createMarketOffer = TWDS.marketwindow.createMarketOffer
+  west.gui.Dialog.prototype.show = TWDS.marketwindow.showwrapper
+  console.log('auction.js reloaded')
+}
 
 // vim: tabstop=2 shiftwidth=2 expandtab
