@@ -68,11 +68,11 @@ TWDS.fbs.makepersonstats = function (a, r) {
       o[k2].value = d[k]
       o[k2].by = [d.name]
     } else if (d[k] === o[k2].value) {
-      o[k2].by.push(d.name);
+      o[k2].by.push(d.name)
     }
     if (d[k] > o.byclass[cl][k2].value) {
       o.byclass[cl][k2].value = d[k]
-      o.byclass[cl][k2].by= [d.name]
+      o.byclass[cl][k2].by = [d.name]
     } else if (d[k] === o.byclass[cl][k2].value && d[k]) {
       o.byclass[cl][k2].by.push(d.name)
     }
@@ -228,22 +228,22 @@ TWDS.fbs.makebasestats = function () {
     }
     if (transform) {
       if (isNaN(a) || !isFinite(a)) {
-        a="-"+dotnull;
+        a = '-' + dotnull
       } else {
         a = a.toFixed(1)
       }
       if (isNaN(d) || !isFinite(d)) {
-        d="-"+dotnull;
+        d = '-' + dotnull
       } else {
         d = d.toFixed(1)
       }
     } else {
-      if (typeof a === "number") {
+      if (typeof a === 'number') {
         if (isNaN(a) || !isFinite(a)) {
-          a="-"
+          a = '-'
         }
         if (isNaN(d) || !isFinite(d)) {
-          d="-"
+          d = '-'
         }
       }
       a += dotnull
@@ -271,13 +271,13 @@ TWDS.fbs.makebasestats = function () {
         return
       }
     }
-    let av=a.value
-    let dv=d.value
+    let av = a.value
+    let dv = d.value
     if (isNaN(av) || !isFinite(av)) {
       if (transform) {
-        av="-"+dotnull;
+        av = '-' + dotnull
       } else {
-        av="-"
+        av = '-'
       }
     } else {
       if (transform) {
@@ -286,18 +286,18 @@ TWDS.fbs.makebasestats = function () {
     }
     if (isNaN(dv) || !isFinite(dv)) {
       if (transform) {
-        dv="-"+dotnull;
+        dv = '-' + dotnull
       } else {
-        dv="-"
+        dv = '-'
       }
     } else {
       if (transform) {
         dv = dv.toFixed(1)
       }
     }
-    if (a.by.length===1 && d.by.length===1) {
-      av=a.by[0]+": "+av;
-      dv=d.by[0]+": "+dv;
+    if (a.by.length === 1 && d.by.length === 1) {
+      av = a.by[0] + ': ' + av
+      dv = d.by[0] + ': ' + dv
     }
     if (hint === null) hint = ''
     const e = TWDS.createEle({
@@ -312,18 +312,17 @@ TWDS.fbs.makebasestats = function () {
       TWDS.q1('th', e).title = hint
     }
     tbody.appendChild(e)
-    if (a.by.length!==1 || d.by.length!==1) {
+    if (a.by.length !== 1 || d.by.length !== 1) {
       const f = TWDS.createEle({
         nodeName: 'tr',
         children: [
-          { nodeName: 'td', innerHTML: a.by.join(", ") },
-          { nodeName: 'th', textContent: t+" by" },
-          { nodeName: 'td', innerHTML: d.by.join(", ") }
+          { nodeName: 'td', innerHTML: a.by.join(', ') },
+          { nodeName: 'th', textContent: t + ' by' },
+          { nodeName: 'td', innerHTML: d.by.join(', ') }
         ]
       })
       tbody.appendChild(f)
     }
-
   }
   const clname = ['Greenhorns', 'Adventurers', 'Duelists', 'Worker', 'Soldiers']
   for (let i = -1; i < 5; i++) {
@@ -353,8 +352,8 @@ TWDS.fbs.makebasestats = function () {
     r('HP at end', at.finishedhp, df.finishedhp, false)
     r('Most HP', at.highest_starthp.value, df.highest_starthp.value, false)
     r('Most HP by', at.highest_starthp.by, df.highest_starthp.by, false)
-    r('Missing HP at start', at.maxhp-at.starthp, df.maxhp-df.starthp, false,
-      "The amount of HP not filled up")
+    r('Missing HP at start', at.maxhp - at.starthp, df.maxhp - df.starthp, false,
+      'The amount of HP not filled up')
     r('HP lost', at.starthp - at.finishedhp, df.starthp - df.finishedhp, false)
     r('HP average', at.starthp / at.count, df.starthp / df.count, true, 'Total start HP divided by fighters')
 
@@ -409,7 +408,7 @@ TWDS.fbs.makebasestats = function () {
 }
 TWDS.fbs.showStatUpdateTable = function (data) {
   if (!TWDS.settings.misc_fortbattle_statistics) {
-    return;
+    return
   }
   TWDS.fbs.data = data
   const ret = CemeteryWindow._TWDS_backup_showStatUpdateTable.apply(this, arguments)
@@ -427,8 +426,8 @@ TWDS.fbs.showStatUpdateTable = function (data) {
     nodeName: 'button',
     textContent: 'FBS',
     id: 'TWDS_fbs_f',
-    className: "TWDS_button",
-    title: "Basic fort battle statistics",
+    className: 'TWDS_button',
+    title: 'Basic fort battle statistics'
   })
   container.appendChild(b1)
   const cp = TWDS.q1('.tw2gui_window.cemetery .tw2gui_window_content_pane')
@@ -444,8 +443,8 @@ TWDS.fbs.showStatUpdateTable = function (data) {
 TWDS.registerStartFunc(function () {
   CemeteryWindow._TWDS_backup_showStatUpdateTable = CemeteryWindow.showStatUpdateTable
   CemeteryWindow.showStatUpdateTable = TWDS.fbs.showStatUpdateTable
-  TWDS.registerSetting("bool", "misc_fortbattle_statistics",
-      "Add a button to the graveyard to show Basic Fortbattle Statistics", true, null, "misc") {
+  TWDS.registerSetting('bool', 'misc_fortbattle_statistics',
+    'Add a button to the graveyard to show Basic Fortbattle Statistics', true, null, 'misc')
 })
 
 // used when reloading, so the updated code will be used.
