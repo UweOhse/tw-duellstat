@@ -67,7 +67,7 @@ TWDS.fbs.makepersonstats = function (a, r) {
     if (d[k] > o[k2].value) {
       o[k2].value = d[k]
       o[k2].by = [d.name]
-    } else if (d[k] === o[k2].value) {
+    } else if (d[k] === o[k2].value && d[k]) {
       o[k2].by.push(d.name)
     }
     if (d[k] > o.byclass[cl][k2].value) {
