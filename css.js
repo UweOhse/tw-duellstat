@@ -414,9 +414,67 @@ TWDS.insertStyles = function () {
     #TWDS_tab_updates dd ul {
       margin-left:2em;
     }
+    .TWDS_fbs_basestats_content table {
+      margin: 0 auto;
+      border-collapse: collapse;
+    }
+    .TWDS_fbs_basestats_content table thead tr {
+      height:24px;
+      box-shadow: inset #7a481f 0px -2px 6px 0px;
+    }
+    .TWDS_fbs_basestats_content table tbody tr {
+      height:24px;
+      box-shadow: inset #7a481f 0px 2px 6px 0px;
+    }
+    .TWDS_fbs_basestats_content table td {
+      vertical-align:middle;
+      text-align:right;
+      padding: 0 4px;
+    }
+    .TWDS_fbs_basestats_content p {
+      margin-bottom:0.5em;
+    }
+    .TWDS_fbs_basestats_content table th {
+      padding: 0 8px;
+    }
+    .TWDS_fbs_basestats_content table td {
+      font-family:fixed;
+    }
+    .TWDS_fbs_basestats_content table th.subhead {
+      background-color:wheat;
+    }
+    .TWDS_fbs_basestats_content .dotnull {
+      visibility:hidden;
+    }
+    .TWDS_fbs_basestats .tw2gui_window_content_pane {
+      max-height:320px;
+      overflow: auto;
+    }
+    .TWDS_scrollbar::-webkit-scrollbar-thumb {
+      background-color: #584329;
+      border-radius: 6px;
+      border: 3px solid #584329;
+    }
+    .TWDS_scrollbar::-webkit-scrollbar-track {
+      background: #200;
+      border-radius: 6px;
+    }
+    .TWDS_scrollbar::-webkit-scrollbar {
+      width:14px;
+    }
+    .TWDS_button {
+      color: #f8c57c;
+      padding:1px 1px;
+      line-height:20px;
+      cursor:pointer;
+      background: url(https://westen.innogamescdn.com/images/interface/custom_unit_counter_sprite.png?2) repeat-x scroll -1px -37px rgba(16, 8, 0, 0);
+    }
   `
   const sty = document.createElement('style')
   sty.textContent = css
+  sty.id = 'TWDS_style_hack'
+  const x = TWDS.q1('#TWDS_style_hack')
+  if (x) x.remove()
   document.body.appendChild(sty)
 }
 TWDS.insertStyles() // no reason to wait with that.
