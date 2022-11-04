@@ -433,17 +433,20 @@ TWDS.insertStyles = function () {
       height:24px;
       box-shadow: inset #7a481f 0px 2px 6px 0px;
     }
-    .TWDS_fbs_basestats_content table td {
+    .TWDS_fbs_basestats_content table tbody td {
       vertical-align:middle;
       text-align:right;
       padding: 0 4px;
-      min-width:200px;
-      max-width:400px;
+      width:230px;
+    }
+    .TWDS_fbs_basestats_content table tbody th {
+      width:176px;
+      p
     }
     .TWDS_fbs_basestats_content p {
       margin-bottom:0.5em;
     }
-    .TWDS_fbs_basestats_content table th {
+    .TWDS_fbs_basestats_content table thead th {
       padding: 0 8px;
     }
     .TWDS_fbs_basestats_content table td {
