@@ -3,6 +3,13 @@ TWDS.insertStyles = function () {
     .TWDS_blinking {
       animation: blinker 0.5s linear 120
     }
+    #TWDS_settings h2 {
+      font-size:22px;
+    }
+    #TWDS_settings h2, h3 {
+      margin-bottom:0.5em;
+      margin-top:1em;
+    }
     @keyframes blinker {
       50% {
         opacity: 0;

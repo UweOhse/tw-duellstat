@@ -14,7 +14,15 @@ TWDS.loadSettings = function () {
   }
 }
 TWDS.registerSetting = function (mode, name, text, def, callBack, group) {
-  TWDS.settingList.push(arguments)
+  const o = {
+    mode: mode,
+    name: name,
+    text: text,
+    def: def,
+    callback: callBack || null,
+    group: group || 'misc'
+  }
+  TWDS.settingList.push(o)
   if (TWDS.settings === null) {
     TWDS.loadSettings()
     if (TWDS.settings === null) {

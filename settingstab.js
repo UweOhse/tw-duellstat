@@ -1,5 +1,5 @@
 
-TWDS.getSettingsContent = function () {
+TWDS.getSettingsContentReal = function () {
   const createVersionThing = function () {
     const thing = document.createElement('p')
     thing.classList.add('TWDS_VERSIONINFO')
@@ -74,13 +74,30 @@ TWDS.getSettingsContent = function () {
 
     h = document.createElement('h2')
     thing.appendChild(h)
-    h.textContent = 'Misc. settings'
+    h.textContent = 'Other settings'
     let lastgroup = ''
+    const a = []
     for (const x of TWDS.settingList.values()) {
-      const mode = x[0]
-      const name = x[1]
-      const text = x[2]
-      const group = x[5]
+      a.push(x)
+    }
+    a.sort(function (a, b) {
+      if (a.group==="misc") {
+        if (b.group!=="misc") {
+          return 1;
+        }
+      }
+      if (b.group==="misc") {
+          return -1;
+      }
+      const t = a.group.toLocaleLowerCase().localeCompare(b.group.toLocaleLowerCase())
+      if (t) return t
+      return a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
+    })
+    for (const one of a) {
+      const mode = one.mode
+      const name = one.name
+      const text = one.text
+      const group = one.group
       if (group !== lastgroup && group !== '') {
         const h3 = document.createElement('h3')
         thing.appendChild(h3)
@@ -139,6 +156,9 @@ TWDS.getSettingsContent = function () {
 }
 TWDS.activateSettingsTab = function () {
   TWDS.activateTab('settings')
+}
+TWDS.getSettingsContent = function () {
+  return TWDS.getSettingsContentReal()
 }
 
 TWDS.settingsStartFunction = function () {
