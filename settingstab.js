@@ -81,13 +81,13 @@ TWDS.getSettingsContentReal = function () {
       a.push(x)
     }
     a.sort(function (a, b) {
-      if (a.group==="misc") {
-        if (b.group!=="misc") {
-          return 1;
+      if (a.group === 'misc') {
+        if (b.group !== 'misc') {
+          return 1
         }
       }
-      if (b.group==="misc") {
-          return -1;
+      if (b.group === 'misc') {
+        return -1
       }
       const t = a.group.toLocaleLowerCase().localeCompare(b.group.toLocaleLowerCase())
       if (t) return t
