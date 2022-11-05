@@ -201,3 +201,14 @@ TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'misc_duelprotection_display',
     'Show a duel protection overlay on your image', true, TWDS.duelprotection.init)
 })
+TWDS.registerStartFunc(function () {
+  window.Map.Helper.imgPath._TWDS_backup_lookForModification = window.Map.Helper.imgPath.lookForModification
+  window.Map.Helper.imgPath.lookForModification = function (path, ongameload) {
+    if (TWDS.settings.misc_normal_water_color) {
+      return path
+    }
+    return window.Map.Helper.imgPath._TWDS_backup_lookForModification(path, ongameload)
+  }
+  TWDS.registerSetting('bool', 'misc_normal_water_color',
+    'Show normal water colors instead of the pink/red/green ones of the event. You need to reload the page after a change.', false)
+})
