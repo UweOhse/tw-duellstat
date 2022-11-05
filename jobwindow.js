@@ -1,9 +1,85 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 //
+$(document).on('click', '.TWDS_wearset', function () {
+  const key = this.dataset.setkey
+  const tmp = window.localStorage.getItem(key)
+  if (tmp) {
+    const o = JSON.parse(tmp)
+    if (Premium.hasBonus('automation')) {
+      Wear.open()
+      for (const i in o.item_ids) {
+        const ii = o.item_ids[i]
+        const b = Bag.getItemByItemId(Number(ii))
+        if (b) {
+          Wear.carry(b)
+        }
+      }
+    } else {
+      if (!wman.getById(Inventory.uid)) {
+        Inventory.open()
+      }
+      Wear.open()
+      const items = Bag.getItemsByItemIds(o.item_ids)
+      Inventory.showSearchResult(items)
+    }
+    return
+  }
+  Ajax.remoteCallMode('inventory', 'show_equip', {}, function (data) {
+    const eql = data.data
+    for (const eq of Object.values(eql)) {
+      if (eq.name === key) {
+        window.EquipManager.switchEquip(eq.equip_manager_id)
+      }
+    }
+  })
+})
 TWDS.jobwindow = {}
+
 TWDS.jobwindow.initView = function () {
   this._TWDS_backup_initView()
   const d = this.window.divMain
+  const old = TWDS.q1('.TWDS_jobwindow_setbuttons', d)
+  if (old) {
+    old.remove()
+  }
+  let haveone = false
+  for (let i = 0; i < 10; i++) {
+    const idx = 'jobwindow_set' + i
+    if (TWDS.settings[idx] > '') {
+      haveone = true
+    }
+  }
+  if (haveone) {
+    const p = TWDS.q1('.job_premium_button', d)
+    if (p) {
+      p.style.display = 'none'
+      const ct = TWDS.createEle({
+        nodeName: 'div',
+        className: 'TWDS_jobwindow_setbuttons'
+      })
+      p.parentNode.insertBefore(ct, p)
+      for (let i = 0; i < 10; i++) {
+        const idx = 'jobwindow_set' + i
+        if (TWDS.settings[idx] > '') {
+          const b = TWDS.createElement({
+            nodeName: 'button',
+            className: 'TWDS_button TWDS_wearset',
+            textContent: TWDS.settings[idx],
+            dataset: {
+              setkey: TWDS.settings[idx]
+            },
+            title: 'Wear this set'
+          })
+          ct.appendChild(b)
+        }
+      }
+    }
+  } else {
+    const p = TWDS.q1('.job_premium_button', d)
+    if (p) {
+      p.style.display = 'block'
+    }
+  }
   if (TWDS.settings.jobwindow_show_jobpoints) {
     const progressthing = d.querySelector('.job_progress_jobstars')
     const m = TWDS.createElement({
@@ -175,10 +251,20 @@ TWDS.registerSetting('bool', 'jobwindow_show_jobpoints',
   'Show the job points in the job window', true, null, 'Jobwindow')
 
 TWDS.registerStartFunc(function () {
+  for (let i = 0; i < 10; i++) {
+    let help = 'The name of a set to offer in place of the higher income button.'
+    if (i === 0) { help += ' This only works if you have the Higher Income premium, and if the name is that of one of the ingame or tw-duellstat sets.' }
+    TWDS.registerSetting('string', 'jobwindow_set' + i, help, '', null, 'Jobwindow')
+  }
   JobWindow.prototype._TWDS_backup_initView = JobWindow.prototype.initView
   JobWindow.prototype.initView = TWDS.jobwindow.initView
   JobWindow.prototype._TWDS_backup_updateMotivation = JobWindow.prototype.updateMotivation
   JobWindow.prototype.updateMotivation = TWDS.jobwindow.updateMotivation
 })
+if (JobWindow.prototype._TWDS_backup_initView) {
+  // helper for the reload
+  JobWindow.prototype.initView = TWDS.jobwindow.initView
+  JobWindow.prototype.updateMotivation = TWDS.jobwindow.updateMotivation
+}
 
 // vim: tabstop=2 shiftwidth=2 expandtab

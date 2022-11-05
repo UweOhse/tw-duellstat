@@ -69,12 +69,17 @@ TWDS.insertStyles = function () {
     #TWDS_equipment tr, #TWDS_equipment td, #TWDS_table th { border:1px solid #888;}
     #TWDS_equipment td, #TWDS_equipment th { padding:1px 2px;}
     .TWDS_button {
-      min-width:4em;
+      min-width:3.5em;
       border-color:#2B1C19;
-      background-color:#4F210D;
       color:white;
-      border-width:4px;
+      border-width:2px;
+      margin:1px;
       border-style:inset;
+      padding:1px 1px;
+      line-height:18px;
+      cursor:pointer;
+      background: rgb(46,16,2);
+      background: radial-gradient(circle, rgba(46,16,2,1) 0%, rgba(93,63,30,1) 49%, rgba(60,29,6,1) 100%);
     }
     .TWDS_button_small {
       min-width:auto;
@@ -288,8 +293,9 @@ TWDS.insertStyles = function () {
       position:absolute;
       top:0;
       position: absolute;
-      top: 40px;
+      top: 43px;
       left: 48px;
+      line-height:16px;
     }
     #TWDS_storage_list {
       border-collapse:collapse;
@@ -474,12 +480,12 @@ TWDS.insertStyles = function () {
     .TWDS_scrollbar::-webkit-scrollbar {
       width:14px;
     }
-    .TWDS_button {
-      color: #f8c57c;
-      padding:1px 1px;
-      line-height:20px;
-      cursor:pointer;
-      background: url(https://westen.innogamescdn.com/images/interface/custom_unit_counter_sprite.png?2) repeat-x scroll -1px -37px rgba(16, 8, 0, 0);
+
+    .TWDS_jobwindow_setbuttons {
+      height: 50px; /* same as the premium thing it replaces */
+    }
+    .TWDS_jobwindow_setbuttons .TWDS_button {
+      margin-top:0;
     }
   `
   const sty = document.createElement('style')
