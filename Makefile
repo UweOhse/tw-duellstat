@@ -6,7 +6,7 @@ CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
 VGET=`git describe --tags --long --dirty --always --broken`
 VERSION:=$(shell git describe --tags --long --dirty --always --broken)
-RELEASEFNAME:=v$(VGET).user.js
+RELEASEFNAME:=$(VGET).user.js
 x := foo
 y := $(x) bar
 x := later
@@ -50,9 +50,9 @@ show-version:
 	@grep "<dt>" updateinfo.html |head -1
 
 release: all
-	@echo tw-duellstat.user.js ../release
-	@echo tw-duellstat.user.js ../$(RELEASEFNAME).user.js
-	@echo updateinfo.html ../
+	@cp tw-duellstat.user.js ../release
+	@cp tw-duellstat.user.js ../release/$(RELEASEFNAME)
+	@cp updateinfo.html ../
 
 releasecheck:
 	echo $x -- $y
