@@ -42,24 +42,24 @@ TWDS.jobwindow.initView = function () {
   if (old) {
     old.remove()
   }
-  let haveone = false
-  for (let i = 0; i < 10; i++) {
-    const idx = 'jobwindow_set' + i
+  let haveone=false
+  for (let i=0; i<10 ; i++) {
+    let idx="jobwindow_set"+i;
     if (TWDS.settings[idx] > '') {
-      haveone = true
+      haveone=true
     }
   }
   if (haveone) {
     const p = TWDS.q1('.job_premium_button', d)
     if (p) {
       p.style.display = 'none'
-      const ct = TWDS.createEle({
-        nodeName: 'div',
-        className: 'TWDS_jobwindow_setbuttons'
-      })
+      let ct=TWDS.createEle({
+        nodeName: "div",
+        className: "TWDS_jobwindow_setbuttons",
+      });
       p.parentNode.insertBefore(ct, p)
-      for (let i = 0; i < 10; i++) {
-        const idx = 'jobwindow_set' + i
+      for (let i=0; i<10 ; i++) {
+        let idx="jobwindow_set"+i;
         if (TWDS.settings[idx] > '') {
           const b = TWDS.createElement({
             nodeName: 'button',
@@ -70,7 +70,7 @@ TWDS.jobwindow.initView = function () {
             },
             title: 'Wear this set'
           })
-          ct.appendChild(b)
+          ct.appendChild(b);
         }
       }
     }
@@ -251,10 +251,11 @@ TWDS.registerSetting('bool', 'jobwindow_show_jobpoints',
   'Show the job points in the job window', true, null, 'Jobwindow')
 
 TWDS.registerStartFunc(function () {
-  for (let i = 0; i < 10; i++) {
-    let help = 'The name of a set to offer in place of the higher income button.'
-    if (i === 0) { help += ' This only works if you have the Higher Income premium, and if the name is that of one of the ingame or tw-duellstat sets.' }
-    TWDS.registerSetting('string', 'jobwindow_set' + i, help, '', null, 'Jobwindow')
+  for (let i=0;i<10; i++) {
+    let help='The name of a set to offer in place of the higher income button.'
+    if (i===0)
+      help+=" This only works if you have the Higher Income premium, and if the name is that of one of the ingame or tw-duellstat sets."
+    TWDS.registerSetting('string', 'jobwindow_set'+i,help,'',null,"Jobwindow");
   }
   JobWindow.prototype._TWDS_backup_initView = JobWindow.prototype.initView
   JobWindow.prototype.initView = TWDS.jobwindow.initView
@@ -262,7 +263,7 @@ TWDS.registerStartFunc(function () {
   JobWindow.prototype.updateMotivation = TWDS.jobwindow.updateMotivation
 })
 if (JobWindow.prototype._TWDS_backup_initView) {
-  // helper for the reload
+   // helper for the reload
   JobWindow.prototype.initView = TWDS.jobwindow.initView
   JobWindow.prototype.updateMotivation = TWDS.jobwindow.updateMotivation
 }
