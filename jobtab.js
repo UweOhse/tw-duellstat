@@ -701,7 +701,7 @@ TWDS.jobtab.startFunction = function () {
   })
   $(document).on('change', '#TWDS_job_modecheckbox', function (ev) {
     const valkey = 'jobtab_modecheckbox'
-    TWDS.settings[valkey] = this.value
+    TWDS.settings[valkey] = this.checked
     TWDS.saveSettings()
     const tab = document.querySelector('#TWDS_tab_job')
     tab.innerHTML = ''
