@@ -483,6 +483,10 @@ TWDS.insertStyles = function () {
 
     .TWDS_jobwindow_setbuttons {
       height: 50px; /* same as the premium thing it replaces */
+      display: flex;
+      flex-flow: wrap;
+      overflow:hidden;
+      justify-content: center;
     }
     .TWDS_jobwindow_setbuttons .TWDS_button {
       margin-top:0;
