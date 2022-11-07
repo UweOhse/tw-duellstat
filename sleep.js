@@ -199,7 +199,7 @@ TWDS.sleep.open = function (eventdata) {
             addit('town-' + todo.town_id + '-' + lv,
               todo.waytime,
               todo.name,
-              'Hotel', lv)
+              TWDS._('SLEEP_HOTEL', 'Hotel'), lv)
             hotellevelreached = lv
           }
         }
@@ -208,7 +208,7 @@ TWDS.sleep.open = function (eventdata) {
           addit('fort-' + todo.fort_id + '-' + todo.x + '-' + todo.y,
             todo.waytime,
             todo.name,
-            'Barrack', lv)
+            TWDS._('SLEEP_BARRACK', 'Barrack'), lv)
         }
         handletodos() // recursion. Urks.
         return

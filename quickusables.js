@@ -87,23 +87,23 @@ TWDS.quickusables.open = function (eventdata) {
     TWDS.quickusables.showusables(choice)
   })
   sb.addClass('TWDS_quickusableshelper')
-  sb.addItem('energy', TWDS._('QUICKUSABLE_ENERGY', 'Energy'))
-  sb.addItem('health', TWDS._('QUICKUSABLE_HEALTH', 'Health'))
-  sb.addItem('workmotivation', TWDS._('QUICKUSABLE_WMOT', 'Work motivation'))
-  sb.addItem('duelmotivation', TWDS._('QUICKUSABLE_DMOT', 'Duel motivation'))
+  sb.addItem('energy', TWDS._('QUICKUSABLES_ENERGY', 'Energy'))
+  sb.addItem('health', TWDS._('QUICKUSABLES_HEALTH', 'Health'))
+  sb.addItem('workmotivation', TWDS._('QUICKUSABLES_WMOT', 'Work motivation'))
+  sb.addItem('duelmotivation', TWDS._('QUICKUSABLES_DMOT', 'Duel motivation'))
 
   const x = [
-    ['drop', TWDS._('QUICKUSABLE_DROP', 'Drop chance')],
-    ['experience', TWDS._('QUICKUSABLE_XP', 'Experience')],
-    ['luck', TWDS._('QUICKUSABLE_LUCK', 'Luck')],
-    ['luck', TWDS._('QUICKUSABLE_MONEY', 'Money')],
-    ['dueldamage', TWDS._('QUICKUSABLE_DUELDAMAGE', 'Duel damage')],
-    ['fortbattledamage', TWDS._('QUICKUSABLE_FBDAMAGE', 'Fort battle damage')],
-    ['multiplayerattack', TWDS._('QUICKUSABLE_MPIATT', 'Multiplayer attack')],
-    ['multiplayerdefense', TWDS._('QUICKUSABLE_MPIDEF', 'Multiplayer defense')],
-    ['waytime', TWDS._('QUICKUSABLE_WAYTIME', 'Waytime shortening')],
-    ['speed', TWDS._('QUICKUSABLE_SPEED', 'Speed')],
-    ['laborpoints', TWDS._('QUICKUSABLE_LP', 'Labor points')]
+    ['drop', TWDS._('QUICKUSABLES_DROP', 'Drop chance')],
+    ['experience', TWDS._('QUICKUSABLES_XP', 'Experience')],
+    ['luck', TWDS._('QUICKUSABLES_LUCK', 'Luck')],
+    ['luck', TWDS._('QUICKUSABLES_MONEY', 'Money')],
+    ['dueldamage', TWDS._('QUICKUSABLES_DUELDAMAGE', 'Duel damage')],
+    ['fortbattledamage', TWDS._('QUICKUSABLES_FBDAMAGE', 'Fort battle damage')],
+    ['multiplayerattack', TWDS._('QUICKUSABLES_MPIATT', 'Multiplayer attack')],
+    ['multiplayerdefense', TWDS._('QUICKUSABLES_MPIDEF', 'Multiplayer defense')],
+    ['waytime', TWDS._('QUICKUSABLES_WAYTIME', 'Waytime shortening')],
+    ['speed', TWDS._('QUICKUSABLES_SPEED', 'Speed')],
+    ['laborpoints', TWDS._('QUICKUSABLES_LP', 'Labor points')]
   ]
   x.sort(function (a, b) {
     return a[1].toLocaleLowerCase().localeCompare(b[1].toLocaleLowerCase())

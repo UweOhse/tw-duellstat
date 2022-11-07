@@ -161,6 +161,8 @@ QUICKUSABLES_LP:"Arbeitspunkte",
 QUICKUSABLES_SETTING: "Ein Klick auf die Energieanzeige öffnet eine Buff-Auswahl.",
 
 SLEEP_SETTING: "Ein Klick auf die Gesundheitsleiste öffnet eine Schlafplatzauswahl.",
+SLEEP_HOTEL: "Hotel",
+SLEEP_BARRACK: "Kaserne",
 
   DUMMY: 'Dummy'
 }
