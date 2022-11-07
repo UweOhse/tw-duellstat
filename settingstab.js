@@ -89,6 +89,17 @@ TWDS.getSettingsContentReal = function () {
       if (b.group === 'misc') {
         return -1
       }
+      if (a.group === b.group && (a.subgroup !== '' || b.subgroup !== '')) {
+        // subgroups to the end.
+        if (a.subgroup !== '' && b.subgroup === '') {
+          return 1
+        }
+        if (b.subgroup !== '' && a.subgroup === '') {
+          return -1
+        }
+        const t = a.subgroup.toLocaleLowerCase().localeCompare(b.subgroup.toLocaleLowerCase())
+        if (t) return t
+      }
       const t = a.group.toLocaleLowerCase().localeCompare(b.group.toLocaleLowerCase())
       if (t) return t
       return a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
@@ -144,6 +155,14 @@ TWDS.getSettingsContentReal = function () {
         span.textContent = text
         div.appendChild(span)
       }
+      if (mode === 'info') {
+        const p = TWDS.createEle({
+          nodeName: 'p',
+          className: 'TWDS_setting_info',
+          textContent: text
+        })
+        div.appendChild(p)
+      }
     }
 
     return thing
@@ -178,9 +197,9 @@ TWDS.settingsStartFunction = function () {
     console.log('changed setting', name, 'to', v)
     window.localStorage.setItem('TWDS_settings', JSON.stringify(TWDS.settings))
     for (const x of TWDS.settingList.values()) {
-      const n = x[1]
+      const n = x.name
       if (name === n) {
-        const cb = x[4]
+        const cb = x.callback
         if (cb) cb(v)
       }
     }
