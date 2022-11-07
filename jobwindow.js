@@ -251,10 +251,12 @@ TWDS.registerSetting('bool', 'jobwindow_show_jobpoints',
   'Show the job points in the job window', true, null, 'Jobwindow')
 
 TWDS.registerStartFunc(function () {
+  TWDS.registerSetting('info', 'AAAAA',
+    'The names of set to offer in place of the higher income button. This only works if you have the Higher Income premium, and if the names are those of ingame or tw-duellstat sets.',
+    '', null, 'Jobwindow', 'Setnames')
+
   for (let i = 0; i < 10; i++) {
-    let help = 'The name of a set to offer in place of the higher income button.'
-    if (i === 0) { help += ' This only works if you have the Higher Income premium, and if the name is that of one of the ingame or tw-duellstat sets.' }
-    TWDS.registerSetting('string', 'jobwindow_set' + i, help, '', null, 'Jobwindow')
+    TWDS.registerSetting('string', 'jobwindow_set' + i, 'Set #' + (i + 1), '', null, 'Jobwindow', 'Setnames')
   }
   JobWindow.prototype._TWDS_backup_initView = JobWindow.prototype.initView
   JobWindow.prototype.initView = TWDS.jobwindow.initView
