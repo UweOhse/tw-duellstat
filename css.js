@@ -491,6 +491,36 @@ TWDS.insertStyles = function () {
     .TWDS_jobwindow_setbuttons .TWDS_button {
       margin-top:0;
     }
+    .TWDS_setting_info {
+      margin-top:1em;
+      border-top:1px dotted #888;
+    }
+    .TWDS_sleephelper .tw2gui_scrollpane {
+      min-width:27em;
+    }
+    .TWDS_quickusableshelper .tw2gui_scrollpane {
+      min-width:16em;
+    }
+    .TWDS_quickusableshelper .tw2gui_scrollpane li:nth-child(4) {
+      border-bottom: 3px solid black;
+    }
+    .TWDS_sleephelper .tw2gui_scrollpane li span span {
+      float:right;
+      font-width:bold;
+      font-family:fixed;
+      line-height:20px;
+    }
+    .TWDS_sleephelper .tw2gui_scrollpane li span span.stars5, 
+    .TWDS_sleephelper .tw2gui_scrollpane li span span.stars6 {
+      color:green;
+    }
+    .TWDS_sleephelper .tw2gui_scrollpane li span span.stars1, 
+    .TWDS_sleephelper .tw2gui_scrollpane li span span.stars2 {
+      color:orange;
+    }
+    .TWDS_clickable {
+      cursor:pointer;
+    }
   `
   const sty = document.createElement('style')
   sty.textContent = css
