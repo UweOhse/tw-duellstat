@@ -20,8 +20,7 @@ TWDS.quickusables.initusables = function () {
     luck: [],
     dueldamage: [],
     fortbattledamage: [],
-    multiplayerattack: [],
-    multiplayerdefense: [],
+    multiplayer: [],
     waytime: [],
     speed: [],
     laborpoints: []
@@ -48,8 +47,8 @@ TWDS.quickusables.initusables = function () {
   doit(2467, 'experience')
   doit(2468, 'money')
   doit(2741, 'fortbattledamage', 0)
-  doit(2741, 'multiplayerattack', 1)
-  doit(2741, 'multiplayerdefense', 2)
+  doit(2741, 'multiplayer', 1)
+  doit(2741, 'multiplayer', 2)
   doit(1901, 'dueldamage')
   doit(1926, 'waytime')
   doit(1927, 'speed')
@@ -57,6 +56,8 @@ TWDS.quickusables.initusables = function () {
   doit(1946, 'health', 1)
 }
 TWDS.quickusables.showusables = function (choice) {
+  console.log('C', choice)
+  Inventory.open() // TWIR needs that if the inventory hasn't been opened
   if (TWDS.quickusables.usables === null) {
     TWDS.quickusables.initusables()
   }
@@ -83,6 +84,7 @@ TWDS.quickusables.showusables = function (choice) {
   Inventory.showSearchResult(filtered)
 }
 TWDS.quickusables.open = function (eventdata) {
+  console.log('quickusables.open')
   const sb = (new west.gui.Selectbox(true)).addListener(function (choice) {
     TWDS.quickusables.showusables(choice)
   })
@@ -99,8 +101,7 @@ TWDS.quickusables.open = function (eventdata) {
     ['luck', TWDS._('QUICKUSABLES_MONEY', 'Money')],
     ['dueldamage', TWDS._('QUICKUSABLES_DUELDAMAGE', 'Duel damage')],
     ['fortbattledamage', TWDS._('QUICKUSABLES_FBDAMAGE', 'Fort battle damage')],
-    ['multiplayerattack', TWDS._('QUICKUSABLES_MPIATT', 'Multiplayer attack')],
-    ['multiplayerdefense', TWDS._('QUICKUSABLES_MPIDEF', 'Multiplayer defense')],
+    ['multiplayer', TWDS._('QUICKUSABLES_MPI', 'Multiplayer')],
     ['waytime', TWDS._('QUICKUSABLES_WAYTIME', 'Waytime shortening')],
     ['speed', TWDS._('QUICKUSABLES_SPEED', 'Speed')],
     ['laborpoints', TWDS._('QUICKUSABLES_LP', 'Labor points')]
