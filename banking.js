@@ -17,7 +17,7 @@ TWDS.banking.depositinit = function () {
         if (Character.money <= 0) {
           return
         }
-        (new west.gui.Dialog('Deposit your Cash (click when in town)',
+        (new west.gui.Dialog('Deposit your Cash (when in town)',
           jQuery("<span class='TWDS_banking'>Money: " + Character.money + '</span>'))).setIcon(west.gui.Dialog.SYS_QUESTION).setModal(true, false).addButton('yes', function () {
           TWDS.banking.deposithelper(1)
         }).addButton('no').show()
