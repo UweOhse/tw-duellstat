@@ -28,15 +28,50 @@ TWDS.quest.render = function (requirement, clsFinish) {
     }
   }
 }
+TWDS.quest.getQuestTrackerEl = function () {
+  const x = Quest.prototype._TWDS_backup_getQuestTrackerEl.apply(this)
+  if (TWDS.settings.questtracker_show_booklinks) {
+    const remover = TWDS.q1('.quest-list.remove', x[0])
+    if (remover) {
+      TWDS.createEle({
+        nodeName: 'span',
+        className: 'TWDS-quest-list-to-book',
+        innerHTML: '&#128366;',
+        before: remover,
+        title: TWDS._('QUESTS_OPEN_BOOK', 'Open in the quest book.'),
+        dataset: {
+          questid: this.id,
+          questgroup: this.group
+        },
+        onclick: function (ev) {
+          const that = this
+          EventHandler.listen('questlog_loaded', function () {
+            window.QuestWindow.switchToQuest(that.dataset.questid)
+            return EventHandler.ONE_TIME_EVENT
+          }, this)
+          window.QuestWindow.open()
+        }
+      })
+    }
+  }
+  return x
+}
 
 TWDS.registerSetting('bool', 'quest_show_itemcount',
-  'In the questwindow show the amount of items in your inventory ', false, null, 'Quests')
+  TWDS._('QUESTS_SETTING_SHOW_ITEMCOUNT', 'Show the amount of items in your inventory in the quest window'),
+  false, null, 'Quests')
 TWDS.registerSetting('bool', 'questtracker_show_itemcount',
-  'In the questtracker show the amount of items in your inventory', false, null, 'Quests')
+  TWDS._('QUESTS_SETTING_SHOW_ITEMCOUNT_TRACKER', 'Show the amount of items in your inventory in the quest tracker.'),
+  false, null, 'Quests')
+TWDS.registerSetting('bool', 'questtracker_show_booklinks',
+  TWDS._('QUESTS_SETTING_ADD_BOOK_LINK', 'Add quest book links to the quest tracker'),
+  true, null, 'Quests')
 
 TWDS.registerStartFunc(function () {
   Quest.prototype._TWDS_backup_render = Quest.prototype.render
   Quest.prototype.render = TWDS.quest.render
+  Quest.prototype._TWDS_backup_getQuestTrackerEl = Quest.prototype.getQuestTrackerEl
+  Quest.prototype.getQuestTrackerEl = TWDS.quest.getQuestTrackerEl
 })
 
 // vim: tabstop=2 shiftwidth=2 expandtab
