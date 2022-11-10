@@ -127,6 +127,22 @@ TWDS.createElement = function (par = {}, par2 = null) {
   const thing = document.createElement(par.nodeName)
   for (const [k, v] of Object.entries(par)) {
     if (k === 'nodeName') continue
+    if (k === 'before' || k === 'beforebegin') {
+      v.insertAdjacentElement('beforebegin', thing)
+      continue
+    }
+    if (k === 'after' || k === 'afterend') {
+      v.insertAdjacentElement('afterend', thing)
+      continue
+    }
+    if (k === 'first' || k === 'afterbegin') {
+      v.insertAdjacentElement('afterbegin', thing)
+      continue
+    }
+    if (k === 'last' || k === 'beforeend') {
+      v.insertAdjacentElement('beforeend', thing)
+      continue
+    }
     if (k === 'dataset' || k === 'dataSet') {
       for (const [k2, v2] of Object.entries(v)) {
         thing.dataset[k2] = v2
