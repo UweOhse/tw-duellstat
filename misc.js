@@ -201,6 +201,13 @@ TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'misc_duelprotection_display',
     'Show a duel protection overlay on your image', true, TWDS.duelprotection.init)
 })
+TWDS.map = {}
+TWDS.map.radialmenu_open = function () {
+  this._TWDS_map_backup_open(true)
+}
+TWDS.map.radialmenu_close = function () {
+  this._TWDS_map_backup_close(true)
+}
 TWDS.registerStartFunc(function () {
   window.Map.Helper.imgPath._TWDS_backup_lookForModification = window.Map.Helper.imgPath.lookForModification
   window.Map.Helper.imgPath.lookForModification = function (path, ongameload) {
@@ -210,5 +217,20 @@ TWDS.registerStartFunc(function () {
     return window.Map.Helper.imgPath._TWDS_backup_lookForModification(path, ongameload)
   }
   TWDS.registerSetting('bool', 'misc_normal_water_color',
-    'Show normal water colors instead of the pink/red/green ones of the event. You need to reload the page after a change.', false)
+    'Show normal water colors instead of the pink/red/green ones of the event. You need to reload the page after a change.', false, null, 'Map')
+
+  window.Map.Radialmenu.prototype._TWDS_map_backup_close = window.Map.Radialmenu.prototype.close
+  window.Map.Radialmenu.prototype._TWDS_map_backup_open = window.Map.Radialmenu.prototype.open
+  TWDS.registerSetting('bool', 'no_jobgroup_animation',
+    TWDS._('TWDS_SETTING_no_jobgroup_animation',
+      'Do not animate the opening and closing of job groups'),
+    false, function (v) {
+      if (v) {
+        window.Map.Radialmenu.prototype.close = TWDS.map.radialmenu_close
+        window.Map.Radialmenu.prototype.open = TWDS.map.radialmenu_open
+      } else {
+        window.Map.Radialmenu.prototype.close = window.Map.Radialmenu.prototype._TWDS_map_backup_close
+        window.Map.Radialmenu.prototype.open = window.Map.Radialmenu.prototype._TWDS_map_backup_open
+      }
+    }, 'Map')
 })
