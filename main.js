@@ -46,6 +46,8 @@ TWDS.createSideButton = function () {
       }
 
       TWDS.activateTab(defaultTab)
+    } else if (wman.isMinimized('TWDS')) {
+      wman.reopen('TWDS')
     } else {
       wman.close('TWDS')
       TWDS.window = null
