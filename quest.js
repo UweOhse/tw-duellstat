@@ -56,6 +56,20 @@ TWDS.quest.getQuestTrackerEl = function () {
   }
   return x
 }
+TWDS.quest.cancelQuest = function (id) {
+  (new west.gui.Dialog(
+    TWDS._('QUEST_CANCEL_QUESTION_TITLE', 'Cancel Quest?'),
+    TWDS._('QUEST_CANCEL_QUESTION',
+      'Are you sure that you want to cancel this Quest?'))
+    .setIcon(west.gui.Dialog.SYS_QUESTION).setModal(true, false, {
+      bg: Game.cdnURL + '/images/curtain_bg.png',
+      opacity: 0.4
+    }).addButton(
+      TWDS._('YES', 'yes'), function () {
+        window.QuestWindow._TWDS_backup_cancelQuest(id)
+      }).addButton(TWDS._('NO', 'no'), function () {}).show()
+  )
+}
 
 TWDS.registerSetting('bool', 'quest_show_itemcount',
   TWDS._('QUESTS_SETTING_SHOW_ITEMCOUNT', 'Show the amount of items in your inventory in the quest window'),
@@ -66,12 +80,17 @@ TWDS.registerSetting('bool', 'questtracker_show_itemcount',
 TWDS.registerSetting('bool', 'questtracker_show_booklinks',
   TWDS._('QUESTS_SETTING_ADD_BOOK_LINK', 'Add quest book links to the quest tracker'),
   true, null, 'Quests')
+TWDS.registerSetting('bool', 'quest_cancel_question',
+  TWDS._('QUESTS_SETTING_ADD_BOOK_LINK', 'Add a safety question before canceling a quest.'),
+  true, null, 'Quests')
 
 TWDS.registerStartFunc(function () {
   Quest.prototype._TWDS_backup_render = Quest.prototype.render
   Quest.prototype.render = TWDS.quest.render
   Quest.prototype._TWDS_backup_getQuestTrackerEl = Quest.prototype.getQuestTrackerEl
   Quest.prototype.getQuestTrackerEl = TWDS.quest.getQuestTrackerEl
+  window.QuestWindow._TWDS_backup_cancelQuest = window.QuestWindow.cancelQuest
+  window.QuestWindow.cancelQuest = TWDS.quest.cancelQuest
 })
 
 // vim: tabstop=2 shiftwidth=2 expandtab
