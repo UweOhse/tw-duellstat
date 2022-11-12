@@ -12,15 +12,22 @@ TWDS.banking.depositinit = function () {
   const deposit = TWDS.q1('#deposit')
   if (deposit) {
     if (TWDS.settings.banking_deposit_button) {
-      $(deposit).addMousePopup('Deposit your cash.')
+      $(deposit).addMousePopup(
+        TWDS._('BANKING_DEPOSIT_YOUR_CASH', 'Deposit your cash.'))
       deposit.onclick = function (e) {
         if (Character.money <= 0) {
           return
         }
-        (new west.gui.Dialog('Deposit your Cash (when in town)',
-          jQuery("<span class='TWDS_banking'>Money: " + Character.money + '</span>'))).setIcon(west.gui.Dialog.SYS_QUESTION).setModal(true, false).addButton('yes', function () {
+        const textDepo = TWDS._('BANKING_DEPOSIT_YOUR_CASH', 'Deposit your cash.')
+        const textYes = TWDS._('YES', 'yes')
+        const textNo = TWDS._('NO', 'no')
+        let textOIT = TWDS._('BANKING_ONLY_IN_TOWN', 'This is only possible if you are in a town.')
+        textOIT = '<div>' + textOIT + '</div>';
+
+        (new west.gui.Dialog(textDepo,
+          jQuery("<span class='TWDS_banking'>$: " + Character.money + '</span>' + textOIT))).setIcon(west.gui.Dialog.SYS_QUESTION).setModal(true, false).addButton(textYes, function () {
           TWDS.banking.deposithelper(1)
-        }).addButton('no').show()
+        }).addButton(textNo).show()
       }
     } else {
       delete deposit.onclick
