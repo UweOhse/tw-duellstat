@@ -233,10 +233,13 @@ TWDS.marketwindow.enhanceit = function (thing) {
       name: 'TWDS_marketwindow_rights'
     }
   })
-  document.querySelector('#msd_rights').appendChild(saverights)
-  if (window.localStorage.TWDS_marketwindow_rights !== null) {
-    const t = window.localStorage.TWDS_marketwindow_rights
-    $('#market_rights').guiElement().select(t || 1)
+  const r = document.querySelector('#msd_rights')
+  if (r) {
+    document.querySelector('#msd_rights').appendChild(saverights)
+    if (window.localStorage.TWDS_marketwindow_rights !== null) {
+      const t = window.localStorage.TWDS_marketwindow_rights
+      $('#market_rights').guiElement().select(t || 1)
+    }
   }
 
   $('.TWDS_marketwindow_save').on('click', function () {
