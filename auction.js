@@ -15,6 +15,7 @@ TWDS.marketwindow.enhanceit = function (thing) {
   // description.
   const savedesc = TWDS.createElement('div', {
     className: 'tw2gui-iconset tw2gui-icon-save TWDS_marketwindow_save',
+    title: TWDS._('AUCTION_SAVE_FOR_FUTURE_SALES', 'Save for future sales'),
     dataset: {
       sel: '#auction_description',
       name: 'TWDS_marketwindow_description'
@@ -33,6 +34,7 @@ TWDS.marketwindow.enhanceit = function (thing) {
     const cur = window.localStorage['TWDS_marketwindow_' + name] || ''
     const t = TWDS.createEle('select', {
       id: 'TWDS_marketwindow_select_base_' + name,
+      title: TWDS._('AUCTION_SAVE_FOR_FUTURE_SALES', 'Save for future sales'),
       style: {
         backgroundColor: 'gainsboro',
         borderColor: 'dimgray'
@@ -47,12 +49,12 @@ TWDS.marketwindow.enhanceit = function (thing) {
         {
           nodeName: 'option',
           value: 'min',
-          textContent: 'min. price',
+          textContent: TWDS._('AUCTION_PRICE_MINIMUM', 'min. price'),
           selected: cur === 'min'
         },
         {
           nodeName: 'option',
-          textContent: 'regular',
+          textContent: TWDS._('AUCTION_PRICE_REGULAR', 'regular'),
           value: 'regular',
           selected: cur === 'regular'
         }
@@ -76,6 +78,7 @@ TWDS.marketwindow.enhanceit = function (thing) {
             nodeName: 'div',
             className: 'tw2gui-iconset tw2gui-icon-save TWDS_marketwindow_save',
             id: 'TWDS_marketwindow_save_base_min',
+            title: TWDS._('AUCTION_SAVE_FOR_FUTURE_SALES', 'Save for future sales'),
             dataset: {
               sel: '#TWDS_marketwindow_select_base_min',
               name: 'TWDS_marketwindow_min'
@@ -96,6 +99,7 @@ TWDS.marketwindow.enhanceit = function (thing) {
             nodeName: 'div',
             className: 'tw2gui-iconset tw2gui-icon-save TWDS_marketwindow_save',
             id: 'TWDS_marketwindow_save_base_max',
+            title: TWDS._('AUCTION_SAVE_FOR_FUTURE_SALES', 'Save for future sales'),
             dataset: {
               sel: '#TWDS_marketwindow_select_base_max',
               name: 'TWDS_marketwindow_max'
@@ -203,7 +207,7 @@ TWDS.marketwindow.enhanceit = function (thing) {
   const savedays = TWDS.createElement('div', {
     id: 'TWDS_marketwindow_save_days',
     className: 'tw2gui-iconset tw2gui-icon-save TWDS_marketwindow_save',
-    title: 'Save the duraction for future auctions',
+    title: TWDS._('AUCTION_SAVE_FOR_FUTURE_SALES', 'Save for future sales'),
     style: {
       cursor: 'pointer',
       display: 'inline-block'
@@ -223,7 +227,7 @@ TWDS.marketwindow.enhanceit = function (thing) {
   const saverights = TWDS.createElement('div', {
     id: 'TWDS_marketwindow_save_rights',
     className: 'tw2gui-iconset tw2gui-icon-save TWDS_marketwindow_save',
-    title: 'Save the rights for future auctions',
+    title: TWDS._('AUCTION_SAVE_FOR_FUTURE_SALES', 'Save for future sales'),
     style: {
       cursor: 'pointer',
       display: 'inline-block'
@@ -246,7 +250,7 @@ TWDS.marketwindow.enhanceit = function (thing) {
     const sel = this.dataset.sel
     const name = this.dataset.name
     window.localStorage[name] = document.querySelector(sel).value;
-    (new UserMessage('saved successful', UserMessage.TYPE_SUCCESS)).show()
+    (new UserMessage(TWDS._('AUCTION_DATA_SAVED', 'saved'), UserMessage.TYPE_SUCCESS)).show()
   })
   $('#market_min_bid').trigger('keyup')
 
