@@ -35,16 +35,25 @@ TWDS.banking.depositinit = function () {
   }
 }
 TWDS.banking.autohome_check = function () {
+  const textNo = TWDS._('NO', 'no')
+  const textYes = TWDS._('YES', 'yes')
   if (Character.homeTown.town_id === 0 || Character.money <= 0) {
     return
   }
-  if (Character.position.x !== Character.homeTown.x || Character.position.y !== Character.homeTown.y) { return }
+  if (Character.position.x !== Character.homeTown.x ||
+    Character.position.y !== Character.homeTown.y) {
+    return
+  }
+
   (new west.gui.Dialog('Deposit your Cash',
-    jQuery("<span class='TWDS_autodeposit'>You have arrived to your Hometown. Would you like to deposit your Cash?<br />Money: " + Character.money + '</span>')))
+    jQuery("<span class='TWDS_autodeposit'>" +
+      TWDS._('BANKING_ARRIVED_HOME',
+        'You have arrived to your Hometown. Would you like to deposit your Cash?') +
+      '<br />$: ' + Character.money + '</span>')))
     .setIcon(west.gui.Dialog.SYS_QUESTION).setModal(true, false)
-    .addButton('yes', function () {
+    .addButton(textYes, function () {
       TWDS.banking.deposithelper(Character.homeTown.town_id)
-    }).addButton('no').show()
+    }).addButton(textNo).show()
 }
 
 TWDS.banking.autohome_toggle = function (v) {
