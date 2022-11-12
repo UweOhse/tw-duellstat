@@ -13,7 +13,7 @@ TWDS.loadSettings = function () {
     console.log('failed to get settings', e)
   }
 }
-TWDS.registerSetting = function (mode, name, text, def, callBack, group, subgroup) {
+TWDS.registerSetting = function (mode, name, text, def, callBack, group, subgroup, ordervalue) {
   const o = {
     mode: mode,
     name: name,
@@ -21,7 +21,8 @@ TWDS.registerSetting = function (mode, name, text, def, callBack, group, subgrou
     def: def,
     callback: callBack || null,
     group: group || 'misc',
-    subgroup: subgroup || ''
+    subgroup: subgroup || '',
+    ordervalue: ordervalue || 0
   }
   TWDS.settingList.push(o)
   if (TWDS.settings === null) {
