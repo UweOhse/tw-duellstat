@@ -2,8 +2,6 @@
 
 TWDS.itemsettab = {}
 
-TWDS.itemsettab.curJobDuration = 15
-
 TWDS.itemsettab.sort = function (e) {
   const colidx = Array.prototype.indexOf.call(this.parentNode.children, this)
   let sortmode = 'a'
@@ -55,7 +53,11 @@ TWDS.itemsettab.sort = function (e) {
   tbody.sortmode = sortmode
   tbody.sortdir = sortdir
 }
-TWDS.itemsettab.createfilters = function (allsets) {
+TWDS.itemsettab.createfilters = function (allsets, checkedWithItems) {
+  let checkedHide = false
+  if (TWDS.settings.itemsettab_hide_columns) {
+    checkedHide = true
+  }
   const years = {}
   const events = {}
   for (let i = 0; i < allsets.length; i++) {
@@ -68,7 +70,7 @@ TWDS.itemsettab.createfilters = function (allsets) {
   const yearsoptions = [{
     nodeName: 'option',
     value: '',
-    textContent: 'any Year'
+    textContent: TWDS._("ITEMSETS_FILTER_ANY_YEAR",'any Year')
   }]
   for (const y of Object.values(years)) {
     const o = {
@@ -81,7 +83,7 @@ TWDS.itemsettab.createfilters = function (allsets) {
   const eventoptions = [{
     nodeName: 'option',
     value: '',
-    textContent: 'Any Event'
+    textContent: TWDS._("ITEMSETS_FILTER_ANY_EVENT",'Any Event'),
   }]
   for (const code of Object.keys(events)) {
     const name = events[code]
@@ -96,39 +98,70 @@ TWDS.itemsettab.createfilters = function (allsets) {
 
   const p = TWDS.createEle({
     nodeName: 'p',
-    children: [
-      {
+    className: "TWDS_itemsets_filterline",
+    children: [{
+      nodeName: 'div',
+      children: [
+        {
+          nodeName: 'span',
+          textContent: TWDS._("ITEMSETS_FILTER_FOR",'Filter for…')
+        },
+        {
+          nodeName: 'select',
+          id: 'TWDS_itemsets_filter_function',
+          children: [
+            { nodeName: 'option', value: '', textContent: TWDS._("ITEMSETS_ANY_BONUS", 'any Bonus') },
+            // { nodeName: 'option', value: 'attr', textContent: 'Attributes (useless)' },
+            // { nodeName: 'option', value: 'skill', textContent: 'Skills (useless)' },
+            { nodeName:'option',value:'dollar',textContent: TWDS._("ITEMSETS_FILTER_MONEY",'$')},
+            { nodeName:'option',value:'drop',  textContent: TWDS._("ITEMSETS_FILTER_DROP",'Drop')},
+            { nodeName:'option',value:'job',   textContent: TWDS._("ITEMSETS_FILTER_JOBPOINTS",'Labor points')},
+            { nodeName:'option',value:'luck',  textContent: TWDS._("ITEMSETS_FILTER_LUCK",'Luck')},
+            { nodeName:'option',value:'pray',  textContent: TWDS._("ITEMSETS_FILTER_PRAY",'Pray')},
+            { nodeName:'option',value:'regen', textContent: TWDS._("ITEMSETS_FILTER_REGEN",'Regeneration')},
+            { nodeName:'option',value:'speed', textContent: TWDS._("ITEMSETS_FILTER_SPEED",'Speed')},
+            { nodeName:'option',value:'xp',    textContent: TWDS._("ITEMSETS_FILTER_XP",'XP')},
+            { nodeName:'option',value:'fb',    textContent: TWDS._("ITEMSETS_FILTER_FB",'Fortbattle')}
+          ]
+        },
+        {
+          nodeName: 'select',
+          id: 'TWDS_itemsets_filter_year',
+          children: yearsoptions
+        },
+        {
+          nodeName: 'select',
+          id: 'TWDS_itemsets_filter_event',
+          children: eventoptions
+        }
+      ]
+    },
+    {
+      nodeName: "label",
+      children: [{
+        nodeName: 'input',
+        type: 'checkbox',
+        checked: checkedHide,
+        onchange: function (v) {
+          v = v.target.checked
+          console.log('hide changed to', v)
+          TWDS.settings.itemsettab_hide_columns = v
+          if (!v) {
+            document.body.classList.remove('TWDS_itemsettable_hidemany')
+            TWDS.q1('#TWDS_itemsettable_th_attr').colSpan = 5
+            TWDS.q1('#TWDS_itemsettable_th_skills').colSpan = 21
+          } else {
+            document.body.classList.add('TWDS_itemsettable_hidemany')
+            TWDS.q1('#TWDS_itemsettable_th_attr').colSpan = 1
+            TWDS.q1('#TWDS_itemsettable_th_skills').colSpan = 1
+          }
+          TWDS.saveSettings()
+        }
+      }, {
         nodeName: 'span',
-        textContent: 'Filter for…'
-      },
-      {
-        nodeName: 'select',
-        id: 'TWDS_itemsets_filter_function',
-        children: [
-          { nodeName: 'option', value: '', textContent: 'any Bonus' },
-          // { nodeName: 'option', value: 'attr', textContent: 'Attributes (useless)' },
-          // { nodeName: 'option', value: 'skill', textContent: 'Skills (useless)' },
-          { nodeName: 'option', value: 'dollar', textContent: '$' },
-          { nodeName: 'option', value: 'drop', textContent: 'Drop' },
-          { nodeName: 'option', value: 'job', textContent: 'Jobpoints' },
-          { nodeName: 'option', value: 'luck', textContent: 'Luck' },
-          { nodeName: 'option', value: 'pray', textContent: 'Pray' },
-          { nodeName: 'option', value: 'regen', textContent: 'Regeneration' },
-          { nodeName: 'option', value: 'speed', textContent: 'Speed' },
-          { nodeName: 'option', value: 'xp', textContent: 'XP' },
-          { nodeName: 'option', value: 'fb', textContent: 'Fortbattle' }
-        ]
-      },
-      {
-        nodeName: 'select',
-        id: 'TWDS_itemsets_filter_year',
-        children: yearsoptions
-      },
-      {
-        nodeName: 'select',
-        id: 'TWDS_itemsets_filter_event',
-        children: eventoptions
-      }
+        textContent: TWDS._("ITEMSETS_HIDE_MANY",'hide many columns')
+      }]
+    },
     ]
   })
   return p
@@ -375,14 +408,16 @@ TWDS.itemsettab.fixallsets = function (allsets) {
 }
 TWDS.itemsettab.getContent1 = function () {
   let allsets = west.storage.ItemSetManager._setArray.slice(0)
-  const div = TWDS.createEle('div')
+  const div = TWDS.createEle({
+    nodeName: 'div'
+  })
   const but = TWDS.createEle({
     nodeName: 'button',
     id: 'TWDS_itemsettable_download',
     style: {
       float: 'right'
     },
-    textContent: 'download unfiltered table'
+    textContent: TWDS._('ITEMSETS_DOWNLOAD_TABLE', 'download unfiltered table')
   })
   div.appendChild(but)
   const butplus = TWDS.createEle({
@@ -392,7 +427,7 @@ TWDS.itemsettab.getContent1 = function () {
       float: 'right'
     },
     textContent: '+',
-    title: 'increase the font size'
+    title: TWDS._('INCREASE_FONT_SIZE', 'increase the font size')
   })
   div.appendChild(butplus)
   const butminus = TWDS.createEle({
@@ -402,18 +437,104 @@ TWDS.itemsettab.getContent1 = function () {
       float: 'right'
     },
     textContent: '-',
-    title: 'decrease the font size'
+    title: TWDS._('DECREASE_FONT_SIZE', 'decrease the font size')
   })
   div.appendChild(butminus)
+  let checkedHand = false
+  let checkedShot = false
+  if (TWDS.settings.itemsettab_use_hand) {
+    checkedHand = true
+  } else {
+    checkedShot = true
+  }
+  let checkedWithItems = false
+  if (TWDS.settings.itemsettab_with_items) {
+    checkedWithItems = true
+  }
 
   const h3 = TWDS.createEle({
     nodeName: 'h3',
-    textContent: 'All item sets'
+    textContent: TWDS._('ITEMSETS_ALL_ITEM_SETS', 'All item sets')
   })
   div.appendChild(h3)
 
+  TWDS.createEle({
+    nodeName: 'div',
+    className:"TWDS_itemsets_options",
+    last: div,
+    children: [
+      {
+        nodeName: 'span',
+        textContent: TWDS._('ITEMSETS_INFLUENCE_OPTIONS',
+          'Options influencing the calculation: ')
+      }, {
+        nodeName: 'select',
+        style: {
+          border: '1px dotted #aaa',
+          padding: '2px 3px'
+        },
+        last: div,
+        children: [
+          {
+            nodeName: 'option',
+            textContent: TWDS._("HANDWEAPON",'Melee Weapon'),
+            selected: checkedHand,
+            value: 'hand'
+          },
+          {
+            nodeName: 'option',
+            textContent: TWDS._("SHOTWEAPON",'Firearm'),
+            selected: checkedShot,
+            value: 'shot'
+          }
+        ],
+        onchange: function (ev) {
+          const v = this.value
+          if (v === 'shot') {
+            checkedShot = true
+            checkedHand = false
+            TWDS.settings.itemsettab_use_hand = false
+          } else {
+            checkedHand = true
+            checkedShot = false
+            TWDS.settings.itemsettab_use_hand = true
+          }
+          TWDS.saveSettings()
+          console.log('before0')
+          if (!wman.isWindowCreated('TWDS')) return
+          console.log('before1')
+          if (!TWDS.window) return
+          console.log('activate')
+          TWDS.activateTab('itemsets')
+        }
+      },
+      {
+        nodeName: 'label',
+        children: [{
+          nodeName: 'input',
+          type: 'checkbox',
+          checked: checkedWithItems,
+          onchange: function (v) {
+            console.log('checkbox change', v)
+            TWDS.settings.itemsettab_with_items = this.checked
+            TWDS.saveSettings()
+            TWDS.activateTab('itemsets')
+          }
+        }, {
+          nodeName: 'span',
+          textContent: TWDS._("ITEMSETS_INCLUDE_ITEMS",'include items')
+        }
+        ]
+      }
+    ]
+  })
+
+  if (TWDS.settings.itemsettab_hide_columns) {
+    document.body.classList.add('TWDS_itemsettable_hidemany')
+  }
+
   allsets = TWDS.itemsettab.fixallsets(allsets)
-  div.appendChild(TWDS.itemsettab.createfilters(allsets))
+  div.appendChild(TWDS.itemsettab.createfilters(allsets, checkedWithItems))
 
   const table = TWDS.createEle({
     nodeName: 'table',
@@ -436,10 +557,12 @@ TWDS.itemsettab.getContent1 = function () {
       className: 'colspanrow',
       children: [
         { nodeName: 'th' },
-        { nodeName: 'th', colSpan: 2, textContent: 'Key' },
-        { nodeName: 'th' }, // #
-        { nodeName: 'th' },
-        { nodeName: 'th' },
+        { nodeName: 'th', colSpan: 2, textContent: '' },
+        { nodeName: 'th', className: 'maybehidden' }, // #
+        { nodeName: 'th', colSpan: 5, 
+          textContent: TWDS._("ATTRIBUTES",'Attributes'), id: 'TWDS_itemsettable_th_attr' },
+        { nodeName: 'th', colSpan: 20, 
+          textContent: TWDS._("SKILLS",'Skills'), id: 'TWDS_itemsettable_th_skills' },
         { nodeName: 'th' }, // $
         { nodeName: 'th' }, //
         { nodeName: 'th' }, //
@@ -447,126 +570,201 @@ TWDS.itemsettab.getContent1 = function () {
         { nodeName: 'th' }, //
         { nodeName: 'th' }, //
         { nodeName: 'th' }, //
-        { nodeName: 'th', colSpan: 4, textContent: 'Fortbattle' },
+        { nodeName: 'th' }, //
+        { nodeName: 'th', colSpan: 3, textContent: TWDS._("FORTBATTLE",'Fortbattle') },
+        { nodeName: 'th', colSpan: 3, textContent: TWDS._("FORTBATTLE_SECTORBONUS",'Fortbattle Sectorbonus') },
         { nodeName: 'th' } //
       ]
     })
+    const doattr = function (no) {
+      const key = window.CharacterSkills.allAttrKeys[no]
+      const name = window.CharacterSkills.keyNames[key]
+      const out = {
+        nodeName: 'th',
+        textContent: name,
+        className: 'maybehidden',
+        dataset: { sortmode: '1' },
+        onclick: sorter
+      }
+      return out
+    }
+    const doskill = function (no) {
+      const key = window.CharacterSkills.allSkillKeys[no]
+      const name = window.CharacterSkills.keyNames[key]
+      const out =
+        {
+          nodeName: 'th',
+          textContent: name,
+          className: 'maybehidden',
+          dataset: { sortmode: '1' },
+          onclick: sorter
+        }
+      return out
+    }
     const h2 = TWDS.createEle({
       nodeName: 'tr',
       children: [
         {
           nodeName: 'th',
-          textContent: 'Name',
+          textContent: TWDS._("ITEMSETS_SETNAME",'Name'),
           className: 'sortable',
           dataset: { sortmode: 'a' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: 'Year',
+          textContent: TWDS._("YEAR",'Year'),
           className: 'sortable',
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: 'Event',
-          title: 'Or the key of the set.',
+          textContent: TWDS._("EVENT",'Event'),
+          title: TWDS._("ITEMSETS_OR_SET_KEY",'Or the key of the set.'),
           dataset: { sortmode: 'a' },
           onclick: sorter
         },
         {
           nodeName: 'th',
           textContent: '#',
-          title: 'Number of items',
+          title: TWDS._("ITEMSETS_NUMBER_OF_ITEMS",'Number of items'),
           dataset: { sortmode: '1' },
-          onclick: sorter
+          onclick: sorter,
+          className: 'maybehidden'
         },
         {
           nodeName: 'th',
-          textContent: 'Attr',
-          title: 'Bonus to the four attributes.',
+          innerHTML: '&#x2211;',
+          title: TWDS._("ITEMSETS_TOTAL_BONUS_ATTR",'Total bonus to the four attributes.'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
+        doattr(0),
+        doattr(1),
+        doattr(2),
+        doattr(3),
         {
           nodeName: 'th',
-          textContent: 'Skills',
-          title: 'Bonus to the skills.',
+          innerHTML: '&#x2211;',
+          title: TWDS._("ITEMSETS_TOTAL_BONUS_SKILLS",'Total bonus to skills.'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
+        doskill(0),
+        doskill(1),
+        doskill(2),
+        doskill(3),
+        doskill(4),
+        doskill(5),
+        doskill(6),
+        doskill(7),
+        doskill(8),
+        doskill(9),
+        doskill(10),
+        doskill(11),
+        doskill(12),
+        doskill(13),
+        doskill(14),
+        doskill(15),
+        doskill(16),
+        doskill(17),
+        doskill(18),
+        doskill(19),
         {
           nodeName: 'th',
           textContent: '$',
-          title: 'Dollar',
+          title: TWDS._("ITEMSETS_FILTER_MONEY",'Dollar'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: 'Drop',
+          dataset: { sortmode: '1' },
+          onclick: sorter,
+          textContent: TWDS._("ITEMSETS_TH_DROP","Drop"),
+          title: TWDS._("ITEMSETS_TH_DROP_TITLE",'Improvement to the product drop chance'),
+        },
+        {
+          nodeName: 'th',
+          textContent: TWDS._("ITEMSETS_TH_JP",'JP'),
+          title: TWDS._("ITEMSETS_TH_JP_TITLE",
+              'Job-Points for all jobs only. Points for special jobs are not counted.'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: 'JP',
-          title: 'Job-Points for all jobs only. Points for special jobs are not counted.',
+          textContent: TWDS._("ITEMSETS_TH_LUCK",'Luck'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: 'Luck',
+          textContent: TWDS._("ITEMSETS_TH_PRAY",'Pray'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: 'Pray',
+          textContent: TWDS._("ITEMSETS_TH_REGEN",'Regen'),
+          title: TWDS._("ITEMSETS_TH_REGEN_TITLE",'Faster regeneration'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: 'Regen',
+          textContent: TWDS._("ITEMSETS_TH_SPEED",'Speed'),
+          title: TWDS._("ITEMSETS_TH_SPEED_TITLE",'Higher Speed'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: 'Speed',
+          textContent: TWDS._("ITEMSETS_TH_XP",'Exp'),
+          title: TWDS._("ITEMSETS_TH_XP_TITLE",'Erfahrung'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: 'XP',
+          textContent: TWDS._("ITEMSETS_TH_FB_OFF",'Off'),
+          title: TWDS._("ITEMSETS_TH_FB_OFF_TITLE",'Attack (Fort battle bonus)'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: 'Off',
+          textContent: TWDS._("ITEMSETS_TH_FB_DEF",'Def'),
+          title: TWDS._("ITEMSETS_TH_FB_DEF_TITLE",'Defense (Fort battle bonus)'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: 'Def',
+          textContent: TWDS._("ITEMSETS_TH_FB_RES",'Res'),
+          title: TWDS._("ITEMSETS_TH_FB_RES_TITLE",'Resistance (Fort battle bonus)'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: 'Dmg',
+          textContent: TWDS._("ITEMSETS_TH_FBS_OFF",'Off'),
+          title: TWDS._("ITEMSETS_TH_FBS_OFF_TITLE",'Attack (Fort battle sector bonus)'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: 'Res',
+          textContent: TWDS._("ITEMSETS_TH_FBS_DEF",'Def'),
+          title: TWDS._("ITEMSETS_TH_FBS_DEF_TITLE",'Defense (Fort battle sector bonus)'),
+          dataset: { sortmode: '1' },
+          onclick: sorter
+        },
+        {
+          nodeName: 'th',
+          textContent: TWDS._("ITEMSETS_TH_FBS_DMG",'Dmg'),
+          title: TWDS._("ITEMSETS_TH_FBS_DMG_TITLE",'Damage (Fort battle sector bonus)'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
@@ -593,6 +791,7 @@ TWDS.itemsettab.getContent1 = function () {
     const eventname = allsets[i].eventname
     const itemSet = west.storage.ItemSetManager.get(k)
     const setBonuses = itemSet.getMergedStages(s.items.length)
+    const items = s.items
     const fuddle = {
       fixed: 0,
       perlevel: 0,
@@ -612,7 +811,11 @@ TWDS.itemsettab.getContent1 = function () {
       fb_resistance: Object.assign({}, fuddle),
       fb_defense: Object.assign({}, fuddle),
       fb_offense: Object.assign({}, fuddle),
-      fb_damage: Object.assign({}, fuddle)
+      fb_damage: Object.assign({}, fuddle),
+      fbs_defense: Object.assign({}, fuddle),
+      fbs_offense: Object.assign({}, fuddle),
+      fbs_damage: Object.assign({}, fuddle),
+      damage: Object.assign({}, fuddle)
     }
     for (let j = 0; j < window.CharacterSkills.allAttrKeys.length; j++) {
       const y = window.CharacterSkills.allAttrKeys[j]
@@ -622,10 +825,7 @@ TWDS.itemsettab.getContent1 = function () {
       const y = window.CharacterSkills.allSkillKeys[j]
       sum[y] = Object.assign({}, fuddle)
     }
-
-    let notice = ''
-    for (let j = 0; j < setBonuses.length; j++) {
-      const bonus = setBonuses[j]
+    const handleonesetbonus = function (bonus) {
       let onenote = ''
       if (bonus.type === 'character') {
         const type = bonus.bonus.type
@@ -635,29 +835,42 @@ TWDS.itemsettab.getContent1 = function () {
         } else if (type === 'attribute' || type === 'skill') {
           const name = bonus.bonus.name
           sum[name].perlevel += bonus.bonus.value
-          sum[name].rounding += bonus.roundingMethod
+          sum[name].rounding = bonus.roundingMethod
         } else if (type === 'job' && bonus.bonus.job === 'all') {
           sum.job.perlevel += bonus.bonus.value
-          sum.job.rounding += bonus.roundingMethod
+          sum.job.rounding = bonus.roundingMethod
         } else if (type === 'job') {
           sum.jobmisc.perlevel += bonus.bonus.value
-          sum.jobmisc.rounding += bonus.roundingMethod
+          sum.jobmisc.rounding = bonus.roundingMethod
+        } else if (type === 'damage') {
+          sum.damage.perlevel += bonus.bonus.value
+          sum.damage.rounding = bonus.roundingMethod
         } else if (type === 'fortbattle') {
-          const k3 = 'fb_' + bonus.bonus.name
+          let k3
+          if (bonus.bonus.isSector) {
+            k3 = 'fbs_' + bonus.bonus.name
+          } else {
+            k3 = 'fb_' + bonus.bonus.name
+          }
           if (k3 in sum) {
             sum[k3].perlevel += bonus.bonus.value
-            sum[k3].rounding += bonus.roundingMethod
+            sum[k3].rounding = bonus.roundingMethod
           } else {
             onenote += 'unkn. fortbattle bonus.bonus.name ' + bonus.bonus.name + '.'
           }
         } else if (type in sum) {
           sum[type].perlevel += bonus.bonus.value
-          sum[type].rounding += bonus.roundingMethod
+          sum[type].rounding = ''
         } else {
           onenote += 'unkn. bonus.bonus.type ' + type + '.'
         }
       } else if (bonus.type === 'fortbattle') {
-        const k2 = 'fb_' + bonus.name
+        let k2
+        if (bonus.isSector) {
+          k2 = 'fbs_' + bonus.name
+        } else {
+          k2 = 'fb_' + bonus.name
+        }
         if (k2 in sum) {
           sum[k2].fixed += bonus.value
         } else {
@@ -685,6 +898,64 @@ TWDS.itemsettab.getContent1 = function () {
       }
       if (notice > '') notice += ' '
       notice += onenote
+    }
+    const handleitembonus = function (bonus) {
+      for (let i = 0; i < bonus.item.length; i++) {
+        const it = bonus.item[i]
+        handleonesetbonus(it)
+        continue
+      }
+      // ToDO
+    }
+
+    let notice = ''
+    for (let j = 0; j < setBonuses.length; j++) {
+      const bonus = setBonuses[j]
+      handleonesetbonus(bonus)
+    }
+    if (checkedWithItems) {
+      for (let j = 0; j < items.length; j++) {
+        const iid = items[j]
+        const item = ItemManager.getByBaseId(iid)
+        if (item.type === 'right_arm') {
+          if (item.sub_type === 'hand' && !checkedHand) {
+            continue
+          } else if (item.sub_type === 'shot' && !checkedShot) {
+            continue
+          }
+        }
+        if (item && item.bonus) {
+          handleitembonus(item.bonus)
+        }
+        if (item.bonus.attributes.length) {
+          if (notice > '') notice += ' '
+          notice += 'unhandled item.bonus.attributes: ' +
+            JSON.stringify(item.bonus.attributes)
+        }
+        if (item.bonus.skills.length) {
+          if (notice > '') notice += ' '
+          notice += 'unhandled item.bonus.skills: ' +
+            JSON.stringify(item.bonus.skills)
+        }
+        if (item.bonus.fortbattle.offense) {
+          sum.fb_offense.fixed += item.bonus.fortbattle.offense
+        }
+        if (item.bonus.fortbattle.defense) {
+          sum.fb_defense.fixed += item.bonus.fortbattle.defense
+        }
+        if (item.bonus.fortbattle.resistance) {
+          sum.fb_resistance.fixed += item.bonus.fortbattle.resistance
+        }
+        if (item.bonus.fortbattlesector.offense) {
+          sum.fbs_offense.fixed += item.bonus.fortbattlesector.offense
+        }
+        if (item.bonus.fortbattlesector.defense) {
+          sum.fbs_defense.fixed += item.bonus.fortbattlesector.defense
+        }
+        if (item.bonus.fortbattlesector.damage) {
+          sum.fbs_damage.fixed += item.bonus.fortbattlesector.damage
+        }
+      }
     }
 
     for (const f of Object.keys(sum)) {
@@ -726,16 +997,17 @@ TWDS.itemsettab.getContent1 = function () {
       }
     }
 
-    const muddle = function (data, post, factor, fnkey, hint) {
+    const muddle = function (data, post, factor, fnkey, cladd) {
       const text = (factor * data.total * 1.0).toFixed(1) + '' + post
-      let title = '<b>' + (factor * data.total * 1.0).toFixed(1) + '' + post + '</b>'
+      let title = '<b>' + (factor * data.total * 1.0).toFixed(2) + '' + post + '</b>'
       let cn = ''
+      if (cladd) { cn += cladd }
       if (data.perlevel) {
         title += '<hr>'
-        title += (factor * data.perlevel * 1.0).toFixed(1) + '' + post + ' per level.'
-        cn += 'perlevel'
+        title += (factor * data.perlevel * 1.0).toFixed(2) + '' + post + ' per level.'
+        cn += ' perlevel'
         if (data.fixed) {
-          title += (factor * data.fixed * 1.0).toFixed(1) + '' + post + ' fixed.'
+          title += (factor * data.fixed * 1.0).toFixed(2) + '' + post + ' fixed.'
         }
       }
 
@@ -751,10 +1023,11 @@ TWDS.itemsettab.getContent1 = function () {
       }
       return out
     }
-    const muddlea = function (total, data, keys, post, factor, fnkey, hint) {
+    const muddlea = function (total, data, keys, post, factor, fnkey, cladd) {
       const text = (factor * total) + '' + post
-      let title = '<b>' + (factor * total * 1.0).toFixed(1) + '' + post + '</b>'
-      const cn = ''
+      let title = '<b>' + (factor * total * 1.0).toFixed(2) + '' + post + '</b>'
+      let cn = ''
+      if (cladd) { cn += cladd }
       let didhr = 0
       for (let j = 0; j < keys.length; j++) {
         const y = keys[j]
@@ -763,10 +1036,10 @@ TWDS.itemsettab.getContent1 = function () {
           didhr = 1
         }
         if (data[y].perlevel) {
-          title += (factor * data[y].perlevel).toFixed(1) + '' + post + ' ' + y + ' per level.<br>'
+          title += (factor * data[y].perlevel).toFixed(2) + '' + post + ' ' + y + ' per level.<br>'
         }
         if (data[y].fixed) {
-          title += (factor * data[y].fixed).toFixed(1) + '' + post + ' ' + y + '<br>'
+          title += (factor * data[y].fixed).toFixed(2) + '' + post + ' ' + y + '<br>'
         }
       }
 
@@ -803,9 +1076,38 @@ TWDS.itemsettab.getContent1 = function () {
         },
         { nodeName: 'td', textContent: year },
         { nodeName: 'td', textContent: eventname, title: k },
-        { nodeName: 'td', textContent: s.items.length },
+        { nodeName: 'td', textContent: s.items.length, className: 'maybehidden' },
         muddlea(sumattributes, sum, window.CharacterSkills.allAttrKeys, '', 1, 'attr'),
+        muddle(sum.strength, '', 1, 'strength', 'maybehidden'),
+        muddle(sum.flexibility, '', 1, 'flexibility', 'maybehidden'),
+        muddle(sum.dexterity, '', 1, 'dexterity', 'maybehidden'),
+        muddle(sum.charisma, '', 1, 'charisma', 'maybehidden'),
         muddlea(sumskills, sum, window.CharacterSkills.allSkillKeys, '', 1, 'skill'),
+
+        muddle(sum.build, '', 1, 'build', 'maybehidden'),
+        muddle(sum.punch, '', 1, 'punch', 'maybehidden'),
+        muddle(sum.tough, '', 1, 'tough', 'maybehidden'),
+        muddle(sum.endurance, '', 1, 'endurance', 'maybehidden'),
+        muddle(sum.health, '', 1, 'health', 'maybehidden'),
+
+        muddle(sum.ride, '', 1, 'ride', 'maybehidden'),
+        muddle(sum.reflex, '', 1, 'reflex', 'maybehidden'),
+        muddle(sum.dodge, '', 1, 'dodge', 'maybehidden'),
+        muddle(sum.hide, '', 1, 'hide', 'maybehidden'),
+        muddle(sum.swim, '', 1, 'swim', 'maybehidden'),
+
+        muddle(sum.aim, '', 1, 'aim', 'maybehidden'),
+        muddle(sum.shot, '', 1, 'shot', 'maybehidden'),
+        muddle(sum.pitfall, '', 1, 'pitfall', 'maybehidden'),
+        muddle(sum.finger_dexterity, '', 1, 'finger_dexterity', 'maybehidden'),
+        muddle(sum.repair, '', 1, 'repair', 'maybehidden'),
+
+        muddle(sum.leadership, '', 1, 'leadership', 'maybehidden'),
+        muddle(sum.tactic, '', 1, 'tactic', 'maybehidden'),
+        muddle(sum.trade, '', 1, 'trade', 'maybehidden'),
+        muddle(sum.animal, '', 1, 'animal', 'maybehidden'),
+        muddle(sum.appearance, '', 1, 'appearance', 'maybehidden'),
+
         muddle(sum.dollar, '%', 100, 'dollar'),
         muddle(sum.drop, '%', 100, 'drop'),
         muddle(sum.job, '', 1, 'job'),
@@ -816,8 +1118,10 @@ TWDS.itemsettab.getContent1 = function () {
         muddle(sum.experience, '%', 100, 'xp'),
         muddle(sum.fb_offense, '', 1, 'fb'),
         muddle(sum.fb_defense, '', 1, 'fb'),
-        muddle(sum.fb_damage, '', 1, 'fb'),
         muddle(sum.fb_resistance, '', 1, 'fb'),
+        muddle(sum.fbs_offense, '', 1, 'fb'),
+        muddle(sum.fbs_defense, '', 1, 'fb'),
+        muddle(sum.fbs_damage, '', 1, 'fb'),
         {
           nodeName: 'td',
           style: {
@@ -864,8 +1168,8 @@ TWDS.itemsettab.getContent1 = function () {
   div.appendChild(ul)
   let li = TWDS.createEle({
     nodeName: 'li',
-    textContent: 'The table shows informations about the item sets in the game. ' +
-     "It does not currently account for the items. Most data is updated as soon as the server is updated, so it's quite current. The only exceptions are the year and the event name, since these are inferred from the set key (a quite difficult thing not following any scheme). So it might be possibly that the year is missing or the event is unknown. Sorry for that, i'll add an exception to the code some time in the far future."
+    textContent: 'The table shows information about the item sets in the game. ' +
+     "It can account for the items. Most data is updated as soon as the server is updated, so it's quite current. The only exceptions are the year and the event name, since these are inferred from the set key (a quite difficult thing not following any scheme). So it might be possibly that the year is missing or the event is unknown. Sorry for that, i'll add an exception to the code some time in the future."
   })
   ul.appendChild(li)
   li = TWDS.createEle({
@@ -888,6 +1192,10 @@ TWDS.itemsettab.getContent1 = function () {
     textContent: 'The filters work subtractive: if you filter for dollar and 2017, you will got the dollar bonus sets of 2017, not all dollar bonus sets plus all sets from 2017.'
   })
   ul.appendChild(li)
+  if (TWDS.settings.itemsettab_hide_columns) {
+    TWDS.q1('#TWDS_itemsettable_th_attr', div).colSpan = 1
+    TWDS.q1('#TWDS_itemsettable_th_skills', div).colSpan = 1
+  }
   return div
 }
 TWDS.itemsets_fontsize = function (delta) {
@@ -952,18 +1260,12 @@ TWDS.itemsettab.dofilter = function () {
 TWDS.itemsettab.activate = function () {
   TWDS.activateTab('itemsets')
   const tab = TWDS.q1('#TWDS_itemset_table')
-  if (window.TWX) {
-    tab.classList.add('with-twx')
-    tab.addEventListener('click', function (e) {
-      const t = e.target
-      if (t.classList.contains('setname')) {
-        if (window.TWX) {
-          window.TWX.GUI.makeList()
-          window.TWX.GUI.open('openBonusWindow', t.dataset.setkey, 'SetBonus')
-        }
-      }
-    })
-  }
+  tab.addEventListener('click', function (e) {
+    const t = e.target
+    if (t.classList.contains('setname')) {
+      TWDS.showset.open(t.dataset.setkey)
+    }
+  })
 }
 
 TWDS.itemsettab.startFunction = function () {
