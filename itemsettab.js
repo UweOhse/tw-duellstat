@@ -70,7 +70,7 @@ TWDS.itemsettab.createfilters = function (allsets, checkedWithItems) {
   const yearsoptions = [{
     nodeName: 'option',
     value: '',
-    textContent: TWDS._("ITEMSETS_FILTER_ANY_YEAR",'any Year')
+    textContent: TWDS._('ITEMSETS_FILTER_ANY_YEAR', 'any Year')
   }]
   for (const y of Object.values(years)) {
     const o = {
@@ -83,7 +83,7 @@ TWDS.itemsettab.createfilters = function (allsets, checkedWithItems) {
   const eventoptions = [{
     nodeName: 'option',
     value: '',
-    textContent: TWDS._("ITEMSETS_FILTER_ANY_EVENT",'Any Event'),
+    textContent: TWDS._('ITEMSETS_FILTER_ANY_EVENT', 'Any Event')
   }]
   for (const code of Object.keys(events)) {
     const name = events[code]
@@ -98,30 +98,30 @@ TWDS.itemsettab.createfilters = function (allsets, checkedWithItems) {
 
   const p = TWDS.createEle({
     nodeName: 'p',
-    className: "TWDS_itemsets_filterline",
+    className: 'TWDS_itemsets_filterline',
     children: [{
       nodeName: 'div',
       children: [
         {
           nodeName: 'span',
-          textContent: TWDS._("ITEMSETS_FILTER_FOR",'Filter for…')
+          textContent: TWDS._('ITEMSETS_FILTER_FOR', 'Filter for…')
         },
         {
           nodeName: 'select',
           id: 'TWDS_itemsets_filter_function',
           children: [
-            { nodeName: 'option', value: '', textContent: TWDS._("ITEMSETS_ANY_BONUS", 'any Bonus') },
+            { nodeName: 'option', value: '', textContent: TWDS._('ITEMSETS_ANY_BONUS', 'any Bonus') },
             // { nodeName: 'option', value: 'attr', textContent: 'Attributes (useless)' },
             // { nodeName: 'option', value: 'skill', textContent: 'Skills (useless)' },
-            { nodeName:'option',value:'dollar',textContent: TWDS._("ITEMSETS_FILTER_MONEY",'$')},
-            { nodeName:'option',value:'drop',  textContent: TWDS._("ITEMSETS_FILTER_DROP",'Drop')},
-            { nodeName:'option',value:'job',   textContent: TWDS._("ITEMSETS_FILTER_JOBPOINTS",'Labor points')},
-            { nodeName:'option',value:'luck',  textContent: TWDS._("ITEMSETS_FILTER_LUCK",'Luck')},
-            { nodeName:'option',value:'pray',  textContent: TWDS._("ITEMSETS_FILTER_PRAY",'Pray')},
-            { nodeName:'option',value:'regen', textContent: TWDS._("ITEMSETS_FILTER_REGEN",'Regeneration')},
-            { nodeName:'option',value:'speed', textContent: TWDS._("ITEMSETS_FILTER_SPEED",'Speed')},
-            { nodeName:'option',value:'xp',    textContent: TWDS._("ITEMSETS_FILTER_XP",'XP')},
-            { nodeName:'option',value:'fb',    textContent: TWDS._("ITEMSETS_FILTER_FB",'Fortbattle')}
+            { nodeName: 'option', value: 'dollar', textContent: TWDS._('ITEMSETS_FILTER_MONEY', '$') },
+            { nodeName: 'option', value: 'drop', textContent: TWDS._('ITEMSETS_FILTER_DROP', 'Drop') },
+            { nodeName: 'option', value: 'job', textContent: TWDS._('ITEMSETS_FILTER_JOBPOINTS', 'Labor points') },
+            { nodeName: 'option', value: 'luck', textContent: TWDS._('ITEMSETS_FILTER_LUCK', 'Luck') },
+            { nodeName: 'option', value: 'pray', textContent: TWDS._('ITEMSETS_FILTER_PRAY', 'Pray') },
+            { nodeName: 'option', value: 'regen', textContent: TWDS._('ITEMSETS_FILTER_REGEN', 'Regeneration') },
+            { nodeName: 'option', value: 'speed', textContent: TWDS._('ITEMSETS_FILTER_SPEED', 'Speed') },
+            { nodeName: 'option', value: 'xp', textContent: TWDS._('ITEMSETS_FILTER_XP', 'XP') },
+            { nodeName: 'option', value: 'fb', textContent: TWDS._('ITEMSETS_FILTER_FB', 'Fortbattle') }
           ]
         },
         {
@@ -137,7 +137,7 @@ TWDS.itemsettab.createfilters = function (allsets, checkedWithItems) {
       ]
     },
     {
-      nodeName: "label",
+      nodeName: 'label',
       children: [{
         nodeName: 'input',
         type: 'checkbox',
@@ -159,9 +159,9 @@ TWDS.itemsettab.createfilters = function (allsets, checkedWithItems) {
         }
       }, {
         nodeName: 'span',
-        textContent: TWDS._("ITEMSETS_HIDE_MANY",'hide many columns')
+        textContent: TWDS._('ITEMSETS_HIDE_MANY', 'hide many columns')
       }]
-    },
+    }
     ]
   })
   return p
@@ -460,7 +460,7 @@ TWDS.itemsettab.getContent1 = function () {
 
   TWDS.createEle({
     nodeName: 'div',
-    className:"TWDS_itemsets_options",
+    className: 'TWDS_itemsets_options',
     last: div,
     children: [
       {
@@ -477,13 +477,13 @@ TWDS.itemsettab.getContent1 = function () {
         children: [
           {
             nodeName: 'option',
-            textContent: TWDS._("HANDWEAPON",'Melee Weapon'),
+            textContent: TWDS._('HANDWEAPON', 'Melee Weapon'),
             selected: checkedHand,
             value: 'hand'
           },
           {
             nodeName: 'option',
-            textContent: TWDS._("SHOTWEAPON",'Firearm'),
+            textContent: TWDS._('SHOTWEAPON', 'Firearm'),
             selected: checkedShot,
             value: 'shot'
           }
@@ -522,7 +522,7 @@ TWDS.itemsettab.getContent1 = function () {
           }
         }, {
           nodeName: 'span',
-          textContent: TWDS._("ITEMSETS_INCLUDE_ITEMS",'include items')
+          textContent: TWDS._('ITEMSETS_INCLUDE_ITEMS', 'include items')
         }
         ]
       }
@@ -559,10 +559,18 @@ TWDS.itemsettab.getContent1 = function () {
         { nodeName: 'th' },
         { nodeName: 'th', colSpan: 2, textContent: '' },
         { nodeName: 'th', className: 'maybehidden' }, // #
-        { nodeName: 'th', colSpan: 5, 
-          textContent: TWDS._("ATTRIBUTES",'Attributes'), id: 'TWDS_itemsettable_th_attr' },
-        { nodeName: 'th', colSpan: 20, 
-          textContent: TWDS._("SKILLS",'Skills'), id: 'TWDS_itemsettable_th_skills' },
+        {
+          nodeName: 'th',
+          colSpan: 5,
+          textContent: TWDS._('ATTRIBUTES', 'Attributes'),
+          id: 'TWDS_itemsettable_th_attr'
+        },
+        {
+          nodeName: 'th',
+          colSpan: 20,
+          textContent: TWDS._('SKILLS', 'Skills'),
+          id: 'TWDS_itemsettable_th_skills'
+        },
         { nodeName: 'th' }, // $
         { nodeName: 'th' }, //
         { nodeName: 'th' }, //
@@ -571,8 +579,8 @@ TWDS.itemsettab.getContent1 = function () {
         { nodeName: 'th' }, //
         { nodeName: 'th' }, //
         { nodeName: 'th' }, //
-        { nodeName: 'th', colSpan: 3, textContent: TWDS._("FORTBATTLE",'Fortbattle') },
-        { nodeName: 'th', colSpan: 3, textContent: TWDS._("FORTBATTLE_SECTORBONUS",'Fortbattle Sectorbonus') },
+        { nodeName: 'th', colSpan: 3, textContent: TWDS._('FORTBATTLE', 'Fortbattle') },
+        { nodeName: 'th', colSpan: 3, textContent: TWDS._('FORTBATTLE_SECTORBONUS', 'Fortbattle Sectorbonus') },
         { nodeName: 'th' } //
       ]
     })
@@ -606,29 +614,29 @@ TWDS.itemsettab.getContent1 = function () {
       children: [
         {
           nodeName: 'th',
-          textContent: TWDS._("ITEMSETS_SETNAME",'Name'),
+          textContent: TWDS._('ITEMSETS_SETNAME', 'Name'),
           className: 'sortable',
           dataset: { sortmode: 'a' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("YEAR",'Year'),
+          textContent: TWDS._('YEAR', 'Year'),
           className: 'sortable',
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("EVENT",'Event'),
-          title: TWDS._("ITEMSETS_OR_SET_KEY",'Or the key of the set.'),
+          textContent: TWDS._('EVENT', 'Event'),
+          title: TWDS._('ITEMSETS_OR_SET_KEY', 'Or the key of the set.'),
           dataset: { sortmode: 'a' },
           onclick: sorter
         },
         {
           nodeName: 'th',
           textContent: '#',
-          title: TWDS._("ITEMSETS_NUMBER_OF_ITEMS",'Number of items'),
+          title: TWDS._('ITEMSETS_NUMBER_OF_ITEMS', 'Number of items'),
           dataset: { sortmode: '1' },
           onclick: sorter,
           className: 'maybehidden'
@@ -636,7 +644,7 @@ TWDS.itemsettab.getContent1 = function () {
         {
           nodeName: 'th',
           innerHTML: '&#x2211;',
-          title: TWDS._("ITEMSETS_TOTAL_BONUS_ATTR",'Total bonus to the four attributes.'),
+          title: TWDS._('ITEMSETS_TOTAL_BONUS_ATTR', 'Total bonus to the four attributes.'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
@@ -647,7 +655,7 @@ TWDS.itemsettab.getContent1 = function () {
         {
           nodeName: 'th',
           innerHTML: '&#x2211;',
-          title: TWDS._("ITEMSETS_TOTAL_BONUS_SKILLS",'Total bonus to skills.'),
+          title: TWDS._('ITEMSETS_TOTAL_BONUS_SKILLS', 'Total bonus to skills.'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
@@ -674,7 +682,7 @@ TWDS.itemsettab.getContent1 = function () {
         {
           nodeName: 'th',
           textContent: '$',
-          title: TWDS._("ITEMSETS_FILTER_MONEY",'Dollar'),
+          title: TWDS._('ITEMSETS_FILTER_MONEY', 'Dollar'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
@@ -682,89 +690,89 @@ TWDS.itemsettab.getContent1 = function () {
           nodeName: 'th',
           dataset: { sortmode: '1' },
           onclick: sorter,
-          textContent: TWDS._("ITEMSETS_TH_DROP","Drop"),
-          title: TWDS._("ITEMSETS_TH_DROP_TITLE",'Improvement to the product drop chance'),
+          textContent: TWDS._('ITEMSETS_TH_DROP', 'Drop'),
+          title: TWDS._('ITEMSETS_TH_DROP_TITLE', 'Improvement to the product drop chance')
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("ITEMSETS_TH_JP",'JP'),
-          title: TWDS._("ITEMSETS_TH_JP_TITLE",
-              'Job-Points for all jobs only. Points for special jobs are not counted.'),
+          textContent: TWDS._('ITEMSETS_TH_JP', 'JP'),
+          title: TWDS._('ITEMSETS_TH_JP_TITLE',
+            'Job-Points for all jobs only. Points for special jobs are not counted.'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("ITEMSETS_TH_LUCK",'Luck'),
+          textContent: TWDS._('ITEMSETS_TH_LUCK', 'Luck'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("ITEMSETS_TH_PRAY",'Pray'),
+          textContent: TWDS._('ITEMSETS_TH_PRAY', 'Pray'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("ITEMSETS_TH_REGEN",'Regen'),
-          title: TWDS._("ITEMSETS_TH_REGEN_TITLE",'Faster regeneration'),
+          textContent: TWDS._('ITEMSETS_TH_REGEN', 'Regen'),
+          title: TWDS._('ITEMSETS_TH_REGEN_TITLE', 'Faster regeneration'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("ITEMSETS_TH_SPEED",'Speed'),
-          title: TWDS._("ITEMSETS_TH_SPEED_TITLE",'Higher Speed'),
+          textContent: TWDS._('ITEMSETS_TH_SPEED', 'Speed'),
+          title: TWDS._('ITEMSETS_TH_SPEED_TITLE', 'Higher Speed'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("ITEMSETS_TH_XP",'Exp'),
-          title: TWDS._("ITEMSETS_TH_XP_TITLE",'Erfahrung'),
+          textContent: TWDS._('ITEMSETS_TH_XP', 'Exp'),
+          title: TWDS._('ITEMSETS_TH_XP_TITLE', 'Erfahrung'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("ITEMSETS_TH_FB_OFF",'Off'),
-          title: TWDS._("ITEMSETS_TH_FB_OFF_TITLE",'Attack (Fort battle bonus)'),
+          textContent: TWDS._('ITEMSETS_TH_FB_OFF', 'Off'),
+          title: TWDS._('ITEMSETS_TH_FB_OFF_TITLE', 'Attack (Fort battle bonus)'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("ITEMSETS_TH_FB_DEF",'Def'),
-          title: TWDS._("ITEMSETS_TH_FB_DEF_TITLE",'Defense (Fort battle bonus)'),
+          textContent: TWDS._('ITEMSETS_TH_FB_DEF', 'Def'),
+          title: TWDS._('ITEMSETS_TH_FB_DEF_TITLE', 'Defense (Fort battle bonus)'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("ITEMSETS_TH_FB_RES",'Res'),
-          title: TWDS._("ITEMSETS_TH_FB_RES_TITLE",'Resistance (Fort battle bonus)'),
+          textContent: TWDS._('ITEMSETS_TH_FB_RES', 'Res'),
+          title: TWDS._('ITEMSETS_TH_FB_RES_TITLE', 'Resistance (Fort battle bonus)'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("ITEMSETS_TH_FBS_OFF",'Off'),
-          title: TWDS._("ITEMSETS_TH_FBS_OFF_TITLE",'Attack (Fort battle sector bonus)'),
+          textContent: TWDS._('ITEMSETS_TH_FBS_OFF', 'Off'),
+          title: TWDS._('ITEMSETS_TH_FBS_OFF_TITLE', 'Attack (Fort battle sector bonus)'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("ITEMSETS_TH_FBS_DEF",'Def'),
-          title: TWDS._("ITEMSETS_TH_FBS_DEF_TITLE",'Defense (Fort battle sector bonus)'),
+          textContent: TWDS._('ITEMSETS_TH_FBS_DEF', 'Def'),
+          title: TWDS._('ITEMSETS_TH_FBS_DEF_TITLE', 'Defense (Fort battle sector bonus)'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
         {
           nodeName: 'th',
-          textContent: TWDS._("ITEMSETS_TH_FBS_DMG",'Dmg'),
-          title: TWDS._("ITEMSETS_TH_FBS_DMG_TITLE",'Damage (Fort battle sector bonus)'),
+          textContent: TWDS._('ITEMSETS_TH_FBS_DMG', 'Dmg'),
+          title: TWDS._('ITEMSETS_TH_FBS_DMG_TITLE', 'Damage (Fort battle sector bonus)'),
           dataset: { sortmode: '1' },
           onclick: sorter
         },
