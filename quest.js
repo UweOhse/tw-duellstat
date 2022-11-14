@@ -71,18 +71,18 @@ TWDS.quest.cancelQuest = function (id) {
   )
 }
 
+TWDS.registerSetting('bool', 'quest_cancel_question',
+  TWDS._('QUESTS_SETTING_CANCEL', 'Add a safety question before canceling a quest.'),
+  true, null, 'Quests', null, 1)
 TWDS.registerSetting('bool', 'quest_show_itemcount',
   TWDS._('QUESTS_SETTING_SHOW_ITEMCOUNT', 'Show the amount of items in your inventory in the quest window'),
-  false, null, 'Quests')
+  false, null, 'Quests', null, 2)
 TWDS.registerSetting('bool', 'questtracker_show_itemcount',
   TWDS._('QUESTS_SETTING_SHOW_ITEMCOUNT_TRACKER', 'Show the amount of items in your inventory in the quest tracker.'),
-  false, null, 'Quests')
+  false, null, 'Quests', null, 3)
 TWDS.registerSetting('bool', 'questtracker_show_booklinks',
   TWDS._('QUESTS_SETTING_ADD_BOOK_LINK', 'Add quest book links to the quest tracker'),
-  true, null, 'Quests')
-TWDS.registerSetting('bool', 'quest_cancel_question',
-  TWDS._('QUESTS_SETTING_ADD_BOOK_LINK', 'Add a safety question before canceling a quest.'),
-  true, null, 'Quests')
+  true, null, 'Quests', null, 4)
 
 TWDS.registerStartFunc(function () {
   Quest.prototype._TWDS_backup_render = Quest.prototype.render
