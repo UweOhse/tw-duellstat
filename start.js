@@ -5,6 +5,7 @@ TWDS.settings = null
 TWDS.lfd = 0
 TWDS.baseURL = 'https://ohse.de/uwe/tw-duellstat/'
 TWDS.version = '@REPLACEMYVERSION@'
+TWDS.crafting = null // to be filled by main.js - async, so don't expect it to be filled.
 
 // a hash function. Source: https://stackoverflow.com/a/52171480
 // doesn't work with IE11. Too bad.
@@ -63,8 +64,17 @@ TWDS.registerStartFunc = function (x) {
 }
 // this is a hack for the developer.
 TWDS.reload = function (x) {
-  $.getScript(TWDS.baseURL + 'dev/' + x + '.js', function () {
+  let u
+  if (x.length === 2) {
+    u = TWDS.baseURL + 'dev/' + x + '.json'
+  } else {
+    u = TWDS.baseURL + 'dev/' + x + '.js'
+  }
+  $.getScript(u, function () {
     console.log('getScript', x, 'done')
+    if (x.length === 2) {
+      TWDS.fixTranslation()
+    }
   })
 }
 
