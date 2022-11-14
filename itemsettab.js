@@ -564,7 +564,7 @@ TWDS.itemsettab.getContent1 = function () {
           nodeName: 'th',
           colSpan: 5,
           dataset: {
-            fullColSpan: 5,
+            fullColSpan: 5
           },
           textContent: TWDS._('ATTRIBUTES', 'Attributes'),
           id: 'TWDS_itemsettable_th_attr'
@@ -573,7 +573,7 @@ TWDS.itemsettab.getContent1 = function () {
           nodeName: 'th',
           colSpan: 21,
           dataset: {
-            fullColSpan: 21,
+            fullColSpan: 21
           },
           textContent: TWDS._('SKILLS', 'Skills'),
           id: 'TWDS_itemsettable_th_skills'
