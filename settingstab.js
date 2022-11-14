@@ -102,6 +102,7 @@ TWDS.getSettingsContentReal = function () {
       }
       const t = a.group.toLocaleLowerCase().localeCompare(b.group.toLocaleLowerCase())
       if (t) return t
+      if (a.ordervalue !== b.ordervalue) { return a.ordervalue - b.ordervalue }
       return a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
     })
     for (const one of a) {
