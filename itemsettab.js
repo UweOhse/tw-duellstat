@@ -146,6 +146,7 @@ TWDS.itemsettab.createfilters = function (allsets, checkedWithItems) {
           v = v.target.checked
           console.log('hide changed to', v)
           TWDS.settings.itemsettab_hide_columns = v
+          // the table download needs to know this.
           if (!v) {
             document.body.classList.remove('TWDS_itemsettable_hidemany')
             TWDS.q1('#TWDS_itemsettable_th_attr').colSpan = 5
@@ -562,12 +563,18 @@ TWDS.itemsettab.getContent1 = function () {
         {
           nodeName: 'th',
           colSpan: 5,
+          dataset: {
+            fullColSpan: 5,
+          },
           textContent: TWDS._('ATTRIBUTES', 'Attributes'),
           id: 'TWDS_itemsettable_th_attr'
         },
         {
           nodeName: 'th',
-          colSpan: 20,
+          colSpan: 21,
+          dataset: {
+            fullColSpan: 21,
+          },
           textContent: TWDS._('SKILLS', 'Skills'),
           id: 'TWDS_itemsettable_th_skills'
         },
