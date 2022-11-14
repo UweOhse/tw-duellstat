@@ -252,6 +252,15 @@ TWDS.download_table = function (name, selector, sep = ',') {
       data = data.replace(/"/g, '""')
       // Push escaped string
       row.push('"' + data + '"')
+      if (cols[j].colSpan) {
+        let x = cols[j].colSpan
+        if (cols[j].dataset.fullColSpan) { x = cols[j].dataset.fullColSpan }
+        let k = parseInt(x)
+        while (k > 1) {
+          row.push('')
+          k--
+        }
+      }
     }
     csv.push(row.join(sep))
   }
