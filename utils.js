@@ -199,7 +199,7 @@ TWDS.jobOpenButton = function (id) {
       nodeName: 'span',
       classList: ['TWDS_joblist_openbutton'],
       dataset: { job_id: id },
-      title: 'Open a window to start the job at the nearest possible position',
+      title: TWDS._('JOBOPENBUTTON_TITLE', 'Open a window to start the job at the nearest possible position'),
       childNodes: [
         {
           nodeName: 'img',
@@ -219,13 +219,37 @@ TWDS.itemBidButton = function (id) {
 
   return TWDS.createElement({
     nodeName: 'span',
-    title: 'buy on market',
     className: 'TWDS_storage_market_button',
     dataset: { item_id: id },
+    title: TWDS._('ITEMBIDBUTTON_TITLE', 'Search on the market'),
     childNodes: [
       {
         nodeName: 'img',
         src: Game.cdnURL + '/images/icons/bid.png',
+        alt: ''
+      }
+    ]
+  })
+}
+TWDS.itemCraftButton = function (id) {
+  const it = ItemManager.get(id)
+  if (!it) return null
+
+  if (it.type !== 'yield') return null
+  if (it.spec_type !== 'crafting') return null
+  if (!TWDS.crafting) return null
+  if (!TWDS.crafting.items) return null
+  if (!TWDS.crafting.items[id]) return null
+
+  return TWDS.createElement({
+    nodeName: 'span',
+    className: 'TWDS_storage_craft_button',
+    title: TWDS._('ITEMCRAFTBUTTON_TITLE', 'Craft it'),
+    dataset: { item_id: id },
+    childNodes: [
+      {
+        nodeName: 'img',
+        src: Game.cdnURL + '/images/icons/icon_consumable.png',
         alt: ''
       }
     ]
