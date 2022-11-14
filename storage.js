@@ -252,7 +252,7 @@ TWDS.storage.initListArea.element = function (ii) {
         childNodes: [
           { nodeName: 'input', type: 'number', size: 5, min: 0, value: e[0], classList: ['TWDS_storage_countinput'] }
         ],
-        onchange: function() {
+        onchange: function () {
           EventHandler.signal('twds_storage_tracking_changed', [this.parentNode.dataset.item_id])
         }
       },
