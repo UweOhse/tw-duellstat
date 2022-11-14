@@ -272,7 +272,8 @@ TWDS.marketwindow.showwrapper = function () {
 }
 
 TWDS.registerSetting('bool', 'marketwindow_enhancements',
-  'Enhance the market offering window', false, null, 'Market')
+  TWDS._('AUCTION_SETTING', 'Enhance the market offering window'),
+  false, null, 'Market')
 
 TWDS.registerStartFunc(function () {
   MarketWindow._TWDS_backup_createMarketOffer = MarketWindow.createMarketOffer
