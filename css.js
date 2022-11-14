@@ -1,5 +1,8 @@
 TWDS.insertStyles = function () {
   const css = `
+    :root {
+      --twds-gold: #f8c57c;
+    }
     .TWDS_blinking {
       animation: blinker 0.5s linear 120
     }
@@ -340,13 +343,14 @@ TWDS.insertStyles = function () {
       background-blend-mode: soft-light;
     }
 
-    .jobgroupicon .item-job,
+    .jobgroupicon .TWDS_storage_needs_item,
     .job .item-job {
       width: 20px;
       height: 20px;
       position: absolute;
       font-size:130%;
       color:white;
+      color: var(--twds-gold);
       background-color:#2B1C19;
       border:2px solid #4F210D;
       border-radius:10px;
@@ -404,7 +408,7 @@ TWDS.insertStyles = function () {
     #TWDS_itemset_table thead tr.colspanrow th {
       border-top:none;
     }
-    #TWDS_itemset_table.with-twx tbody th.setname {
+    #TWDS_itemset_table tbody th.setname {
       cursor:pointer;
     }
     #TWDS_itemsettable_butplus,
@@ -521,6 +525,190 @@ TWDS.insertStyles = function () {
     .TWDS_clickable {
       cursor:pointer;
     }
+    #TWDS_trackbar_container {
+      width: 515px;
+      height: 20px;
+      bottom: 64px;
+      position: absolute;
+      z-index: 13;
+      left: 50%;
+      margin-left: -258px;
+      display: flex;
+      justify-content: space-around;
+      background: rgb(46,16,2);
+      background: url('https://westde.innogamescdn.com/images/tw2gui/window/minimized_bg.png?24');
+      background-position: 0 -35px;
+    }
+    #user-interface.TWDS_trackbar_active  .friendsbar-toggle {
+      bottom:84px;
+    }
+    #user-interface.TWDS_trackbar_active.friendsbar-open  .friendsbar-toggle {
+      bottom:158px;
+    }
+    #TWDS_trackbar_container .TWDS_trackbar_tracker {
+      height:12px;
+      flex-grow:1;
+      margin:2px;
+      box-sizing:border-box;
+      border:1px solid hsl(0deg 0% 40%);
+      background: url('https://westde.innogamescdn.com/images/tw2gui/window/minimized_bg.png?24');
+      background-position: 0 -3px;
+      position:relative;
+      border-radius:8px;
+    }
+    #TWDS_trackbar_container .TWDS_trackbar_tracker::before {
+      width:var(--twds-progress);
+      display:block;
+      content: "x";
+      color:transparent;
+      background-color: hsl(32deg 76% 45%);
+      position:absolute;
+      border-radius:8px;
+      height:12px;
+      margin-top:-1px;
+      mix-blend-mode:difference;
+    }
+    #TWDS_trackbar_container .TWDS_trackbar_xp::before {
+      background-color: hsl(32deg 76% 45%);
+    }
+    #TWDS_trackbar_container .TWDS_trackbar_achievement::before {
+      background-color: hsl(181deg 41% 40%)
+    }
+    #TWDS_trackbar_container .TWDS_trackbar_storage::before {
+      background-color: hsl(121deg 76% 35%);
+    }
+    #TWDS_trackbar_container .TWDS_trackbar_product::before {
+      background-color: hsl(151deg 56% 35%);
+    }
+    #TWDS_trackbar_container .TWDS_trackbar_tracker::after {
+      content: attr(data-text);
+      color:black;
+      position:absolute;
+      left:3px;
+      font-size:10px;
+      height:100%;
+      line-height:100%;
+      color:#FFF;
+    }
+    body.TWDS_quicksilver_exclamation .TWDS_gold::after,
+    body.TWDS_quicksilver_exclamation .TWDS_silver::after {
+      content: "!";
+      display: block;
+      font-size: 96px;
+      position: relative;
+      font-weight: bold;
+      width: 100%;
+      height: 100%;
+      left: 50%;
+      top: -50%;
+      color:transparent;
+      font-style: italic;
+      text-shadow:3px 2px black;
+    }
+    body.TWDS_quicksilver_exclamation .TWDS_gold.opened::after,
+    body.TWDS_quicksilver_exclamation .TWDS_silver.opened::after {
+      color:transparent;
+      text-shadow:none;
+    }
+    body.TWDS_quicksilver_exclamation .TWDS_gold::after {
+      color:gold;
+    }
+    body.TWDS_quicksilver_exclamation .TWDS_silver::after {
+      color:silver;
+    }
+    body.TWDS_quicksilver_exclamation .TWDS_gold,
+    body.TWDS_quicksilver_exclamation .TWDS_silver {
+      outline-color: transparent;
+      background-color:transparent;
+    }
+    .TWDS_gold, .TWDS_silver {
+      outline-style:solid;
+      outline-color: transparent;
+      outline-width: 3px;
+      outline-offset:3px;
+    }
+    .TWDS_gold {
+      background-color:gold;
+      outline-color: gold;
+    }
+    .TWDS_silver {
+      background-color:silver;
+      outline-color: silver;
+    }
+    #ui_questtracker .TWDS-quest-list-to-book {
+      display:none;
+      color:white;
+      line-height:13px;
+    }
+    #ui_questtracker .quest-list.title:hover .TWDS-quest-list-to-book {
+      display: inline-block;
+      zoom: 1;
+    }
+    body.TWDS_itemsettable_hidemany #TWDS_tab_itemsets .maybehidden {
+      display:none;
+    }
+    .TWDS_itemsets_filterline {
+      display:flex;
+      justify-content:space-between;
+    }
+    .TWDS_itemsets_options select,
+    .TWDS_itemsets_options label {
+      margin-left:1em;
+    }
+    .TWDS_showset .TWDS_itemcontainer {
+      border-top:1px dotted #888;
+      display:flex;
+      flex-flow:wrap;
+    }
+    .TWDS_showset .TWDS_itemcontainer .TWDS_item {
+      width:49%;
+      border:1px dotted #888;
+    }
+    .TWDS_showset .TWDS_itemcontainer .inventory_popup {
+    }
+    .TWDS_showset .TWDS_itemcontainer .inventory_popup .item_set_names,
+    .TWDS_showset .TWDS_itemcontainer .inventory_popup .inventory_popup_item_set_names,
+    .TWDS_showset .TWDS_itemcontainer .inventory_popup .item_set_names + span
+    {
+      display:none !important;
+    }
+    .TWDS_showset .TWDS_itemcontainer .inventory_popup .inventory_popup_item_set_names +br {
+      display:none !important;
+    }
+    .TWDS_showset .TWDS_itemcontainer .inventory_popup_requirement_text {
+      margin-top:-3em;
+      display:inline-block;
+    }
+    .TWDS_showset .TWDS_topcontainer {
+      display:flex;
+      flex-flow:wrap;
+    }
+    .TWDS_showset .TWDS_topcontainer > * {
+      width:49%;
+    }
+    .TWDS_showset .TWDS_setcontainer br {
+      display:none;
+    }
+    .TWDS_showset .TWDS_topcontainer li {
+      list-style-type:none;
+    }
+    .TWDS_showset_selectors  {
+      display:flex;
+      justify-content: space-between;
+      border-bottom:1px dotted #888;
+      padding-bottom:0.25em;
+      margin-bottom:0.25em;
+    }
+    .TWDS_showset .TWDS_item {
+      position:relative;
+    }
+    .TWDS_showset .TWDS_item input[type=checkbox] {
+      position:absolute;
+      top:2px;
+      right: 2px;
+      z-index:2;
+    }
+
   `
   const sty = document.createElement('style')
   sty.textContent = css
