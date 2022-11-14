@@ -334,8 +334,9 @@ TWDS.fbs.parselog = function () {
   return [rounddata, extradata]
 }
 TWDS.fbs.makebasestats = function () {
-  this.bsw = wman.open('TWDS_fbs_basestats').setMiniTitle('Basic statistics')
-  this.bsw.setTitle('Basic statistics')
+  const _ = TWDS._
+  this.bsw = wman.open('TWDS_fbs_basestats').setMiniTitle(_('FBS_TITLE', 'statistics'))
+  this.bsw.setTitle(_('FBS_TITLE', 'statistics'))
   this.bsw.setSize(700, 400)
   const content = TWDS.createEle({
     nodeName: 'div',
@@ -349,10 +350,10 @@ TWDS.fbs.makebasestats = function () {
 
   let outcome = 'Unknown result (' + this.data.battle_outcome + ')'
   switch (this.data.battle_outcome) {
-    case 'FINALROUND': outcome = 'Fort defended'; break
-    case 'FLAGLOST': outcome = 'Flag taken'; break
-    case 'ATTACKER_WIPED': outcome = 'Attackers beaten'; break
-    case 'DEFENDER_WIPED': outcome = 'Defenders beaten'; break
+    case 'FINALROUND': outcome = _('FBS_OUTCOME_DEFENDED', 'Fort defended'); break
+    case 'FLAGLOST': outcome = _('FBS_OUTCOME_FLAGLOST', 'Flag taken'); break
+    case 'ATTACKER_WIPED': outcome = _('FBS_OUTCOME_ATTACKERS_BEATEN', 'Attackers beaten'); break
+    case 'DEFENDER_WIPED': outcome = _('FBS_OUTCOME_DEFENDERS_BEATEN', 'Defenders beaten'); break
   }
   let lc = Game.locale.replace('_', '-')
   if (lc === 'en-DK') lc = 'en-GB' // en-dk: 16.52.04, en-GB: 16:52:04
@@ -362,7 +363,7 @@ TWDS.fbs.makebasestats = function () {
 
   const h3 = TWDS.createEle({
     nodeName: 'h3',
-    textContent: 'The fight for ' + this.data.result.fortname
+    textContent: _('FBS_THE_FIGHT_FOR', 'The fight for: ') + this.data.result.fortname
   })
   content.appendChild(h3)
 
@@ -383,9 +384,9 @@ TWDS.fbs.makebasestats = function () {
       {
         nodeName: 'tr',
         children: [
-          { nodeName: 'th', textContent: 'Attacking side', className: 'tw_red' },
+          { nodeName: 'th', textContent: _('FBS_ATT_SIDE', 'Attacking side'), className: 'tw_red' },
           { nodeName: 'th', textContent: '' },
-          { nodeName: 'th', textContent: 'Defending side', className: 'tw_blue' }
+          { nodeName: 'th', textContent: _('FBS_DEF_SIDE', 'Defending side'), className: 'tw_blue' }
         ]
       }
     ]
@@ -408,14 +409,6 @@ TWDS.fbs.makebasestats = function () {
       { nodeName: 'td', textContent: this.data.result.attackertownname },
       { nodeName: 'th', textContent: 'Town' },
       { nodeName: 'td', textContent: this.data.result.defendertownname }
-    ]
-  }))
-  tbody.appendChild(TWDS.createEle({
-    nodeName: 'tr',
-    children: [
-      { nodeName: 'td', textContent: this.data.attacker_count },
-      { nodeName: 'th', textContent: 'Fighters' },
-      { nodeName: 'td', textContent: this.data.defender_count }
     ]
   }))
 
@@ -532,14 +525,14 @@ TWDS.fbs.makebasestats = function () {
         nodeName: 'tr',
         children: [
           { nodeName: 'td', innerHTML: a.by.join(', ') },
-          { nodeName: 'th', textContent: t + ' by' },
+          { nodeName: 'th', textContent: _('FBS_DOTDOT_BY', '... by') },
           { nodeName: 'td', innerHTML: d.by.join(', ') }
         ]
       })
       tbody.appendChild(f)
     }
   }
-  const clname = ['Greenhorns', 'Adventurers', 'Duelists', 'Worker', 'Soldiers']
+  const clname = ['greenhorn', 'adventurer', 'duelist', 'worker', 'soldier']
   for (let i = -1; i < 5; i++) {
     let at
     let df
@@ -552,73 +545,72 @@ TWDS.fbs.makebasestats = function () {
     }
     if (at.count + df.count === 0) { continue }
     if (i === -1) {
-      tbody.appendChild(subhead('Over all character classes'))
+      tbody.appendChild(subhead(_('FBS_OVER_ALL_CLASSES', 'Over all character classes')))
     } else {
-      tbody.appendChild(subhead(clname[i]))
+      tbody.appendChild(subhead(Game.InfoHandler.getLocalString4Charclass(clname[i])))
     }
-    r('Fighters', at.count, df.count, false,
+    r(_('FBS_FIGHTERS', 'Fighters'), at.count, df.count, false,
       'The number of fighters at the start of the battle.')
-    r('Survivors', at.survived, df.survived, false,
+    r(_('FBS_SURVIVORS', 'Survivors'), at.survived, df.survived, false,
       'The number of fighters still standing at the end of the battle.')
-    r('Avg. # of fighters alive.', at.personroundsalive / rounds, df.personroundsalive / rounds, true,
+    r(_('FBS_AVERAGE_ALIVE', 'Avg. # of fighters alive.'), at.personroundsalive / rounds, df.personroundsalive / rounds, true,
       'Counted over time, not a simple average.')
 
-    r('HP at start', at.starthp, df.starthp, false)
-    r('HP at end', at.finishedhp, df.finishedhp, false)
-    r('Most HP', at.highest_starthp.value, df.highest_starthp.value, false)
-    r('Most HP by', at.highest_starthp.by, df.highest_starthp.by, false)
-    r('Missing HP at start', at.maxhp - at.starthp, df.maxhp - df.starthp, false,
+    r(_('FBS_HP_AT_START', 'HP at start'), at.starthp, df.starthp, false)
+    r(_('FBS_HP_AT_END', 'HP at end'), at.finishedhp, df.finishedhp, false)
+    q(_('FBS_MOST_HP', 'Most HP'), at.highest_starthp, df.highest_starthp, false)
+    r(_('FBS_MISSING_HP', 'Missing HP at start'), at.maxhp - at.starthp, df.maxhp - df.starthp, false,
       'The amount of HP not filled up')
-    r('HP lost', at.starthp - at.finishedhp, df.starthp - df.finishedhp, false)
-    r('HP average', at.starthp / at.count, df.starthp / df.count, true, 'Total start HP divided by fighters')
+    r(_('FBS_HP_LOST', 'HP lost'), at.starthp - at.finishedhp, df.starthp - df.finishedhp, false)
+    r(_('FBS_HP_AVERAGE', 'HP average'), at.starthp / at.count, df.starthp / df.count, true, 'Total start HP divided by fighters')
 
     // sr('totalcauseddamage', 'Damage caused')
-    r('Total damage done', at.totalcauseddamage, df.totalcauseddamage, true, 'per fighter')
-    r('Average damage done', at.totalcauseddamage / at.count, df.totalcauseddamage / df.count, true, 'per fighter')
-    r('... per hit', at.totalcauseddamage / at.hitcount, df.totalcauseddamage / df.hitcount, true)
-    r('Average hits done', at.hitcount / at.count, df.hitcount / df.count, true)
-    r('Average missed shots', at.misscount / at.count, df.misscount / df.count, true)
+    r(_('FBS_TOTAL_DAMAGE_DONE', 'Total damage done'), at.totalcauseddamage, df.totalcauseddamage, false, 'per fighter')
+    r(_('FBS_AVERAGE_DAMAGE_DONE', 'Average damage done'), at.totalcauseddamage / at.count, df.totalcauseddamage / df.count, true, 'per fighter')
+    r(_('FBS_AVERAGE_DAMAGE_PER_HIT', '... per hit'), at.totalcauseddamage / at.hitcount, df.totalcauseddamage / df.hitcount, true)
+    r(_('FBS_AVERAGE_HITS_DONE', 'Average hits done'), at.hitcount / at.count, df.hitcount / df.count, true)
+    r(_('FBS_AVERAGE_MISSED_SHOTS', 'Average missed shots'), at.misscount / at.count, df.misscount / df.count, true)
 
-    r('Average damage taken', df.totalcauseddamage / at.count, at.totalcauseddamage / df.count, true)
-    r('Average dodged shots', at.dodgecount / at.count, df.dodgecount / df.count, true)
-    r('Average hits taken', at.takenhits / at.count, df.takenhits / df.count, true)
+    r(_('FBS_AVERAGE_DAMAGE_TAKEN', 'Average damage taken'), df.totalcauseddamage / at.count, at.totalcauseddamage / df.count, true)
+    r(_('FBS_AVERAGE_DODGED_SHOTS', 'Average dodged shots'), at.dodgecount / at.count, df.dodgecount / df.count, true)
+    r(_('FBS_AVERAGE_HITS_TAKEN', 'Average hits taken'), at.takenhits / at.count, df.takenhits / df.count, true)
 
-    r('KOs achieved', at.ko_count, df.ko_count)
-    r('Critical hits', at.crithits, df.crithits)
-    r('Ghosts', at.playdeadcount, df.playdeadcount)
+    r(_('FBS_KOS_ACHIEVED', 'KOs achieved'), at.ko_count, df.ko_count)
+    r(_('FBS_CRITICAL_HITS', 'Critical hits'), at.crithits, df.crithits)
+    r(_('FBS_GHOSTS', 'Ghosts'), at.playdeadcount, df.playdeadcount)
 
-    r('Total levels', at.charlevel, df.charlevel)
-    r('Average level', at.charlevel / at.count, df.charlevel / df.count, true)
-    q('Highest level', at.highest_charlevel, df.highest_charlevel, true)
+    r(_('FBS_TOTAL_LEVELS', 'Total levels'), at.charlevel, df.charlevel)
+    r(_('FBS_AVERAGE_LEVEL', 'Average level'), at.charlevel / at.count, df.charlevel / df.count, true)
+    q(_('FBS_HIGHEST_LEVEL', 'Highest level'), at.highest_charlevel, df.highest_charlevel, true)
     // r('Highest level by', at.highest_charlevel.by, df.highest_charlevel.by, false)
     // r('Avg. # of levels alive.', at.personlevelroundsalive/rounds, df.personlevelroundsalive/rounds, true)
 
-    r('Average max weapon. dmg.', at.weaponmaxdmg / at.count, df.weaponmaxdmg / df.count, true)
-    r('Average min weapon. dmg.', at.weaponmindmg / at.count, df.weaponmindmg / df.count, true)
+    r(_('FBS_AVERAGE_MAX_WEAPON_DMG', 'Average max weapon. dmg.'), at.weaponmaxdmg / at.count, df.weaponmaxdmg / df.count, true)
+    r(_('FBS_AVERAGE_MIN_WEAPON_DMG', 'Average min weapon. dmg.'), at.weaponmindmg / at.count, df.weaponmindmg / df.count, true)
     //
-    q('Highest damage by one fighter ', at.highest_totalcauseddamage,
+    q(_('FBS_HIGHEST_DMG_BY_1', 'Highest damage by one fighter'), at.highest_totalcauseddamage,
       df.highest_totalcauseddamage, false)
-    q('Highest single shot damage', at.highest_maxdamage, df.highest_maxdamage, false)
-    q('Most hits', at.highest_hitcount, df.highest_hitcount, false)
-    q('Highest hits %', at.highest_hitquote, df.highest_hitquote, true)
+    q(_('FBS_HIGHEST_SINGLE_SHOT_DMG', 'Highest single shot damage'), at.highest_maxdamage, df.highest_maxdamage, false)
+    q(_('FBS_MOST_HITS', 'Most hits'), at.highest_hitcount, df.highest_hitcount, false)
+    q(_('FBS_HIGHEST_HIT_PERCENT', 'Highest hits %'), at.highest_hitquote, df.highest_hitquote, true)
 
-    q('Most dodges', at.highest_dodgecount, df.highest_dodgecount, false)
-    q('Highest dodge %', at.highest_dodgequote, df.highest_dodgequote, true)
-    q('Most hits taken', at.highest_takenhits, df.highest_takenhits, false)
+    q(_('FBS_MOST_DODGES', 'Most dodges'), at.highest_dodgecount, df.highest_dodgecount, false)
+    q(_('FBS_HIGHEST_DODGE_PERCENT', 'Highest dodge %'), at.highest_dodgequote, df.highest_dodgequote, true)
+    q(_('FBS_MOST_HITS_TAKEN', 'Most hits taken'), at.highest_takenhits, df.highest_takenhits, false)
 
-    q('Most KOs', at.highest_ko_count, df.highest_ko_count, false)
-    q('Most critical hits', at.highest_crithits, df.highest_crithits, false)
-    q('Most Ghosts', at.highest_playdeadcount, df.highest_playdeadcount, false)
-    q('Most moves', at.highest_moves, df.highest_moves, false)
-    q('Most fields moved', at.highest_fieldsmoved, df.highest_fieldsmoved, true)
-    q('Most sectors moved', at.highest_sectorsmoved, df.highest_sectorsmoved, false)
+    q(_('FBS_MOST_KOS', 'Most KOs'), at.highest_ko_count, df.highest_ko_count, false)
+    q(_('FBS_MOST_CRITS', 'Most critical hits'), at.highest_crithits, df.highest_crithits, false)
+    q(_('FBS_MOST_GHOSTS', 'Most Ghosts'), at.highest_playdeadcount, df.highest_playdeadcount, false)
+    q(_('FBS_MOST_MOVES', 'Most moves'), at.highest_moves, df.highest_moves, false)
+    q(_('FBS_MOST_FIELDS_MOVED', 'Most fields moved'), at.highest_fieldsmoved, df.highest_fieldsmoved, true)
+    q(_('FBS_MOST_SECTORS_MOVED', 'Most sectors moved'), at.highest_sectorsmoved, df.highest_sectorsmoved, false)
 
-    r('Shots fired', at.hitcount + at.misscount, df.hitcount + df.misscount)
-    r('Shots fired%',
+    r(_('FBS_SHOTS_FIRED', 'Shots fired'), at.hitcount + at.misscount, df.hitcount + df.misscount)
+    r(_('FBS_SHOTS_FIRED_PERCENT', 'Shots fired%'),
       100.0 * (at.hitcount + at.misscount) / at.personroundsalive54,
       100.0 * (df.hitcount + df.misscount) / df.personroundsalive54, true,
       'Percent of the possible shots fired (assuming at least one target in the line of sight in each round)')
-    r('Online %',
+    r(_('FBS_ONLINE_PERCENT', 'Online %'),
       100.0 * (at.onlinecount) / at.personroundsalive54,
       100.0 * (df.onlinecount) / df.personroundsalive54, true,
       'Counting every round online, divided by the number of fighters alive')
@@ -951,7 +943,7 @@ TWDS.fbs.showStatUpdateTable = function (data) {
 
 TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'misc_fortbattle_statistics',
-    'Add a button to the graveyard to show Basic Fortbattle Statistics', true, null, 'misc')
+    TWDS._('FBS_SETTING', 'Add a button to the graveyard to show fortbattle statistics'), true, null, 'misc')
   // give TW Toolkit time to patch the original functions. Yes, it patches them.
   window.setTimeout(function () {
     CemeteryWindow._TWDS_backup_showStatUpdateTable = CemeteryWindow.showStatUpdateTable
