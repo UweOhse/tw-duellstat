@@ -11,47 +11,8 @@ TWDS.storage.save = function () {
 }
 
 TWDS.registerSetting('bool', 'storageMapIcon',
-  TWDS._('MISC_MAPICON', 'mark jobgroups for missing items on the map'),
-  true
-)
-TWDS.storage.WTKHelper = function () {
-  const data = {}
-  const x = function (key, o, f) {
-    for (const e of o) {
-      const ii = e.itemID
-      const p = e.profession
-      if (Character.professionId !== p && p !== 100) return
-      if (!(ii in data)) data[ii] = { minLevel: 999, maxLevel: 0, amount: 0 }
-      if (e.minLevel < data[ii].minLevel) data[ii].minLevel = e.minLevel
-      if (e.maxLevel > data[ii].maxLevel) data[ii].maxLevel = e.maxLevel
-      data[ii].amount += e.amount * f
-    }
-  }
-  const weeks = 4
-  x('ghosttown', window.WTK.DailyItemHelper.ghostTown, 7 * weeks)
-  x('indianvillage', window.WTK.DailyItemHelper.indianVillage, 7 * weeks)
-  x('monday', window.WTK.DailyItemHelper.daily.monday, weeks)
-  x('tuesday', window.WTK.DailyItemHelper.daily.tuesday, weeks)
-  x('wednesday', window.WTK.DailyItemHelper.daily.wednesday, weeks)
-  x('thursday', window.WTK.DailyItemHelper.daily.thursday, weeks)
-  x('friday', window.WTK.DailyItemHelper.daily.friday, weeks)
-  x('saturday', window.WTK.DailyItemHelper.daily.saturday, weeks)
-  x('sunday', window.WTK.DailyItemHelper.daily.sunday, weeks)
-  x('', window.WTK.DailyItemHelper.others, 7 * weeks)
-  const out = {}
-  for (const [k, o] of Object.entries(data)) {
-    const v = []
-    v[0] = o.amount
-    v[1] = 'daily'
-    if (o.minLevel > 0 && o.maxLevel === 150) {
-      v[1] = 'daily (lv' + o.minLevel + '-)'
-    } else if (o.minLevel > 0 && o.maxLevel < 150) {
-      v[1] = 'daily (lv' + o.minLevel + '-' + o.maxLevel + ')'
-    }
-    out[k] = v
-  }
-  console.log('dailys', JSON.stringify(out))
-}
+  TWDS._('STORAGE_MARK_JOBGROUPS', 'mark jobgroups for missing items on the map'),
+  true, null, 'Map')
 
 TWDS.storage.startSearch = function (name) {
   // var amount = parseInt($('#WTKExtendedItemFinder_searchDialog_targetAmount').val());
@@ -61,6 +22,17 @@ TWDS.storage.startSearch = function (name) {
   TWDS.storage.reload()
   if (name > '') {
     ssc.innerHTML = '<tr><th><th>Name<th>Count<th>ID<th>'
+    ssc.innerHTML = ''
+    TWDS.createEle({
+      nodeName: 'tr',
+      children: [
+        { nodeName: 'th' },
+        { nodeName: 'th', textContent: TWDS._('STORAGE_NAME', 'Name') },
+        { nodeName: 'th', textContent: TWDS._('STORAGE_COUNT', 'Count') },
+        { nodeName: 'th', textContent: TWDS._('STORAGE_ID', 'Id') }
+      ],
+      last: ssc
+    })
     let count = 0
 
     for (const it of Object.values(all)) {
@@ -87,7 +59,11 @@ TWDS.storage.startSearch = function (name) {
             {
               nodeName: 'td',
               childNodes: [
-                { nodeName: 'button', textContent: 'add this', classList: ['TWDS_button', 'TWDS_storage_addthis'] }
+                {
+                  nodeName: 'button',
+                  textContent: TWDS._('STORAGE_ADD_THIS', 'add this'),
+                  classList: ['TWDS_button', 'TWDS_storage_addthis']
+                }
               ]
             }
           ]
@@ -103,7 +79,7 @@ TWDS.storage.startSearch = function (name) {
       ss.classList.remove('visible')
     }
   } else {
-    document.getElementById('TWDS_storage_select').innerHTML = ''
+    ssc.innerHTML = ''
   }
   // and now for the main list
   $('#TWDS_storage_list .datarow').each(function (idx, row) {
@@ -181,12 +157,13 @@ TWDS.storage.initListArea = function (container) {
     className: 'headrow',
     childNodes: [
       { nodeName: 'th', dataset: { key: 'item_id' }, textContent: '' },
-      { nodeName: 'th', dataset: { key: 'name' }, textContent: 'Name' },
+      { nodeName: 'th', dataset: { key: 'name' }, textContent: TWDS._('STORAGE_NAME', 'Name') },
       { nodeName: 'th', dataset: { key: 'percent' }, textContent: '%' },
-      { nodeName: 'th', dataset: { key: 'count' }, textContent: 'In Bag' },
-      { nodeName: 'th', dataset: { key: 'target' }, textContent: 'Target' },
-      { nodeName: 'th', dataset: {}, textContent: 'Comment' },
-      { nodeName: 'th', dataset: {}, textContent: '' }
+      { nodeName: 'th', dataset: { key: 'count' }, textContent: TWDS._('STORAGE_IN_BAG', 'In Bag') },
+      { nodeName: 'th', dataset: { key: 'target' }, textContent: TWDS._('STORAGE_TARGET', 'Target') },
+      { nodeName: 'th', dataset: {}, textContent: TWDS._('STORAGE_COMMENT', 'Comment') },
+      { nodeName: 'th', dataset: {}, textContent: '' },
+      { nodeName: 'th', dataset: {}, textContent: TWDS._('STORAGE_TRACKING', 'Tracking') }
     ]
   })
   tbody.appendChild(tr)
@@ -195,6 +172,19 @@ TWDS.storage.initListArea = function (container) {
     const tr = TWDS.storage.initListArea.element(ii)
     if (tr !== null) { tbody.appendChild(tr) }
   }
+}
+TWDS.storage.getsummary = function () {
+  const s = {
+    current: 0,
+    required: 0
+  }
+  for (const id of Object.keys(TWDS.storage.data)) {
+    const have = Bag.getItemCount(id)
+    const want = parseInt(TWDS.storage.data[id][0])
+    s.current += (have > want) ? want : have
+    s.required += want
+  };
+  return s
 }
 TWDS.storage.initListArea.element = function (ii) {
   const e = TWDS.storage.data[ii]
@@ -222,6 +212,10 @@ TWDS.storage.initListArea.element = function (ii) {
   const b = TWDS.itemBidButton(ii)
   if (b !== null) { // null if !found || !auctionable
     searchthings += b.outerHTML
+  }
+  const craft = TWDS.itemCraftButton(ii)
+  if (craft !== null) { // null if !found || !auctionable
+    searchthings += craft.outerHTML
   }
 
   const count = Bag.getItemCount(it.item_id)
@@ -257,7 +251,10 @@ TWDS.storage.initListArea.element = function (ii) {
         dataset: { key: 'target', sortval: e[0] },
         childNodes: [
           { nodeName: 'input', type: 'number', size: 5, min: 0, value: e[0], classList: ['TWDS_storage_countinput'] }
-        ]
+        ],
+        onchange: function() {
+          EventHandler.signal('twds_storage_tracking_changed', [this.parentNode.dataset.item_id])
+        }
       },
       {
         nodeName: 'td',
@@ -268,7 +265,24 @@ TWDS.storage.initListArea.element = function (ii) {
       {
         nodeName: 'td',
         childNodes: [
-          { nodeName: 'button', textContent: 'remove', className: 'TWDS_button TWDS_storage_removethis' }
+          {
+            nodeName: 'button',
+            textContent: TWDS._('STORAGE_REMOVE', 'remove'),
+            title: TWDS._('STORAGE_REMOVE_TITLE', 'removes this line, not the products.'),
+            className: 'TWDS_button TWDS_storage_removethis'
+          }
+        ]
+      },
+      {
+        nodeName: 'td',
+        childNodes: [
+          {
+            nodeName: 'input',
+            type: 'checkbox',
+            title: TWDS._('STORAGE_TRACKING_TITLE', 'adds this product to the tracker, if it is active.'),
+            checked: e[2],
+            className: 'TWDS_button TWDS_storage_trackthis'
+          }
         ]
       }
     ]
@@ -281,23 +295,26 @@ TWDS.storage.initSearchArea = function (container) {
   container.appendChild(div)
   const nameInput = new west.gui.Textfield('TWDS_storage_search_name').setSize(10).setClass4Input('input_layout')
   div.appendChild(nameInput.getMainDiv()[0])
-  div.querySelector('#TWDS_storage_search_name').placeholder = 'search for items'
+  div.querySelector('#TWDS_storage_search_name').placeholder = TWDS._('STORAGE_SEARCH_PLACEHOLDER', 'search for items')
   div.querySelector('#TWDS_storage_search_name').type = 'search'
   div.querySelector('#TWDS_storage_search_name').style.boxSizing = 'content-box'
   div.appendChild(TWDS.createElement({
     nodeName: 'button',
     id: 'TWDS_storage_export',
-    textContent: 'Export'
+    textContent: TWDS._('STORAGE_EXPORT', 'Export'),
+    title: TWDS._('STORAGE_EXPORT_TITLE', 'Exports the whole list to the clipboard')
   }))
   div.appendChild(TWDS.createElement({
     nodeName: 'button',
     id: 'TWDS_storage_export_selected',
-    textContent: 'Export selected'
+    textContent: TWDS._('STORAGE_EXPORT_SELECTED', 'Export selected'),
+    title: TWDS._('STORAGE_EXPORT_SELECTED_TITLE', 'You will be asked for a search string, and items with comments matching that will be exported to the clipboard')
   }))
   div.appendChild(TWDS.createElement({
     nodeName: 'button',
     id: 'TWDS_storage_import',
-    textContent: 'Import (add)'
+    textContent: TWDS._('STORAGE_IMPORT', 'Import'),
+    title: TWDS._('STORAGE_IMPORT_TITLE', 'Import records from the clipboard. You will have a chance to review any changes before they happen.')
   }))
 
   const sdiv = TWDS.createElement({
@@ -324,6 +341,35 @@ TWDS.storage.calcCrafting = function () {
     const it = ItemManager.get(i)
     console.log(i, it.name, e)
   }
+}
+TWDS.storage.gettarget = function (pr) {
+  if (pr in TWDS.storage.data) {
+    return TWDS.storage.data[pr][0]
+  }
+  return null
+}
+TWDS.storage.gettracked = function () {
+  const out = []
+  for (const id of Object.keys(TWDS.storage.data)) {
+    if (TWDS.storage.data[id][2]) { out.push(id) }
+  }
+  return out
+}
+TWDS.storage.changetracking = function (pr, mode) {
+  if (pr in TWDS.storage.data) {
+    TWDS.storage.data[pr][2] = mode
+  }
+  EventHandler.signal('twds_storage_tracking_changed', [pr])
+}
+TWDS.storage.istracked = function (pr) {
+  if (pr in TWDS.storage.data && 2 in TWDS.storage.data[pr]) {
+    return TWDS.storage.data[pr][2]
+  }
+  return false
+}
+TWDS.storage.untrack = function (pr) {
+  TWDS.storage.changetracking(pr, false)
+  TWDS.storage.save()
 }
 
 TWDS.storage.getContent = function () {
@@ -353,10 +399,12 @@ TWDS.storageStartFunction = function () {
     const ii = tr.dataset.item_id
     TWDS.storage.data[ii] = [Bag.getItemCount(ii) + 100, '']
     TWDS.storage.save()
-    tr.parentNode.removeChild(tr)
-    const n = TWDS.storage.initListArea.element(ii)
-    const tbody = document.querySelector('#TWDS_storage_list tbody')
-    tbody.insertBefore(n, tbody.firstChild)
+    if (tr.parentNode) {
+      tr.parentNode.removeChild(tr)
+      const n = TWDS.storage.initListArea.element(ii)
+      const tbody = document.querySelector('#TWDS_storage_list tbody')
+      tbody.insertBefore(n, tbody.firstChild)
+    }
   })
   $(document).on('click', '#TWDS_storage_list button.TWDS_storage_removethis', function () {
     const tr = this.closest('tr')
@@ -365,10 +413,17 @@ TWDS.storageStartFunction = function () {
     TWDS.storage.save()
     tr.parentNode.removeChild(tr)
   })
+  $(document).on('click', '#TWDS_storage_list input.TWDS_storage_trackthis', function () {
+    const tr = this.closest('tr')
+    const ii = tr.dataset.item_id
+    TWDS.storage.changetracking(ii, this.checked)
+    TWDS.storage.save()
+  })
   $(document).on('change', '#TWDS_storage_list input.TWDS_storage_countinput', function () {
     const tr = this.closest('tr')
     const ii = tr.dataset.item_id
     TWDS.storage.data[ii][0] = this.value
+    if (TWDS.storage.data[ii][2]) { EventHandler.signal('twds_storage_tracking_changed', [ii]) }
     TWDS.storage.save()
   })
   $(document).on('change', '#TWDS_storage_list .TWDS_storage_textinput', function () {
@@ -384,6 +439,14 @@ TWDS.storageStartFunction = function () {
     document.querySelector('.tw2gui_window_tab._tab_id_buy').click()
     document.querySelector('[name=market_search_search]').value = it.name
     document.querySelector('.market-buy .tw2gui_iconbutton.iconBut_mpb_refresh').click()
+  })
+  $(document).on('click', '.TWDS_storage_craft_button', function () {
+    const ii = this.dataset.item_id
+    if ('TW_Calc' in window) {
+      window.TW_Calc.openCraftRecipeWindow(ii)
+    } else {
+      CharacterWindow.open('crafting')
+    }
   })
   $(document).on('click', '#TWDS_storage_list th[data-key]', function () {
     TWDS.storage.sortList(this.dataset.key)
@@ -471,20 +534,23 @@ TWDS.storageStartFunction = function () {
 
   Map.Component.JobGroup.TWDS_backup_getMarkers = Map.Component.JobGroup.getMarkers
   Map.Component.JobGroup.getMarkers = function (groupId) {
-    if (!TWDS.settings.saleProtection) { return Map.Component.JobGroup.TWDS_backup_getMarkers(groupId) }
-
-    let s = ''
-    if (JobList.hasImportantJob(groupId)) { s += '<div class="important" title="' + 'Wird für eine Quest benötigt'.escapeHTML() + '"></div>' }
-    if (JobList.hasNewJob(groupId)) { s += '<div class="new-job" title="' + 'Neue Arbeit'.escapeHTML() + '"></div>' }
+    let s = Map.Component.JobGroup.TWDS_backup_getMarkers(groupId)
+    if (!TWDS.settings.saleProtection) {
+      return s
+    }
 
     const jobs = JobList.getJobsByGroupId(groupId)
+    const itemnames = []
     for (const job of jobs) {
       for (const y of Object.keys(job.yields)) {
         if (y in TWDS.storage.data && Bag.getItemCount(y) < TWDS.storage.data[y][0]) {
           const it = ItemManager.get(y)
-          s += '<div class="item-job" title="' + it.name.escapeHTML() + '">!</div>'
+          itemnames.push(it.name.escapeHTML())
         }
       }
+    }
+    if (itemnames.length) {
+      s += '<div class="item-job TWDS_storage_needs_item" title="' + itemnames.join(', ') + '">!</div>'
     }
     return s
   }
