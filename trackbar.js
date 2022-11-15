@@ -222,5 +222,5 @@ TWDS.registerStartFunc(function () {
       'Show a summary of the storage (tab) in the trackbar.'),
     true, null, 'misc', 'trackbar')
   EventHandler.listen('twds_storage_tracking_changed', function (x) { TWDS.trackbar.settingchanged() })
-  EventHandler.listen('character_xp_changed', function (x) { TWDS.trackbar.update() })
+  EventHandler.listen('character_exp_changed', function (x) { TWDS.trackbar.update() })
 })
