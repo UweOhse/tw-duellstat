@@ -721,6 +721,19 @@ TWDS.insertStyles = function () {
       line-height: 20px;
       text-shadow: #000 1px 1px;
     }
+    body.TWDS_quest_finishable #ui_menubar > .questtracker::after {
+      content: "\\2794";
+      display: block;
+      color: orange;
+      position: absolute;
+      right: 36px;
+      top:13px;
+      letter-spacing: -4px;
+      font-size: 200%;
+      font-weight: bold;
+      line-height: 20px;
+      text-shadow: #000 1px 1px;
+    }
     body.TWDS_quest_finishable #windows > .questtracker {
       box-shadow: orange -1px -1px 10px 3px;
     }
