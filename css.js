@@ -708,6 +708,22 @@ TWDS.insertStyles = function () {
       right: 2px;
       z-index:2;
     }
+    body.TWDS_daily_tasks_open .char_links.daily::after {
+      content: "\\21da";
+      display: block;
+      color: red;
+      position: relative;
+      left: 25px;
+      top:2px;
+      letter-spacing: -4px;
+      font-size: 350%;
+      font-weight: bold;
+      line-height: 20px;
+      text-shadow: #000 1px 1px;
+    }
+    body.TWDS_quest_finishable #windows > .questtracker {
+      box-shadow: orange -1px -1px 10px 3px;
+    }
 
   `
   const sty = document.createElement('style')
