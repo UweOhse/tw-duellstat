@@ -1,4 +1,71 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
+//
+TWDS.finished_task_handler = function () {
+  if (Character.playerId === 0) {
+    setTimeout(TWDS.finished_task_handler, 100)
+    return
+  }
+  if (!TWDS.settings.misc_daily_activities_warning) {
+    document.body.classList.remove('TWDS_daily_tasks_open')
+    return
+  }
+  // the bloody signal is sent *before* the counter is updated,
+  // *and* setFinishedTasks4CurrentDay does not reset the counter, before it adds to it.
+  Character.setFinishedTasks(0)
+  Character.setFinishedTasks4CurrentDay()
+  if (Character.finishedTasks < 3) {
+    document.body.classList.add('TWDS_daily_tasks_open')
+  } else {
+    document.body.classList.remove('TWDS_daily_tasks_open')
+  }
+}
+TWDS.registerStartFunc(function () {
+  EventHandler.listen('activity_changed', function () {
+    TWDS.finished_task_handler()
+    Character.setFinishedTasks(0) // because set...4current is called again, and counts again.
+  })
+  TWDS.registerSetting('bool', 'misc_daily_activities_warning',
+    TWDS._('MISC_DAILY_ACTIVITIES_SETTING',
+      'Show a reminder that you still have not finished three daily activities'), true, function () {
+      EventHandler.signal('activity_changed') // TW ignores missing key
+    })
+  TWDS.finished_task_handler()
+})
+TWDS.finishable_quest_handler = function () {
+  if (!window.QuestLog.quests_loaded) { // yes, quests_loaded. quest_loaded is unused
+    setTimeout(TWDS.finishable_quest_handler, 100)
+    return
+  }
+  if (!TWDS.settings.misc_mark_tracker_when_finishable) {
+    document.body.classList.remove('TWDS_quest_finishable')
+    return
+  }
+  let f = false
+  for (const id in window.QuestLog.quests) {
+    const q = window.QuestLog.quests[id]
+    if (q.finishable) {
+      f = true
+      break
+    }
+  }
+  if (f) {
+    document.body.classList.add('TWDS_quest_finishable')
+  } else {
+    document.body.classList.remove('TWDS_quest_finishable')
+  }
+}
+
+TWDS.registerStartFunc(function () {
+  const events = ['quest_tracking_changed', 'quest_solved', 'quest_update', 'quest_removed', 'quest_added', 'linearquest_added', 'linearquest_removed', 'linearquest_update', 'TWDS_quest_check']
+  EventHandler.listen(events, function () {
+    TWDS.finishable_quest_handler()
+  })
+  TWDS.registerSetting('bool', 'misc_mark_tracker_when_finishable',
+    TWDS._('MISC_MARK_QUEST_FINISHABLE',
+      'Mark the quest tracker if a quest can be finished.'), true, function () {
+      EventHandler.signal('TWDS_queck_check') // TW ignores missing key
+    })
+})
 
 TWDS.market = {}
 TWDS.market.hasBonus = function (item) {
