@@ -2,20 +2,41 @@
 //
 // i'd have liked to use <progress>, but i can't style it as i want it (background-color is a must, for i
 // want to add a text to the meter, and i need to know the colors to get contrast).
+//
+
 
 if ('trackbar' in TWDS) {
+  console.log("removing old trackbar stuff");
+  window.clearInterval(TWDS.trackbar.interval);
   TWDS.trackbar.settingchanged(false)
-  EventHandler.unlisten('bag_add', TWDS.trackbar.update)
-  EventHandler.unlisten('inventory_changed', TWDS.trackbar.update)
-  EventHandler.unlisten('character_tracking_achievement_changed', TWDS.trackbar.a_trackingchanged)
-  EventHandler.unlisten('trader_item_selled', TWDS.trackbar.update)
+  setTimeout(TWDS.trackbar.settingchanged,250);
 }
 TWDS.trackbar = {}
 TWDS.trackbar.container = null
-TWDS.trackbar.setOneTracker = function (ele, have, want) {
-  ele.dataset.have = have
-  if (want !== null) { ele.dataset.want = want }
+TWDS.trackbar.status = 0
+TWDS.trackbar.interval = -1
+TWDS.trackbar.last_background_run = 0
+
+TWDS.trackbar.datachange_listener=function(x) {
+    TWDS.trackbar.status=2;
 }
+TWDS.trackbar.setuplisteners=function(x) {
+  let fn="listen";
+  if (x===false)
+    fn="unlisten";
+  let events=["inventory_changed", "trader_item_selled", "bad_add",
+    "character_tracking_achievement_changed", "character_exp_changed",
+    "twds_storage_tracking_changed"];
+
+  for (let i=0;i<events.length;i++) {
+    EventHandler[fn](events[i],TWDS.trackbar.datachange_listener);
+  }
+}
+
+TWDS.trackbar.setonetrackerdata = function (ele, have, want) {
+    ele.dataset.have = have
+    if (want !== null) { ele.dataset.want = want }
+  }
 TWDS.trackbar.createOneTracker = function (cl, have, want, name) {
   const m = TWDS.createEle({
     nodeName: 'div',
@@ -26,42 +47,122 @@ TWDS.trackbar.createOneTracker = function (cl, have, want, name) {
     }
   })
   m.onclick = TWDS.trackbar.click
-  TWDS.trackbar.setOneTracker(m, have, want)
-  TWDS.trackbar.updateOneTracker(m)
+  TWDS.trackbar.setonetrackerdata(m, have, want)
   return m
 }
-TWDS.trackbar.updateOneTracker = function (ele) {
-  const have = ele.dataset.have
-  const want = ele.dataset.want
-  const percent = (100 * have / want).toFixed(1)
-  let todo
-  if (want === have) todo = ''
-  else todo = ' (' + (want - have) + ')'
 
-  ele.title = percent + '%: ' + have + ' / ' + want + ' ' + ele.dataset.name + todo
-  ele.style = '--twds-progress: ' + percent + '%'
-  ele.dataset.text = percent + '%' + todo
-}
+TWDS.trackbar.backgroundjob=function() {
+  let updateOneTracker = function (ele) {
+    const have = ele.dataset.have
+    const want = ele.dataset.want
+    const percent = (100 * have / want).toFixed(1)
+    let todo
+    if (want === have) todo = ''
+    else todo = ' (' + (want - have) + ')'
 
-TWDS.trackbar.p = []
-TWDS.trackbar.a_trackingchanged = function (e) {
+    ele.title = percent + '%: ' + have + ' / ' + want + ' ' + ele.dataset.name + todo
+    ele.style = '--twds-progress: ' + percent + '%'
+    ele.dataset.text = percent + '%' + todo
+  }
+
+  if (!TWDS.settings.trackbar)
+    return;
+  if (TWDS.trackbar.status === 0) {
+    let stich = new Date().getTime()- 60 * 10000;
+    if (TWDS.trackbar.last_background_run > stich) {
+      return;
+    }
+  } else {
+    TWDS.trackbar.status--;
+  }
+
+
+  // check if all trackers exist.
+  let e=TWDS.q1(".TWDS_trackbar_achievement");
   const status = Character.getTrackingAchievement()
   if (status !== undefined) {
-    let ele = TWDS.q1('.TWDS_trackbar_achievement', TWDS.trackbar.container)
-    if (!ele) {
-      ele = TWDS.trackbar.createOneTracker('TWDS_trackbar_achievement',
-        status.current, status.required, Character.getMaxExperience4Level(), '')
+    if (!e) {
+      e = TWDS.trackbar.createOneTracker('TWDS_trackbar_achievement',
+        status.current,status.required,status.title);
       const xp = TWDS.q1('.TWDS_trackbar_xp', TWDS.trackbar.container)
-      xp.insertAdjacentElement('afterend', ele)
+      if (xp) {
+        // we might run really early!
+        xp.insertAdjacentElement('afterend', e)
+      }
     }
-    TWDS.trackbar.setOneTracker(ele, status.current, status.required)
-    TWDS.trackbar.updateOneTracker(ele)
   } else {
-    const m = TWDS.q1('.TWDS_trackbar_achievement', TWDS.trackbar.container)
-    if (m) m.remove()
+    if (e) {
+      e.remove()
+    }
   }
-  TWDS.trackbar.update()
-}
+
+  let st = TWDS.q1('.TWDS_trackbar_storage', TWDS.trackbar.container)
+  const withstorage = TWDS.settings.trackbar_storage
+  if (withstorage) {
+    if (!st) {
+      const sum = TWDS.storage.getsummary()
+      st = TWDS.trackbar.createOneTracker('TWDS_trackbar_storage',
+        sum.current, sum.required, 'products')
+      const ac = TWDS.q1('.TWDS_trackbar_achievement', TWDS.trackbar.container)
+      if (ac) {
+        ac.insertAdjacentElement('afterend', st)
+      } else {
+        const xp = TWDS.q1('.TWDS_trackbar_xp', TWDS.trackbar.container)
+        if (xp) {
+          // we might run really early!
+          xp.insertAdjacentElement('afterend', st)
+        }
+      }
+    }
+  } else {
+    if (st) st.remove()
+  }
+
+  const plist = TWDS.storage.gettracked()
+  for (let i = 0; i < plist.length; i++) {
+    const id = plist[i]
+    const want = TWDS.storage.gettarget(id)
+    const count = Bag.getItemCount(id)
+    let e=TWDS.q(".TWDS_trackbar_product[data-product="+id+"]");
+    if (!e) {
+      e = TWDS.trackbar.createOneTracker('TWDS_trackbar_product',
+        count, want, ItemManager.get(id).name)
+      e.dataset.product = id
+      TWDS.trackbar.container.appendChild(e);
+    }
+  }
+  const all = TWDS.q('.TWDS_trackbar_tracker', TWDS.trackbar.container)
+  
+  // update the displayed data
+  for (let i = 0; i < all.length; i++) {
+    const e = all[i]
+    if (e.classList.contains('TWDS_trackbar_xp')) {
+      TWDS.trackbar.setonetrackerdata(e,
+        Character.getExperience4Level(), Character.getMaxExperience4Level())
+    } else if (e.classList.contains('TWDS_trackbar_achievement')) {
+      const status = Character.getTrackingAchievement()
+      if (status !== undefined) {
+        TWDS.trackbar.setonetrackerdata(e, status.current, status.required)
+      } else {
+        e.remove()
+        continue
+      }
+    } else if (e.classList.contains('TWDS_trackbar_storage')) {
+      const sum = TWDS.storage.getsummary()
+      TWDS.trackbar.setonetrackerdata(e, sum.current, sum.required)
+    } else if (e.classList.contains('TWDS_trackbar_product')) {
+      const id = e.dataset.product
+      const count = Bag.getItemCount(id)
+      TWDS.trackbar.setonetrackerdata(e, count, null)
+    } else {
+      continue // something else.
+    }
+    updateOneTracker(e)
+  }
+};
+
+
+
 TWDS.trackbar.click = function (e) {
   if (this.classList.contains('TWDS_trackbar_xp')) { return }
   if (this.classList.contains('TWDS_trackbar_achievement')) {
@@ -97,60 +198,6 @@ TWDS.trackbar.click = function (e) {
     }
   }
 }
-TWDS.trackbar.update = function () {
-  const all = TWDS.q('.TWDS_trackbar_tracker', TWDS.trackbar.container)
-  const withstorage = TWDS.settings.trackbar_storage
-  let st = TWDS.q1('.TWDS_trackbar_storage', TWDS.trackbar.container)
-  if (withstorage) {
-    if (!st) {
-      const sum = TWDS.storage.getsummary()
-      st = TWDS.trackbar.createOneTracker('TWDS_trackbar_storage',
-        sum.current, sum.required, 'products')
-      const ac = TWDS.q1('.TWDS_trackbar_achievement', TWDS.trackbar.container)
-      if (ac) {
-        ac.insertAdjacentElement('afterend', st)
-      } else {
-        const xp = TWDS.q1('.TWDS_trackbar_xp', TWDS.trackbar.container)
-        xp.insertAdjacentElement('afterend', st)
-      }
-    }
-  } else {
-    if (st) st.remove()
-  }
-  for (let i = 0; i < all.length; i++) {
-    const e = all[i]
-    if (e.classList.contains('TWDS_trackbar_xp')) {
-      TWDS.trackbar.setOneTracker(e,
-        Character.getExperience4Level(), Character.getMaxExperience4Level())
-    } else if (e.classList.contains('TWDS_trackbar_achievement')) {
-      const status = Character.getTrackingAchievement()
-      if (status !== undefined) {
-        TWDS.trackbar.setOneTracker(e, status.current, status.required)
-      } else {
-        e.remove()
-        continue
-      }
-    } else if (e.classList.contains('TWDS_trackbar_storage')) {
-      const sum = TWDS.storage.getsummary()
-      TWDS.trackbar.setOneTracker(e, sum.current, sum.required)
-    } else if (e.classList.contains('TWDS_trackbar_product')) {
-      const id = e.dataset.product
-      const count = Bag.getItemCount(id)
-      TWDS.trackbar.setOneTracker(e, count, null)
-    } else {
-      continue // something else.
-    }
-    TWDS.trackbar.updateOneTracker(e)
-  }
-}
-//   EventHandler.listen("twds_storage_trackingadded", TWDS.trackbar.trackingadded);
-//   EventHandler.listen("twds_storage_trackingremoved", TWDS.trackbar.trackingadded);
-TWDS.trackbar.trackingadded = function (x) {
-  TWDS.trackbar.settingchanged()
-}
-TWDS.trackbar.trackingremoved = function (x) {
-  TWDS.trackbar.settingchanged()
-}
 
 TWDS.trackbar.settingchanged = function (v) {
   if (!ItemManager.isLoaded()) {
@@ -176,8 +223,13 @@ TWDS.trackbar.settingchanged = function (v) {
     WestUi._twds_updateExpBar = WestUi.updateExpBar
     WestUi.updateExpBar = TWDS.trackbar.update
   }
-  EventHandler.unlisten('inventory_changed', TWDS.trackbar.update)
-  EventHandler.unlisten('character_tracking_achievement_changed', TWDS.trackbar.a_trackingchanged)
+  window.clearInterval(TWDS.trackbar.interval);
+  if (v) {
+    TWDS.trackbar.setuplisteners(true);
+  } else {
+    TWDS.trackbar.setuplisteners(false);
+  }
+  console.log("SC",v);
 
   if (v) {
     origele.style.display = 'none'
@@ -191,24 +243,9 @@ TWDS.trackbar.settingchanged = function (v) {
     let m = TWDS.trackbar.createOneTracker('TWDS_trackbar_xp',
       Character.getExperience4Level(), Character.getMaxExperience4Level(), 'XP')
     e.appendChild(m)
-    TWDS.trackbar.a_trackingchanged()
 
-    const plist = TWDS.storage.gettracked()
-    for (let i = 0; i < plist.length; i++) {
-      const id = plist[i]
-      const want = TWDS.storage.gettarget(id)
-      const count = Bag.getItemCount(id)
-      m = TWDS.trackbar.createOneTracker('TWDS_trackbar_product',
-        count, want, ItemManager.get(id).name)
-      m.dataset.product = id
-      e.appendChild(m)
-    }
-
-    TWDS.trackbar.update()
-    EventHandler.listen('inventory_changed', TWDS.trackbar.update)
-    EventHandler.listen('trader_item_selled', TWDS.trackbar.update)
-    EventHandler.listen('bag_add', TWDS.trackbar.update)
-    EventHandler.listen('character_tracking_achievement_changed', TWDS.trackbar.trackingchanged)
+    TWDS.trackbar.backgroundjob()
+    TWDS.trackbar.interval=window.setInterval(TWDS.trackbar.backgroundjob,200);
   }
 }
 
@@ -216,11 +253,10 @@ TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'trackbar',
     TWDS._('TRACKBAR_SETTING',
       'Add a trackbar capable of tracking experience, achievements, and products together.'),
-    true, TWDS.trackbar.settingchanged, 'misc', 'trackbar')
+    true, function() { TWDS.trackbar.settingchanged() }, 'misc', 'trackbar')
   TWDS.registerSetting('bool', 'trackbar_storage',
     TWDS._('TRACKBAR_SETTING_STORAGESUMMARY',
       'Show a summary of the storage (tab) in the trackbar.'),
     true, null, 'misc', 'trackbar')
-  EventHandler.listen('twds_storage_tracking_changed', function (x) { TWDS.trackbar.settingchanged() })
-  EventHandler.listen('character_exp_changed', function (x) { TWDS.trackbar.update() })
+  TWDS.trackbar.setuplisteners(true);
 })
