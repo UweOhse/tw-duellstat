@@ -4,12 +4,11 @@
 // want to add a text to the meter, and i need to know the colors to get contrast).
 //
 
-
 if ('trackbar' in TWDS) {
-  console.log("removing old trackbar stuff");
-  window.clearInterval(TWDS.trackbar.interval);
+  console.log('removing old trackbar stuff')
+  window.clearInterval(TWDS.trackbar.interval)
   TWDS.trackbar.settingchanged(false)
-  setTimeout(TWDS.trackbar.settingchanged,250);
+  setTimeout(TWDS.trackbar.settingchanged, 250)
 }
 TWDS.trackbar = {}
 TWDS.trackbar.container = null
@@ -17,26 +16,25 @@ TWDS.trackbar.status = 0
 TWDS.trackbar.interval = -1
 TWDS.trackbar.last_background_run = 0
 
-TWDS.trackbar.datachange_listener=function(x) {
-    TWDS.trackbar.status=2;
+TWDS.trackbar.datachange_listener = function (x) {
+  TWDS.trackbar.status = 2
 }
-TWDS.trackbar.setuplisteners=function(x) {
-  let fn="listen";
-  if (x===false)
-    fn="unlisten";
-  let events=["inventory_changed", "trader_item_selled", "bad_add",
-    "character_tracking_achievement_changed", "character_exp_changed",
-    "twds_storage_tracking_changed"];
+TWDS.trackbar.setuplisteners = function (x) {
+  let fn = 'listen'
+  if (x === false) { fn = 'unlisten' }
+  const events = ['inventory_changed', 'trader_item_selled', 'bad_add',
+    'character_tracking_achievement_changed', 'character_exp_changed',
+    'twds_storage_tracking_changed']
 
-  for (let i=0;i<events.length;i++) {
-    EventHandler[fn](events[i],TWDS.trackbar.datachange_listener);
+  for (let i = 0; i < events.length; i++) {
+    EventHandler[fn](events[i], TWDS.trackbar.datachange_listener)
   }
 }
 
 TWDS.trackbar.setonetrackerdata = function (ele, have, want) {
-    ele.dataset.have = have
-    if (want !== null) { ele.dataset.want = want }
-  }
+  ele.dataset.have = have
+  if (want !== null) { ele.dataset.want = want }
+}
 TWDS.trackbar.createOneTracker = function (cl, have, want, name) {
   const m = TWDS.createEle({
     nodeName: 'div',
@@ -51,8 +49,8 @@ TWDS.trackbar.createOneTracker = function (cl, have, want, name) {
   return m
 }
 
-TWDS.trackbar.backgroundjob=function() {
-  let updateOneTracker = function (ele) {
+TWDS.trackbar.backgroundjob = function () {
+  const updateOneTracker = function (ele) {
     const have = ele.dataset.have
     const want = ele.dataset.want
     const percent = (100 * have / want).toFixed(1)
@@ -65,25 +63,23 @@ TWDS.trackbar.backgroundjob=function() {
     ele.dataset.text = percent + '%' + todo
   }
 
-  if (!TWDS.settings.trackbar)
-    return;
+  if (!TWDS.settings.trackbar) { return }
   if (TWDS.trackbar.status === 0) {
-    let stich = new Date().getTime()- 60 * 10000;
+    const stich = new Date().getTime() - 60 * 10000
     if (TWDS.trackbar.last_background_run > stich) {
-      return;
+      return
     }
   } else {
-    TWDS.trackbar.status--;
+    TWDS.trackbar.status--
   }
 
-
   // check if all trackers exist.
-  let e=TWDS.q1(".TWDS_trackbar_achievement");
+  let e = TWDS.q1('.TWDS_trackbar_achievement')
   const status = Character.getTrackingAchievement()
   if (status !== undefined) {
     if (!e) {
       e = TWDS.trackbar.createOneTracker('TWDS_trackbar_achievement',
-        status.current,status.required,status.title);
+        status.current, status.required, status.title)
       const xp = TWDS.q1('.TWDS_trackbar_xp', TWDS.trackbar.container)
       if (xp) {
         // we might run really early!
@@ -123,16 +119,16 @@ TWDS.trackbar.backgroundjob=function() {
     const id = plist[i]
     const want = TWDS.storage.gettarget(id)
     const count = Bag.getItemCount(id)
-    let e=TWDS.q(".TWDS_trackbar_product[data-product="+id+"]");
+    let e = TWDS.q('.TWDS_trackbar_product[data-product=' + id + ']')
     if (!e) {
       e = TWDS.trackbar.createOneTracker('TWDS_trackbar_product',
         count, want, ItemManager.get(id).name)
       e.dataset.product = id
-      TWDS.trackbar.container.appendChild(e);
+      TWDS.trackbar.container.appendChild(e)
     }
   }
   const all = TWDS.q('.TWDS_trackbar_tracker', TWDS.trackbar.container)
-  
+
   // update the displayed data
   for (let i = 0; i < all.length; i++) {
     const e = all[i]
@@ -159,9 +155,7 @@ TWDS.trackbar.backgroundjob=function() {
     }
     updateOneTracker(e)
   }
-};
-
-
+}
 
 TWDS.trackbar.click = function (e) {
   if (this.classList.contains('TWDS_trackbar_xp')) { return }
@@ -223,13 +217,13 @@ TWDS.trackbar.settingchanged = function (v) {
     WestUi._twds_updateExpBar = WestUi.updateExpBar
     WestUi.updateExpBar = TWDS.trackbar.update
   }
-  window.clearInterval(TWDS.trackbar.interval);
+  window.clearInterval(TWDS.trackbar.interval)
   if (v) {
-    TWDS.trackbar.setuplisteners(true);
+    TWDS.trackbar.setuplisteners(true)
   } else {
-    TWDS.trackbar.setuplisteners(false);
+    TWDS.trackbar.setuplisteners(false)
   }
-  console.log("SC",v);
+  console.log('SC', v)
 
   if (v) {
     origele.style.display = 'none'
@@ -240,12 +234,12 @@ TWDS.trackbar.settingchanged = function (v) {
     TWDS.trackbar.container = e
     ui.appendChild(e)
     ui.classList.add('TWDS_trackbar_active')
-    let m = TWDS.trackbar.createOneTracker('TWDS_trackbar_xp',
+    const m = TWDS.trackbar.createOneTracker('TWDS_trackbar_xp',
       Character.getExperience4Level(), Character.getMaxExperience4Level(), 'XP')
     e.appendChild(m)
 
     TWDS.trackbar.backgroundjob()
-    TWDS.trackbar.interval=window.setInterval(TWDS.trackbar.backgroundjob,200);
+    TWDS.trackbar.interval = window.setInterval(TWDS.trackbar.backgroundjob, 200)
   }
 }
 
@@ -253,10 +247,10 @@ TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'trackbar',
     TWDS._('TRACKBAR_SETTING',
       'Add a trackbar capable of tracking experience, achievements, and products together.'),
-    true, function() { TWDS.trackbar.settingchanged() }, 'misc', 'trackbar')
+    true, function () { TWDS.trackbar.settingchanged() }, 'misc', 'trackbar')
   TWDS.registerSetting('bool', 'trackbar_storage',
     TWDS._('TRACKBAR_SETTING_STORAGESUMMARY',
       'Show a summary of the storage (tab) in the trackbar.'),
     true, null, 'misc', 'trackbar')
-  TWDS.trackbar.setuplisteners(true);
+  TWDS.trackbar.setuplisteners(true)
 })
