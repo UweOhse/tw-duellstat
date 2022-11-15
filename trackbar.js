@@ -97,16 +97,18 @@ TWDS.trackbar.backgroundjob = function () {
   if (withstorage) {
     if (!st) {
       const sum = TWDS.storage.getsummary()
-      st = TWDS.trackbar.createOneTracker('TWDS_trackbar_storage',
-        sum.current, sum.required, 'products')
-      const ac = TWDS.q1('.TWDS_trackbar_achievement', TWDS.trackbar.container)
-      if (ac) {
-        ac.insertAdjacentElement('afterend', st)
-      } else {
-        const xp = TWDS.q1('.TWDS_trackbar_xp', TWDS.trackbar.container)
-        if (xp) {
-          // we might run really early!
-          xp.insertAdjacentElement('afterend', st)
+      if (sum.required) {
+        st = TWDS.trackbar.createOneTracker('TWDS_trackbar_storage',
+          sum.current, sum.required, 'products')
+        const ac = TWDS.q1('.TWDS_trackbar_achievement', TWDS.trackbar.container)
+        if (ac) {
+          ac.insertAdjacentElement('afterend', st)
+        } else {
+          const xp = TWDS.q1('.TWDS_trackbar_xp', TWDS.trackbar.container)
+          if (xp) {
+            // we might run really early!
+            xp.insertAdjacentElement('afterend', st)
+          }
         }
       }
     }
