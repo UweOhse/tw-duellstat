@@ -351,7 +351,7 @@ TWDS.storage.gettarget = function (pr) {
 TWDS.storage.gettracked = function () {
   const out = []
   for (const id of Object.keys(TWDS.storage.data)) {
-    if (TWDS.storage.data[id][2]) { out.push(id) }
+    if (TWDS.storage.data[id][2] && TWDS.storage.data[id][1]) { out.push(id) }
   }
   return out
 }
