@@ -187,7 +187,7 @@ TWDS.jobwindow.updateMotivationMeter = function (o) {
   if ('job_points' in o) {
     jp = o.job_points
     malus = o.job.malus
-  } else if ('job' in o && 'workpoints' in o.job) {
+  } else if ('job' in o && o.job && 'workpoints' in o.job) {
     jp = o.job.jobpoints - o.job.workpoints
     malus = o.job.jobObj.malus
   }
