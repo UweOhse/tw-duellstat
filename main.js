@@ -98,12 +98,14 @@ TWDS.storecrafting = function (x) {
   if (x.error) return
   TWDS.crafting = {}
   TWDS.crafting.items = {}
-  for (let i = 0; i < x.recipes_content.length; i++) {
-    const rid = x.recipes_content[i].item_id
-    const r = ItemManager.get(rid)
-    if (r) {
-      console.log(r.name, '=>', r.craftitem)
-      TWDS.crafting.items[r.craftitem] = true
+  if (x.recipes_content) {
+    for (let i = 0; i < x.recipes_content.length; i++) {
+      const rid = x.recipes_content[i].item_id
+      const r = ItemManager.get(rid)
+      if (r) {
+        console.log(r.name, '=>', r.craftitem)
+        TWDS.crafting.items[r.craftitem] = true
+      }
     }
   }
 }
