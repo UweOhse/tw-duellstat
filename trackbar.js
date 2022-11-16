@@ -24,6 +24,7 @@ TWDS.trackbar.setuplisteners = function (x) {
   if (x === false) { fn = 'unlisten' }
   const events = ['inventory_changed', 'trader_item_selled', 'bad_add',
     'character_tracking_achievement_changed', 'character_exp_changed',
+    'character_level_up',
     'twds_storage_tracking_changed']
 
   for (let i = 0; i < events.length; i++) {
