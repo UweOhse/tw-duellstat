@@ -214,12 +214,6 @@ TWDS.trackbar.settingchanged = function (v) {
   if (forget) { forget.remove() }
   TWDS.trackbar.container = null
 
-  if (WestUi._twds_updateExpBar) {
-    WestUi.updateExpBar = WestUi._twds_updateExpBar
-  } else {
-    WestUi._twds_updateExpBar = WestUi.updateExpBar
-    WestUi.updateExpBar = TWDS.trackbar.update
-  }
   window.clearInterval(TWDS.trackbar.interval)
   if (v) {
     TWDS.trackbar.setuplisteners(true)
