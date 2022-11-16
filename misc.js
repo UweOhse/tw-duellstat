@@ -300,4 +300,14 @@ TWDS.registerStartFunc(function () {
         window.Map.Radialmenu.prototype.open = window.Map.Radialmenu.prototype._TWDS_map_backup_open
       }
     }, 'Map')
+  TWDS.registerSetting('bool', 'misc_trader_show_max_button',
+    TWDS._('MISC_SETTING_SHOW_MAX_BUTTON',
+      'Show the "max" button while selling at the traveling merchant.'),
+    false, function (v) {
+      if (v) {
+        document.body.classList.add('TWDS_show_trader_max_value')
+      } else {
+        document.body.classList.remove('TWDS_show_trader_max_value')
+      }
+    }, 'misc')
 })

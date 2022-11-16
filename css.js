@@ -737,6 +737,13 @@ TWDS.insertStyles = function () {
     body.TWDS_quest_finishable #windows > .questtracker {
       box-shadow: orange -1px -1px 10px 3px;
     }
+    body.TWDS_show_trader_max_value .item_sell .pricing_container .input_max_value {
+      display: block;
+      border: 1px solid #8a6322;
+      margin-bottom: 5px;
+      border-radius: 4px;
+      background-color: #d6d2cd;
+    }
 
   `
   const sty = document.createElement('style')
