@@ -177,17 +177,17 @@ TWDS.clothcache.startFunction = function () {
       if (ii in iu) {
         iu = iu[ii]
         if (iu.job.length) {
-          title = title + iu.job.length + ' jobs'
+          title = title + TWDS._('CLOTHCACHE_JOBS', '$n$ jobs', { n: iu.job.length })
           count += iu.job.length
         }
         if (iu.eq.length) {
           if (title > '') title += ', '
-          title = title + iu.eq.length + ' equipment sets'
+          title = title + TWDS._('CLOTHCACHE_TW_EQ_SETS', '$n$ equipment sets', { n: iu.eq.length })
           count += iu.eq.length
         }
         if (iu.ds.length) {
           if (title > '') title += ', '
-          title = title + iu.ds.length + ' tw-duellstat equipment sets'
+          title = title + TWDS._('CLOTHCACHE_DS_EQ_SETS', '$n$ duellstat equipment sets', { n: iu.ds.length })
           count += iu.ds.length
         }
       }
@@ -197,20 +197,22 @@ TWDS.clothcache.startFunction = function () {
         let wcnt = 0
         for (let i = 0; i < twcalc.length; i++) {
           for (let j = 0; j < 10; j++) {
-            if (twcalc[i][j] === ii) { wcnt++ }
+            if (twcalc[i].items[j] === ii) { wcnt++ }
           }
         }
         if (wcnt) {
           if (title > '') title += ', '
-          title = title + wcnt + ' TW-Calc equipment sets'
+          title = title + TWDS._('CLOTHCACHE_TC_EQ_SETS', '$n$ TW-Calc equipment sets', { n: wcnt })
           count += wcnt
         }
       }
       if (!count) {
         return
       }
+      title += TWDS._('CLOTHCACHE_SHIFT_CLICK_FOR', '. Shift-Click for more information.')
       const span = document.createElement('span')
       span.classList.add('TWDS_itemusageinfo')
+      span.dataset.item_id = ii
       this.divMain[0].appendChild(span)
       span.textContent = count
       span.title = title
@@ -219,6 +221,17 @@ TWDS.clothcache.startFunction = function () {
         this.divMain[0].classList.add('not_sellable')
       }
     }
+    document.addEventListener('click', function (ev) {
+      if (ev.target.classList.contains('TWDS_itemusageinfo')) {
+        if (ev.shiftKey) {
+          let sel = "#TWDS_wuw [data-itemid='"
+          sel += ev.target.dataset.item_id
+          sel += "']"
+          TWDS.opentab('wuw', sel)
+        }
+        return false
+      }
+    })
   } catch (e) {
   }
 
