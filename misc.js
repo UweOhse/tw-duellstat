@@ -97,14 +97,19 @@ TWDS.market.hasBonus = function (item) {
   }
   return false
 }
+TWDS.market.filtermode = 'none'
 TWDS.market.filter = function (mode, cat) {
   const p = $('#mpb_' + cat + '_content p')
   p.show()
-  if (!mode) return
+  if (mode === 'none') return
   for (let i = 0; i < TWDS.market[cat].length; i++) {
     const item = ItemManager.get(TWDS.market[cat][i])
     if (item) {
-      if (!TWDS.market.hasBonus(item)) { $(p[i]).hide() }
+      if (mode === 'bonus') {
+        if (!TWDS.market.hasBonus(item)) { $(p[i]).hide() }
+      } else if (mode === 'set') {
+        if (!item.set) { $(p[i]).hide() }
+      }
     }
   }
 }
@@ -120,24 +125,27 @@ TWDS.market.handleFilterChange = function () {
     if (col1) col1.guiElement.setSelected(false, true)
     if (col2) col2.guiElement.setSelected(false, true)
     combo = combo.value
+    TWDS.market.filtermode = combo
     if (combo === 'none') {
-      TWDS.market.filter(false, m[1])
+      TWDS.market.filter(combo, m[1])
     } else if (combo === 'collect') {
       if (col1) col1.guiElement.toggle()
     } else if (combo === 'collect2') {
       if (col2) col2.guiElement.toggle()
     } else {
-      TWDS.market.filter(true, m[1])
+      TWDS.market.filter(combo, m[1])
     }
   }
 }
 TWDS.market.updateCategory = function (category, data) {
   TWDS.market[category] = data
+  console.log('updateCategory', category, data)
   const old = document.getElementById('TWDS_market_filters')
   if (!old) {
     const combo = new west.gui.Combobox('TWDS_market_filters')
     combo.addItem('none', 'none')
     combo.addItem('bonus', 'bonus')
+    combo.addItem('set', 'set')
     let e = document.getElementById('buyFilterIsCollect')
     if (e) {
       e.style.display = 'none'
@@ -164,9 +172,7 @@ TWDS.market.updateCategory = function (category, data) {
   }
   const ret = MarketWindow.Buy._TWDS_backup_updateCategory(category, data)
   if (old) {
-    if (old.classList.contains('tw2gui_checkbox_checked')) {
-      TWDS.market.filter(true, category)
-    }
+    TWDS.market.filter(TWDS.market.filtermode, category)
   }
   return ret
 }
