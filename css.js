@@ -377,7 +377,7 @@ TWDS.insertStyles = function () {
     input[type=number][size="7"] {
       width:8em;
     }
-    #TWDS_tab_itemsets {
+    #TWDS_tab_itemsets, #TWDS_tab_wuw {
       height:340px;
       overflow-y: auto !important;
       overflow-x: auto !important;
