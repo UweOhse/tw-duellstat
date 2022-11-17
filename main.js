@@ -1,4 +1,38 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
+TWDS.opentab = function (tabname, scrollto) {
+  if (typeof (wman.getById('TWDS')) === 'undefined') {
+    TWDS.window = null
+  }
+  if (TWDS.window == null) {
+    // TWDS.updateData()
+    TWDS.window = wman.open('TWDS', 'Duellstat', 'noreload nocloseall').setMiniTitle('Duellstat')
+
+    let defaultTab = ''
+    for (const tabData of Object.values(TWDS.knownTabs)) {
+      const t = TWDS.createTab(tabData.key)
+      TWDS.window.addTab(tabData.title,
+        tabData.key, tabData.activationFunc)
+      const sp = new west.gui.Scrollpane()
+      sp.appendContent(t)
+      TWDS.window.appendToContentPane(sp.getMainDiv())
+      if (tabData.isDefault && defaultTab === '') { defaultTab = tabData.key }
+    }
+    const lastseen = window.localStorage.TWDS_last_seen || ''
+    if (lastseen !== TWDS.version) {
+      defaultTab = 'updates'
+      window.localStorage.TWDS_last_seen = TWDS.version
+    }
+
+    if (tabname === null) { tabname = defaultTab }
+  }
+  TWDS.activateTab(tabname)
+  if (scrollto) {
+    const x = TWDS.q1(scrollto, TWDS.window.divMain)
+    if (x) {
+      x.scrollIntoView(true)
+    }
+  }
+}
 TWDS.createSideButton = function () {
   const d = document.createElement('div')
   d.classList.add('menulink')
@@ -26,26 +60,7 @@ TWDS.createSideButton = function () {
       TWDS.window = null
     }
     if (TWDS.window == null) {
-      // TWDS.updateData()
-      TWDS.window = wman.open('TWDS', 'Duellstat', 'noreload nocloseall').setMiniTitle('Duellstat')
-
-      let defaultTab = ''
-      for (const tabData of Object.values(TWDS.knownTabs)) {
-        const t = TWDS.createTab(tabData.key)
-        TWDS.window.addTab(tabData.title,
-          tabData.key, tabData.activationFunc)
-        const sp = new west.gui.Scrollpane()
-        sp.appendContent(t)
-        TWDS.window.appendToContentPane(sp.getMainDiv())
-        if (tabData.isDefault && defaultTab === '') { defaultTab = tabData.key }
-      }
-      const lastseen = window.localStorage.TWDS_last_seen || ''
-      if (lastseen !== TWDS.version) {
-        defaultTab = 'updates'
-        window.localStorage.TWDS_last_seen = TWDS.version
-      }
-
-      TWDS.activateTab(defaultTab)
+      TWDS.opentab(null)
     } else if (wman.isMinimized('TWDS')) {
       wman.reopen('TWDS')
     } else {
