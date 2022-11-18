@@ -150,7 +150,7 @@ TWDS.minimap.updateReal = function () {
     const str = "<div class='TWDS_mm_markethack' style='" + style + ' />'
     const ele = $(str)
     ele.addMousePopup('<div style="min-width:60px;text-align:center">' +
-        a + ' items' + '</div>')
+        a + ' ' + TWDS._('ITEMS', 'items') + '</div>')
     ele[0].dataset.posx = x
     ele[0].dataset.posy = y
 
@@ -526,7 +526,8 @@ TWDS.minimap.uiinit = function () {
     const e = $("<span id='TWDS_minimap_worldmapmarketcontainer' class='hasMousePopup' style='display:block'>" +
            "<input type='checkbox' value='1' " + checked + '>' +
        str +
-       'Market items on world map</span>')
+       TWDS._('MINIMAP_MARKET_ITEMS_ON_WORLDMAP', 'Market items on world map') +
+       '</span>')
     $('.mmap_others').append(e)
     $('#TWDS_minimap_worldmapmarketcontainer input').change(function (e) {
       TWDS.settings.minimap_worldmapmarket_active = this.checked ? 1 : 0
@@ -595,19 +596,22 @@ TWDS.registerStartFunc(function () {
   }
 
   TWDS.registerSetting('bool', 'minimap_silvergold',
-    'show known silver/gold jobs on the minimap.', defaultval, function (v) {
+    TWDS._('MINIMAP_SETTING_SILVERGOLD', 'Show known silver/gold jobs on the minimap.'),
+    defaultval, function (v) {
       TWDS.minimap.uiinit()
     },
     'Minimap'
   )
   TWDS.registerSetting('bool', 'minimap_coordinput',
-    'Abuse the job input field as coordinate input.', defaultval, function (v) {
+    TWDS._('MINIMAP_SETTING_COORDINPUT', 'Abuse the job input field as coordinate input.'),
+    defaultval, function (v) {
       TWDS.minimap.uiinit()
     },
     'Minimap'
   )
   TWDS.registerSetting('bool', 'minimap_use_worldmapmarket',
-    'Add a checkbox allowing to show the market items on the mini world map.', true, function (v) {
+    TWDS._('MINIMAP_SETTING_WORLDMAPMARKET',
+      'Add a checkbox allowing to show the market items on the mini world map.'), true, function (v) {
       TWDS.minimap.uiinit()
     },
     'Minimap'
