@@ -79,6 +79,7 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
   let durationIdx = 0
   if (duration === 600) durationIdx = 1
   if (duration === 3600) durationIdx = 2
+  const _ = TWDS._
 
   let useBest = 0
   if (TWDS.settings.jobtab_modecheckbox) {
@@ -146,7 +147,7 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
     td.dataset.field = 'lp'
     td.textContent = curNetto
     if (best !== null && curNetto !== bestNetto) {
-      td.title = bestNetto + ' in best clothes'
+      td.title = bestNetto + ' ' + _('JOBTAB_IN_BEST_CLOTHES', '(in best clothes)')
     }
     if (curNetto < 0) {
       td.classList.add('TWDS_job_negative')
@@ -160,7 +161,7 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
     td.dataset.field = 'stars'
     td.dataset.sortval = curStars
     if (best !== null && bestStars !== curStars) {
-      td.title = bestStars + ' stars in best clothes'
+      td.title = bestStars + '* ' + _('JOBTAB_IN_BEST_CLOTHES', '(in best clothes)')
     }
     if (curStars < 6) {
       td.classList.add('TWDS_job_negative')
@@ -175,7 +176,8 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
     td.title = serverdata.jobs[jobId].durations[0].xp + '/' +
       serverdata.jobs[jobId].durations[1].xp + '/' +
       serverdata.jobs[jobId].durations[2].xp +
-      ' xp in 15s/10m/1h'
+        ' ' + _('JOBTAB_XP', 'experience points') +
+        ' ' + _('JOBTAB_15101', ' (15s/10m/1h)')
 
     td = document.createElement('td')
     tr.appendChild(td)
@@ -184,7 +186,7 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
     td.title = '$' + serverdata.jobs[jobId].durations[0].money + '/' +
       serverdata.jobs[jobId].durations[1].money + '/' +
       serverdata.jobs[jobId].durations[2].money +
-      ' in 15s/10m/1h'
+        ' ' + _('JOBTAB_15101', ' (15s/10m/1h)')
 
     td = document.createElement('td')
     tr.appendChild(td)
@@ -196,12 +198,13 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
     if (best !== null && curBrutto !== bestBrutto) {
       let luck2 = TWDS.TWDBcalcLuck(bestBrutto, difficulty, TWDS.jobData['job_' + jobId].job_luck, mot, 1)
       if (charPremium) luck2 *= 1.5
-      td.title += '<br>' + Math.round(luck2) + ' -' + Math.round(luck2 * 3) + ' in best clothes'
+      td.title += '<br>' + Math.round(luck2) + ' -' + Math.round(luck2 * 3) +
+        +' ' + _('JOBTAB_IN_BEST_CLOTHES', '(in best clothes)')
     }
     td.title += '<br>' + serverdata.jobs[jobId].durations[0].luck + '/' +
       serverdata.jobs[jobId].durations[1].luck + '/' +
       serverdata.jobs[jobId].durations[2].luck +
-      ' luck mod. in 15s/10m/1h'
+        +_('JOBTAB_LUCK_MOD', ' luck modification in 15s/10m/1h')
 
     td = document.createElement('td')
     tr.appendChild(td)
@@ -217,7 +220,7 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
       else dang *= 0.9
     }
     td.textContent = Math.round(dang * 10) / 10
-    td.title = dang + '% chance of injury'
+    td.title = dang + '% ' + _('JOBTAB_INJURY_CHANCE', 'chance of injury')
     if (best !== null) {
       let dang2 = TWDS.TWDBcalcDanger(bestBrutto, difficulty, TWDS.jobData['job_' + jobId].job_danger, mot, 1)
       if (Character.charClass === 'adventurer') {
@@ -225,15 +228,20 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
         else dang2 *= 0.9
       }
       dang2 = Math.round(dang2 * 10) / 10
-      td.title += '<br>' + dang2 + '% chance of injury in best clothes'
+      td.title += '<br>' + dang2 + '% ' + _('JOBTAB_INJURY_CHANCE_IBC', 'chance of injury in best clothes')
     }
     const mh = Character.getMaxHealth()
     const maxInj = Math.round((TWDS.jobData['job_' + jobId].job_maxdmg) / 100 * mh)
     const h = Character.health
-    td.title += '<br>An injury costs up to ' + maxInj + ' health points (' + TWDS.jobData['job_' + jobId].job_maxdmg + '% of max. health).'
+    td.title += '<br>'
+    td.title += _('JOBTAB_INJURY_COST',
+      'An injury costs up to $maxhp$ health points ($percent$% of max. health).',
+      { maxhp: maxInj, percent: TWDS.jobData['job_' + jobId].job_maxdmg })
+    // td.title += _("JOBTAB_INJURY_COST",'An injury costs up to ' + maxInj + ' health points (' + TWDS.jobData['job_' + jobId].job_maxdmg + '% of max. health).'
 
     const worstJobs = parseInt((h + 1) / maxInj)
-    td.title += '<br>You might last ' + worstJobs + ' jobs in the worst case.'
+    td.title += '<br>' + _('JOBTAB_MIGHT_LAST', 'You might last $worst$ jobs in the worst case.',
+      { worst: worstJobs })
 
     td = document.createElement('td')
     tr.appendChild(td)
@@ -248,7 +256,7 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
       but.textContent = '>>'
       but.classList.add('TWDS_joblist_startbutton')
       but.dataset.jobid = jobId
-      but.title = 'Start the job at the nearest possible position'
+      but.title = _('JOBTAB_START_NEAREST', 'Start the job at the nearest possible position')
       td.appendChild(but)
     }
   }
@@ -269,7 +277,7 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
     tr.appendChild(th)
     th.dataset.field = 'date'
     th.textContent = TWDS._('JOBLIST_DATE', 'Date')
-    th.title = "The date the 'best' clothes were calculated."
+    th.title = TWDS._('JOBLIST_DATE_TITLE', "The date the 'best' clothes were calculated.")
 
     th = document.createElement('th')
     tr.appendChild(th)
@@ -290,6 +298,7 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
     tr.appendChild(th)
     th.dataset.field = 'xp'
     th.textContent = TWDS._('JOBLIST_XP', 'xp')
+    th.title = TWDS._('JOBLIST_XP_TITLE', 'Experience points')
 
     th = document.createElement('th')
     tr.appendChild(th)
@@ -301,17 +310,20 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
     th.dataset.field = 'luck'
     // th.textContent = TWDS._('JOBLIST_LUCK', 'luck')
     th.innerHTML = '&#9752;'
+    th.title = TWDS._('JOBLIST_LUCK_TITLE', 'The maximum value of the items you can find.')
 
     th = document.createElement('th')
     tr.appendChild(th)
     th.dataset.field = 'motivation'
     th.textContent = TWDS._('JOBLIST_MOTIVATION', 'Mot.')
+    th.title = TWDS._('JOBLIST_MOTIVATION_TITLE', 'Current motivation for this job')
 
     th = document.createElement('th')
     tr.appendChild(th)
     th.dataset.field = 'danger'
     // th.textContent = TWDS._('JOBLIST_DANGER', 'Danger')
     th.innerHTML = '&#9829;'
+    th.title = TWDS._('JOBLIST_DANGER_TITLE', 'The chance to have an accident.')
 
     th = document.createElement('th')
     tr.appendChild(th)
@@ -393,6 +405,7 @@ TWDS.jobtab.sort = function (tab, key) {
 
 TWDS.jobtab.curJobDuration = 15
 TWDS.jobtab.getContent = function () {
+  const _ = TWDS._
   const x = window.localStorage.getItem('TWDS_job_duration')
   if (x !== null) { TWDS.jobtab.curJobDuration = parseInt(x) }
 
@@ -419,8 +432,8 @@ TWDS.jobtab.getContent = function () {
 
   const modetext = document.createElement('span')
   modearea.appendChild(modetext)
-  modetext.textContent = 'assume best clothes'
-
+  modetext.textContent = _('JOBTAB_ASSUME_BEST', 'assume best clothes')
+  modetext.title = _('JOBTAB_ASSUME_BEST_TITLE', 'otherwise the current equipment is used')
   const sig = document.createElement('span')
   p.appendChild(sig)
   sig.id = 'TWDS_job_searchgroup'
@@ -428,7 +441,7 @@ TWDS.jobtab.getContent = function () {
   const input = document.createElement('input')
   sig.appendChild(input)
   input.id = 'TWDS_job_search'
-  input.placeholder = 'search'
+  input.placeholder = _('SEARCH', 'search')
   input.type = 'search'
 
   const button = document.createElement('button')
@@ -563,6 +576,7 @@ TWDS.jobtab.addFilters = function () {
     nodeName: 'div',
     id: 'TWDS_jobtab_filter_container'
   })
+  const _ = TWDS._
   for (const key of keys) {
     const opkey = 'obtab_filter_op_' + key[0]
     const valkey = 'obtab_filter_value_' + key[0]
@@ -575,7 +589,7 @@ TWDS.jobtab.addFilters = function () {
       childNodes: [
         {
           nodeName: 'legend',
-          textContent: key[1]
+          textContent: _('JOBTAB_LEGEND_' + key[1], key[1])
         },
         {
           nodeName: 'select',
