@@ -55,17 +55,25 @@ TWDS.clothcache.info = function (ele) {
     agesum += now - old.timestamp
     found++
   }
-  let t = found + '/' + total + ' jobs have best clothes stored in the cache.'
+  let t = TWDS._('CLOTHCACHE_STATUS_INFO_TEXT',
+    '$found$ / $total$ jobs have best clothes stored in the cache.',
+    { found: found, total: total })
+
   if (found) {
     const avg = (agesum / found) / 1000
-    t += 'The average age is '
+    let agestr
     if (avg > 2 * 86400) {
-      t += Math.round(avg / 8640) / 10 + ' days.'
+      agestr = (avg / 86400).toFixed(1)
+      agestr = TWDS._('CLOTHCACHE_STATUS_AGE_DAYS', '$n$ days', { n: agestr })
     } else if (avg > 2 * 3600) {
-      t += Math.round(avg / 360) / 10 + ' hours.'
+      agestr = (avg / 3600).toFixed(1)
+      agestr = TWDS._('CLOTHCACHE_STATUS_AGE_HOURS', '$n$ hours', { n: agestr })
     } else {
-      t += Math.round(avg / 60) + ' minutes.'
+      agestr += (avg / 60).toFixed(1)
+      agestr = TWDS._('CLOTHCACHE_STATUS_AGE_MINUTES', '$n$ minutes', { n: agestr })
     }
+    t += ' '
+    t += TWDS._('CLOTHCACHE_STATUS_AGE_TEXT', 'The average age is $age$.', { age: agestr })
   }
   ele.textContent = t
 }
