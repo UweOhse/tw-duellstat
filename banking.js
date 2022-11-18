@@ -66,11 +66,15 @@ TWDS.banking.autohome_toggle = function (v) {
 }
 TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'banking_deposit_button',
-    'Clicking on the bank account in the top row opens a dialogue to deposit your cash.', true, TWDS.banking.depositinit,
+    TWDS._('BANKING_SETTING_DEPOSIT_BUTTON',
+      'Clicking on the bank account in the top row opens a dialogue to deposit your cash.'),
+    true, TWDS.banking.depositinit,
     'Banking'
   )
   TWDS.registerSetting('bool', 'banking_auto_hometown',
-    'Open the deposit dialogue when arriving in your home town.', false, TWDS.banking.autohome_toggle,
+    TWDS._('BANKING_SETTING_AUTOHOME',
+      'Open the deposit dialogue when arriving in your home town.'),
+    false, TWDS.banking.autohome_toggle,
     'Banking'
   )
 })
