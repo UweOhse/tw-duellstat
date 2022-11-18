@@ -272,8 +272,23 @@ TWDS.duelprotection.init = function (active) {
 }
 TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'misc_duelprotection_display',
-    'Show a duel protection overlay on your image', true, TWDS.duelprotection.init)
+    TWDS._("MISC_SETTING_DUELPROTECTION_DISPLAY",'Show a duel protection overlay on your image'), 
+    true, TWDS.duelprotection.init)
+  TWDS.registerSetting('bool', 'misc_profile_text_click',
+    TWDS._("MISC_SETTING_PROFILE_TEXT_CLICK",
+      'A click on your profile text opens the profile text in the settings.'), true)
+  // the itemmanager_loaded is sent after Character.init is called.
+  EventHandler.listen("itemmanager_loaded",function() {
+    TWDS.delegate(document,"click",".tw2gui_window.playerprofile-"+Character.playerId,function() {
+      if (TWDS.settings.misc_profile_text_click) {
+        /* eslint-disable no-new */
+        new window.OptionsWindow();
+      }
+    });
+    return EventHandler.ONE_TIME_EVENT;
+  });
 })
+
 TWDS.map = {}
 TWDS.map.radialmenu_open = function () {
   this._TWDS_map_backup_open(true)
