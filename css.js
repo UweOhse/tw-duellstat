@@ -495,6 +495,10 @@ TWDS.insertStyles = function () {
     .TWDS_jobwindow_setbuttons .TWDS_button {
       margin-top:0;
     }
+    .TWDS_settingline {
+      padding-left:1.25em;
+      text-indent:-1.25em;
+    }
     .TWDS_setting_info {
       margin-top:1em;
       border-top:1px dotted #888;
