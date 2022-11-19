@@ -748,6 +748,47 @@ TWDS.insertStyles = function () {
       border-radius: 4px;
       background-color: #d6d2cd;
     }
+    .TWDS_minimap_navcontainer {
+      position:absolute;
+      right:20px;
+      font-size:200%;
+      top:218px;
+      width:78px;
+      height:78px;
+    }
+    .TWDS_minimap_navcontainer span:hover {
+      color:white;
+      color:green;
+      background-color:black;
+    }
+    .TWDS_minimap_navcontainer span {
+      width:26px;
+      height:26px;
+      line-height:22px;
+      text-align:center;
+      position:absolute;
+      cursor:pointer;
+    }
+    .TWDS_minimap_navcontainer .up {
+      top:0;
+      left:26px;
+      cursor:n-resize;
+    }
+    .TWDS_minimap_navcontainer .down {
+      bottom:0;
+      left:26px;
+      cursor:s-resize;
+    }
+    .TWDS_minimap_navcontainer .left {
+      left:0;
+      top:26px;
+      cursor:w-resize;
+    }
+    .TWDS_minimap_navcontainer .right {
+      right:0;
+      top:26px;
+      cursor:e-resize;
+    }
 
   `
   const sty = document.createElement('style')
