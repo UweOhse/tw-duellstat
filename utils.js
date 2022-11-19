@@ -256,14 +256,13 @@ TWDS.itemCraftButton = function (id) {
   })
 }
 
-TWDS.delegate=function(root,evname,selector, func) {
-  root.addEventListener(evname,function(ev) {
+TWDS.delegate = function (root, evname, selector, func) {
+  root.addEventListener(evname, function (ev) {
     if (ev.target.closest && ev.target.closest(selector)) {
-      func.call(this,ev);
+      func.call(this, ev)
     }
-  });
+  })
 }
-
 
 // logic from
 // https://stackoverflow.com/questions/15547198/export-html-table-to-csv-using-vanilla-javascript
