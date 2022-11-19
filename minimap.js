@@ -104,7 +104,7 @@ TWDS.minimap.updateIfOpen = function () {
   TWDS.minimap.updateReal()
 }
 TWDS.minimap.updateReal = function () {
-  TWDS.minimap.uiinit(true)
+  TWDS.minimap.uiinit()
 
   const handleonebonusposition = function (x, y, withgold, a) {
     const o = 0.00513
@@ -439,7 +439,67 @@ TWDS.minimap.init = function () {
     console.error(t, 'manipulate MinimapWindow.refreshWindow')
   }
 }
+TWDS.minimap.arrowclickhandler = function (ev) {
+  TWDS.minimap.arrowclickhandler2(ev)
+}
+TWDS.minimap.arrowclickhandler2 = function (ev) {
+  const w = Map.width
+  const h = Map.height
+  let xmod = 0
+  let ymod = 0
+  if (ev.target.classList.contains('left')) {
+    xmod = -w
+  } else if (ev.target.classList.contains('right')) {
+    xmod = +w
+  } else if (ev.target.classList.contains('up')) {
+    ymod = -h
+  } else if (ev.target.classList.contains('down')) {
+    ymod = +h
+  }
+  const cur = Map.getCurrentMid()
+  cur.x += xmod
+  cur.y += ymod
+  if (cur.x < 0) cur.x = w / 2
+  if (cur.y < 0) cur.y = h / 2
+  if (cur.x > Map.mapWidth) { cur.x = Map.mapWidth - w / 2 }
+  if (cur.y > Map.mapHeight) { cur.y = Map.mapHeight - h / 2 }
+  Map.center(cur.x, cur.y)
+}
+TWDS.minimap.arrowinit = function () {
+  const v = TWDS.settings.minimap_add_navigation
+  if (!v) {
+    return
+  }
+  const old = TWDS.q1('.TWDS_minimap_container')
+  if (old) { return } // just being careful
+  const mmr = TWDS.q1('.minimap-right')
+  if (!mmr) return
+
+  TWDS.createEle({
+    nodeName: 'div',
+    className: 'TWDS_minimap_navcontainer',
+    children: [{
+      nodeName: 'span',
+      innerHTML: '&#x2190;',
+      className: 'TWDS_minimap_nav left'
+    }, {
+      nodeName: 'span',
+      innerHTML: '&#x2191;',
+      className: 'TWDS_minimap_nav up'
+    }, {
+      nodeName: 'span',
+      innerHTML: '&#x2193;',
+      className: 'TWDS_minimap_nav down'
+    }, {
+      nodeName: 'span',
+      innerHTML: '&#x2192;',
+      className: 'TWDS_minimap_nav right'
+    }],
+    last: mmr
+  })
+}
 TWDS.minimap.uiinit = function () {
+  TWDS.minimap.arrowinit()
   const simplebutton = function (text, title, css, cb) {
     const label = $('<label />')
     const sel = $('<span>' + text + '</span>')
@@ -616,6 +676,14 @@ TWDS.registerStartFunc(function () {
     },
     'Minimap'
   )
+  TWDS.registerSetting('bool', 'minimap_add_navigation',
+    TWDS._('MINIMAP_SETTING_NAVIGATION',
+      'Add arrows to navigate the map.'), false, function (v) {
+      TWDS.minimap.arrowinit(v)
+    },
+    'Minimap'
+  )
+  TWDS.delegate(document.body, 'click', '.TWDS_minimap_nav', TWDS.minimap.arrowclickhandler)
 })
 
 // vim: tabstop=2 shiftwidth=2 expandtab
