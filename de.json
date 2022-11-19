@@ -391,6 +391,7 @@ MINIMAP_MARKET_ITEMS_ON_WORLDMAP: "Marktgegenstände (Weltkarte)",
 MINIMAP_SETTING_SILVERGOLD: "Bekannte Bonus-Arbeiten auf der Minimap zeigen.",
 MINIMAP_SETTING_COORDINPUT: "Arbeits-Eingabefeld verarbeitet auch Koordinaten.",
 MINIMAP_SETTING_WORLDMAPMARKET: "Zeige eine Checkbox, die das Zeigen von Marktgegenständen auf der Weltkarte erlaubt.",
+MINIMAP_SETTING_NAVIGATION: "Ergänze den rechten Bereich der Minimap um Navigationspfeile.",
 
 
   DUMMY: 'Dummy'
