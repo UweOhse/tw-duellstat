@@ -439,6 +439,10 @@ TWDS.minimap.init = function () {
     console.error(t, 'manipulate MinimapWindow.refreshWindow')
   }
 }
+TWDS.minimap.opacityhandler = function (ev) {
+  console.log('OP', this.checked, this, ev)
+  if (this.checked) { document.body.classList.add('TWDS_searchmode') } else { document.body.classList.remove('TWDS_searchmode') }
+}
 TWDS.minimap.arrowclickhandler = function (ev) {
   TWDS.minimap.arrowclickhandler2(ev)
 }
@@ -455,6 +459,8 @@ TWDS.minimap.arrowclickhandler2 = function (ev) {
     ymod = -h
   } else if (ev.target.classList.contains('down')) {
     ymod = +h
+  } else {
+    return
   }
   const cur = Map.getCurrentMid()
   cur.x += xmod
@@ -470,9 +476,9 @@ TWDS.minimap.arrowinit = function () {
   if (!v) {
     return
   }
-  const old = TWDS.q1('.TWDS_minimap_container')
+  const old = TWDS.q1('.TWDS_minimap_navcontainer')
   if (old) { return } // just being careful
-  const mmr = TWDS.q1('.minimap-right')
+  const mmr = TWDS.q1('.minimap .tw2gui_window_content_pane')
   if (!mmr) return
 
   TWDS.createEle({
@@ -494,6 +500,11 @@ TWDS.minimap.arrowinit = function () {
       nodeName: 'span',
       innerHTML: '&#x2192;',
       className: 'TWDS_minimap_nav right'
+    }, {
+      nodeName: 'input',
+      type: 'checkbox',
+      className: 'TWDS_minimap_opacity_checkbox',
+      title: TWDS._('MINIMAP_OPACITY_CHECKBOX_TITLE', 'make the user interface mostly transparent')
     }],
     last: mmr
   })
@@ -684,6 +695,10 @@ TWDS.registerStartFunc(function () {
     'Minimap'
   )
   TWDS.delegate(document.body, 'click', '.TWDS_minimap_nav', TWDS.minimap.arrowclickhandler)
+  TWDS.delegate(document.body, 'change', '.TWDS_minimap_opacity_checkbox', TWDS.minimap.opacityhandler)
+  EventHandler.listen('window_closed_minimap', function () {
+    document.body.classList.remove('TWDS_searchmode')
+  })
 })
 
 // vim: tabstop=2 shiftwidth=2 expandtab
