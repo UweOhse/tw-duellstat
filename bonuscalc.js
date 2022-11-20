@@ -1,3 +1,116 @@
+
+TWDS.bonuscalc = {}
+TWDS.bonuscalc.lasthash = null
+TWDS.bonuscalc.lastbonus = null
+TWDS.bonuscalc.getSpeed = function (itemids) {
+  const bo = TWDS.bonuscalc.getComboBonus(itemids)
+  let speed = 100
+  if (Wear.wear.animal) {
+    speed += CharacterSkills.getSkill('ride').points // includes mobility
+    if (bo.flexibility) speed += bo.flexibility
+    if (bo.ride) speed += bo.ride
+    let x = Wear.wear.animal.obj.speed
+    x = Character.defaultSpeed / (Character.defaultSpeed * x) * 100 - 100
+    speed += x
+    if (bo.speed) {
+      speed = speed * (1 + bo.speed)
+    }
+    console.log('SPD5', speed)
+  }
+  if (Premium.hasBonus('greenhorn')) { speed *= 2 }
+  return speed
+}
+TWDS.bonuscalc.getComboBonus = function (itemids) {
+  const usedSets = {}
+  const gethash = function (itemids) {
+    itemids.sort(function (a, b) {
+      return a - b
+    })
+    const str = Character.level + '/' + itemids.join(',')
+    return TWDS.cyrb53(str)
+  }
+
+  if (itemids === null || itemids === undefined) {
+    itemids = []
+    for (const e of Object.entries(Wear.slots)) {
+      console.log(e)
+      const x = Wear.get(e[1])
+      if (x) { itemids.push(x.obj.item_id) }
+    }
+  }
+  const hash = gethash(itemids)
+  if (hash === TWDS.bonuscalc.lasthash) { return JSON.parse(TWDS.bonuscalc.lastbonus) }
+
+  const items = []
+  for (let i = 0; i < itemids.length; i++) {
+    items.push(ItemManager.get(itemids[i]))
+  }
+  const setlist = west.storage.ItemSetManager._setList
+  for (const item of items) { // this is item.obj!
+    const set = item.set
+    if (!(set in setlist)) continue
+    if (!(set in usedSets)) {
+      usedSets[set] = []
+    }
+    usedSets[set].push(item.item_base_id)
+  }
+  const totalbonus = {}
+  const addbonus = function (b) {
+    if (!(b.key in totalbonus)) { totalbonus[b.key] = 0 }
+    totalbonus[b.key] += b.value
+  }
+  const extractor = new west.item.BonusExtractor(Character)
+  for (const setkey of Object.keys(usedSets)) {
+    const set = west.storage.ItemSetManager.get(setkey)
+    const itemsinuse = usedSets[setkey].length
+    const setbonuses = set.getMergedStages(itemsinuse)
+    console.log('SET', setkey, itemsinuse, '=>', setbonuses)
+    for (let i = 0; i < setbonuses.length; i++) {
+      addbonus(extractor.getExportValue(setbonuses[i]))
+    }
+  }
+  for (let i = 0; i < items.length; i++) {
+    const it = items[i]
+    for (let j = 0; j < it.bonus.item.length; j++) {
+      extractor.init(Character, it.item_level)
+      const v = extractor.getExportValue(it.bonus.item[j])
+      console.log('ITEM', it.name, it, j, '=>', v)
+      addbonus(v)
+    }
+    if (it.bonus.attributes && it.bonus.attributes.length) {
+      console.warn('unhandled attributes bonus', it, it.bonus.attributes)
+    }
+    if (it.bonus.skills && it.bonus.skills.length) {
+      console.warn('unhandled attributes bonus', it, it.bonus.attributes)
+    }
+    if (it.bonus.fortbattle) {
+      if (it.bonus.fortbattle.offense) {
+        addbonus({ key: 'fortbattle_offense', value: it.bonus.fortbattle.offense })
+      }
+      if (it.bonus.fortbattle.defense) {
+        addbonus({ key: 'fortbattle_defense', value: it.bonus.fortbattle.defense })
+      }
+      if (it.bonus.fortbattle.resistance) {
+        addbonus({ key: 'fortbattle_resistance', value: it.bonus.fortbattle.resistance })
+      }
+    }
+    if (it.bonus.fortbattlesector) {
+      if (it.bonus.fortbattlesector.offense) {
+        addbonus({ key: 'fortbattlesector_offense', value: it.bonus.fortbattlesector.offense })
+      }
+      if (it.bonus.fortbattlesector.defense) {
+        addbonus({ key: 'fortbattlesector_defense', value: it.bonus.fortbattlesector.defense })
+      }
+      if (it.bonus.fortbattlesector.damage) {
+        addbonus({ key: 'fortbattlesector_damage', value: it.bonus.fortbattlesector.damage })
+      }
+    }
+  }
+  TWDS.bonuscalc.lasthash = hash
+  TWDS.bonuscalc.lastbonus = JSON.stringify(totalbonus)
+  return totalbonus
+}
+
 TWDS.getComboBonus = function (combo) {
   const usedSets = {}
   const allBonus = {}
