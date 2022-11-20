@@ -104,10 +104,17 @@ TWDS.main = function main () {
     window.localStorage.removeItem(key)
     tr.remove()
   })
-  for (const fn of Object.values(TWDS.startFunctions)) {
-    fn()
-  }
   TWDS.createSideButton()
+  const dostartfuncs = function () {
+    for (const fn of Object.values(TWDS.startFunctions)) {
+      fn()
+    }
+  }
+  if (ItemManager.isLoaded()) {
+    dostartfuncs()
+  } else {
+    EventHandler.listen('itemmanager_loaded', dostartfuncs)
+  }
 }
 TWDS.storecrafting = function (x) {
   if (x.error) return
