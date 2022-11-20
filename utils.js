@@ -258,8 +258,9 @@ TWDS.itemCraftButton = function (id) {
 
 TWDS.delegate = function (root, evname, selector, func) {
   root.addEventListener(evname, function (ev) {
-    if (ev.target.closest && ev.target.closest(selector)) {
-      func.call(this, ev)
+    const tg = ev.target.closest(selector)
+    if (tg) {
+      func.call(tg, ev)
     }
   })
 }
