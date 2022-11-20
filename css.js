@@ -377,7 +377,7 @@ TWDS.insertStyles = function () {
     input[type=number][size="7"] {
       width:8em;
     }
-    #TWDS_tab_itemsets, #TWDS_tab_wuw {
+    #TWDS_tab_itemsets, #TWDS_tab_wuw, #TWDS_tab_settings {
       height:340px;
       overflow-y: auto !important;
       overflow-x: auto !important;
@@ -788,6 +788,84 @@ TWDS.insertStyles = function () {
       right:0;
       top:26px;
       cursor:e-resize;
+    }
+    .TWDS_minimap_navcontainer .TWDS_minimap_opacity_checkbox {
+      right:calc(39px - 0.5em);
+      top:calc(39px - 0.5em);
+      position:absolute;
+    }
+    body.TWDS_searchmode #user-interface,
+    body.TWDS_searchmode #windows > * {
+      display:none;
+    }
+    body.TWDS_searchmode #windows > .minimap {
+      display:block;
+    }
+    body.TWDS_searchmode #windows > .minimap > * {
+      opacity:0.0;
+    }
+    body.TWDS_searchmode #windows .minimap .tw2gui_window_content_pane {
+      opacity:1.0;
+    }
+    body.TWDS_searchmode #windows .minimap .tw2gui_window_content_pane .minimap_content {
+      opacity:0.0;
+    }
+    body.TWDS_searchmode #windows .minimap .tw2gui_window_content_pane .TWDS_minimap_navcontainer {
+      opacity:1.0;
+      border:1px solid #0008;
+      border-radius:8px;
+      background-color:#2228;
+    }
+    .TWDS_overlay {
+      position:fixed;
+      z-index:1;
+      cursor:move;
+      background-Color:#2228;
+      border:1px solid white;
+      width: max-content;
+      height: max-content;
+      color:white;
+      padding:4px;
+      cursor:move,
+    }
+    .TWDS_overlay:hover {
+      outline:2px dashed green;
+    }
+    .TWDS_overlay table td {
+      text-align:right;
+    }
+    .TWDS_overlay table th {
+      font-weight:normal;
+      text-align:left;
+    }
+    .TWDS_overlay table th:nth-child(3) {
+      padding-left:0.75em;
+    }
+    .TWDS_overlay .note {
+      border-top:1px dotted #f00;
+    }
+    .TWDS_overlay .note:hover {
+      border-top:1px dotted #f00;
+      cursor:text;
+    }
+    .TWDS_overlay:hover .note:after {
+      border-top:1px dotted #888;
+      display:block;
+      position: absolute;
+      content:'✏';
+      right: 0em;
+      bottom: -0.25em;
+      font-size: 2em;
+      color:#FFF;
+      transform: rotate(45deg);
+      cursor:text;
+      z-index:2;
+    }
+    .TWDS_overlay > div {
+      margin-top:1.0em;
+    }
+    .TWDS_overlay > div:first-child {
+      margin-top:0.0em;
     }
 
   `
