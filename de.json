@@ -3,6 +3,18 @@ YES: "Ja",
 NO: "Nein",
 SEARCH: "Suchen",
 ITEMS: "Gegenstände",
+SPEED: "Geschwindigkeit",
+DUEL_LEVEL: "Duellstufe",
+EP: "Erfahrungspunkte",
+EXPERIENCE: "Erfahrung",
+DAMAGE: "Schaden",
+BONUS_LUCK: "Glückschance",
+BONUS_DOLLAR: "Verdienst",
+BONUS_DROP: "Produktfundchance",
+BONUS_EXPERIENCE: "Erfahrung",
+BONUS_REGEN: "Regeneration",
+BONUS_PRAY: "Beten",
+
 
   CONFIRM_REMOVE: 'Ausrüstungsset $name$ wirklich löschen?',
   SHORT_SHOTWEAPON: ' (Schuss)',
@@ -392,6 +404,14 @@ MINIMAP_SETTING_SILVERGOLD: "Bekannte Bonus-Arbeiten auf der Minimap zeigen.",
 MINIMAP_SETTING_COORDINPUT: "Arbeits-Eingabefeld verarbeitet auch Koordinaten.",
 MINIMAP_SETTING_WORLDMAPMARKET: "Zeige eine Checkbox, die das Zeigen von Marktgegenständen auf der Weltkarte erlaubt.",
 MINIMAP_SETTING_NAVIGATION: "Ergänze den rechten Bereich der Minimap um Navigationspfeile.",
+
+OVERLAY_FULL_HEALTH: "Volle Gesundheit",
+OVERLAY_FULL_ENERGY: "Volle Erholung",
+OVERLAY_RES_MELEE: "Widerstand/Schlag",
+OVERLAY_RES_SHOT: "Widerstand/Schuss",
+OVERLAY_LEVELEQ: "~Stufe",
+OVERLAY_LEVELEQ_TITLE: "Du würdest ungefähr diesen Level benötigen, um die angezeigten Werte ohne Ausrüstung erreichen zu können. Dabei sind die Lebenspunkte nicht mitgerechnet.", 
+
 
 
   DUMMY: 'Dummy'
