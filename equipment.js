@@ -156,10 +156,12 @@ TWDS.getEquipmentData = function () {
       name = setlist[i].name
     }
     if (nd > 0) {
-      if (Wear.wear.right_arm.obj.sub_type === 'shot') {
-        name += TWDS._('SHORT_SHOTWEAPON', ' (shot)')
-      } else if (Wear.wear.right_arm.obj.sub_type !== 'shot') {
-        name += TWDS._('SHORT_MELEEWEAPON', ' (melee)')
+      if (Wear.wear.right_arm) {
+        if (Wear.wear.right_arm.obj.sub_type === 'shot') {
+          name += TWDS._('SHORT_SHOTWEAPON', ' (shot)')
+        } else if (Wear.wear.right_arm.obj.sub_type !== 'shot') {
+          name += TWDS._('SHORT_MELEEWEAPON', ' (melee)')
+        }
       }
     }
     names.push(name)
@@ -191,7 +193,8 @@ TWDS.getEquipmentData = function () {
     hashstr += ',' + ids[i]
   }
 
-  const dmg = Wear.wear.right_arm.obj.getDamage(Character)
+  let dmg = 0
+  if (Wear.wear.right_arm) { dmg = Wear.wear.right_arm.obj.getDamage(Character) }
   const hash = TWDS.cyrb53(hashstr)
   const key = 'TWDS_h_' + hash
   const tmp = window.localStorage.getItem(key)
@@ -218,7 +221,17 @@ TWDS.getEquipmentData = function () {
   o.dmg_min = dmg.min
   o.dmg_max = dmg.max
   o.dmg_abs_max = dmg.max * 1.75 * 1.5
-  o.shot = (Wear.wear.right_arm.obj.sub_type === 'shot')
+  o.shot = (Wear.wear.right_arm && Wear.wear.right_arm.obj.sub_type === 'shot')
+
+  let lvtmp = zaeh + refl + ausw + ziel
+  if (o.shot) {
+    lvtmp += schuss
+  } else {
+    lvtmp += schlag
+  }
+  // 5: 3 skill points and 1 attribute, which can be worth 2 skill points (Green/Blue)
+  o.leveleq_attack = Math.round((lvtmp + auft) / 5)
+  o.leveleq_defense = Math.round((lvtmp + takt) / 5)
 
   const s = JSON.stringify(o)
   return [key, s]
