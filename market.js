@@ -270,6 +270,74 @@ TWDS.marketwindow.showwrapper = function () {
   }
   return thing
 }
+TWDS.trader = {}
+TWDS.trader.currenttrader = null
+TWDS.trader.inventory = []
+TWDS.trader.open = function (type, townid, coordX, coordY) {
+  TWDS.trader.currenttrader = type
+  TWDS.trader.inventory = []
+  const retcode = window.Trader._twds_backup_open(type, townid, coordX, coordY)
+  if (type !== 'general' && type !== 'gunsmith' && type !== 'tailor') {
+    return retcode
+  }
+  const w = wman.getById(type)
+  if (!w) {
+    return retcode
+  }
+  console.log(w, w.divMain, typeof w.divMain)
+  const cp = TWDS.q1('.tw2gui_window_content_pane', w.divMain)
+  console.log('ts', cp)
+  if (cp) {
+    if (TWDS.settings.town_shop_collect_switch) {
+      TWDS.createEle({
+        nodeName: 'input',
+        className: 'TWDS_market_filter_collectibles',
+        type: 'checkbox',
+        title: TWDS._('MARKET_TOWN_SHOP_FILTER_COLLECTIBLES', 'show only collectibles'),
+        beforeend: cp
+      })
+    }
+    if (TWDS.settings.town_shop_search) {
+      TWDS.createEle({
+        nodeName: 'input',
+        className: 'TWDS_market_town_shop_search',
+        type: 'text',
+        title: TWDS._('MARKET_TOWN_SHOP_SEARCH', 'Search'),
+        placeholder: 'search',
+        beforeend: cp
+      })
+    }
+  }
+  return retcode
+}
+TWDS.trader.addItemToInv = function (itemid) {
+  TWDS.trader.inventory.push(itemid)
+  window.Trader._twds_backup_addItemToInv(itemid)
+}
+TWDS.trader.filterchange = function () {
+  const search = TWDS.q1('.TWDS_market_town_shop_search')
+  let searchstr
+  if (search) { searchstr = search.value.toLocaleLowerCase() }
+  const col = TWDS.q1('.TWDS_market_filter_collectibles')
+  let checked = false
+  if (col) { checked = col.checked }
+  window.Trader.inv = {} // no other way to do it.
+  for (let i = 0; i < TWDS.trader.inventory.length; i++) {
+    const itemid = TWDS.trader.inventory[i]
+    if (searchstr > '') {
+      const it = ItemManager.get(itemid)
+      if (it.name.toLocaleLowerCase().search(searchstr) === -1) { continue }
+    }
+    if (!checked || !TWDS.collections.loaded) {
+      window.Trader._twds_backup_addItemToInv(itemid)
+    } else {
+      if (TWDS.collections.isMissing(itemid)) {
+        window.Trader._twds_backup_addItemToInv(itemid)
+      }
+    }
+  }
+  window.Trader.drawInventory(1)
+}
 
 TWDS.registerSetting('bool', 'marketwindow_enhancements',
   TWDS._('AUCTION_SETTING', 'Enhance the market offering window'),
@@ -317,6 +385,24 @@ TWDS.registerStartFunc(function () {
     }
   })
   document.body.appendChild(datalist)
+  window.Trader._twds_backup_open = window.Trader.open
+  window.Trader.open = function (a, b, c, d) { return TWDS.trader.open(a, b, c, d) }
+  window.Trader._twds_backup_addItemToInv = window.Trader.addItemToInv
+  window.Trader.addItemToInv = function (a) { return TWDS.trader.addItemToInv(a) }
+  TWDS.delegate(document.body, 'change', '.TWDS_market_filter_collectibles', function () {
+    TWDS.trader.filterchange()
+  })
+  TWDS.delegate(document.body, 'change', '.TWDS_market_town_shop_search', function () {
+    TWDS.trader.filterchange()
+  })
+  TWDS.registerSetting('bool', 'town_shop_collect_switch',
+    TWDS._('MARKET_TOWN_SHOP_COLLECT_SWITCH_SETTING',
+      'Add a switch to the town traders, to only show missing collectibles.'),
+    true, null, 'Market')
+  TWDS.registerSetting('bool', 'town_shop_search',
+    TWDS._('MARKET_TOWN_SHOP_SEARCH_SETTING',
+      'Add a search field to the town traders.'),
+    true, null, 'Market')
 })
 
 // used when reloading, so the update code will be used.

@@ -2,6 +2,7 @@ TWDS.insertStyles = function () {
   const css = `
     :root {
       --twds-gold: #f8c57c;
+      --twds-dark-brown: #5c3f1e;
     }
     .TWDS_blinking {
       animation: blinker 0.5s linear 120
@@ -800,21 +801,18 @@ TWDS.insertStyles = function () {
     }
     body.TWDS_searchmode #windows > .minimap {
       display:block;
+      width:0px;
+      height:0px;
+      overflow:hidden;
     }
-    body.TWDS_searchmode #windows > .minimap > * {
-      opacity:0.0;
-    }
-    body.TWDS_searchmode #windows .minimap .tw2gui_window_content_pane {
-      opacity:1.0;
-    }
-    body.TWDS_searchmode #windows .minimap .tw2gui_window_content_pane .minimap_content {
-      opacity:0.0;
-    }
-    body.TWDS_searchmode #windows .minimap .tw2gui_window_content_pane .TWDS_minimap_navcontainer {
+    body.TWDS_searchmode .TWDS_minimap_navcontainer {
       opacity:1.0;
       border:1px solid #0008;
       border-radius:8px;
       background-color:#2228;
+      position:fixed;
+      left:calc(50% - 39px);
+      top:calc(50% - 39px);
     }
     .TWDS_overlay {
       position:fixed;
@@ -866,6 +864,19 @@ TWDS.insertStyles = function () {
     }
     .TWDS_overlay > div:first-child {
       margin-top:0.0em;
+    }
+    .TWDS_market_filter_collectibles {
+      position:absolute;
+      right: 15px;
+      top:4px;
+      accent-color:var(--twds-dark-brown);
+    }
+    .TWDS_market_town_shop_search {
+      position:absolute;
+      right:80px;
+      top:4px;
+      width:110px;
+      accent-color:var(--twds-dark-brown);
     }
 
   `
