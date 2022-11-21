@@ -245,7 +245,8 @@ TWDS.registerStartFunc(function () {
     true, TWDS.overlay.settingchanged, 'Overlay', null, 4)
   TWDS.registerSetting('bool', 'overlay_note', 'show an editable notebook on the overlay',
     true, TWDS.overlay.settingchanged, 'Overlay', null, 5)
-  window.EventHandler.listen('wear_changed', function () {
+  // inventory_changed is called after crafting, when the craft skill may have changed.
+  window.EventHandler.listen(['wear_changed', 'character_level_up', 'inventory_changed'], function () {
     TWDS.overlay.update()
   })
 
