@@ -144,7 +144,6 @@ TWDS.getEquipmentData = function () {
       continue
     }
     const nd = numDuelWeaponsInSet(i)
-    console.log('set', i, setlist[i], 'has dw', nd)
     let name = ''
     if (setItemCount !== setItemsWorn) {
       if (nd > 1 && setItemsWorn === setItemCount - 1) {
@@ -301,7 +300,6 @@ TWDS.highlightEquipmentTable = function (tab) {
       }
     })
   })
-  console.log('HL', merk)
 }
 TWDS.classifyEquipment = function (o) {
   let schaden = o.schlag
