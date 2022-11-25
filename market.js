@@ -270,6 +270,143 @@ TWDS.marketwindow.showwrapper = function () {
   }
   return thing
 }
+
+TWDS.marketwindow.hasBonus = function (item) {
+  const bonusExtractor = new west.item.BonusExtractor(Character, item.getItemLevel())
+
+  let fbs = item.bonus.fortbattle
+  if (fbs.offense || fbs.defense || fbs.resistance) {
+    return true
+  }
+  fbs = item.bonus.fortbattlesector
+  if (fbs.damage || fbs.offense || fbs.defense) {
+    return true
+  }
+  for (let k = 0; k < item.bonus.item.length; k++) {
+    if (typeof item.bonus.item[k] === 'undefined') continue
+    if (item.bonus.item[k].type === 'character') continue
+    if (item.bonus.item[k].type === 'fortbattle') {
+      if (bonusExtractor.getValue(item.bonus.item[k]) > 0) return true
+      continue
+    }
+    const bt = item.bonus.item[k].type
+    if (['speed', 'regen', 'luck', 'pray', 'experience', 'dollar', 'damage', 'drop'].indexOf(bt) !== -1) {
+      if (bonusExtractor.getValue(item.bonus.item[k]) > 0) return true
+    }
+  }
+  if (item.usebonus && item.usebonus.length) {
+    return true
+  }
+  return false
+}
+
+TWDS.marketwindow.filtermode = 'none'
+TWDS.marketwindow.filter = function (mode, cat) {
+  const p = $('#mpb_' + cat + '_content p')
+  console.time('FILTER')
+  p.show()
+  if (mode === 'none') return
+
+  for (let i = 0; i < TWDS.marketwindow[cat].length; i++) {
+    const item = ItemManager.get(TWDS.marketwindow[cat][i])
+    if (!item) { // ECANTHAPPEN
+      $(p[i]).hide()
+      continue
+    }
+    // if the thing has a usebonus, then it has to match that bonus or "bonus".
+    if (item.usebonus) {
+      if (mode === 'bonus') continue
+      if (!TWDS.quickusables.match(item, mode)) {
+        $(p[i]).hide()
+      }
+      continue
+    }
+    if (mode === 'bonus') {
+      if (!TWDS.marketwindow.hasBonus(item)) { $(p[i]).hide() }
+    } else if (mode === 'set') {
+      if (!item.set) { $(p[i]).hide() }
+    } else if (mode === 'noset') {
+      if (item.set) { $(p[i]).hide() }
+    } else if (mode === 'craft') {
+      if (!(item.item_id in TWDS.crafting.resources)) {
+        $(p[i]).hide()
+      }
+    } else if (mode === 'collect') {
+      if (!TWDS.collections.isMissing(item.item_id)) {
+        $(p[i]).hide()
+      }
+    } else {
+      $(p[i]).hide()
+    }
+  }
+  console.timeEnd('FILTER')
+}
+TWDS.marketwindow.handleFilterChange = function () {
+  const x = document.querySelector('#mpb_marketoffers .tw2gui_accordion_categorybar.accordion_opened')
+  if (!x) return
+  const id = x.id
+  const m = id.match(/^mpb_(.*)/)
+  let combo = document.getElementById('TWDS_marketwindow_filters_value')
+  if (combo && m) {
+    const col1 = document.getElementById('buyFilterIsCollect')
+    const col2 = document.getElementById('buyFilterIsCollect2')
+    if (col1) col1.guiElement.setSelected(false, true)
+    if (col2) col2.guiElement.setSelected(false, true)
+    let e = TWDS.q1('#buyFilterIsCollect')
+    if (e) e.style.display = 'none'
+    e = TWDS.q1('#buyFilterIsCollect2')
+    if (e) e.style.display = 'none'
+    combo = combo.value
+    TWDS.marketwindow.filtermode = combo
+    TWDS.marketwindow.filter(combo, m[1])
+  }
+}
+TWDS.marketwindow.updateCategory = function (category, data) {
+  return TWDS.marketwindow.updateCategoryReal(category, data)
+}
+TWDS.marketwindow.updateCategoryReal = function (category, data) {
+  TWDS.marketwindow[category] = data
+  console.log('updateCategory-2', category, data)
+  const old = document.getElementById('TWDS_marketwindow_filters')
+  if (!old) {
+    const combo = new west.gui.Combobox('TWDS_marketwindow_filters')
+    combo.addItem('none', TWDS._('MARKETWINDOW_FILTER_NONE', 'none'))
+    combo.addItem('bonus', TWDS._('MARKETWINDOW_FILTER_BONUS', 'bonus equipment'))
+    combo.addItem('set', TWDS._('MARKETWINDOW_FILTER_SET', 'set items'))
+    combo.addItem('noset', TWDS._('MARKETWINDOW_FILTER_NOSET', 'items without set '))
+    combo.addItem('collect', TWDS._('MARKETWINDOW_FILTER_COLLECT', 'collect'))
+    combo.addItem('craft', TWDS._('MARKETWINDOW_FILTER_CRAFT', 'crafting'))
+    const qc = TWDS.quickusables.getcategories()
+    for (let i = 0; i < qc.length; i++) {
+      console.log('combo.addItem', qc[i], TWDS.quickusables.getcatdesc(qc[i]))
+      combo.addItem(qc[i], TWDS.quickusables.getcatdesc(qc[i]))
+    }
+    combo.addListener(TWDS.marketwindow.handleFilterChange)
+
+    const sb = document.querySelector('.market-buy .searchbox')
+    sb.appendChild(combo.divMain[0])
+    sb.style.marginTop = '-5px'
+    combo.select('none')
+    /*
+    let chb = new west.gui.Checkbox("bonus only", false, TWDS.market.handleFilter)
+    chb.setSelected(false);
+    chb.setId('TWDS_market_bonusfilter_chb');
+    chb.setTooltip('filter for special bonus');
+    old=chb.getMainDiv()[0]
+    */
+  }
+  const ret = MarketWindow.Buy._TWDS_backup_updateCategory(category, data)
+  if (old) {
+    TWDS.marketwindow.filter(TWDS.marketwindow.filtermode, category)
+  }
+  return ret
+}
+
+TWDS.registerStartFunc(function () {
+  MarketWindow.Buy._TWDS_backup_updateCategory = MarketWindow.Buy.updateCategory
+  MarketWindow.Buy.updateCategory = TWDS.marketwindow.updateCategory
+})
+
 TWDS.trader = {}
 TWDS.trader.currenttrader = null
 TWDS.trader.inventory = []
@@ -291,7 +428,7 @@ TWDS.trader.open = function (type, townid, coordX, coordY) {
     if (TWDS.settings.town_shop_collect_switch) {
       TWDS.createEle({
         nodeName: 'input',
-        className: 'TWDS_market_filter_collectibles',
+        className: 'TWDS_trader_filter_collectibles',
         type: 'checkbox',
         title: TWDS._('MARKET_TOWN_SHOP_FILTER_COLLECTIBLES', 'show only collectibles'),
         beforeend: cp
@@ -300,7 +437,7 @@ TWDS.trader.open = function (type, townid, coordX, coordY) {
     if (TWDS.settings.town_shop_search) {
       TWDS.createEle({
         nodeName: 'input',
-        className: 'TWDS_market_town_shop_search',
+        className: 'TWDS_trader_town_shop_search',
         type: 'text',
         title: TWDS._('MARKET_TOWN_SHOP_SEARCH', 'Search'),
         placeholder: 'search',
@@ -310,15 +447,16 @@ TWDS.trader.open = function (type, townid, coordX, coordY) {
   }
   return retcode
 }
+
 TWDS.trader.addItemToInv = function (itemid) {
   TWDS.trader.inventory.push(itemid)
   window.Trader._twds_backup_addItemToInv(itemid)
 }
 TWDS.trader.filterchange = function () {
-  const search = TWDS.q1('.TWDS_market_town_shop_search')
+  const search = TWDS.q1('.TWDS_trader_town_shop_search')
   let searchstr
   if (search) { searchstr = search.value.toLocaleLowerCase() }
-  const col = TWDS.q1('.TWDS_market_filter_collectibles')
+  const col = TWDS.q1('.TWDS_trader_filter_collectibles')
   let checked = false
   if (col) { checked = col.checked }
   window.Trader.inv = {} // no other way to do it.
