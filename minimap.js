@@ -106,7 +106,7 @@ TWDS.minimap.updateIfOpen = function () {
 TWDS.minimap.updateReal = function () {
   TWDS.minimap.uiinit()
 
-  const handleonebonusposition = function (x, y, withgold, a) {
+  const handleonebonusposition = function (x, y, withgold, a, withtracked) {
     const o = 0.00513
     const x1 = parseInt(x * o, 10) - 3
     const y1 = parseInt(y * o, 10) + 2
@@ -114,12 +114,11 @@ TWDS.minimap.updateReal = function () {
     if (a.length > 1) {
       mayrotate = 'transform:rotate(45deg);'
     }
-    const style = 'z-index:7 ;position:absolute; display:block; width:4px; height:4px; ' +
-              'background-color:' + (withgold ? 'yellow' : 'white') +
-               ';left:' + x1 + 'px;top:' + y1 + 'px;' + mayrotate + 'border:1px solid ' +
-               (withgold ? 'red' : 'black') + ";'"
-
-    const str = "<div class='TWDS_bonusjob' style='" + style + ' />'
+    let cl = ''
+    if (withgold) { cl += ' gold' }
+    if (withtracked) { cl += ' tracked' }
+    const style = 'left:' + x1 + 'px;top:' + y1 + 'px;' + mayrotate
+    const str = "<div class='TWDS_bonusjob " + cl + "' style='" + style + "' />"
     const ele = $(str)
     ele.addMousePopup('<div style="min-width:60px;text-align:center">' +
         a.join('<div class="marker_popup_divider"></div>') + '</div>')
@@ -147,7 +146,7 @@ TWDS.minimap.updateReal = function () {
                ';left:' + x1 + 'px;top:' + y1 + 'px;' + mayrotate + 'border:1px solid ' +
                'black' + ";'"
 
-    const str = "<div class='TWDS_mm_markethack' style='" + style + ' />'
+    const str = "<div class='TWDS_mm_markethack' style='" + style + "'/>"
     const ele = $(str)
     ele.addMousePopup('<div style="min-width:60px;text-align:center">' +
         a + ' ' + TWDS._('ITEMS', 'items') + '</div>')
@@ -162,6 +161,23 @@ TWDS.minimap.updateReal = function () {
     })
     $('#minimap_worldmap').append(ele)
   }
+  const tracked = {}
+  if (TWDS.settings.minimap_silvergold && TWDS.settings.minimap_silvergold_trackerhelper) {
+    for (const q of Object.values(window.QuestTrackerWindow.trackedQuests)) {
+      for (let i = 0; i < q.requirements.length; i++) {
+        const r = q.requirements[i]
+        if (r.solved === false && r.jsInfo) {
+          if (r.jsInfo.type === 'task-finish-job') {
+            tracked[r.jsInfo.id] = true
+          }
+          if (r.jsInfo.type === 'inventory_changed') {
+            const x = JobList.getJobsIdsByItemId(r.jsInfo.id)
+            for (let y = 0; y < x.length; y++) { tracked[x[y]] = true }
+          }
+        }
+      }
+    }
+  }
 
   // $("#minimap_worldmap").css("position","relative"); not good, messes up map
   $('#minimap_worldmap .TWDS_bonusjob').remove()
@@ -172,6 +188,7 @@ TWDS.minimap.updateReal = function () {
       let x = -1
       let y = -1
       let withgold = false
+      let withtracked = false
       for (const onejobkey in oneposdata) {
         const onejob = oneposdata[onejobkey]
         x = onejob.x
@@ -181,6 +198,8 @@ TWDS.minimap.updateReal = function () {
         const jid = onejob.job_id
         const job = JobList.getJobById(jid)
         if (gold) withgold = true
+        if (jid in tracked) { withtracked = true }
+
         let str = "<div style='min-width:60px;text-align:center' >"
         str += "<span style='font-weight:bold;display:block;'>" + job.name + '</span>' +
                "<div class='job' style='position:relative;left:50%;margin:10px -25px;'>" +
@@ -191,7 +210,7 @@ TWDS.minimap.updateReal = function () {
         a.push(str)
       }
       if (a.length > 0) {
-        handleonebonusposition(x, y, withgold, a)
+        handleonebonusposition(x, y, withgold, a, withtracked)
       }
     }
   }
@@ -487,19 +506,19 @@ TWDS.minimap.arrowinit = function () {
     children: [{
       nodeName: 'span',
       innerHTML: '&#x2190;',
-      className: 'TWDS_minimap_nav left'
+      className: 'TWDS_minimap_nav left ArrowLeft'
     }, {
       nodeName: 'span',
       innerHTML: '&#x2191;',
-      className: 'TWDS_minimap_nav up'
+      className: 'TWDS_minimap_nav up ArrowUp'
     }, {
       nodeName: 'span',
       innerHTML: '&#x2193;',
-      className: 'TWDS_minimap_nav down'
+      className: 'TWDS_minimap_nav down ArrowDown'
     }, {
       nodeName: 'span',
       innerHTML: '&#x2192;',
-      className: 'TWDS_minimap_nav right'
+      className: 'TWDS_minimap_nav right ArrowRight'
     }, {
       nodeName: 'input',
       type: 'checkbox',
@@ -653,6 +672,19 @@ TWDS.minimap.uiinit = function () {
     })
   }
 }
+TWDS.minimap.keyup = function (ev) {
+  if (!document.body.classList.contains('TWDS_searchmode')) { return }
+  const k = ev.key
+  const x = TWDS.q1('.TWDS_minimap_nav.' + k)
+  if (x) {
+    const event = new window.MouseEvent('click', {
+      view: window,
+      bubbles: true,
+      cancelable: true
+    })
+    x.dispatchEvent(event)
+  }
+}
 
 TWDS.registerStartFunc(function () {
   TWDS.minimap.init()
@@ -670,6 +702,13 @@ TWDS.registerStartFunc(function () {
     TWDS._('MINIMAP_SETTING_SILVERGOLD', 'Show known silver/gold jobs on the minimap.'),
     defaultval, function (v) {
       TWDS.minimap.uiinit()
+    },
+    'Minimap'
+  )
+  TWDS.registerSetting('bool', 'minimap_silvergold_trackerhelper',
+    TWDS._('MINIMAP_SETTING_SILVERGOLD_TRACKERHELPER',
+      'Add highlightning of tracked bonus jobs.'), false, function (v) {
+      TWDS.minimap.uiinit(v)
     },
     'Minimap'
   )
@@ -698,6 +737,9 @@ TWDS.registerStartFunc(function () {
   TWDS.delegate(document.body, 'change', '.TWDS_minimap_opacity_checkbox', TWDS.minimap.opacityhandler)
   EventHandler.listen('window_closed_minimap', function () {
     document.body.classList.remove('TWDS_searchmode')
+  })
+  document.addEventListener('keyup', function (ev) {
+    TWDS.minimap.keyup(ev)
   })
 })
 
