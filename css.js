@@ -4,8 +4,52 @@ TWDS.insertStyles = function () {
       --twds-gold: #f8c57c;
       --twds-dark-brown: #5c3f1e;
     }
+    .TWDS_bonusjob {
+      z-index:7;
+      position:absolute;
+      display:block;
+      width:4px;
+      height:4px;
+      background-color: white;
+      border:1px solid black;
+    }
+    .TWDS_bonusjob.gold {
+      background-color:yellow;
+      border-color:red;
+    }
+    .TWDS_bonusjob.tracked {
+      border-radius:1px;
+      border-color:red;
+      background:linear-gradient(45deg, white, red);
+    }
+    .TWDS_bonusjob.tracked.gold {
+      background:linear-gradient(45deg, yellow, red);
+    }
     .TWDS_blinking {
       animation: blinker 0.5s linear 120
+    }
+    #TWDS_settings {
+      display:grid;
+      grid-template-columns: 2fr 1fr;
+    }
+    #TWDS_settings .TWDS_VERSIONINFO {
+      grid-row:1;
+      grid-column:2;
+      border:blue;
+      color: #333;
+      text-align: right;
+      padding: 0 2px 5px 0;
+    }
+    #TWDS_settings .TWDS_settings_extraarea {
+      grid-row:2;
+      grid-column:2;
+    }
+    #TWDS_settings .TWDS_settings_cache {
+      grid-row:1/ span 2;
+      grid-column:1;
+    }
+    #TWDS_settings .TWDS_settings_main {
+      grid-column:1/ span 2;
     }
     #TWDS_settings h2 {
       font-size:22px;
@@ -27,11 +71,6 @@ TWDS.insertStyles = function () {
       text-decoration: underline red;
     }
 
-    .TWDS_VERSIONINFO {
-      color: #333;
-      text-align: right;
-      padding: 0 2px 5px 0;
-    }
     .TWDS .tw2gui_scrollpane {
       margin:1em 0;
     }
@@ -797,10 +836,10 @@ TWDS.insertStyles = function () {
     }
     body.TWDS_searchmode #user-interface,
     body.TWDS_searchmode #windows > * {
-      display:none;
+      display:none !important;
     }
     body.TWDS_searchmode #windows > .minimap {
-      display:block;
+      display:block !important;
       width:0px;
       height:0px;
       overflow:hidden;
@@ -865,18 +904,55 @@ TWDS.insertStyles = function () {
     .TWDS_overlay > div:first-child {
       margin-top:0.0em;
     }
-    .TWDS_market_filter_collectibles {
+    .TWDS_trader_filter_collectibles {
       position:absolute;
       right: 15px;
       top:4px;
       accent-color:var(--twds-dark-brown);
     }
-    .TWDS_market_town_shop_search {
+    .TWDS_trader_town_shop_search {
       position:absolute;
       right:80px;
       top:4px;
       width:110px;
       accent-color:var(--twds-dark-brown);
+    }
+    .TWDS_smartstart {
+      position:absolute;
+      bottom:120px;
+      left:10px !important;
+      background-color:var(--twds-dark-brown);
+      color:white;
+      width:80px;
+      padding-block:3px;
+      text-align:center;
+    }
+    div.job_durationbar .TWDS_jw_luck {
+      top:135px;
+      right:16px;
+      left:auto;
+      width:65px;
+      color: rgb(119, 255, 119);
+    }
+    div.job_durationbar .TWDS_jw_luck::after {
+      content: "\\2618";
+      display:inline;
+      color: rgb(119, 255, 119);
+    }
+    .TWDS_itemusewindow table {
+      border-collapse:collapse;
+      border:1px solid #888;
+    }
+    .TWDS_itemusewindow .header td,
+    .TWDS_itemusewindow .header th {
+      border-bottom: 3px solid #888;
+    }
+    .TWDS_itemusewindow th:first-child {
+      border-right: 1px solid #888;
+    }
+    .TWDS_itemusewindow table th,
+    .TWDS_itemusewindow table td {
+    border-bottom:1px solid #888;
     }
 
   `
