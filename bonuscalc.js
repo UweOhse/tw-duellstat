@@ -33,7 +33,6 @@ TWDS.bonuscalc.getComboBonus = function (itemids) {
   if (itemids === null || itemids === undefined) {
     itemids = []
     for (const e of Object.entries(Wear.slots)) {
-      console.log(e)
       const x = Wear.get(e[1])
       if (x) { itemids.push(x.obj.item_id) }
     }
@@ -64,7 +63,6 @@ TWDS.bonuscalc.getComboBonus = function (itemids) {
     const set = west.storage.ItemSetManager.get(setkey)
     const itemsinuse = usedSets[setkey].length
     const setbonuses = set.getMergedStages(itemsinuse)
-    console.log('SET', setkey, itemsinuse, '=>', setbonuses)
     for (let i = 0; i < setbonuses.length; i++) {
       addbonus(extractor.getExportValue(setbonuses[i]))
     }
@@ -74,7 +72,6 @@ TWDS.bonuscalc.getComboBonus = function (itemids) {
     for (let j = 0; j < it.bonus.item.length; j++) {
       extractor.init(Character, it.item_level)
       const v = extractor.getExportValue(it.bonus.item[j])
-      console.log('ITEM', it.name, it, j, '=>', v)
       addbonus(v)
     }
     if (it.bonus.attributes && it.bonus.attributes.length) {
@@ -135,7 +132,6 @@ TWDS.getComboBonus = function (combo) {
       }
       allBonus[name][0] += value
       allBonus[name][1].push([value, source])
-      // console.log('updated', name, ' with +', value, 'to', allBonus[name], 'for', source)
     }
   }
 
