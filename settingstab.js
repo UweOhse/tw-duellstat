@@ -6,8 +6,25 @@ TWDS.getSettingsContentReal = function () {
     thing.textContent = 'Version: @REPLACEMYVERSION@'
     return thing
   }
+  const createExtraThing = function () {
+    const thing = TWDS.createEle({
+      nodeName: 'div',
+      className: 'TWDS_settings_extraarea'
+    })
+    if (TWDS.settings.misc_chestanalyzer) {
+      console.log('T')
+      TWDS.createEle({
+        nodeName: 'button',
+        textContent: 'Chests',
+        onclick: TWDS.itemuse.openwindow,
+        first: thing
+      })
+    }
+    return thing
+  }
   const createCacheThing = function () {
     const thing = document.createElement('div')
+    thing.className = 'TWDS_settings_cache'
     let button
     let p
 
@@ -70,6 +87,12 @@ TWDS.getSettingsContentReal = function () {
     button.title = TWDS._('CLOTHCACHE_RELOAD_30D_MOUSEOVER', 'Reload the cloth cache for all jobs where it is older than 30 days')
     button.classList.add('TWDS_job_reload')
     button.dataset.reloadmode = '30d'
+
+    return thing
+  }
+  const createMainThing = function () {
+    const thing = document.createElement('div')
+    thing.className = 'TWDS_settings_main'
 
     let lastgroup = ''
     const a = []
@@ -169,6 +192,8 @@ TWDS.getSettingsContentReal = function () {
   div.id = 'TWDS_settings'
   div.appendChild(createVersionThing())
   div.appendChild(createCacheThing())
+  div.appendChild(createExtraThing())
+  div.appendChild(createMainThing())
   return div
 }
 TWDS.activateSettingsTab = function () {
