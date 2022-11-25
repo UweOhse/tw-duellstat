@@ -120,6 +120,7 @@ TWDS.storecrafting = function (x) {
   if (x.error) return
   TWDS.crafting = {}
   TWDS.crafting.items = {}
+  TWDS.crafting.resources = {}
   if (x.recipes_content) {
     for (let i = 0; i < x.recipes_content.length; i++) {
       const rid = x.recipes_content[i].item_id
@@ -127,6 +128,10 @@ TWDS.storecrafting = function (x) {
       if (r) {
         console.log(r.name, '=>', r.craftitem)
         TWDS.crafting.items[r.craftitem] = true
+        for (let j = 0; j < r.resources.length; j++) {
+          const ri = r.resources[j].item
+          TWDS.crafting.resources[ri] = true
+        }
       }
     }
   }
