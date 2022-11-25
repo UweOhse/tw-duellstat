@@ -160,11 +160,13 @@ TWDS.overlay.update = function () {
     const sel = cfg[i][1]
     const cb = cfg[i][2]
     const e = TWDS.q1(sel)
-    if (TWDS.settings[sn]) {
-      e.innerHTML = cb()
-      e.style.display = 'block'
-    } else {
-      e.style.display = 'none'
+    if (e) { // the thing might not be in the dom.
+      if (TWDS.settings[sn]) {
+        e.innerHTML = cb()
+        e.style.display = 'block'
+      } else {
+        e.style.display = 'none'
+      }
     }
   }
 }
