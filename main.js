@@ -103,18 +103,28 @@ TWDS.main = function main () {
     const key = tr.dataset.key
     window.localStorage.removeItem(key)
     tr.remove()
+    TWDS.clothcache.recalcItemUsage()
   })
   TWDS.createSideButton()
+
+  let didstartfuncs = false
   const dostartfuncs = function () {
+    if (didstartfuncs) return
+    didstartfuncs = true
     for (const fn of Object.values(TWDS.startFunctions)) {
       fn()
     }
+    return EventHandler.ONE_TIME_EVENT
   }
-  if (ItemManager.isLoaded()) {
-    dostartfuncs()
-  } else {
+  if (!ItemManager.isLoaded()) {
     EventHandler.listen('itemmanager_loaded', dostartfuncs)
+    return
   }
+  if (!Character.playerId) {
+    EventHandler.listen('char_avatar_changed', dostartfuncs)
+    return
+  }
+  dostartfuncs()
 }
 TWDS.storecrafting = function (x) {
   if (x.error) return
@@ -146,14 +156,6 @@ TWDS.preMain = function () {
     window.setTimeout(TWDS.preMain, 100)
     return
   }
-  const loadcrafting = function () {
-    if (!ItemManager.isLoaded()) {
-      window.setTimeout(loadcrafting, 250)
-      return
-    }
-    Ajax.remoteCall('crafting', '', {}, TWDS.storecrafting)
-  }
-  loadcrafting()
 
   TWDS.main()
 }
