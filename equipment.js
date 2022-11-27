@@ -761,6 +761,7 @@ TWDS.registerStartFunc(function () {
     false)
   $(document).on('click', '#TWDS_equipment_takeover', function () {
     window.localStorage.setItem(this.dataset.key, this.dataset.edata)
+    TWDS.clothcache.recalcItemUsage()
     TWDS.activateEquipmentTab()
     this.parentNode.removeChild(this)
   })
