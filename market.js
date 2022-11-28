@@ -527,10 +527,10 @@ TWDS.registerStartFunc(function () {
   window.Trader.open = function (a, b, c, d) { return TWDS.trader.open(a, b, c, d) }
   window.Trader._twds_backup_addItemToInv = window.Trader.addItemToInv
   window.Trader.addItemToInv = function (a) { return TWDS.trader.addItemToInv(a) }
-  TWDS.delegate(document.body, 'change', '.TWDS_market_filter_collectibles', function () {
+  TWDS.delegate(document.body, 'change', '.TWDS_trader_filter_collectibles', function () {
     TWDS.trader.filterchange()
   })
-  TWDS.delegate(document.body, 'change', '.TWDS_market_town_shop_search', function () {
+  TWDS.delegate(document.body, 'change', '.TWDS_trader_town_shop_search', function () {
     TWDS.trader.filterchange()
   })
   TWDS.registerSetting('bool', 'town_shop_collect_switch',
