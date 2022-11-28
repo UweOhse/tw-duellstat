@@ -73,6 +73,9 @@ TWDS.TWDBcalcExp = function (pts, mal, magic, mot, fac) {
 TWDS.TWDBcalcDanger = function (pts, mal, magic, mot, fac) {
   return TWDS.TWDBcalcStepFormula('round', 'round', function (lp) { return Math.pow(lp, -0.2) }, pts, mal, magic, 100, fac, true)
 }
+TWDS.TWDBcalcProductRate = function (pts, mal, magic, mot, fac) {
+  return TWDS.TWDBcalcStepFormula('round', 'round', function (lp, stars) { return stars < 15 ? 6.25 : 9.375 }, pts, mal, magic, 100, fac)
+}
 TWDS.jobtab.initDisplay = function (container, serverdata) {
   const charPremium = Number(Premium.hasBonus('character'))
   const duration = TWDS.jobtab.curJobDuration
