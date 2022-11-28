@@ -87,6 +87,7 @@ TWDS.jobwindow.initView2 = function () {
   if (TWDS.settings.jobwindow_show_luckp) {
     const hack = function (what, basis) {
       const b = TWDS.q1('.job_durationbar_' + what, d)
+      if (!b) return // too few labor points.
       const e = TWDS.createEle({
         nodeName: 'div',
         className: 'TWDS_jw_luck',
@@ -98,7 +99,8 @@ TWDS.jobwindow.initView2 = function () {
     hack('middle', this.job.basis)
     hack('long', this.job.basis)
   }
-  if (TWDS.settings.jobwindow_smart_start) {
+  const longdurationbar = TWDS.q1('.job_durationbar_long', d)
+  if (TWDS.settings.jobwindow_smart_start && longdurationbar) { // we might have too few jobpoints
     const o = TWDS.q('.TWDS_smartstart', d)
     if (o) {
       for (let i = 0; i < o.length; i++) { o[i].remove() }
@@ -298,23 +300,25 @@ TWDS.jobwindow.updateMotivationMeter = function (o) {
     met[0].min = 0
     met[0].max = 25
   }
-  const hasa = Premium.hasBonus('automation')
-  let maxpossible = 4
-  if (hasa) { maxpossible = 9 }
-  // now the smart buttons.
-  let tonextborder = mot % 25
-  if (tonextborder === 0) { tonextborder = 25 }
-  let t = Math.min(maxpossible, tonextborder, Character.energy)
-  TWDS.jobwindow.ssb1.textContent = t + 'x'
-  TWDS.jobwindow.ssb1.dataset.smartstart = t
+  if (TWDS.jobwindow.ssb3) {
+    const hasa = Premium.hasBonus('automation')
+    let maxpossible = 4
+    if (hasa) { maxpossible = 9 }
+    // now the smart buttons.
+    let tonextborder = mot % 25
+    if (tonextborder === 0) { tonextborder = 25 }
+    let t = Math.min(maxpossible, tonextborder, Character.energy)
+    TWDS.jobwindow.ssb1.textContent = t + 'x'
+    TWDS.jobwindow.ssb1.dataset.smartstart = t
 
-  t = Math.min(maxpossible, Math.ceil(tonextborder / 5), Math.floor(Character.energy / 5))
-  TWDS.jobwindow.ssb2.textContent = t + 'x'
-  TWDS.jobwindow.ssb2.dataset.smartstart = t
+    t = Math.min(maxpossible, Math.ceil(tonextborder / 5), Math.floor(Character.energy / 5))
+    TWDS.jobwindow.ssb2.textContent = t + 'x'
+    TWDS.jobwindow.ssb2.dataset.smartstart = t
 
-  t = Math.min(maxpossible, Math.floor(Character.energy / 12))
-  TWDS.jobwindow.ssb3.textContent = t + 'x'
-  TWDS.jobwindow.ssb3.dataset.smartstart = t
+    t = Math.min(maxpossible, Math.floor(Character.energy / 12))
+    TWDS.jobwindow.ssb3.textContent = t + 'x'
+    TWDS.jobwindow.ssb3.dataset.smartstart = t
+  }
 }
 TWDS.jobwindow.smartstart = function (e, y) {
   e.preventDefault()
