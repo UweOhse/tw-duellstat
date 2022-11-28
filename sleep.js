@@ -23,7 +23,6 @@ TWDS.sleep.openwrapper = function (eventdata) {
   return TWDS.sleep.open(eventdata)
 }
 TWDS.sleep.open = function (eventdata) {
-  console.log('sleep.open', eventdata)
   const translatehotelroom = ['', 'cubby', 'bedroom', 'hotel_room', 'apartment', 'luxurious_apartment']
 
   let cache = window.localStorage.getItem('TWDS_sleep_cache')
@@ -42,7 +41,7 @@ TWDS.sleep.open = function (eventdata) {
       forts: {}
     }
   }
-  const now = (new Date()).getTime() * 1000
+  const now = (new Date()).getTime()
   let needexpire = false
   if (now - ts >= 86400 * 1000) {
     needexpire = true
@@ -69,7 +68,7 @@ TWDS.sleep.open = function (eventdata) {
             if (needexpire) {
               const id = loc.fort.fort_id
               if (id in cache.forts) {
-                if (cache.forts[id] !== loc.fort.level * 2 + 2) {
+                if (cache.forts[id] !== loc.fort.type * 2 + 2) {
                   // 0=small=max. barrack level 2
                   // 1=medium=max. barrack level 4
                   // 2=medium=max. barrack level 6
@@ -128,7 +127,6 @@ TWDS.sleep.open = function (eventdata) {
       }
       const town = e.match(/^town-(\d+)-(\d+)/)
       if (town !== null) {
-        console.log('sleep in hotel ', town[2])
         window.TaskQueue.add(new window.TaskSleep(town[1], translatehotelroom[town[2]]))
       }
     })
@@ -185,7 +183,7 @@ TWDS.sleep.open = function (eventdata) {
     let hotellevelreached = 0
     const handletodos = function () {
       if (todoidx >= todos.length) {
-        cache.timestamp = (new Date()).getTime() * 1000
+        cache.timestamp = (new Date()).getTime()
         window.localStorage.setItem('TWDS_sleep_cache', JSON.stringify(cache))
         sb.show(eventdata)
         return
