@@ -72,7 +72,27 @@ TWDS.createSideButton = function () {
 
 window.TWDS = TWDS
 
-TWDS.main = function main () {
+TWDS.didstartfuncs = false
+TWDS.wait2callstartfuncs = function () {
+  if (TWDS.didstartfuncs) return
+  const dostartfuncs = function () {
+    TWDS.didstartfuncs = true
+    for (const fn of Object.values(TWDS.startFunctions)) {
+      fn()
+    }
+  }
+  if (!ItemManager.isLoaded()) {
+    EventHandler.listen('itemmanager_loaded', TWDS.wait2callstartfuncs)
+    return
+  }
+  if (!Character.playerId) {
+    EventHandler.listen('char_avatar_changed', TWDS.wait2callstartfuncs)
+    return
+  }
+  dostartfuncs()
+  return EventHandler.ONE_TIME_EVENT
+}
+TWDS.main = function () {
   console.log('duellstat main starts. $', window.jQuery, $)
   $(document).on('click', '.TWDS_nameeditTrigger', function () {
     const oldName = this.textContent
@@ -106,25 +126,7 @@ TWDS.main = function main () {
     TWDS.clothcache.recalcItemUsage()
   })
   TWDS.createSideButton()
-
-  let didstartfuncs = false
-  const dostartfuncs = function () {
-    if (didstartfuncs) return
-    didstartfuncs = true
-    for (const fn of Object.values(TWDS.startFunctions)) {
-      fn()
-    }
-    return EventHandler.ONE_TIME_EVENT
-  }
-  if (!ItemManager.isLoaded()) {
-    EventHandler.listen('itemmanager_loaded', dostartfuncs)
-    return
-  }
-  if (!Character.playerId) {
-    EventHandler.listen('char_avatar_changed', dostartfuncs)
-    return
-  }
-  dostartfuncs()
+  TWDS.wait2callstartfuncs()
 }
 TWDS.storecrafting = function (x) {
   if (x.error) return
