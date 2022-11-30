@@ -231,7 +231,7 @@ TWDS.clothcache.startFunction = function () {
           let sel = "#TWDS_wuw [data-itemid='"
           sel += ev.target.dataset.item_id
           sel += "']"
-          TWDS.opentab('wuw', sel)
+          TWDS.wuw.openwindow(sel)
         }
         return false
       }
