@@ -77,8 +77,14 @@ TWDS.wait2callstartfuncs = function () {
   if (TWDS.didstartfuncs) return
   const dostartfuncs = function () {
     TWDS.didstartfuncs = true
-    for (const fn of Object.values(TWDS.startFunctions)) {
-      fn()
+    try {
+      for (const fn of Object.values(TWDS.startFunctions)) {
+        fn()
+      }
+    } catch (e) {
+      console.log('Caught exception', e)
+      new UserMessage('Caught exception: ' + e).show()
+      console.trace(e)
     }
   }
   if (!ItemManager.isLoaded()) {
@@ -93,7 +99,6 @@ TWDS.wait2callstartfuncs = function () {
   return EventHandler.ONE_TIME_EVENT
 }
 TWDS.main = function () {
-  console.log('duellstat main starts. $', window.jQuery, $)
   $(document).on('click', '.TWDS_nameeditTrigger', function () {
     const oldName = this.textContent
     const str = TWDS._('CONFIRM_REMOVE', 'Enter a new name for the equipment set', {})
@@ -138,7 +143,6 @@ TWDS.storecrafting = function (x) {
       const rid = x.recipes_content[i].item_id
       const r = ItemManager.get(rid)
       if (r) {
-        console.log(r.name, '=>', r.craftitem)
         TWDS.crafting.items[r.craftitem] = true
         for (let j = 0; j < r.resources.length; j++) {
           const ri = r.resources[j].item
