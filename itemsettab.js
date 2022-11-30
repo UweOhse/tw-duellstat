@@ -1264,8 +1264,8 @@ TWDS.itemsettab.dofilter = function () {
         // huh?
         continue
       }
-      const v = td.textContent
-      if (v === '') {
+      const v = parseFloat(td.textContent)
+      if (v === 0.0) {
         tr[i].style.display = 'none'
         continue
       }
