@@ -40,10 +40,6 @@ TWDS.insertStyles = function () {
       text-align: right;
       padding: 0 2px 5px 0;
     }
-    #TWDS_settings .TWDS_settings_extraarea {
-      grid-row:2;
-      grid-column:2;
-    }
     #TWDS_settings .TWDS_settings_cache {
       grid-row:1/ span 2;
       grid-column:1;
@@ -255,6 +251,9 @@ TWDS.insertStyles = function () {
       grid-column:2;
       grid-row: 2;
     }
+    #TWDS_job_search {
+      width:140px;
+    }
     #TWDS_job_duration {
       grid-column:2;
       grid-row: 3;
@@ -281,6 +280,10 @@ TWDS.insertStyles = function () {
     }
     #TWDS_jobtab_filter_container select {
       display:block;
+    }
+    #TWDS_jobtab_filter_container input {
+      display:block;
+      width:75px;
     }
 
     div.item span.TWDS_itemusageinfo {
@@ -399,6 +402,11 @@ TWDS.insertStyles = function () {
     }
     .market-buy img[alt="report"] {
       margin-left:5px;
+    }
+    #TWDS_wuw {
+      height:340px;
+      overflow-y: auto !important;
+      overflow-x: auto !important;
     }
     #TWDS_wuw_table {
       border-collapse: collapse;
@@ -953,6 +961,83 @@ TWDS.insertStyles = function () {
     .TWDS_itemusewindow table th,
     .TWDS_itemusewindow table td {
     border-bottom:1px solid #888;
+    }
+    .TWDS_collections_list dd > span {
+      display:inline-block;
+    }
+    .TWDS_collections_list dd > span > .item {
+      float:none;
+      display:inline-block;
+    }
+    .TWDS_collections_list dd > span > b {
+      display: inline-flex;
+      flex-direction: column;
+    }
+    .TWDS_shopitemlink {
+      display: inline-block;
+      cursor: pointer;
+      vertical-align: middle;
+      margin-right: 2px;
+    }
+    .TWDS_marketsearchlink {
+      display: inline-block;
+      cursor: pointer;
+      vertical-align: middle;
+      margin-right: 2px;
+    }
+    .TWDS_questgivers_list dt {
+      cursor:pointer;
+      font-weight:bold;
+      margin-top:1em;
+    }
+    .TWDS_questgivers_list dd {
+      padding-left:2em;
+      height:20px;
+      font-weight:bold;
+      border-top:2px solid #eec;
+    }
+    .TWDS_questgivers_list .TWDS_questlist_questlink {
+      cursor:pointer;
+      text-decoration:underline;
+      padding-right:2em;
+    }
+    .TWDS_questgivers_list .TWDS_questlist_questlink.finishable {
+      color:rgb(102,102,102);
+    }
+    .TWDS_questgivers_list .TWDS_questlist_questlink::before {
+      content: " ";
+      position:static;
+      margin-left:-1em;
+      display:inline-block;
+      background: url(https://westen.innogamescdn.com/images/tw2gui/iconset.png?14) no-repeat;
+      width: 16px;
+      height: 16px;
+      background-position: 16px 1000px;
+    }
+    .TWDS_questgivers_list .TWDS_questlist_questlink.acceptable::before {
+      background-position: -48px -64px;
+    }
+    .TWDS_questgivers_list .TWDS_questlist_questlink.accepted::before {
+      background-position: -112px -96px;
+    }
+    .TWDS_questgivers_list .TWDS_questlist_questlink.finishable::before {
+      background-position: -128px -80px;
+    }
+    .TWDS_questgivers_list .TWDS_questlist_questgrouplink {
+      cursor:pointer;
+      text-decoration:underline;
+    }
+    .TWDS_questlist_please_wait {
+      font-size:200%;
+      color: red;
+    }
+    .TWDS_questlist_please_wait::before {
+      content: "!";
+      font-size:250%;
+    }
+    .TWDS_questlist_please_wait::after {
+      content: "!";
+      font-size:250%;
     }
 
   `
