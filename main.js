@@ -133,25 +133,6 @@ TWDS.main = function () {
   TWDS.createSideButton()
   TWDS.wait2callstartfuncs()
 }
-TWDS.storecrafting = function (x) {
-  if (x.error) return
-  TWDS.crafting = {}
-  TWDS.crafting.items = {}
-  TWDS.crafting.resources = {}
-  if (x.recipes_content) {
-    for (let i = 0; i < x.recipes_content.length; i++) {
-      const rid = x.recipes_content[i].item_id
-      const r = ItemManager.get(rid)
-      if (r) {
-        TWDS.crafting.items[r.craftitem] = true
-        for (let j = 0; j < r.resources.length; j++) {
-          const ri = r.resources[j].item
-          TWDS.crafting.resources[ri] = true
-        }
-      }
-    }
-  }
-}
 
 TWDS.preMain = function () {
   if (typeof $ === 'undefined') {
