@@ -1,26 +1,5 @@
-TWDS.initWUWDisplay = function (container) {
-  /*
-  const ele = function (tr, what, t) {
-    const td = document.createElement(what)
-    td.textContent = t
-    tr.appendChild(td)
-  }
-  const vele = function (tr, what, val) {
-    const td = document.createElement(what)
-    if (val !== 0) {
-      td.textContent = val[0]
-      let ti = ''
-      for (const pair of Object.values(val[1])) {
-        ti += `${pair[0]} ${pair[1]}<br>`
-      }
-      td.title = ti
-    } else {
-      td.innerHTML = '&nbsp;'
-    }
-    tr.appendChild(td)
-  }
-  */
-
+TWDS.wuw = {}
+TWDS.wuw.initWUWDisplay = function (container) {
   const intro = document.createElement('p')
   intro.textContent = TWDS._('WUW_INTRO',
     'This page shows what items are used for which jobs with the best possible labor points.')
@@ -179,21 +158,47 @@ TWDS.initWUWDisplay = function (container) {
     })
   })
 }
-TWDS.getWUWContent = function () {
+TWDS.wuw.openwindow = function (scrollto) {
+  const wid = 'TWDS_wuw_window'
+  const win = wman.open(wid, 'set', 'TWDS_wuw')
+  win.setTitle("What's used where")
+  win.setMiniTitle('WUW')
+
   const div = document.createElement('div')
   div.id = 'TWDS_wuw'
-  TWDS.initWUWDisplay(div)
+  TWDS.wuw.initWUWDisplay(div)
+
+  const sp = new west.gui.Scrollpane()
+
+  sp.appendContent(div)
+
+  win.appendToContentPane(sp.getMainDiv())
+
+  if (scrollto) {
+    const x = TWDS.q1(scrollto, win.divMain)
+    if (x) {
+      x.scrollIntoView(true)
+    }
+  }
+}
+
+/*
+TWDS.wuw.getWUWContent = function () {
+  const div = document.createElement('div')
+  div.id = 'TWDS_wuw'
+  TWDS.wuw.initWUWDisplay(div)
   return div
 }
-TWDS.activateWUWTab = function () {
+TWDS.wuw.activateWUWTab = function () {
   TWDS.activateTab('wuw')
 }
 TWDS.registerStartFunc(function () {
   TWDS.registerTab('wuw',
     TWDS._('TABNAME_WUW', 'Usage'),
-    TWDS.getWUWContent,
-    TWDS.activateWUWTab,
+    TWDS.wuw.getWUWContent,
+    TWDS.wuw.activateWUWTab,
     true)
 })
+*/
 
 // vim: tabstop=2 shiftwidth=2 expandtab
