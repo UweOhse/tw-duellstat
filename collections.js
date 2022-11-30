@@ -7,6 +7,49 @@ TWDS.collections.missing_items = {}
 TWDS.collections.unfinished = {}
 TWDS.collections.loaded = {}
 
+TWDS.collections.openwindow = function () {
+  const win = wman.open('TWDS_collections_window', 'Collections', 'TWDS_collections_window')
+  win.setMiniTitle('Collections')
+
+  const sp = new west.gui.Scrollpane()
+  const content = TWDS.createEle('div', {
+    className: 'TWDS_collections_list'
+  })
+  TWDS.createEle('h2', { textContent: 'Collections', beforeend: content })
+  const dl = TWDS.createEle('dl', { beforeend: content })
+  console.log('unfinished', TWDS.collections.unfinished)
+
+  for (const name of Object.keys(TWDS.collections.unfinished)) {
+    const c = TWDS.collections.unfinished[name]
+    TWDS.createEle('dt', { beforeend: dl, textContent: name })
+    const dd = TWDS.createEle('dd', { beforeend: dl })
+    for (let i = 0; i < c.length; i++) {
+      const span = TWDS.createEle('span', { beforeend: dd })
+      const itno = c[i]
+      const it = ItemManager.get(itno)
+      if (!it) continue
+      const inside = new tw2widget.InventoryItem(it)
+      span.appendChild(inside.getMainDiv()[0])
+      const b = TWDS.createEle('b', { beforeend: span })
+      if (it.auctionable) {
+        const sl = TWDS.marketsearchlink(itno)
+        if (sl) { b.appendChild(sl) }
+      }
+      if (it.tradeable) {
+        TWDS.createEle('i', { beforeend: b, textContent: 'T' })
+        /*
+        let x=TWDS.shopItemLinkIfPossible(it)
+        if (x)
+          b.appendChild(x);
+        */
+      }
+    }
+  }
+  sp.appendContent(content)
+
+  win.appendToContentPane(sp.getMainDiv())
+}
+
 TWDS.collections.prepareNameCache = function () {
   const out = {}
   const all = ItemManager.getAll()
