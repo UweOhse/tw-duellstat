@@ -422,6 +422,16 @@ MARKETWINDOW_FILTER_SET:"Setgegenstände",
 MARKETWINDOW_FILTER_NOSET:"Setlose Items",
 MARKETWINDOW_FILTER_CRAFT:"Handwerks-Resourcen",
 MARKETWINDOW_FILTER_COLLECT:"Sammelungen",
+QUESTLIST_TITLE: "Quests nach Arbeitgebern",
+QUESTLIST_PLEASE_WAIT: "Bitte warten, das dauert etwas",
+
+EXTRAS_TITLE: "Weitere Funktionen",
+EXTRAS_WUW_TEXT: "Was wird genutzt?",
+EXTRAS_WUW_HELP: "Zeigt welche Ausrüstung in Arbeiten oder Ausrüstungssets verwendet wird.",
+EXTRAS_CHESTS_TEXT: "Kisteninhalte",
+EXTRAS_CHESTS_HELP: "Zeigt den Inhalt der geöffneten Kisten / Verpackungen.",
+EXTRAS_QUESTS_TEXT: "Quests",
+EXTRAS_QUESTS_HELP: "Zeigt, nach Arbeitgeber geordnet, die gerade verfügbaren Quests",
 
 
 
