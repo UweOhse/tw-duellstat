@@ -619,7 +619,7 @@ TWDS.minimap.uiinit = function () {
        TWDS._('MINIMAP_MARKET_ITEMS_ON_WORLDMAP', 'Market items on world map') +
        '</span>')
     $('.mmap_others').append(e)
-    $('#TWDS_minimap_worldmapmarketcontainer input').change(function (e) {
+    $('#TWDS_minimap_worldmapmarketcontainer input').on('change', function (e) {
       TWDS.settings.minimap_worldmapmarket_active = this.checked ? 1 : 0
       TWDS.saveSettings()
       TWDS.minimap.updateIfOpen()
