@@ -25,7 +25,6 @@ TWDS.overlay.show = function () {
     else break
   }
   const windows = TWDS.q1('#windows')
-  console.log('WIN', windows)
 
   let pos = window.localStorage.TWDS_overlay_pos
   if (pos) pos = JSON.parse(pos)
@@ -140,7 +139,6 @@ TWDS.overlay.getbonusdata = function () {
 
     b.push('+' + Math.round(a[i][0]) + perc + ' ' + a[i][2])
   }
-  console.log('GBD', b, b.join(', '))
   return b.join(', ')
 }
 TWDS.overlay.getnote = function () {
@@ -188,11 +186,9 @@ TWDS.overlay.inputevent = function (ev) {
   const text = TWDS.q1('.TWDS_overlay .note').innerHTML
   window.localStorage.TWDS_overlay_free = text
   ev.preventDefault()
-  console.log('INPUT end')
   return true
 }
 TWDS.overlay.click = function (ev) {
-  console.log('click', ev)
   if (ev.target.closest('.TWDS_overlay .note')) { return }
   TWDS.opentab('settings', "[data-setting-name='overlay_use']")
 }
@@ -225,7 +221,6 @@ TWDS.overlay.dragend = function (ev) {
 
 TWDS.overlay.settingchanged = function () {
   const ele = TWDS.q1('.TWDS_overlay')
-  console.log('SS', ele)
   if (!TWDS.settings.overlay_use) {
     if (ele) ele.remove()
     return
