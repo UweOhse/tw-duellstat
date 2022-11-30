@@ -6,22 +6,6 @@ TWDS.getSettingsContentReal = function () {
     thing.textContent = 'Version: @REPLACEMYVERSION@'
     return thing
   }
-  const createExtraThing = function () {
-    const thing = TWDS.createEle({
-      nodeName: 'div',
-      className: 'TWDS_settings_extraarea'
-    })
-    if (TWDS.settings.misc_chestanalyzer) {
-      console.log('T')
-      TWDS.createEle({
-        nodeName: 'button',
-        textContent: 'Chests',
-        onclick: TWDS.itemuse.openwindow,
-        first: thing
-      })
-    }
-    return thing
-  }
   const createCacheThing = function () {
     const thing = document.createElement('div')
     thing.className = 'TWDS_settings_cache'
@@ -192,7 +176,6 @@ TWDS.getSettingsContentReal = function () {
   div.id = 'TWDS_settings'
   div.appendChild(createVersionThing())
   div.appendChild(createCacheThing())
-  div.appendChild(createExtraThing())
   div.appendChild(createMainThing())
   return div
 }
