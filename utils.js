@@ -121,9 +121,15 @@ TWDS.q = function (sel, pa) {
 }
 
 TWDS.createElement = function (par = {}, par2 = null) {
-  if (typeof par === 'string' && typeof par2 === 'object' && par2 !== null) {
-    par2.nodeName = par
-    par = par2
+  if (typeof par === 'string') {
+    if (typeof par2 === 'object' && par2 !== null) {
+      par2.nodeName = par
+      par = par2
+    } else {
+      par = {
+        nodeName: par
+      }
+    }
   }
   const thing = document.createElement(par.nodeName)
   for (const [k, v] of Object.entries(par)) {
@@ -257,12 +263,14 @@ TWDS.itemCraftButton = function (id) {
 }
 
 TWDS.delegate = function (root, evname, selector, func) {
-  root.addEventListener(evname, function (ev) {
+  const h = function (ev) {
     const tg = ev.target.closest(selector)
     if (tg) {
       func.call(tg, ev)
     }
-  })
+  }
+  root.removeEventListener(evname, h)
+  root.addEventListener(evname, h)
 }
 
 // logic from
@@ -312,3 +320,34 @@ TWDS.download_table = function (name, selector, sep = ',') {
   link.click()
   document.body.removeChild(link)
 }
+
+TWDS.marketsearchlink = function (itemid) {
+  const it = ItemManager.get(itemid)
+  if (!it) return false
+  return TWDS.createEle({
+    nodeName: 'span',
+    className: 'tw2gui-iconset tw2gui-icon-friends TWDS_marketsearchlink',
+    dataset: {
+      itemid: itemid,
+      itemname: it.name
+    }
+  })
+}
+TWDS.marketsearchlinkhandler = function (ev) {
+  console.log('MSLH', ev, this, this.dataset)
+  if (!Character.homeTown || !Character.homeTown.town_id) { return }
+  MarketWindow.open(Character.homeTown.town_id, 0, Character.homeTown.town_name)
+  MarketWindow.showTab('buy')
+  const x = TWDS.q1('.tw2gui_window.marketplace input[name=market_search_search]')
+  const y = TWDS.q1('.tw2gui_window.marketplace .iconBut_mpb_refresh')
+  if (x && y) {
+    x.value = this.dataset.itemname
+    const event = new window.MouseEvent('click', {
+      view: window,
+      bubbles: true,
+      cancelable: true
+    })
+    y.dispatchEvent(event)
+  }
+}
+TWDS.delegate(document.body, 'click', '.TWDS_marketsearchlink', TWDS.marketsearchlinkhandler)
