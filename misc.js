@@ -148,7 +148,7 @@ TWDS.duelprotection.init = function (active) {
       'background-color': '#7776'
     })
     $(cl).append(hack)
-    $(hack).hover(TWDS.duelprotection.updateMouseover)
+    $(hack).on('mouseenter', TWDS.duelprotection.updateMouseover)
     TWDS.duelprotection.hack = hack
     // update the bg color, too.
     TWDS.duelprotection.updateMouseover()
