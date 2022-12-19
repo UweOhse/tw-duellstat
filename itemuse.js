@@ -2,7 +2,7 @@
 //
 TWDS.itemuse = { }
 TWDS.itemuse.chests = { }
-TWDS.itemuse.handler = function (itemid, resp) {
+TWDS.itemuse.itemusehandler = function (itemid, resp) {
   console.log('item used', itemid, resp)
   if (resp.error) return
   const msg = resp.msg
@@ -31,6 +31,36 @@ TWDS.itemuse.handler = function (itemid, resp) {
   }
   window.localStorage.setItem('TWDS_itemuse_cache', JSON.stringify(TWDS.itemuse.chests))
 }
+TWDS.itemuse.adventhandler = function (calendarid, resp) {
+  console.log('advent used', calendarid, resp)
+  if (resp.error) return
+  const msg = resp.msg
+  const loaded = window.localStorage.getItem('TWDS_itemuse_cache')
+  if (!loaded) { TWDS.itemuse.chests = {} } else { TWDS.itemuse.chests = JSON.parse(loaded) }
+  if (!TWDS.itemuse.chests[calendarid]) { TWDS.itemuse.chests[calendarid] = { count: 0, items: {} } }
+  const found = msg.item
+  if (!(found in TWDS.itemuse.chests[calendarid].items)) {
+    TWDS.itemuse.chests[calendarid].items[found] = 0
+  }
+  TWDS.itemuse.chests[calendarid].items[found] += msg.n
+  TWDS.itemuse.chests[calendarid].count++
+  window.localStorage.setItem('TWDS_itemuse_cache', JSON.stringify(TWDS.itemuse.chests))
+}
+TWDS.itemuse.wofhandler = function (container, resp) {
+  console.log('advent used', container, resp)
+  if (resp.error) return
+  const loaded = window.localStorage.getItem('TWDS_itemuse_cache')
+  if (!loaded) { TWDS.itemuse.chests = {} } else { TWDS.itemuse.chests = JSON.parse(loaded) }
+  if (!TWDS.itemuse.chests[container]) { TWDS.itemuse.chests[container] = { count: 0, items: {} } }
+  const found = resp.picked[0]
+  if (!(found in TWDS.itemuse.chests[container].items)) {
+    TWDS.itemuse.chests[container].items[found] = 0
+  }
+  TWDS.itemuse.chests[container].items[found] += 1
+  TWDS.itemuse.chests[container].count++
+  window.localStorage.setItem('TWDS_itemuse_cache', JSON.stringify(TWDS.itemuse.chests))
+}
+
 TWDS.itemuse.openwindow = function () {
   const wid = 'TWDS_itemusewindow'
   const win = wman.open(wid, 'set', 'TWDS_itemuse')
@@ -99,7 +129,26 @@ TWDS.itemuse.prehandler = function (ev, xhr, settings) {
     if (!TWDS.settings.misc_chestanalyzer) return
     const mat = settings.data.match('item_id=([0-9]+)')
     if (mat == null) return
-    TWDS.itemuse.handler(parseInt(mat[1]), xhr.responseJSON)
+    TWDS.itemuse.itemusehandler(parseInt(mat[1]), xhr.responseJSON)
+  }
+  if (url.search('window=advent') !== -1) {
+    console.log('itemuse? advent', 1)
+    if (!TWDS.settings.misc_chestanalyzer) return
+    console.log('itemuse? advent', 2)
+    if (url.search('action=open_door') === -1) return
+    console.log('itemuse? advent', 3)
+    TWDS.itemuse.adventhandler(12700000, xhr.responseJSON)
+  }
+  if (url.search('window=wheeloffortune') !== -1) {
+    console.log('itemuse? wheel', 1)
+    if (!TWDS.settings.misc_chestanalyzer) return
+    console.log('itemuse? wheel', 2)
+    if (url.search('action=gamble') === -1) return
+    const mat = settings.data.match('gametype=([a-z0-9_]+)')
+    if (mat == null) return
+    console.log('itemuse? wheel', 3)
+    const container = 2347000 // fair kitten
+    TWDS.itemuse.wofhandler(container, xhr.responseJSON)
   }
 }
 TWDS.registerStartFunc(function () {
