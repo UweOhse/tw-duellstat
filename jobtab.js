@@ -89,11 +89,31 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
     useBest = 1
   }
 
+  TWDS.minimap.loadcache()
+  const silvers = {}
+  const golds = {}
+  for (const poskey in TWDS.minimap.cache) {
+    for (const j in TWDS.minimap.cache[poskey]) {
+      if (TWDS.minimap.cache[poskey][j].silver) {
+        silvers[j] = true
+      }
+      if (TWDS.minimap.cache[poskey][j].gold) {
+        golds[j] = true
+      }
+    }
+  }
+
   const row = function (tab, jobId, best) {
     const jobdata = JobList.getJobById(jobId)
 
     const tr = document.createElement('tr')
     tab.appendChild(tr)
+    if (jobId in golds) {
+      tr.classList.add('gold')
+    }
+    if (jobId in silvers) {
+      tr.classList.add('silver')
+    }
     tr.dataset.jobid = jobId
     let td
     let bestNetto
