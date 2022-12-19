@@ -48,7 +48,6 @@ TWDS.items.popupenhancement = function () {
   return TWDS.items.popupenhancementReal.call(this)
 }
 TWDS.items.makedata = function () {
-
   TWDS.items.data = {} // for debugging.
 
   const items = ItemManager.getAll()
