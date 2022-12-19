@@ -103,10 +103,23 @@ TWDS.minimap.updateIfOpen = function () {
   }
   TWDS.minimap.updateReal()
 }
+TWDS.minimap.findjob = function (jname) {
+  jname = jname.toUpperCase()
+  if (!window.JobsModel) return null
+  if (!window.JobsModel.Jobs) return null
+  if (!window.JobsModel.Jobs.length) return null
+  for (let i = 0, len = JobsModel.Jobs.length; i < len; ++i) {
+    if (JobsModel.Jobs[i] && JobsModel.Jobs[i].name.toUpperCase() === jname) {
+      return JobsModel.Jobs[i].id
+    }
+  }
+  return null
+}
+
 TWDS.minimap.updateReal = function () {
   TWDS.minimap.uiinit()
 
-  const handleonebonusposition = function (x, y, withgold, a, withtracked) {
+  const handleonebonusposition = function (x, y, withgold, a, withtracked, withsearched) {
     const o = 0.00513
     const x1 = parseInt(x * o, 10) - 3
     const y1 = parseInt(y * o, 10) + 2
@@ -117,6 +130,7 @@ TWDS.minimap.updateReal = function () {
     let cl = ''
     if (withgold) { cl += ' gold' }
     if (withtracked) { cl += ' tracked' }
+    if (withsearched) { cl += ' searched' }
     const style = 'left:' + x1 + 'px;top:' + y1 + 'px;' + mayrotate
     const str = "<div class='TWDS_bonusjob " + cl + "' style='" + style + "' />"
     const ele = $(str)
@@ -182,6 +196,10 @@ TWDS.minimap.updateReal = function () {
   // $("#minimap_worldmap").css("position","relative"); not good, messes up map
   $('#minimap_worldmap .TWDS_bonusjob').remove()
   if (TWDS.settings.minimap_silvergold) {
+    const jobname = $('.minimap .tw2gui_jobsearch_string').val()
+    let jobid = null
+    if (jobname) { jobid = TWDS.minimap.findjob(jobname) }
+
     for (const oneposkey in TWDS.minimap.cache) {
       const oneposdata = TWDS.minimap.cache[oneposkey]
       const a = []
@@ -189,6 +207,7 @@ TWDS.minimap.updateReal = function () {
       let y = -1
       let withgold = false
       let withtracked = false
+      let withsearched = false
       for (const onejobkey in oneposdata) {
         const onejob = oneposdata[onejobkey]
         x = onejob.x
@@ -199,6 +218,7 @@ TWDS.minimap.updateReal = function () {
         const job = JobList.getJobById(jid)
         if (gold) withgold = true
         if (jid in tracked) { withtracked = true }
+        if (jid === jobid) withsearched = true
 
         let str = "<div style='min-width:60px;text-align:center' >"
         str += "<span style='font-weight:bold;display:block;'>" + job.name + '</span>' +
@@ -210,7 +230,7 @@ TWDS.minimap.updateReal = function () {
         a.push(str)
       }
       if (a.length > 0) {
-        handleonebonusposition(x, y, withgold, a, withtracked)
+        handleonebonusposition(x, y, withgold, a, withtracked, withsearched)
       }
     }
   }
@@ -625,7 +645,6 @@ TWDS.minimap.uiinit = function () {
       TWDS.minimap.updateIfOpen()
     })
   }
-
   if (TWDS.settings.minimap_coordinput) {
     $('.tw2gui_jobsearch_string').on('keyup', function (e) {
       if (e.keyCode === 13) {
@@ -741,6 +760,9 @@ TWDS.registerStartFunc(function () {
   document.addEventListener('keyup', function (ev) {
     TWDS.minimap.keyup(ev)
   })
+  TWDS.delegate(document.body, 'change', '.minimap .tw2gui_jobsearch_string',
+    function () { TWDS.minimap.updateIfOpen() }
+  )
 })
 
 // vim: tabstop=2 shiftwidth=2 expandtab
