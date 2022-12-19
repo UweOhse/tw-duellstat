@@ -25,6 +25,15 @@ TWDS.insertStyles = function () {
     .TWDS_bonusjob.tracked.gold {
       background:linear-gradient(45deg, yellow, red);
     }
+    .TWDS_bonusjob.searched {
+      border-radius:1px;
+      border-color:#44f;
+      background:linear-gradient(45deg, white, #44f);
+    }
+    .TWDS_bonusjob.searched.gold {
+      border-color:red;
+      background:linear-gradient(45deg, white, #44f);
+    }
     .TWDS_blinking {
       animation: blinker 0.5s linear 120
     }
@@ -266,13 +275,22 @@ TWDS.insertStyles = function () {
 
     #TWDS_jobs {
       margin-bottom:1em;
-      border-collapse: collapse
+      border-collapse: collapse;
+      width:98%;
+      margin-left:1%;
+      margin-right:1%;
     }
     #TWDS_jobs tr, #TWDS_jobs td, #TWDS_jobs th { border:1px solid #888;}
     #TWDS_jobs td { text-align:right;}
     #TWDS_jobs td[data-field=name] { text-align:left; padding:1px 2px; }
     #TWDS_jobs th[data-field=danger] { color: red}
     #TWDS_jobs th[data-field=luck] { color: green}
+    #TWDS_jobs tr.gold td { 
+      background-color: #ffd70050;
+    }
+    #TWDS_jobs tr.silver td { 
+      background-color: #c0c0c080;
+    }
 
     #TWDS_jobtab_filter_container fieldset {
       display:inline-block;
