@@ -43,7 +43,7 @@ version:
 
 set-version:
 	git tag -a v'$(V)' -m 'Version $(V)'
-	rm tw-duellstat.user.js
+	rm -f tw-duellstat.user.js
 
 show-version:
 	@echo git describes it as:
