@@ -189,7 +189,7 @@ TWDS.marketwindow.enhanceit = function (thing) {
         $(max).keyup()
       }
       const min = document.querySelector('#market_min_bid')
-      if (min && parseInt(min.value.trim) > 0) {
+      if (min && parseInt(min.value.trim()) > 0) {
         min.value = min.value * count
         $(min).keyup()
       }
