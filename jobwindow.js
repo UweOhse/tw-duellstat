@@ -138,8 +138,8 @@ TWDS.jobwindow.initView2 = function () {
     TWDS.jobwindow.ssb1 = c(1, TWDS.q1('.job_durationbar_short', d), this)
     TWDS.jobwindow.ssb2 = c(5, TWDS.q1('.job_durationbar_middle', d), this)
     TWDS.jobwindow.ssb3 = c(12, TWDS.q1('.job_durationbar_long', d), this)
-    TWDS.jobwindow.ssb3.title = TWDS._('JOBWINDOW_SSB3_TITLE',
-      'Start as many jobs as possible')
+    TWDS.jobwindow.ssb3.title = TWDS._('JOBWINDOW_SSB12_TITLE',
+      'Start as many jobs as possible in the same motivation class')
   }
   if (TWDS.settings.jobwindow_show_jobpoints) {
     const progressthing = d.querySelector('.job_progress_jobstars')
@@ -315,7 +315,7 @@ TWDS.jobwindow.updateMotivationMeter = function (o) {
     TWDS.jobwindow.ssb2.textContent = t + 'x'
     TWDS.jobwindow.ssb2.dataset.smartstart = t
 
-    t = Math.min(maxpossible, Math.floor(Character.energy / 12))
+    t = Math.min(maxpossible, Math.ceil(tonextborder / 12), Math.floor(Character.energy / 12))
     TWDS.jobwindow.ssb3.textContent = t + 'x'
     TWDS.jobwindow.ssb3.dataset.smartstart = t
   }
