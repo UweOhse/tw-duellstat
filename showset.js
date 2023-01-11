@@ -193,7 +193,9 @@ TWDS.showset.getcontent = function (win) {
   }
 
   for (let i = 0; i < set.items.length; i++) {
-    const item = ItemManager.getByBaseId(set.items[i])
+    const itemlevel = win._TWDS_itemlevels[i]
+    const leveledid = itemlevel + 1000 * set.items[i]
+    const item = ItemManager.get(leveledid)
     if (item.type === 'right_arm') {
       if (item.sub_type !== subtype) { continue }
     }
@@ -207,12 +209,13 @@ TWDS.showset.getcontent = function (win) {
     })
 
     const checkvalue = Math.pow(2, i)
+    const checked = win._TWDS_items & checkvalue
 
     TWDS.createEle({
       nodeName: 'input',
       type: 'checkbox',
       value: checkvalue,
-      checked: win._TWDS_items & checkvalue,
+      checked: checked,
       onchange: function (ev) {
         const v = this.value
         if (this.checked) {
@@ -224,14 +227,37 @@ TWDS.showset.getcontent = function (win) {
       },
       first: tmp
     })
+    TWDS.createEle({
+      nodeName: 'select',
+      type: 'checkbox',
+      value: itemlevel,
+      dataset: {
+        idx: i
+      },
+      children: [
+        { nodeName: 'option', value: 0, textContent: 0, selected: itemlevel === 0 },
+        { nodeName: 'option', value: 1, textContent: 1, selected: itemlevel === 1 },
+        { nodeName: 'option', value: 2, textContent: 2, selected: itemlevel === 2 },
+        { nodeName: 'option', value: 3, textContent: 3, selected: itemlevel === 3 },
+        { nodeName: 'option', value: 4, textContent: 4, selected: itemlevel === 4 },
+        { nodeName: 'option', value: 5, textContent: 5, selected: itemlevel === 5 }
+      ],
+      onchange: function (ev) {
+        const v = parseInt(this.value)
+        win._TWDS_itemlevels[i] = v
+        TWDS.showset.reload(win)
+      },
+      first: tmp
+    })
     ct.appendChild(tmp)
     if (win._TWDS_items & checkvalue) {
+      const ex = new west.item.BonusExtractor(dummyChar, win._TWDS_itemlevels[i])
       if (item.bonus.item.length) {
         for (let k = 0; k < item.bonus.item.length; k++) {
           const b = item.bonus.item[k]
           if (b.type === 'damage' || (b.type === 'character' && b.bonus.type === 'damage')) { continue }
           merge(b)
-          const x = extractor.getExportValue(b)
+          const x = ex.getExportValue(b)
           if (x.key in leveledresult) {
             leveledresult[x.key] += x.value
           } else {
@@ -305,7 +331,7 @@ TWDS.showset.getcontent = function (win) {
   }
   return content
 }
-TWDS.showset.open = function (key) {
+TWDS.showset.open = function (key, checkowned) {
   const set = west.storage.ItemSetManager.get(key)
   const wid = 'TWDS_showset_' + key
   const win = wman.open(wid, 'set', 'TWDS_showset')
@@ -315,6 +341,19 @@ TWDS.showset.open = function (key) {
     win._TWDS_level = Character.level
     win._TWDS_items = 65535
     win._TWDS_sub_type = 'shot'
+    win._TWDS_itemlevels = []
+  }
+  if (checkowned) {
+    win._TWDS_items = 0
+    for (let i = 0; i < set.items.length; i++) {
+      const checkvalue = Math.pow(2, i)
+      const blist = Bag.getItemsByBaseItemId(set.items[i])
+      win._TWDS_itemlevels[i] = 0
+      if (blist.length) {
+        win._TWDS_items |= checkvalue
+        win._TWDS_itemlevels[i] = blist[0].obj.item_level
+      }
+    }
   }
 
   const sp = new west.gui.Scrollpane()
