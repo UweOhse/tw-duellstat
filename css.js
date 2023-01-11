@@ -1058,6 +1058,47 @@ TWDS.insertStyles = function () {
       font-size:250%;
     }
 
+    .TWDS_altinv_container table {
+      border-collapse: collapse;
+    }
+    .TWDS_altinv_container td,
+    .TWDS_altinv_container th {
+      border: 1px solid #888;
+      padding:1px;
+      vertical-align:middle;
+    }
+    .TWDS_altinv_container tbody .itemname { 
+    }
+    .TWDS_altinv_container tbody .used .itemname { 
+    }
+    .TWDS_altinv_container tbody .setname { 
+      font-weight: bold;
+    }
+    .TWDS_altinv_container tbody .buy,
+    .TWDS_altinv_container tbody .sell { 
+      font-weight: bold;
+    }
+    .TWDS_altinv_container tbody .setitemcount,
+    .TWDS_altinv_container tbody .count { 
+      text-align: right;
+    }
+    .TWDS_altinv_container tbody .searchword {
+      float: right;
+      font-weight: normal;
+    }
+    .TWDS_altinv_container tbody .setname {
+      text-decoration: underline;
+    }
+    .TWDS_altinv_container tbody .setrow .unused {
+      color:red;
+    }
+    .TWDS_altinv_container tbody .itemrow .unused {
+      color:red;
+    }
+    .TWDS_altinv_container tbody .itemrow .used {
+      text-decoration: underline;
+    }
+
   `
   const sty = document.createElement('style')
   sty.textContent = css

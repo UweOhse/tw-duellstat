@@ -40,6 +40,10 @@ TWDS.extras.getTabContent = function () {
     TWDS._('EXTRAS_COLLECTIONS_TEXT', 'Collections?'),
     TWDS._('EXTRAS_COLLECTIONS_HELP', 'Shows missing collection items.')
   ))
+  div.appendChild(TWDS.extras.button('TWDS.altinv.openwindow',
+    TWDS._('EXTRAS_COLLECTIONS_TEXT', 'Tabular inventory'),
+    TWDS._('EXTRAS_COLLECTIONS_HELP', 'Shows your inventory as one big table, sorted by set and name.')
+  ))
   return div
 }
 TWDS.extras.activateTab = function () {
