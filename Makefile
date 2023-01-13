@@ -1,4 +1,4 @@
-CHECK_SOURCES=start.js list_jobdata.js utils.js css.js de.json translation.js bonuscalc.js equipment.js \
+CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js de.json translation.js bonuscalc.js equipment.js \
       collections.js itemuse.js crafting.js items.js questlist.js \
    readduels.js peopletab.js jobtab.js settingstab.js clothcache.js speedcalc.js market.js itemsettab.js \
    gencalc.js storage.js chat.js injurywarning.js banking.js misc.js minimap.js jobwindow.js quest.js wuw.js \
