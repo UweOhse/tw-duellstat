@@ -354,6 +354,10 @@ TWDS.showset.open = function (key, checkowned) {
         win._TWDS_itemlevels[i] = blist[0].obj.item_level
       }
     }
+  } else {
+    for (let i = 0; i < set.items.length; i++) {
+      win._TWDS_itemlevels[i] = 0
+    }
   }
 
   const sp = new west.gui.Scrollpane()
