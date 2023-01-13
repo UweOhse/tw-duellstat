@@ -1,5 +1,6 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 TWDS.settingList = []
+TWDS.extraList = []
 TWDS.saveSettings = function () {
   window.localStorage.setItem('TWDS_settings', JSON.stringify(TWDS.settings))
 }
@@ -12,6 +13,9 @@ TWDS.loadSettings = function () {
   } catch (e) {
     console.log('failed to get settings', e)
   }
+}
+TWDS.registerExtra = function (fn, text, help) {
+  TWDS.extraList.push({ fn: fn, text: text, help: help })
 }
 TWDS.registerSetting = function (mode, name, text, def, callBack, group, subgroup, ordervalue) {
   const o = {
