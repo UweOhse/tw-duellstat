@@ -42,6 +42,7 @@ TWDS.overlay.show = function () {
       { nodeName: 'div', className: 'basedata' },
       { nodeName: 'div', className: 'dueldata' },
       { nodeName: 'div', className: 'bonusdata' },
+      { nodeName: 'div', className: 'battledata' },
       { nodeName: 'div', className: 'note', contentEditable: true }
     ],
     beforeend: windows
@@ -79,6 +80,131 @@ TWDS.overlay.getregendata = function () {
   return s
 }
 */
+TWDS.overlay.getbattledata = function () {
+  const getone = function (x) {
+    const y = CharacterSkills.getSkill(x)
+    return y.bonus + y.points // bonus: skill. points: attr
+  }
+
+  const prem = Number(Premium.hasBonus('character'))
+
+  const health = Character.maxHealth
+  let dodge = getone('dodge')
+  let aim = getone('aim')
+  let lead = getone('leadership')
+  const hide = getone('hide')
+  const trap = getone('pitfall')
+  const bo = TWDS.bonuscalc.getComboBonus()
+  let multiplayerAttack = 0
+  let multiplayerDefense = 0
+  let sectorAttack = 0
+  let sectorDefense = 0
+  let sectorDamage = 0
+  let fortResistance = 0
+  if ('fort_attack' in bo) {
+    multiplayerAttack += bo.fort_attack
+  }
+  if ('fort_defense' in bo) {
+    multiplayerDefense += bo.fort_defense
+  }
+  if ('fort_offense_sector' in bo) {
+    sectorAttack += bo.fort_offense_sector
+  }
+  if ('fort_defense_sector' in bo) {
+    sectorDefense += bo.fort_defense_sector
+  }
+  if ('fort_resistance' in bo) {
+    fortResistance += bo.fort_resistance
+  }
+  if ('fort_damage_sector' in bo) {
+    sectorDamage += bo.fort_damage_sector
+  }
+
+  if (Character.charClass === 'soldier') {
+    if (prem) { lead = lead * 1.5 } else { lead = lead * 1.25 }
+  }
+  if (Character.charClass === 'worker') {
+    if (prem) {
+      aim *= 1.4
+      dodge *= 1.4
+    } else {
+      aim *= 1.2
+      dodge *= 1.2
+    }
+  }
+
+  const attAttack = Math.pow(lead, 0.5) +
+    Math.pow(aim, 0.5) +
+    Math.pow(hide, 0.6) +
+    multiplayerAttack +
+    sectorAttack +
+    25
+  const attDefend = Math.pow(lead, 0.5) +
+    Math.pow(dodge, 0.5) +
+    Math.pow(hide, 0.6) +
+    multiplayerDefense +
+    sectorDefense +
+    10
+  const defAttack = Math.pow(lead, 0.5) +
+    Math.pow(aim, 0.5) +
+    Math.pow(trap, 0.6) +
+    multiplayerAttack +
+    sectorAttack +
+    25
+  const defDefend = Math.pow(lead, 0.5) +
+    Math.pow(dodge, 0.5) +
+    Math.pow(trap, 0.6) +
+    multiplayerDefense +
+    sectorDefense +
+    10
+  const attRes = 300 * hide / health + fortResistance
+  const defRes = 300 * trap / health + fortResistance
+
+  const la = Wear.get('left_arm')
+  let dmg = {
+    min: 0,
+    max: 0
+  }
+  if (la) {
+    dmg = la.obj.getDamage(Character)
+  }
+  dmg.min += sectorDamage
+  dmg.max += sectorDamage
+
+  let s = '<b>' + TWDS._('OVERLAY_FB_VALUES', 'Fortbattle Values') + '</b><br>'
+  s += "<table class='TWDS_overlay_battledata'><tr>"
+  s += '<td>' + TWDS._('OVERLAY_FB_ATT', 'Attack')
+  s += '<td>' + TWDS._('OVERLAY_FB_HIT', 'hit')
+  s += '<td>' + Math.round(attAttack * 10) / 10
+  s += '<td>' + TWDS._('OVERLAY_FB_DODGE', 'dodge')
+  s += '<td>' + Math.round(attDefend * 10) / 10
+  s += '<td>' + TWDS._('OVERLAY_FB_RESISTANCE', 'resistance')
+  s += '<td>' + Math.round(attRes * 10) / 10
+  s += '<tr>'
+  s += '<td>' + TWDS._('OVERLAY_FB_DEF', 'Defend')
+  s += '<td>' + TWDS._('OVERLAY_FB_HIT', 'hit')
+  s += '<td>' + Math.round(defAttack * 10) / 10
+  s += '<td>' + TWDS._('OVERLAY_FB_DODGE', 'dodge')
+  s += '<td>' + Math.round(defDefend * 10) / 10
+  s += '<td>' + TWDS._('OVERLAY_FB_RESISTANCE', 'resistance')
+  s += '<td>' + Math.round(defRes * 10) / 10
+  s += '<tr>'
+  s += '<td>' + TWDS._('OVERLAY_FB_DAMAGE', 'Damage')
+  s += "<td colspan='6'>"
+  s += dmg.min + '-' + dmg.max
+  s += TWDS._('OVERLAY_FB_AVG', ', average') + ' '
+  s += Math.round((dmg.min + dmg.max) / 2)
+  s += '<tr>'
+  s += '<td>' + TWDS._('OVERLAY_FB_SECT', 'Sectorbonus')
+  s += '<td>' + TWDS._('OVERLAY_FB_DAMAGE', 'damage')
+  s += '<td>' + sectorDamage + ', '
+  s += '<td>' + TWDS._('OVERLAY_FB_HIT', 'hit')
+  s += '<td>' + multiplayerAttack + ', '
+  s += '<td>' + TWDS._('OVERLAY_FB_DODGE', 'dodge')
+  s += '<td>' + multiplayerDefense
+  s += '</table>'
+  return s
+}
 TWDS.overlay.getdueldata = function () {
   const eq = TWDS.overlay.getEquipmentData()
   let s
@@ -151,6 +277,7 @@ TWDS.overlay.update = function () {
     ['overlay_basics', '.TWDS_overlay .basedata', TWDS.overlay.getbasedata],
     ['overlay_duel', '.TWDS_overlay .dueldata', TWDS.overlay.getdueldata],
     ['overlay_bonus', '.TWDS_overlay .bonusdata', TWDS.overlay.getbonusdata],
+    ['overlay_battle', '.TWDS_overlay .battledata', TWDS.overlay.getbattledata],
     ['overlay_note', '.TWDS_overlay .note', TWDS.overlay.getnote]
   ]
   for (let i = 0; i < cfg.length; i++) {
@@ -239,9 +366,11 @@ TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'overlay_duel', 'show duel information in the overlay (your values in the current equipment)',
     true, TWDS.overlay.settingchanged, 'Overlay', null, 3)
   TWDS.registerSetting('bool', 'overlay_bonus', 'show bonus information in the overlay (the bonus of the current equipment)',
-    true, TWDS.overlay.settingchanged, 'Overlay', null, 4)
-  TWDS.registerSetting('bool', 'overlay_note', 'show an editable notebook on the overlay',
     true, TWDS.overlay.settingchanged, 'Overlay', null, 5)
+  TWDS.registerSetting('bool', 'overlay_fortbattle', 'show fortbattle values in the overlay (the fortbattle values in the current equipment)',
+    false, TWDS.overlay.settingchanged, 'Overlay', null, 5)
+  TWDS.registerSetting('bool', 'overlay_note', 'show an editable notebook on the overlay',
+    true, TWDS.overlay.settingchanged, 'Overlay', null, 6)
   // inventory_changed is called after crafting, when the craft skill may have changed.
   window.EventHandler.listen(['wear_changed', 'character_level_up', 'inventory_changed'], function () {
     TWDS.overlay.update()
