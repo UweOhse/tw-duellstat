@@ -904,6 +904,22 @@ TWDS.insertStyles = function () {
     .TWDS_overlay table th:nth-child(3) {
       padding-left:0.75em;
     }
+    .TWDS_overlay_battledata {
+      border-collapse: collapse;
+    }
+    .TWDS_overlay_battledata td {
+      border:1px solid #888;
+      padding:1px 2px;
+    }
+    .TWDS_overlay_battledata td:first-child {
+      text-align:left;
+      padding-right:0.5em;
+    }
+    .TWDS_overlay_battledata td:nth-child(2),
+    .TWDS_overlay_battledata td:nth-child(4),
+    .TWDS_overlay_battledata td:nth-child(6) {
+      text-align:left;
+    }
     .TWDS_overlay .note {
       border-top:1px dotted #f00;
     }
