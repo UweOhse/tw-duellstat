@@ -44,6 +44,10 @@ TWDS.extras.getTabContent = function () {
     TWDS._('EXTRAS_COLLECTIONS_TEXT', 'Tabular inventory'),
     TWDS._('EXTRAS_COLLECTIONS_HELP', 'Shows your inventory as one big table, sorted by set and name.')
   ))
+  for (let i = 0; i < TWDS.extraList.length; i++) {
+    const e = TWDS.extraList[i]
+    div.appendChild(TWDS.extras.button(e.fn, e.text, e.help))
+  }
   return div
 }
 TWDS.extras.activateTab = function () {
