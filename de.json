@@ -17,6 +17,7 @@ BONUS_PRAY: "Beten",
 
 
   CONFIRM_REMOVE: 'Ausrüstungsset $name$ wirklich löschen?',
+  ENTER_NEW_NAME: 'Neuer Name für Ausrüstungsset $name$?',
   SHORT_SHOTWEAPON: ' (Schuss)',
   SHORT_MELEEWEAPON: ' (Schlag)',
   BONUSNAME_dollar: 'Geld für Arbeiten und Duelle',

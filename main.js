@@ -101,7 +101,9 @@ TWDS.wait2callstartfuncs = function () {
 TWDS.main = function () {
   $(document).on('click', '.TWDS_nameeditTrigger', function () {
     const oldName = this.textContent
-    const str = TWDS._('CONFIRM_REMOVE', 'Enter a new name for the equipment set', {})
+    const str = TWDS._('ENTER_NEW_NAME', 'Enter a new name for the equipment set $name$', {
+      name: n
+    })
     const newName = window.prompt(str)
     if (newName === false) return
     if (oldName === newName) {
