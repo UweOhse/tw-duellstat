@@ -102,7 +102,7 @@ TWDS.main = function () {
   $(document).on('click', '.TWDS_nameeditTrigger', function () {
     const oldName = this.textContent
     const str = TWDS._('ENTER_NEW_NAME', 'Enter a new name for the equipment set $name$', {
-      name: n
+      name: oldName
     })
     const newName = window.prompt(str)
     if (newName === false) return
