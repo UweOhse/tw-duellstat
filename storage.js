@@ -348,6 +348,23 @@ TWDS.storage.gettarget = function (pr) {
   }
   return null
 }
+TWDS.storage.reload()
+TWDS.storage.getMissingList = function () {
+  const out = {}
+  for (const id of Object.keys(TWDS.storage.data)) {
+    const want = TWDS.storage.data[id][0]
+    const have = Bag.getItemCount(id)
+    if (want > have) {
+      if (JobsModel.Jobs.length) {
+        const jl = JobList.getJobsByItemId(id)
+        for (const job of jl) {
+          out[job.id] = id
+        }
+      }
+    }
+  }
+  return out
+}
 TWDS.storage.gettracked = function () {
   const out = []
   for (const id of Object.keys(TWDS.storage.data)) {

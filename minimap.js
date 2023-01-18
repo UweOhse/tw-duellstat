@@ -119,7 +119,8 @@ TWDS.minimap.findjob = function (jname) {
 TWDS.minimap.updateReal = function () {
   TWDS.minimap.uiinit()
 
-  const handleonebonusposition = function (x, y, withgold, a, withtracked, withsearched) {
+  const handleonebonusposition = function (x, y, withgold, a, withtracked, withsearched,
+    withmissing, withalways) {
     const o = 0.00513
     const x1 = parseInt(x * o, 10) - 3
     const y1 = parseInt(y * o, 10) + 2
@@ -131,6 +132,8 @@ TWDS.minimap.updateReal = function () {
     if (withgold) { cl += ' gold' }
     if (withtracked) { cl += ' tracked' }
     if (withsearched) { cl += ' searched' }
+    if (withmissing) { cl += ' storagemissing' }
+    if (withalways) { cl += ' hl_always' }
     const style = 'left:' + x1 + 'px;top:' + y1 + 'px;' + mayrotate
     const str = "<div class='TWDS_bonusjob " + cl + "' style='" + style + "' />"
     const ele = $(str)
@@ -195,7 +198,21 @@ TWDS.minimap.updateReal = function () {
 
   // $("#minimap_worldmap").css("position","relative"); not good, messes up map
   $('#minimap_worldmap .TWDS_bonusjob').remove()
+  $('#minimap_worldmap .TWDS_storagejob').remove()
   if (TWDS.settings.minimap_silvergold) {
+    let missing = {}
+    if (TWDS.settings.minimap_silvergold_storagehelper) { missing = TWDS.storage.getMissingList() } // object jobId->someItemId
+    const hlalways = {}
+    if (TWDS.settings.minimap_silvergold_hl_always > '') {
+      const s = TWDS.settings.minimap_silvergold_hl_always.split(' ')
+      for (let i = 0; i < s.length; i++) {
+        const t = parseInt(s[i])
+        if (t > 0) {
+          hlalways[t] = true
+        }
+      }
+    }
+
     const jobname = $('.minimap .tw2gui_jobsearch_string').val()
     let jobid = null
     if (jobname) { jobid = TWDS.minimap.findjob(jobname) }
@@ -208,6 +225,8 @@ TWDS.minimap.updateReal = function () {
       let withgold = false
       let withtracked = false
       let withsearched = false
+      let withmissing = false
+      let withalways = false
       for (const onejobkey in oneposdata) {
         const onejob = oneposdata[onejobkey]
         x = onejob.x
@@ -219,6 +238,8 @@ TWDS.minimap.updateReal = function () {
         if (gold) withgold = true
         if (jid in tracked) { withtracked = true }
         if (jid === jobid) withsearched = true
+        if (jid in missing) withmissing = true
+        if (jid in hlalways) withalways = true
 
         let str = "<div style='min-width:60px;text-align:center' >"
         str += "<span style='font-weight:bold;display:block;'>" + job.name + '</span>' +
@@ -230,7 +251,8 @@ TWDS.minimap.updateReal = function () {
         a.push(str)
       }
       if (a.length > 0) {
-        handleonebonusposition(x, y, withgold, a, withtracked, withsearched)
+        handleonebonusposition(x, y, withgold, a, withtracked, withsearched, withmissing,
+          withalways)
       }
     }
   }
@@ -385,9 +407,11 @@ TWDS.minimap.export = function () {
       }
       out += ' --' + '\n'
     }
-    out += o.name + '; ' + o.bonus + '; ' + o.x + '-' + o.y + '; ' + o.id + '\n'
+    out += o.name + '; ' + o.bonus + '; '
+    out += "<span class='TWDS_minimap_export_pos'>" + o.x + '-' + o.y + '</span>; '
+    out += o.id + '\n'
   }
-  ta2.text(out)
+  ta2.html(out)
 
   const content = $('<div />')
   content.css({
@@ -403,6 +427,7 @@ TWDS.minimap.export = function () {
   download123.css({
     float: 'right'
   })
+  download123.click(downloader)
 
   const downloadabc = $('<a>download</a>')
   downloadabc[0].dataset.contentid = 'TWDS_minimap_joblist_abc'
@@ -421,6 +446,10 @@ TWDS.minimap.export = function () {
 
   (new west.gui.Dialog('Bonus-Jobs Export', $('<div />').append(content))).addButton('ok').show()
 }
+TWDS.minimap.export_center_handler = function () {
+  const pos = this.textContent.split('-', 2)
+  Map.center(pos[0], pos[1])
+}
 
 TWDS.minimap.interval = -1
 TWDS.minimap.isOpen = function () {
@@ -430,6 +459,8 @@ TWDS.minimap.isOpen = function () {
 }
 
 TWDS.minimap.init = function () {
+  TWDS.delegate(document.body, 'click', '.TWDS_minimap_export_pos',
+    TWDS.minimap.export_center_handler)
   // Radial Menu can tell us about gold/silver jobs
   try {
     if (!window.Map.Radialmenu.prototype._twds_minimap_open) {
@@ -727,6 +758,20 @@ TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'minimap_silvergold_trackerhelper',
     TWDS._('MINIMAP_SETTING_SILVERGOLD_TRACKERHELPER',
       'Add highlightning of tracked bonus jobs.'), false, function (v) {
+      TWDS.minimap.uiinit(v)
+    },
+    'Minimap'
+  )
+  TWDS.registerSetting('bool', 'minimap_silvergold_storagehelper',
+    TWDS._('MINIMAP_SETTING_SILVERGOLD_STORAGEHELPER',
+      'Add highlightning of bonus jobs for items missing in the storage.'), false, function (v) {
+      TWDS.minimap.uiinit(v)
+    },
+    'Minimap'
+  )
+  TWDS.registerSetting('string', 'minimap_silvergold_hl_always',
+    TWDS._('MINIMAP_SETTING_SILVERGOLD_HL_ALWAYS',
+      'Always highlight these jobs (job ids separated by spaces).'), '', function (v) {
       TWDS.minimap.uiinit(v)
     },
     'Minimap'

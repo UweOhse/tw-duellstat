@@ -34,6 +34,14 @@ TWDS.insertStyles = function () {
       border-color:red;
       background:linear-gradient(45deg, white, #44f);
     }
+    .TWDS_bonusjob.storagemissing {
+      border-radius:1px;
+      border-color:#080;
+      background:linear-gradient(45deg, transparent, #0f0);
+    }
+    .TWDS_bonusjob.hl_always {
+      background:linear-gradient(45deg, transparent, #f0f);
+    }
     .TWDS_blinking {
       animation: blinker 0.5s linear 120
     }
@@ -1113,6 +1121,9 @@ TWDS.insertStyles = function () {
     }
     .TWDS_altinv_container tbody .itemrow .used {
       text-decoration: underline;
+    }
+    .TWDS_minimap_export_pos:hover {
+      text-decoration:underline;
     }
 
   `
