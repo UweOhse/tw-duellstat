@@ -27,7 +27,7 @@ TWDS.crafting.start = function () {
     window.setTimeout(TWDS.crafting.start, 250)
     return
   }
-  Ajax.remoteCall('crafting', '', {}, TWDS.storemyrecipes)
+  Ajax.remoteCall('crafting', '', {}, TWDS.crafting.storemyrecipes)
 }
 
 TWDS.registerStartFunc(function () {
