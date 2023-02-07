@@ -17,7 +17,7 @@ TWDS.genCalc = function (bonusNames, skills) {
   // MUSS man aber vielleicht?
   sets = TWDS.genCalc.filterUneffectiveSets(sets, bonusNames, skills)
   console.log('subsets after filter', sets)
-  if (sets.length > 750) { return }
+  if (sets.length > 1000) { return }
 
   // Was fehlt: FillEmpty(combinesets, BestItems,AllItemsWithSpeedBonus)
 
