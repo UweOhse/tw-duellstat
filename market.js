@@ -220,6 +220,7 @@ TWDS.marketwindow.enhanceit = function (thing) {
   document.querySelector('#msd_days').appendChild(savedays)
   if (window.localStorage.TWDS_marketwindow_days !== null) {
     const t = window.localStorage.TWDS_marketwindow_days
+    console.log('T', t, t || 1)
     $('#market_days').guiElement().select(t || 1)
   }
 
@@ -302,10 +303,14 @@ TWDS.marketwindow.hasBonus = function (item) {
 
 TWDS.marketwindow.filtermode = 'none'
 TWDS.marketwindow.filter = function (mode, cat) {
-  const p = $('#mpb_' + cat + '_content p')
   console.time('FILTER')
+  console.log('FILTERING', mode, cat)
+  const p = $('#mpb_' + cat + '_content p')
   p.show()
-  if (mode === 'none') return
+  if (mode === 'none') {
+    console.timeEnd('FILTER')
+    return
+  }
 
   for (let i = 0; i < TWDS.marketwindow[cat].length; i++) {
     const item = ItemManager.get(TWDS.marketwindow[cat][i])
@@ -378,7 +383,6 @@ TWDS.marketwindow.updateCategoryReal = function (category, data) {
     combo.addItem('craft', TWDS._('MARKETWINDOW_FILTER_CRAFT', 'crafting'))
     const qc = TWDS.quickusables.getcategories()
     for (let i = 0; i < qc.length; i++) {
-      console.log('combo.addItem', qc[i], TWDS.quickusables.getcatdesc(qc[i]))
       combo.addItem(qc[i], TWDS.quickusables.getcatdesc(qc[i]))
     }
     combo.addListener(TWDS.marketwindow.handleFilterChange)
@@ -398,6 +402,24 @@ TWDS.marketwindow.updateCategoryReal = function (category, data) {
   const ret = MarketWindow.Buy._TWDS_backup_updateCategory(category, data)
   if (old) {
     TWDS.marketwindow.filter(TWDS.marketwindow.filtermode, category)
+  }
+  const x = TWDS.q('#mpb_' + category + '_content .tw2gui_scrollpane_clipper_contentpane p')
+  if (x && x.length === data.length) {
+    for (let i = 0; i < data.length; i++) {
+      const ii = data[i]
+      const c = Bag.getItemCount(ii)
+      x[i].dataset.bagitemcount = c
+      if (TWDS.storage.isMissing(ii)) {
+        const si = TWDS.storage.iteminfo(ii)
+        x[i].classList.add('TWDS_storage_missing')
+        x[i].dataset.want = si[0]
+        x[i].dataset.have = si[1]
+      }
+      if (TWDS.collections.isMissing(ii)) {
+        x[i].classList.add('TWDS_collection_missing')
+      }
+      // x[i].textContent+= " ["+c+"]";
+    }
   }
   return ret
 }
@@ -421,7 +443,6 @@ TWDS.trader.open = function (type, townid, coordX, coordY) {
   if (!w) {
     return retcode
   }
-  console.log(w, w.divMain, typeof w.divMain)
   const cp = TWDS.q1('.tw2gui_window_content_pane', w.divMain)
   console.log('ts', cp)
   if (cp) {
