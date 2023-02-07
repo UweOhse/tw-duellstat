@@ -202,16 +202,6 @@ TWDS.minimap.updateReal = function () {
   if (TWDS.settings.minimap_silvergold) {
     let missing = {}
     if (TWDS.settings.minimap_silvergold_storagehelper) { missing = TWDS.storage.getMissingList() } // object jobId->someItemId
-    const hlalways = {}
-    if (TWDS.settings.minimap_silvergold_hl_always > '') {
-      const s = TWDS.settings.minimap_silvergold_hl_always.split(' ')
-      for (let i = 0; i < s.length; i++) {
-        const t = parseInt(s[i])
-        if (t > 0) {
-          hlalways[t] = true
-        }
-      }
-    }
 
     const jobname = $('.minimap .tw2gui_jobsearch_string').val()
     let jobid = null
@@ -239,7 +229,7 @@ TWDS.minimap.updateReal = function () {
         if (jid in tracked) { withtracked = true }
         if (jid === jobid) withsearched = true
         if (jid in missing) withmissing = true
-        if (jid in hlalways) withalways = true
+        if ('BJHL_' + jid in TWDS.settings && TWDS.settings['BJHL_' + jid]) withalways = true
 
         let str = "<div style='min-width:60px;text-align:center' >"
         str += "<span style='font-weight:bold;display:block;'>" + job.name + '</span>' +
@@ -388,7 +378,7 @@ TWDS.minimap.export = function () {
     out += "<span class='TWDS_minimap_export_pos'>" + o.x + '-' + o.y + '</span>; '
     out += o.id + '\n'
   }
-  ta1.text(out)
+  ta1.html(out)
 
   const cmp2 = function (a, b) {
     if (a.county !== b.county) { return a.county > b.county ? 1 : -1 }
@@ -767,13 +757,6 @@ TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'minimap_silvergold_storagehelper',
     TWDS._('MINIMAP_SETTING_SILVERGOLD_STORAGEHELPER',
       'Add highlightning of bonus jobs for items missing in the storage.'), false, function (v) {
-      TWDS.minimap.uiinit(v)
-    },
-    'Minimap'
-  )
-  TWDS.registerSetting('string', 'minimap_silvergold_hl_always',
-    TWDS._('MINIMAP_SETTING_SILVERGOLD_HL_ALWAYS',
-      'Always highlight these jobs (job ids separated by spaces).'), '', function (v) {
       TWDS.minimap.uiinit(v)
     },
     'Minimap'
