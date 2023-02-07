@@ -297,6 +297,7 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
         } else {
           delete TWDS.settings['BJHL_' + v]
         }
+        TWDS.saveSettings()
       }
     })
     tr.appendChild(td)
