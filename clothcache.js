@@ -18,7 +18,6 @@ TWDS.getBestSetWrapper = function (skills, id, returnFull = false) {
     timestamp: new Date().getTime(),
     id: id,
     level: Character.level,
-    cache: best
   }
   one.items = [...best.items] // clone that
   for (let i = 0; i < best.sets.length; i++) {
