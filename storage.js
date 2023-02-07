@@ -349,6 +349,24 @@ TWDS.storage.gettarget = function (pr) {
   return null
 }
 TWDS.storage.reload()
+TWDS.storage.isMissing = function (ii) {
+  const id = parseInt(ii)
+  if (id in TWDS.storage.data) {
+    const want = TWDS.storage.data[id][0]
+    const have = Bag.getItemCount(id)
+    if (want > have) return true
+  }
+  return false
+}
+TWDS.storage.iteminfo = function (ii) {
+  const id = parseInt(ii)
+  if (id in TWDS.storage.data) {
+    const want = TWDS.storage.data[id][0]
+    const have = Bag.getItemCount(id)
+    return [want, have]
+  }
+  return [0, 0]
+}
 TWDS.storage.getMissingList = function () {
   const out = {}
   for (const id of Object.keys(TWDS.storage.data)) {
