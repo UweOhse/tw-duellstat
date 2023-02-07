@@ -90,9 +90,10 @@ TWDS.describeItemCombo = function (singleItems) {
   return is
 }
 // reading the current skill values, and the items
-TWDS.getEquipmentData = function () {
+TWDS.getEquipmentData = function (noskills) {
   const getOne = function (s) {
     const x = CharacterSkills.getSkill(s)
+    if (noskills) return x.bonus
     return x.bonus + x.points
   }
   const schlag = getOne('punch')
@@ -320,7 +321,7 @@ TWDS.classifyEquipment = function (o) {
   })
 
   let type = ''
-  if (o.auft > o.takt + 100) { type = TWDS._('ATTACKING_SET', 'Attacking,') } else if (o.takt > o.auft + 100) { type = TWDS._('ATTACKING_SET', 'Defending,') }
+  if (o.auft > o.takt + 100) { type = TWDS._('ATTACKING_SET', 'Attacking,') } else if (o.takt > o.auft + 100) { type = TWDS._('DEFENDING_SET', 'Defending,') }
   let sep = ' '
   for (let i = 0; i < ca.length; i++) {
     if (ca[i][0] > avg) {
@@ -772,7 +773,7 @@ TWDS.registerStartFunc(function () {
     if (key1 === 'special') {
       if (key2 === 'speed') items = TWDS.speedCalc()
       else if (key2 === 'xp') items = TWDS.genCalc({ experience: 1 }, {})
-      else if (key2 === 'regen') items = TWDS.genCalc({ regen: 1 }, { health: 0.01 })
+      else if (key2 === 'regen') items = TWDS.genCalc({ regen: 1 }, { })
       else if (key2 === 'luck') items = TWDS.genCalc({ luck: 1 }, {})
       else if (key2 === 'pray') items = TWDS.genCalc({ pray: 1 }, {})
       else if (key2 === 'dollar') items = TWDS.genCalc({ dollar: 1 }, {})
