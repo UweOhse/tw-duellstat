@@ -282,6 +282,24 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
       but.title = _('JOBTAB_START_NEAREST', 'Start the job at the nearest possible position')
       td.appendChild(but)
     }
+    td = document.createElement('td')
+    TWDS.createEle({
+      nodeName: 'input',
+      type: 'checkbox',
+      value: jobId,
+      checked: !!TWDS.settings['BJHL_' + jobId],
+      last: td,
+      onchange: function () {
+        console.log('change', this, this.checked)
+        const v = this.value
+        if (this.checked) {
+          TWDS.settings['BJHL_' + v] = true
+        } else {
+          delete TWDS.settings['BJHL_' + v]
+        }
+      }
+    })
+    tr.appendChild(td)
   }
   const headrow = function (tab) {
     const thead = document.createElement('thead')
@@ -349,6 +367,10 @@ TWDS.jobtab.initDisplay = function (container, serverdata) {
     th.title = TWDS._('JOBLIST_DANGER_TITLE', 'The chance to have an accident.')
 
     th = document.createElement('th')
+    tr.appendChild(th)
+    th = document.createElement('th')
+    th.textContent = 'Mark'
+    th.title = TWDS._('JOBLIST_HIGHLIGHT_TITLE', 'Mark known bonus jobs on the minimap')
     tr.appendChild(th)
   }
 
