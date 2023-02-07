@@ -2,7 +2,7 @@ CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js de.json transl
       collections.js itemuse.js crafting.js items.js questlist.js \
    readduels.js peopletab.js jobtab.js settingstab.js clothcache.js speedcalc.js market.js itemsettab.js \
    gencalc.js storage.js chat.js injurywarning.js banking.js misc.js minimap.js jobwindow.js quest.js wuw.js \
-   updatetab.js fbs.js sleep.js quickusables.js trackbar.js quicksilver.js showset.js overlay.js \
+   updatetab.js fbs.js sleep.js quickusables.js trackbar.js quicksilver.js showset.js overlay.js craftcalc.js \
    altinventory.js \
    extras.js main.js
 CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)

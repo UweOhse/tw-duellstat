@@ -1125,6 +1125,31 @@ TWDS.insertStyles = function () {
     .TWDS_minimap_export_pos:hover {
       text-decoration:underline;
     }
+    .market-buy .TWDS_storage_missing::before {
+      content: '[' attr(data-have) ' / ' attr(data-want) ']';
+      padding-inline:2px;
+      color: red;
+    }
+    .market-buy .TWDS_collection_missing::before {
+      content: '\\25a5';
+      width:24px;
+      font-size:larger;
+      padding-inline:1px;
+    }
+    .TWDS_craftcalc_inputarea {
+      display:flex;
+      justify-content:space-around;
+    }
+    .TWDS_craftcalc_content h1 {
+      margin-top:1em;
+    }
+    .TWDS_craftcalc_content h1:first-child {
+      margin-top:0em;
+    }
+    .TWDS_craftcalc_resultarea {
+      border-top:2px solid #888;
+      margin-top:1em;
+    }
 
   `
   const sty = document.createElement('style')
