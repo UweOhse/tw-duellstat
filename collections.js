@@ -7,7 +7,7 @@ TWDS.collections.missing_items = {}
 TWDS.collections.unfinished = {}
 TWDS.collections.loaded = {}
 
-TWDS.collections.dropdata={
+TWDS.collections.dropdata = {
   50206000: 0, // grüne handtasche @ quest geschäftsidee
   50511000: 158, // geldbeutelchen @ wells fargo
   50512000: 132, // modische handtasche @ pianist
@@ -56,7 +56,7 @@ TWDS.collections.dropdata={
   52659000: 169, // goldadlereier @ büro
   52660000: 201, // montezuma wachtel eier @ antilopen
   52661000: 204, // wanderfalkeneier @ gerichtsmediziner
-  52662000: 183, // purpurschnäpper @ kisten 
+  52662000: 183, // purpurschnäpper @ kisten
   52663000: 0, // hausfinkeneier quest
   52664000: 175, // amerikanische kräheneier @ rinder stehlen
   52665000: 197, // amer. flamingo @ lagerfeuer
@@ -95,8 +95,8 @@ TWDS.collections.dropdata={
   53166000: 0, // schwarze maulbeeren @ quest
   53167000: 162, // weiße maulbeeren @ kräuter
   53168000: 177, // vogenbeeren @ anwalt
-  53169000: 166, // papaya @ gemischtwaren
-};
+  53169000: 166 // papaya @ gemischtwaren
+}
 
 TWDS.collections.openwindow = function () {
   const win = wman.open('TWDS_collections_window', 'Collections', 'TWDS_collections_window')
@@ -126,16 +126,16 @@ TWDS.collections.openwindow = function () {
         const sl = TWDS.marketsearchlink(itno)
         if (sl) { b.appendChild(sl) }
       }
-      if (it.tradeable && it.traderlevel!==99) {
-        if (TW_Calc && TW_Calc.openShopWindowByItemId) {
-          let x=TWDS.createEle('i', { beforeend: b, textContent: '$', className: "TWDS_collections_shoplink" })
-          x.onclick=function() {
-            TW_Calc.openShopWindowByItemId(itno)
-          };
+      if (it.tradeable && it.traderlevel !== 99) {
+        if (window.TW_Calc && window.TW_Calc.openShopWindowByItemId) {
+          const x = TWDS.createEle('i', { beforeend: b, textContent: '$', className: 'TWDS_collections_shoplink' })
+          x.onclick = function () {
+            window.TW_Calc.openShopWindowByItemId(itno)
+          }
         }
       }
       if (itno in TWDS.collections.dropdata && TWDS.collections.dropdata[itno]) {
-        let jobno=TWDS.collections.dropdata[itno];
+        const jobno = TWDS.collections.dropdata[itno]
         const jobdata = JobList.getJobById(jobno)
         b.innerHTML += MinimapWindow.getQuicklink(jobdata.name, 'task-finish-job')
       }
