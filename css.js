@@ -1131,10 +1131,11 @@ TWDS.insertStyles = function () {
       color: red;
     }
     .market-buy .TWDS_collection_missing::before {
-      content: '\\25a5';
+      content: '\\1F3C6';
       width:24px;
       font-size:larger;
       padding-inline:1px;
+      color: palegoldenrod;
     }
     .TWDS_craftcalc_inputarea {
       display:flex;
@@ -1149,6 +1150,9 @@ TWDS.insertStyles = function () {
     .TWDS_craftcalc_resultarea {
       border-top:2px solid #888;
       margin-top:1em;
+    }
+    .TWDS_collections_shoplink {
+      cursor:pointer;
     }
 
   `
