@@ -1,7 +1,7 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 TWDS.logging = {}
 TWDS.loglist = []
-TWDS.dolog = function (lv, args) {
+TWDS.dolog = function (lv, ...args) {
   const str = args.join(', ')
   const e = {
     lv: lv,
@@ -16,7 +16,6 @@ TWDS.dolog = function (lv, args) {
   }
   TWDS.loglist.length = 3
   const win = wman.getById('TWDS_log_window')
-  console.log('win', win)
   if (win) {
     const x = TWDS.q1('.TWDS_log_window table tbody')
     if (x) {
