@@ -156,10 +156,11 @@ TWDS.craftcalc.getcontent = function (win) {
           }
         }
       }
-      if (!(item in things)) {
+      if (!(itemid in things)) {
         things[itemid] = 0
       }
       things[itemid] += count * it.resources[i].count
+      // console.log("for",count, it.name, ":", it.resources[i].count,item.name, "=",things[itemid]);
     }
   }
   handlerecipe(r, count)
