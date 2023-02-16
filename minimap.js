@@ -120,7 +120,7 @@ TWDS.minimap.updateReal = function () {
   TWDS.minimap.uiinit()
 
   const handleonebonusposition = function (x, y, withgold, a, withtracked, withsearched,
-    withmissing, withalways) {
+    withmissing, withalways, withcollection) {
     const o = 0.00513
     const x1 = parseInt(x * o, 10) - 3
     const y1 = parseInt(y * o, 10) + 2
@@ -134,6 +134,7 @@ TWDS.minimap.updateReal = function () {
     if (withsearched) { cl += ' searched' }
     if (withmissing) { cl += ' storagemissing' }
     if (withalways) { cl += ' hl_always' }
+    if (withcollection) { cl += ' collection' }
     const style = 'left:' + x1 + 'px;top:' + y1 + 'px;' + mayrotate
     const str = "<div class='TWDS_bonusjob " + cl + "' style='" + style + "' />"
     const ele = $(str)
@@ -200,8 +201,10 @@ TWDS.minimap.updateReal = function () {
   $('#minimap_worldmap .TWDS_bonusjob').remove()
   $('#minimap_worldmap .TWDS_storagejob').remove()
   if (TWDS.settings.minimap_silvergold) {
-    let missing = {}
-    if (TWDS.settings.minimap_silvergold_storagehelper) { missing = TWDS.storage.getMissingList() } // object jobId->someItemId
+    let missingStorage = {}
+    let missingCollections = {}
+    if (TWDS.settings.minimap_silvergold_storagehelper) { missingStorage = TWDS.storage.getMissingList() } // object jobId->someItemId
+    if (TWDS.settings.minimap_silvergold_collecthelper) { missingCollections = TWDS.collections.getMissingList() } // object jobId->someItemId
 
     const jobname = $('.minimap .tw2gui_jobsearch_string').val()
     let jobid = null
@@ -217,6 +220,7 @@ TWDS.minimap.updateReal = function () {
       let withsearched = false
       let withmissing = false
       let withalways = false
+      let withcollection = false
       for (const onejobkey in oneposdata) {
         const onejob = oneposdata[onejobkey]
         x = onejob.x
@@ -228,7 +232,8 @@ TWDS.minimap.updateReal = function () {
         if (gold) withgold = true
         if (jid in tracked) { withtracked = true }
         if (jid === jobid) withsearched = true
-        if (jid in missing) withmissing = true
+        if (jid in missingStorage) withmissing = true
+        if (jid in missingCollections) withcollection = true
         if ('BJHL_' + jid in TWDS.settings && TWDS.settings['BJHL_' + jid]) withalways = true
 
         let str = "<div style='min-width:60px;text-align:center' >"
@@ -242,7 +247,7 @@ TWDS.minimap.updateReal = function () {
       }
       if (a.length > 0) {
         handleonebonusposition(x, y, withgold, a, withtracked, withsearched, withmissing,
-          withalways)
+          withalways, withcollection)
       }
     }
   }
@@ -578,18 +583,6 @@ TWDS.minimap.uiinit = function () {
     const sel = $('<span>' + text + '</span>')
     sel.attr('title', title)
     sel.click(cb)
-    sel.css({
-      display: 'inline-block',
-      'min-width': '12px',
-      height: '12px',
-      'background-color': 'silver',
-      border: '1px solid black',
-      color: 'black',
-      'line-height': '12px',
-      'text-align': 'center',
-      margin: '1px 2px',
-      cursor: 'pointer'
-    })
     sel.css(css)
     label.append(sel)
     return label
@@ -599,11 +592,6 @@ TWDS.minimap.uiinit = function () {
   if (TWDS.settings.minimap_silvergold) {
     const container = $("<div id='TWDS_minimap_silvergold' />")
     $('#mmap_cbbox_jobs').before(container)
-    container.css({
-      display: 'inline-block',
-      float: 'right',
-      'margin-right': '8px'
-    })
 
     container.append(simplebutton('#', 'show/hide coordinates', {
       'background-color': 'white'
@@ -749,14 +737,21 @@ TWDS.registerStartFunc(function () {
   )
   TWDS.registerSetting('bool', 'minimap_silvergold_trackerhelper',
     TWDS._('MINIMAP_SETTING_SILVERGOLD_TRACKERHELPER',
-      'Add highlightning of tracked bonus jobs.'), false, function (v) {
+      'Highlight bonus jobs tracked in quests.'), false, function (v) {
+      TWDS.minimap.uiinit(v)
+    },
+    'Minimap'
+  )
+  TWDS.registerSetting('bool', 'minimap_silvergold_collecthelper',
+    TWDS._('MINIMAP_SETTING_SILVERGOLD_COLLECTHELPER',
+      'Highlight bonus jobs dropping missing collectibles.'), false, function (v) {
       TWDS.minimap.uiinit(v)
     },
     'Minimap'
   )
   TWDS.registerSetting('bool', 'minimap_silvergold_storagehelper',
     TWDS._('MINIMAP_SETTING_SILVERGOLD_STORAGEHELPER',
-      'Add highlightning of bonus jobs for items missing in the storage.'), false, function (v) {
+      'Highlight bonus jobs for items missing in the storage.'), false, function (v) {
       TWDS.minimap.uiinit(v)
     },
     'Minimap'
