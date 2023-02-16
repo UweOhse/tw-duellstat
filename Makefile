@@ -3,8 +3,10 @@ CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js de.json transl
    readduels.js peopletab.js jobtab.js settingstab.js clothcache.js speedcalc.js market.js itemsettab.js \
    gencalc.js storage.js chat.js injurywarning.js banking.js misc.js minimap.js jobwindow.js quest.js wuw.js \
    updatetab.js fbs.js sleep.js quickusables.js trackbar.js quicksilver.js showset.js overlay.js craftcalc.js \
-   altinventory.js \
+   altinventory.js friends.js \
    extras.js main.js
+SASS_SOURCES=minimap.sass
+
 CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
 VGET=`git describe --tags --long --dirty --always --broken`
@@ -31,7 +33,15 @@ all: precheck tw-duellstat.user.js
 	@touch $@
 	
 precheck: $(CHECK_STAMPS)
-	
+
+css.js: css-pre.in sass.css css-post.in
+	cat $^ >$@.t
+	mv $@.t $@
+
+sass.css: $(SASS_SOURCES)
+	cat $(SASS_SOURCES) | sassc >$@.t
+	mv $@.t $@
+
 tw-duellstat.user.js: $(ALL_SOURCES) Makefile updateinfo.html
 	cat $(ALL_SOURCES) \
 	| awk '/@REPLACEUPDATEINFO@/{file="updateinfo.html";while ((getline<file) > 0) {print} next} {print}' \
