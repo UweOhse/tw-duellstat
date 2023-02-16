@@ -143,7 +143,6 @@ TWDS.craftcalc.getcontent = function (win) {
     }
     for (let i = 0; i < it.resources.length; i++) {
       const itemid = it.resources[i].item
-      const item = ItemManager.get(itemid)
       if (itemid in win._TWDS_craftitems) {
         if (deref === 0) {
           handlerecipe(win._TWDS_craftitems[itemid], count * it.resources[i].count)
