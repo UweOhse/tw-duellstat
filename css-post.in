@@ -1,0 +1,10 @@
+  `
+  const sty = document.createElement('style')
+  sty.textContent = css
+  sty.id = 'TWDS_style_hack'
+  const x = TWDS.q1('#TWDS_style_hack')
+  if (x) x.remove()
+  document.body.appendChild(sty)
+}
+TWDS.insertStyles() // no reason to wait with that.
+// vim: tabstop=2 shiftwidth=2 expandtab

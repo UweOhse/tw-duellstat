@@ -1,47 +1,15 @@
+// vim: tabstop=2 shiftwidth=2 expandtab
 TWDS.insertStyles = function () {
   const css = `
     :root {
       --twds-gold: #f8c57c;
       --twds-dark-brown: #5c3f1e;
     }
-    .TWDS_bonusjob {
-      z-index:7;
-      position:absolute;
-      display:block;
-      width:4px;
-      height:4px;
-      background-color: white;
-      border:1px solid black;
+    .TWDS_clicktarget {
+      text-decoration:underline;
+      cursor:pointer;
     }
-    .TWDS_bonusjob.gold {
-      background-color:yellow;
-      border-color:red;
-    }
-    .TWDS_bonusjob.tracked {
-      border-radius:1px;
-      border-color:red;
-      background:linear-gradient(45deg, white, red);
-    }
-    .TWDS_bonusjob.tracked.gold {
-      background:linear-gradient(45deg, yellow, red);
-    }
-    .TWDS_bonusjob.searched {
-      border-radius:1px;
-      border-color:#44f;
-      background:linear-gradient(45deg, white, #44f);
-    }
-    .TWDS_bonusjob.searched.gold {
-      border-color:red;
-      background:linear-gradient(45deg, white, #44f);
-    }
-    .TWDS_bonusjob.storagemissing {
-      border-radius:1px;
-      border-color:#080;
-      background:linear-gradient(45deg, transparent, #0f0);
-    }
-    .TWDS_bonusjob.hl_always {
-      background:linear-gradient(45deg, transparent, #f0f);
-    }
+
     .TWDS_blinking {
       animation: blinker 0.5s linear 120
     }
@@ -288,6 +256,18 @@ TWDS.insertStyles = function () {
       margin-left:1%;
       margin-right:1%;
     }
+
+    table.TWDS_with_border {
+      border-collapse: collapse;
+    }
+    table.TWDS_with_border tr,
+    table.TWDS_with_border th,
+    table.TWDS_with_border td { border:1px solid #888 }
+    table.TWDS_padded th,
+    table.TWDS_padded td { padding:1px;}
+    th.ra, td.ra { text-align:right }
+    th.center, td.center { text-align:enter }
+
     #TWDS_jobs tr, #TWDS_jobs td, #TWDS_jobs th { border:1px solid #888;}
     #TWDS_jobs td { text-align:right;}
     #TWDS_jobs td[data-field=name] { text-align:left; padding:1px 2px; }
@@ -822,62 +802,6 @@ TWDS.insertStyles = function () {
       border-radius: 4px;
       background-color: #d6d2cd;
     }
-    .TWDS_minimap_navcontainer {
-      position:absolute;
-      right:20px;
-      font-size:200%;
-      top:218px;
-      width:78px;
-      height:78px;
-    }
-    .TWDS_minimap_navcontainer span:hover {
-      color:white;
-      color:green;
-      background-color:black;
-    }
-    .TWDS_minimap_navcontainer span {
-      width:26px;
-      height:26px;
-      line-height:22px;
-      text-align:center;
-      position:absolute;
-      cursor:pointer;
-    }
-    .TWDS_minimap_navcontainer .up {
-      top:0;
-      left:26px;
-      cursor:n-resize;
-    }
-    .TWDS_minimap_navcontainer .down {
-      bottom:0;
-      left:26px;
-      cursor:s-resize;
-    }
-    .TWDS_minimap_navcontainer .left {
-      left:0;
-      top:26px;
-      cursor:w-resize;
-    }
-    .TWDS_minimap_navcontainer .right {
-      right:0;
-      top:26px;
-      cursor:e-resize;
-    }
-    .TWDS_minimap_navcontainer .TWDS_minimap_opacity_checkbox {
-      right:calc(39px - 0.5em);
-      top:calc(39px - 0.5em);
-      position:absolute;
-    }
-    body.TWDS_searchmode #user-interface,
-    body.TWDS_searchmode #windows > * {
-      display:none !important;
-    }
-    body.TWDS_searchmode #windows > .minimap {
-      display:block !important;
-      width:0px;
-      height:0px;
-      overflow:hidden;
-    }
     body.TWDS_searchmode .TWDS_minimap_navcontainer {
       opacity:1.0;
       border:1px solid #0008;
@@ -1154,7 +1078,122 @@ TWDS.insertStyles = function () {
     .TWDS_collections_shoplink {
       cursor:pointer;
     }
+    .TWDS_calc_group.attrgroup, 
+    .TWDS_calc_group.boostgroup {
+      width:50%;
+      display:inline-block;
+    }
+    .TWDS_calc_selectarea .onebonus {
+      display:inline-block;
+      width:49px;
+      padding:2px;
+    }
+    .TWDS_calc_selectarea .onebonus input {
+      width:4em;
+    }
+    .TWDS_calc_selectarea .onebonus img {
+      width:45px;
+    }
+.tw2gui_window.minimap .TWDS_bonusjob {
+  z-index: 7;
+  position: absolute;
+  display: block;
+  width: 6px;
+  height: 6px;
+  background-color: white;
+  border: 1px solid black;
+  box-sizing: border-box; }
+  .tw2gui_window.minimap .TWDS_bonusjob.gold {
+    background-color: yellow;
+    border-color: red; }
+  .tw2gui_window.minimap .TWDS_bonusjob.storagemissing {
+    border-color: #00cc00;
+    border-width: 2.2px; }
+  .tw2gui_window.minimap .TWDS_bonusjob.hl_always {
+    border-color: #880088;
+    border-width: 2.2px; }
+  .tw2gui_window.minimap .TWDS_bonusjob.tracked {
+    border-color: #4983ff;
+    border-width: 2.2px; }
+  .tw2gui_window.minimap .TWDS_bonusjob.collection {
+    border-color: #ff3197;
+    border-width: 2.2px; }
+  .tw2gui_window.minimap .TWDS_bonusjob.searched {
+    border-color: #FF0000;
+    border-width: 2.2px; }
 
+.tw2gui_window.minimap #TWDS_minimap_silvergold {
+  display: inline-block;
+  float: right;
+  margin-right: 8px; }
+  .tw2gui_window.minimap #TWDS_minimap_silvergold label span {
+    display: inline-block;
+    min-width: 12px;
+    height: 12px;
+    background-color: silver;
+    border: 1px solid black;
+    color: black;
+    line-height: 12px;
+    text-align: center;
+    margin: 1px 2px;
+    cursor: pointer; }
+
+.tw2gui_window.minimap .TWDS_minimap_navcontainer {
+  position: absolute;
+  right: 20px;
+  font-size: 200%;
+  top: 218px;
+  width: 78px;
+  height: 78px; }
+  .tw2gui_window.minimap .TWDS_minimap_navcontainer span:hover {
+    color: white;
+    color: green;
+    background-color: black; }
+  .tw2gui_window.minimap .TWDS_minimap_navcontainer span {
+    width: 26px;
+    height: 26px;
+    line-height: 22px;
+    text-align: center;
+    position: absolute;
+    cursor: pointer; }
+  .tw2gui_window.minimap .TWDS_minimap_navcontainer .up {
+    top: 0;
+    left: 26px;
+    cursor: n-resize; }
+  .tw2gui_window.minimap .TWDS_minimap_navcontainer .down {
+    bottom: 0;
+    left: 26px;
+    cursor: s-resize; }
+  .tw2gui_window.minimap .TWDS_minimap_navcontainer .left {
+    left: 0;
+    top: 26px;
+    cursor: w-resize; }
+  .tw2gui_window.minimap .TWDS_minimap_navcontainer .right {
+    right: 0;
+    top: 26px;
+    cursor: e-resize; }
+  .tw2gui_window.minimap .TWDS_minimap_navcontainer .TWDS_minimap_opacity_checkbox {
+    right: calc(39px - 0.5em);
+    top: calc(39px - 0.5em);
+    position: absolute; }
+  body.TWDS_searchmode .tw2gui_window.minimap .TWDS_minimap_navcontainer {
+    opacity: 1.0;
+    border: 1px solid #0008;
+    border-radius: 8px;
+    background-color: #2228;
+    position: fixed;
+    left: calc(50% - 39px);
+    top: calc(50% - 39px); }
+
+body.TWDS_searchmode #user-interface,
+body.TWDS_searchmode #windows > * {
+  display: none !important; }
+
+body.TWDS_searchmode #windows > .minimap {
+  display: block !important;
+  width: 0px;
+  height: 0px;
+  overflow: hidden; }
   `
   const sty = document.createElement('style')
   sty.textContent = css
