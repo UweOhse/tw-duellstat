@@ -10,11 +10,10 @@ TWDS.dolog = function (lv, ...args) {
   }
   TWDS.loglist.push(e)
   const l = TWDS.loglist.length
-  const max = 3
+  const max = 200
   if (l > max) {
     TWDS.loglist = TWDS.loglist.slice(l - max, l)
   }
-  TWDS.loglist.length = 3
   const win = wman.getById('TWDS_log_window')
   if (win) {
     const x = TWDS.q1('.TWDS_log_window table tbody')
