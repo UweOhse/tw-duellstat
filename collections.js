@@ -6,6 +6,10 @@ TWDS.collections.seen_items = {}
 TWDS.collections.missing_items = {}
 TWDS.collections.unfinished = {}
 TWDS.collections.loaded = {}
+TWDS.collections.missing_collectible_jobs = {}
+TWDS.collections.getMissingList = function () {
+  return TWDS.collections.missing_collectible_jobs
+}
 
 TWDS.collections.dropdata = {
   50206000: 0, // grüne handtasche @ quest geschäftsidee
@@ -194,6 +198,10 @@ TWDS.collections.load = function () {
             // missing shit.
             TWDS.collections.missing_items[ii] = title
             TWDS.collections.unfinished[title].push(ii)
+            if (ii in TWDS.collections.dropdata && TWDS.collections.dropdata[ii]) {
+              const jobno = TWDS.collections.dropdata[ii]
+              TWDS.collections.missing_collectible_jobs[jobno] = ii
+            }
           } else {
             TWDS.collections.seen_items[ii] = title
           }
