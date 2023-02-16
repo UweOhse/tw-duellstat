@@ -76,19 +76,18 @@ TWDS.speedcalc.doit = function (mode) {
       }
       merk[tp].push([value.speedBonus, item])
     }
-    for (let tp in merk) {
-      let a=merk[tp]
-      a.sort(function(a,b) {
-        return b[0]-a[0];
+    for (const tp in merk) {
+      const a = merk[tp]
+      a.sort(function (a, b) {
+        return b[0] - a[0]
       })
     }
-    console.log("MERK",merk);
+    console.log('MERK', merk)
     bonusItems = []
     for (const tp in merk) {
-      const limit = (mode===1) ? 1 : 3;
-      for (let i=0;i < merk[tp].length && i<limit; i++) {
-        if (i>0 && merk[tp][i][0] < merk[tp][0][0]*0.33)
-          break;
+      const limit = (mode === 1) ? 1 : 3
+      for (let i = 0; i < merk[tp].length && i < limit; i++) {
+        if (i > 0 && merk[tp][i][0] < merk[tp][0][0] * 0.33) { break }
         bonusItems.push(merk[tp][i][1])
       }
     }
@@ -209,20 +208,19 @@ TWDS.speedcalc.filterUneffectiveSets = function (sets, mode) {
     if (speed < 1) { continue }
     const slots = JSON.stringify(sets[i].getUsedSlots().sort())
     if (!bestBySlots[slots]) {
-      bestBySlots[slots]=[]
+      bestBySlots[slots] = []
     }
     bestBySlots[slots].push([speed, sets[i]])
-  }  
+  }
   for (const sl in bestBySlots) {
-    bestBySlots[sl].sort(function(a,b) {
-      return b[0]-a[0];
+    bestBySlots[sl].sort(function (a, b) {
+      return b[0] - a[0]
     })
   }
   for (const sl in bestBySlots) {
-    let limit = (mode === 2) ? 5 : 1;
-    for (let i=0;i<bestBySlots[sl].length && i <limit;i++) {
-      if (i === 0 || bestBySlots[sl][i][0] > 0.5 * bestBySlots[sl][0][0])
-        r.push(bestBySlots[sl][i][1])
+    const limit = (mode === 2) ? 5 : 1
+    for (let i = 0; i < bestBySlots[sl].length && i < limit; i++) {
+      if (i === 0 || bestBySlots[sl][i][0] > 0.5 * bestBySlots[sl][0][0]) { r.push(bestBySlots[sl][i][1]) }
     }
   }
   return r
