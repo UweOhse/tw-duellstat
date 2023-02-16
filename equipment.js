@@ -771,7 +771,7 @@ TWDS.registerStartFunc(function () {
     const key2 = this.dataset.key2
     let items
     if (key1 === 'special') {
-      if (key2 === 'speed') items = TWDS.speedCalc()
+      if (key2 === 'speed') items = TWDS.speedcalc.openwindow()
       else if (key2 === 'xp') items = TWDS.genCalc({ experience: 1 }, {})
       else if (key2 === 'regen') items = TWDS.genCalc({ regen: 1 }, { })
       else if (key2 === 'luck') items = TWDS.genCalc({ luck: 1 }, {})
