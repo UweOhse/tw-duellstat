@@ -52,12 +52,21 @@ TWDS.itemuse.wofhandler = function (container, resp) {
   const loaded = window.localStorage.getItem('TWDS_itemuse_cache')
   if (!loaded) { TWDS.itemuse.chests = {} } else { TWDS.itemuse.chests = JSON.parse(loaded) }
   if (!TWDS.itemuse.chests[container]) { TWDS.itemuse.chests[container] = { count: 0, items: {} } }
-  const found = resp.picked[0]
-  if (!(found in TWDS.itemuse.chests[container].items)) {
-    TWDS.itemuse.chests[container].items[found] = 0
+  if ('picked' in resp) {
+    const found = resp.picked[0]
+    if (!(found in TWDS.itemuse.chests[container].items)) {
+      TWDS.itemuse.chests[container].items[found] = 0
+    }
+    TWDS.itemuse.chests[container].items[found] += 1
+    TWDS.itemuse.chests[container].count++
+  } else if ('prize' in resp) {
+    const found = resp.prize.itemId
+    if (!(found in TWDS.itemuse.chests[container].items)) {
+      TWDS.itemuse.chests[container].items[found] = 0
+    }
+    TWDS.itemuse.chests[container].items[found] += 1
+    TWDS.itemuse.chests[container].count++
   }
-  TWDS.itemuse.chests[container].items[found] += 1
-  TWDS.itemuse.chests[container].count++
   window.localStorage.setItem('TWDS_itemuse_cache', JSON.stringify(TWDS.itemuse.chests))
 }
 
@@ -145,10 +154,14 @@ TWDS.itemuse.prehandler = function (ev, xhr, settings) {
     console.log('itemuse? wheel', 2)
     if (url.search('action=gamble') === -1) return
     const mat = settings.data.match('gametype=([a-z0-9_]+)')
-    if (mat == null) return
-    console.log('itemuse? wheel', 3)
-    const container = 2347000 // fair kitten
-    TWDS.itemuse.wofhandler(container, xhr.responseJSON)
+    if (mat !== null) {
+      console.log('itemuse? wheel', 3)
+      const container = 2347000 // fair kitten
+      TWDS.itemuse.wofhandler(container, xhr.responseJSON)
+    } else if (xhr.responseJSON.prize && xhr.responseJSON.prize.itemId) {
+      const container = 52361000 // valentine rose cake
+      TWDS.itemuse.wofhandler(container, xhr.responseJSON)
+    }
   }
 }
 TWDS.registerStartFunc(function () {
