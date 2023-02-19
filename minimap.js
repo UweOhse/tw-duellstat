@@ -592,6 +592,18 @@ TWDS.minimap.uiinit = function () {
   if (TWDS.settings.minimap_silvergold) {
     const container = $("<div id='TWDS_minimap_silvergold' />")
     $('#mmap_cbbox_jobs').before(container)
+    let legend = ''
+    legend += "<b class='TWDS_bonusjob noabs gold'></b>Gold bonus job.<br>"
+    legend += "<b class='TWDS_bonusjob noabs silver'></b>Silver bonus job.<br>"
+    legend += "<b class='TWDS_bonusjob noabs storagemissing'></b>Job drops products needed in the storage.<br>"
+    legend += "<b class='TWDS_bonusjob noabs collection'></b>Job can drop item needed for a collection.<br>"
+    legend += "<b class='TWDS_bonusjob noabs hl_always'></b>Job marked as always highlighted bonus job.<br>"
+    legend += "<b class='TWDS_bonusjob noabs tracked'></b>Job tracked in the quest tracker.<br>"
+    legend += "<b class='TWDS_bonusjob noabs searched'></b>The currently searched job.<br>"
+    legend += 'Note: silver jobs have a white center, gold jobs a yellow one.'
+    const q = $('<span>?</span>')
+    q[0].title = legend
+    container.append(q)
 
     container.append(simplebutton('#', 'show/hide coordinates', {
       'background-color': 'white'
@@ -604,7 +616,7 @@ TWDS.minimap.uiinit = function () {
       }
     }))
 
-    container.append(simplebutton('x', 'clear the silver jobs', {
+    container.append(simplebutton('x', '<div>clear the silver jobs</div>', {
       'background-color': 'silver'
     }, function () {
       if (window.confirm('clear the stored silver job data?')) {
