@@ -67,7 +67,7 @@ TWDS.injuryWarningHandler = function () {
     if (warnSuboptimal) {
       const best = TWDS.getJobBestFromCache(jid)
       if (best !== null) {
-        const bestnetto = TWDS.jobtab.calcNettoJobPoints(jid, best.items)
+        const bestnetto = TWDS.joblist.calcNettoJobPoints(jid, best.items)
         if (bestnetto > jp) {
           if (flag === 0) flag = 1
           anyWarning = true
