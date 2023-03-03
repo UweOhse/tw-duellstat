@@ -1,0 +1,95 @@
+#TWDS_joblist_container {
+    .hasMousePopup,
+    [title] {
+        text-decoration:underline;
+    }
+  p {
+    text-align:right;
+    display:grid;
+  } 
+  #TWDS_job_filtergroup {
+    grid-column:1; 
+    grid-row: 1 / span 3;
+    margin-right:2em;
+    display:inline-block;
+  }
+  #TWDS_job_modearea {
+    grid-column:2;
+    grid-row: 1;
+  }
+  #TWDS_job_searchgroup {
+    grid-column:2;
+    grid-row: 2;
+  }
+  #TWDS_job_search { 
+    width:140px;
+  }
+  #TWDS_job_duration {
+    grid-column:2;
+    grid-row: 3;
+    justify-self: end;
+    min-width:5em;
+  }
+  #TWDS_joblist_filter_container {
+    text-align:left;
+    fieldset {
+      display:inline-block;
+      max-width:12em;
+    }
+    select {
+      display:block;
+    }
+    input {
+      display:block;
+      width:75px;
+    }
+  }
+
+  #TWDS_jobs {
+    margin-bottom:1em;
+    border-collapse: collapse;
+    width:98%;
+    margin-left:1%;
+    margin-right:1%;
+    tr, td, th { border:1px solid #888;}
+    td { text-align:right;}
+    td[data-field=name] { text-align:left; padding:1px 2px; }
+    th[data-field=danger] { color: red}
+    th[data-field=luck] { color: green}
+    tr.gold td {
+      background-color: #ffd70050;
+    }
+    tr.silver td {
+      background-color: #c0c0c080;
+    }
+  }
+  .TWDS_joblist_stars {
+    opacity:0.5;
+    color:green;
+    text-shadow: 0 0 0px black;
+  }
+  .TWDS_joblist_stars.TWDS_joblist_stage_gold {
+    color:gold;
+  }
+  .TWDS_joblist_stars.TWDS_joblist_stage_silver {
+    color:silver;
+  } 
+  .TWDS_joblist_stars.TWDS_joblist_stage_bronze {
+    color:#cd7f32;
+  } 
+  .TWDS_job_negative {
+    color:red;
+  } 
+  .TWDS_job_less {
+    color:orange;
+  } 
+  #TWDS_job p {
+    text-align:right
+  } 
+  #TWDS_jobs tr.hidden {
+    display:none
+  } 
+  #TWDS_job_filterx {
+    border-radius:5px;
+  }
+}
