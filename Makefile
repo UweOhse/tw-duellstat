@@ -1,11 +1,15 @@
-CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js de.json translation.js bonuscalc.js equipment.js \
+
+LANGSJSON:=$(shell ls *-base.json|sed 's/-base.json/.json/')
+TRANS_DE:=$(shell ls *.de)
+
+CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js $(LANGSJSON) translation.js bonuscalc.js equipment.js \
       collections.js itemuse.js crafting.js items.js questlist.js \
-   readduels.js peopletab.js jobtab.js settingstab.js clothcache.js speedcalc.js market.js itemsettab.js \
+   readduels.js peopletab.js joblist.js settingstab.js clothcache.js speedcalc.js market.js itemsettab.js \
    gencalc.js storage.js chat.js injurywarning.js banking.js misc.js minimap.js jobwindow.js quest.js wuw.js \
    updatetab.js fbs.js sleep.js quickusables.js trackbar.js quicksilver.js showset.js overlay.js craftcalc.js \
-   altinventory.js friends.js \
+   altinventory.js friends.js calculator.js \
    extras.js main.js
-SASS_SOURCES=minimap.sass
+SASS_SOURCES=minimap.sass joblist.sass
 
 CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
@@ -26,6 +30,13 @@ GLOBALS=--global Game --global TWDS --global Character --global wman --global Ba
 	--global TaskQueue --global GameInject --global jQuery --global Blob --global Quest \
 	--global Node --global BankWindow --global CemeteryWindow --global WestUi
 all: precheck tw-duellstat.user.js
+
+de.json: de-base.json $(TRANS_DE) Makefile
+	echo "TWDS.translation_de = {" >$@.t
+	cat $< >>$@.t
+	cat $(TRANS_DE) >>$@.t
+	echo "DUMMY: 'Dummy' }" >>$@.t
+	mv $@.t $@
 
 %.stamp: %.js
 	@echo standardizing/fixing $^
