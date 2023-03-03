@@ -576,6 +576,7 @@ TWDS.genCalc.getSetBonusGenValues = function (set, bonusNames, skills) {
   const memo = 'TWDS.gSBGV.' + JSON.stringify(bonusNames) + '.' + JSON.stringify(skills)
 
   if (!('_memo' in set)) set._memo = {} // this happens for merged sets.
+  //  if (set.key === "set_oktoberfest_2016_1") { console.log("CC",set.key,set,bonusNames,bonus); }
 
   // if (!(memo in set._memo)) console.log("merge",set,bonus)
 
@@ -596,7 +597,7 @@ TWDS.genCalc.getSetBonusGenValues = function (set, bonusNames, skills) {
     } else if (k === 'fbdefense_sector') {
       if ('fortbattlesector' in bonus && 'defense' in bonus.fortbattlesector) { boni.theBonus += bonus.fortbattlesector.defense * factor }
     } else if (k === 'fboffense_sector') {
-      // console.log('NOT IMPL', 'gsBGV0', k, bonus,set, set.key)
+      // if (set.key === "set_oktoberfest_2016_1") console.log('NOT IMPL', 'gsBGV0', k, bonus,set, set.key)
       // console.log('NOT IMPL', 'gsBGV0', k, bonus)
       if ('fortbattlesector' in bonus && 'offense' in bonus.fortbattlesector) { boni.theBonus += bonus.fortbattlesector.offense * factor }
     } else if (k === 'fbdamage') {
@@ -627,9 +628,7 @@ TWDS.genCalc.getSetBonusGenValues = function (set, bonusNames, skills) {
 TWDS.genCalc.ItemSet = {}
 
 TWDS.genCalc.ItemSet.getMergedBonus = function (set) {
-  if (set.key === '2018_doldenset') console.log('XXX', 'TRUE')
   if (set._mergedBonus) { return set._mergedBonus }
-  if (set.key === '2018_doldenset') console.log('XXX', 'TRUE2')
   const bonus = {
     damage: 0,
     dollar: 0,
@@ -645,12 +644,19 @@ TWDS.genCalc.ItemSet.getMergedBonus = function (set) {
     experience: 0
   }; const bonusObjects = TWDS.genCalc.ItemSet.getMergedStages(set); let i; let b; const bonusExtractor = new west.item.BonusExtractor(Character)
   const merge = function (b, value) {
-    // if (set.key==="2018_doldenset") console.log("MERGE",b,value);
+    if (set.key === 'set_oktoberfest_2016_1') console.log('MERGE', b, value)
     switch (b.type) {
       case 'skill':
       case 'attribute':
       case 'fortbattle':
-        bonus[b.type][b.name] = (bonus[b.type][b.name] || 0) + value
+        if (b.isSector) {
+          if (!('fortbattlesector' in bonus)) {
+            bonus.fortbattlesector = {}
+          }
+          bonus.fortbattlesector[b.name] = (bonus.fortbattlesector[b.name] || 0) + value
+        } else {
+          bonus[b.type][b.name] = (bonus[b.type][b.name] || 0) + value
+        }
         break
       case 'job':
         bonus.job[b.job] = (bonus.job[b.job] || 0) + value
