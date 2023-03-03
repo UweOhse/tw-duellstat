@@ -20,7 +20,7 @@ TWDS.bonuscalc.getSpeed = function (itemids) {
   if (Premium.hasBonus('greenhorn')) { speed *= 2 }
   return speed
 }
-TWDS.bonuscalc.getComboBonus = function (itemids) {
+TWDS.bonuscalc.getComboBonus = function (itemids, fixnames) {
   const usedSets = {}
   const gethash = function (itemids) {
     itemids.sort(function (a, b) {
@@ -46,6 +46,7 @@ TWDS.bonuscalc.getComboBonus = function (itemids) {
   }
   const setlist = west.storage.ItemSetManager._setList
   for (const item of items) { // this is item.obj!
+    if (item === undefined) continue
     const set = item.set
     if (!(set in setlist)) continue
     if (!(set in usedSets)) {
@@ -69,6 +70,7 @@ TWDS.bonuscalc.getComboBonus = function (itemids) {
   }
   for (let i = 0; i < items.length; i++) {
     const it = items[i]
+    if (it === undefined) continue
     for (let j = 0; j < it.bonus.item.length; j++) {
       extractor.init(Character, it.item_level)
       const v = extractor.getExportValue(it.bonus.item[j])
@@ -82,24 +84,24 @@ TWDS.bonuscalc.getComboBonus = function (itemids) {
     }
     if (it.bonus.fortbattle) {
       if (it.bonus.fortbattle.offense) {
-        addbonus({ key: 'fortbattle_offense', value: it.bonus.fortbattle.offense })
+        addbonus({ key: fixnames ? 'fort_offense' : 'fortbattle_offense', value: it.bonus.fortbattle.offense })
       }
       if (it.bonus.fortbattle.defense) {
-        addbonus({ key: 'fortbattle_defense', value: it.bonus.fortbattle.defense })
+        addbonus({ key: fixnames ? 'fort_defense' : 'fortbattle_defense', value: it.bonus.fortbattle.defense })
       }
       if (it.bonus.fortbattle.resistance) {
-        addbonus({ key: 'fortbattle_resistance', value: it.bonus.fortbattle.resistance })
+        addbonus({ key: fixnames ? 'fort_resistance' : 'fortbattle_resistance', value: it.bonus.fortbattle.resistance })
       }
     }
     if (it.bonus.fortbattlesector) {
       if (it.bonus.fortbattlesector.offense) {
-        addbonus({ key: 'fortbattlesector_offense', value: it.bonus.fortbattlesector.offense })
+        addbonus({ key: fixnames ? 'fort_offense_sector' : 'fortbattlesector_offense', value: it.bonus.fortbattlesector.offense })
       }
       if (it.bonus.fortbattlesector.defense) {
-        addbonus({ key: 'fortbattlesector_defense', value: it.bonus.fortbattlesector.defense })
+        addbonus({ key: fixnames ? 'fort_defense_sector' : 'fortbattlesector_defense', value: it.bonus.fortbattlesector.defense })
       }
       if (it.bonus.fortbattlesector.damage) {
-        addbonus({ key: 'fortbattlesector_damage', value: it.bonus.fortbattlesector.damage })
+        addbonus({ key: fixnames ? 'fort_damage_sector' : 'fortbattlesector_damage', value: it.bonus.fortbattlesector.damage })
       }
     }
   }
