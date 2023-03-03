@@ -220,42 +220,6 @@ TWDS.insertStyles = function () {
     #TWDS_attr_skill td {
       text-align:center;
     }
-    #TWDS_job p {
-       text-align:right;
-       display:grid;
-    }
-    #TWDS_job_filtergroup {
-      grid-column:1;
-      grid-row: 1 / span 3
-    }
-    #TWDS_job_modearea {
-      grid-column:2;
-      grid-row: 1;
-    }
-    #TWDS_job_searchgroup {
-      grid-column:2;
-      grid-row: 2;
-    }
-    #TWDS_job_search {
-      width:140px;
-    }
-    #TWDS_job_duration {
-      grid-column:2;
-      grid-row: 3;
-      justify-self: end;
-      min-width:5em;
-    }
-    #TWDS_jobtab_filter_container {
-      text-align:left;
-    }
-
-    #TWDS_jobs {
-      margin-bottom:1em;
-      border-collapse: collapse;
-      width:98%;
-      margin-left:1%;
-      margin-right:1%;
-    }
 
     table.TWDS_with_border {
       border-collapse: collapse;
@@ -268,29 +232,6 @@ TWDS.insertStyles = function () {
     th.ra, td.ra { text-align:right }
     th.center, td.center { text-align:enter }
 
-    #TWDS_jobs tr, #TWDS_jobs td, #TWDS_jobs th { border:1px solid #888;}
-    #TWDS_jobs td { text-align:right;}
-    #TWDS_jobs td[data-field=name] { text-align:left; padding:1px 2px; }
-    #TWDS_jobs th[data-field=danger] { color: red}
-    #TWDS_jobs th[data-field=luck] { color: green}
-    #TWDS_jobs tr.gold td { 
-      background-color: #ffd70050;
-    }
-    #TWDS_jobs tr.silver td { 
-      background-color: #c0c0c080;
-    }
-
-    #TWDS_jobtab_filter_container fieldset {
-      display:inline-block;
-      max-width:12em;
-    }
-    #TWDS_jobtab_filter_container select {
-      display:block;
-    }
-    #TWDS_jobtab_filter_container input {
-      display:block;
-      width:75px;
-    }
 
     div.item span.TWDS_itemusageinfo {
       top:0;
