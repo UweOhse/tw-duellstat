@@ -193,7 +193,7 @@ TWDS.showset.getcontent = function (win) {
   }
 
   for (let i = 0; i < set.items.length; i++) {
-    const itemlevel = win._TWDS_itemlevels[i]
+    const itemlevel = win._TWDS_itemlevels[i] || 0
     const leveledid = itemlevel + 1000 * set.items[i]
     const item = ItemManager.get(leveledid)
     if (item.type === 'right_arm') {
