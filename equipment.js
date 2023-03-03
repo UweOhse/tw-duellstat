@@ -21,6 +21,7 @@ TWDS.describeItemCombo = function (singleItems) {
   }
   for (let i = 0; i < singleItems.length; i++) {
     const item = singleItems[i]
+    if (item === undefined) continue
     const set = item.set
     if (!(set in setlist)) continue
     if (!(set in setsInUse)) {
@@ -71,6 +72,7 @@ TWDS.describeItemCombo = function (singleItems) {
 
   for (let i = 0; i < singleItems.length; i++) {
     const item = singleItems[i]
+    if (item === undefined) continue
     const set = item.set
     if (!(set in setsInUse) || setsInUse[set].length < 2) {
       names.push(item.name)
