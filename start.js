@@ -63,7 +63,7 @@ TWDS.registerStartFunc = function (x) {
   TWDS.startFunctions.push(x)
 }
 // this is a hack for the developer.
-TWDS.reload = function (x) {
+TWDS.reload = function (x, y) {
   let u
   if (x.length === 2) {
     u = TWDS.baseURL + 'dev/' + x + '.json'
@@ -75,6 +75,7 @@ TWDS.reload = function (x) {
     if (x.length === 2) {
       TWDS.fixTranslation()
     }
+    if (y) { y() }
   })
 }
 
