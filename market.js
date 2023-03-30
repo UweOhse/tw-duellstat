@@ -418,15 +418,86 @@ TWDS.marketwindow.updateCategoryReal = function (category, data) {
       if (TWDS.collections.isMissing(ii)) {
         x[i].classList.add('TWDS_collection_missing')
       }
+      /*
+      const d = TWDS.items.data[ii]
+      if (d) {
+        if (d.time) {
+          let border=300*d.time*60;
+        }
+        x[i].classList.add('TWDS_collection_missing')
+      }
+      */
       // x[i].textContent+= " ["+c+"]";
     }
   }
+  return ret
+}
+TWDS.marketwindow.updateTable = function (data) {
+  return TWDS.marketwindow.updateTableReal(data)
+}
+TWDS.marketwindow.updateTableReal = function (data) {
+  console.log('data is', data)
+  const ret = MarketWindow.Buy._TWDS_backup_updateTable(data)
+  console.log('orig returned', ret)
+  const tab = MarketWindow.buyTable.getMainDiv()[0]
+  for (let i = 0; i < data.length; i++) {
+    const offer = data[i]
+    const moid = offer.market_offer_id
+    const ii = offer.item_id
+    const sp = offer.singleMaxPrice
+
+    //    let x= e(MarketWindow.offerTable.getMainDiv()).children().find(".marketBidsData_" + r.market_offer_id).append(i);
+    const x = TWDS.q1('.marketOffersData_' + moid + ' .mpb_buynow span', tab)
+    if (!x) continue
+    const d = TWDS.items.data[ii]
+    if (d && sp) {
+      if (d.time) {
+        const g = parseFloat(TWDS.settings.market_buy_perhour_green) || 1500.0
+        const b = parseFloat(TWDS.settings.market_buy_perhour_blue) || 2000.0
+        const r = parseFloat(TWDS.settings.market_buy_perhour_red) || 2500.0
+        const perhour = sp / (d.time)
+        x.title = '$' + sp + '/unit, $' + perhour.toFixed(1) + '/h'
+        if (r || g || b) {
+          if (g && perhour < g) {
+            x.classList.add('TWDS_market_buy_green')
+          } else if (b && perhour < b) {
+            x.classList.add('TWDS_market_buy_blue')
+          } else if (r && perhour > r) {
+            x.classList.add('TWDS_market_buy_red')
+          }
+        }
+      }
+    }
+  }
+  /*
+for (var n = 0; n < da.length; n++) {
+var r = t[n];
+var i = e('<div class="mpo_alert" />');
+e(MarketWindow.offerTable.getMainDiv()).children().find(".marketBidsData_" + r.market_offer_id).append(i);
+if (!r.isFinished) {
+              i.append(f(r))
+          }
+}
+
+  MarketWindow.Buy._TWDS_backup_updateCategory = MarketWindow.Buy.updateCategory
+  */
   return ret
 }
 
 TWDS.registerStartFunc(function () {
   MarketWindow.Buy._TWDS_backup_updateCategory = MarketWindow.Buy.updateCategory
   MarketWindow.Buy.updateCategory = TWDS.marketwindow.updateCategory
+  MarketWindow.Buy._TWDS_backup_updateTable = MarketWindow.Buy.updateTable
+  MarketWindow.Buy.updateTable = TWDS.marketwindow.updateTable
+  TWDS.registerSetting('int', 'market_buy_perhour_green',
+    'Mark offers green if an item costs less then ... dollars per hour of base item collection time',
+    0, null, 'Market')
+  TWDS.registerSetting('int', 'market_buy_perhour_blue',
+    'Mark offers blue if an item costs less then ... dollars per hour of base item collection time',
+    0, null, 'Market')
+  TWDS.registerSetting('int', 'market_buy_perhour_red',
+    'Mark offers red if an item costs more then ... dollars per hour of base item collection time',
+    0, null, 'Market')
 })
 
 TWDS.trader = {}
