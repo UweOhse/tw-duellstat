@@ -114,9 +114,11 @@ TWDS.fbs.makepersonstats = function (a, r, extra) {
     d.dodgequote = d.dodgecount / (d.dodgecount + d.takenhits + 0.0) * 100
     d.survived = (d.killedby === -1 ? 1 : 0)
     //
-    d.moves = extra[id].moves
-    d.fieldsmoved = extra[id].fieldsmoved
-    d.sectorsmoved = extra[id].sectorsmoved
+    if (id in extra) {
+      d.moves = extra[id].moves
+      d.fieldsmoved = extra[id].fieldsmoved
+      d.sectorsmoved = extra[id].sectorsmoved
+    }
     for (const f of Object.keys(d)) {
       if (f in o) {
         o[f] += d[f]
