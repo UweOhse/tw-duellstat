@@ -217,3 +217,48 @@ TWDS.registerStartFunc(function () {
       }
     }, 'misc')
 })
+
+TWDS.registerSetting('bool', 'fixCompost',
+  TWDS._('COMPOST_RECIPE_FIX', 'Fix the display of the compost recipe (TW-Calc workaround).'),
+  false, function (val) {
+    const old = document.getElementById('TWDS_fix_compost_css')
+    if (old) old.parentNode.removeChild(old)
+    if (val) {
+      const sty = document.createElement('style')
+      sty.id = 'TWDS_fix_compost_css'
+      sty.textContent = "[data-recipe-craft-item-id='51580000'] .recipe_resources .item { zoom:0.92}"
+      document.body.appendChild(sty)
+    }
+  })
+TWDS.registerSetting('bool', 'fixRecruitHealth',
+  TWDS._('COMPOST_RECIPE_FIX', 'Fix overlong lines in the fort battle recruiting screen.'),
+  false, function (val) {
+    const old = document.getElementById('TWDS_fix_recruit_health')
+    if (old) old.parentNode.removeChild(old)
+    if (val) {
+      const sty = document.createElement('style')
+      sty.id = 'TWDS_fix_recruit_health'
+      sty.textContent = '.fort_battle_recruitlist_list .tbody .healthpoints p { font-size:smaller}'
+      document.body.appendChild(sty)
+    }
+  })
+
+TWDS.registerStartFunc(function () {
+  west.gui.payHandler.prototype._TWDS_backup_addPayOption = west.gui.payHandler.prototype.addPayOption;
+  west.gui.payHandler.prototype.addPayOption = function(e) {
+    this._TWDS_backup_addPayOption.apply(this, arguments);
+    if (TWDS.settings.misc_avoid_nuggets) {
+      if (false === e || "nugget" === e || 2 === e || 2 === e.id) {
+        return this
+      }
+      this.setSelectedPayId(e.id || e);
+      return this
+    }
+    return this
+  }
+
+  TWDS.registerSetting('bool', 'misc_avoid_nuggets',
+    TWDS._('MISC_AVOID_NUGGETS',
+      'Default to other payment methods than nuggets, if possible.'),
+    false)
+})
