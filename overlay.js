@@ -122,15 +122,15 @@ TWDS.overlay.getbattledata = function () {
   if ('fort_offense_sector' in bo) {
     sectorAttack += bo.fort_offense_sector
   }
-  if ('fortbattle_sector_offense' in bo) {
-    sectorAttack += bo.fortbattle_sector_offense
+  if ('fortbattlesector_offense' in bo) {
+    sectorAttack += bo.fortbattlesector_offense
   }
 
   if ('fort_defense_sector' in bo) {
     sectorDefense += bo.fort_defense_sector
   }
-  if ('fortbattle_sector_defense' in bo) {
-    sectorDefense += bo.fortbattle_sector_defense
+  if ('fortbattlesector_defense' in bo) {
+    sectorDefense += bo.fortbattlesector_defense
   }
 
   if ('fort_resistance' in bo) {
