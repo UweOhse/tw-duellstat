@@ -1,4 +1,3 @@
-
 LANGSJSON:=$(shell ls *-base.json|sed 's/-base.json/.json/')
 TRANS_DE:=$(shell ls *.de)
 
@@ -7,9 +6,9 @@ CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js $(LANGSJSON) t
    readduels.js peopletab.js joblist.js settingstab.js clothcache.js speedcalc.js market.js itemsettab.js \
    gencalc.js storage.js chat.js injurywarning.js banking.js misc.js minimap.js jobwindow.js quest.js wuw.js \
    updatetab.js fbs.js sleep.js quickusables.js trackbar.js quicksilver.js showset.js overlay.js craftcalc.js \
-   altinventory.js friends.js calculator.js \
+   altinventory.js friends.js calculator.js townlog.js \
    extras.js main.js
-SASS_SOURCES=minimap.sass joblist.sass
+SASS_SOURCES=minimap.sass joblist.sass market.sass
 
 CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
