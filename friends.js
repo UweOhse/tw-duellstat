@@ -21,10 +21,6 @@ TWDS.friends.openwindow = function () {
   const thead = TWDS.createEle('thead', { beforeend: table })
   const tbody = TWDS.createEle('tbody', { beforeend: table })
 
-  for (let i = 0; i < TWDS.loglist.length; i++) {
-    const e = TWDS.loglist[i]
-    TWDS.logging.prependline(tbody, e)
-  }
   sp.appendContent(content)
 
   win.appendToContentPane(sp.getMainDiv())
