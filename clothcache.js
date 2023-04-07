@@ -170,11 +170,13 @@ TWDS.clothcache.startFunction = function () {
     tw2widget.InventoryItem.prototype.initDisplay = function () {
       tw2widget.InventoryItem.prototype._TWDS_backup_initDisplay.apply(this, arguments)
 
+      const ii = this.obj.item_id
+      this.divMain[0].dataset.twds_item_id = ii // for ease of scripting
+
       let iu = window.localStorage.getItem('TWDS_itemusage')
       if (iu === null) return
       iu = JSON.parse(iu)
 
-      const ii = this.obj.item_id
       let title = ''
       let count = 0
       if (ii in iu) {
