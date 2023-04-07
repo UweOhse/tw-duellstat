@@ -3,8 +3,13 @@
 TWDS.calculator = {}
 TWDS.calculator.presets = [
   { name: 'duel', disabled: true },
+  { name: 'at dodge / melee res.', tough: 2.97, dodge: 3.25, aim: 2.39, appearance: 1.25 },
+  { name: 'att shot res. with melee dmg', punch: 2, reflex: 5, aim: 3, appearance: 5 },
+  { name: 'clover:  aim / damage / dodge', punch: 25, tough: 18, dodge: 26, reflex: 14, aim: 30, shot: 35, tactic: 24, appearance: 25 },
+
   { name: 'bounty hunter: at / dodge / melee resistance', tough: 449, dodge: 489, aim: 360, appearance: 219 },
   { name: 'brooks: at / damage / shot resistance', punch: 232, reflex: 523, aim: 286, appearance: 538 },
+
   { name: 'clover:  aim / damage / dodge', punch: 254, tough: 184, dodge: 259, reflex: 143, aim: 299, shot: 344, tactic: 241, appearance: 251 },
   { name: 'cowgirl: at / aim / meelee damage', punch: 418, dodge: 130, aim: 458, tactic: 127, appearance: 352 },
   { name: 'hamilton: at / aim / melee damage / dodge', punch: 393, dodge: 255, aim: 321, appearance: 213 },
@@ -20,12 +25,12 @@ TWDS.calculator.presets = [
   { name: 'vaquero: att / aim / show', dodge: 138, aim: 493, shot: 478, appearance: 312 },
   //
   { name: 'fort battle', disabled: true },
-  { name: 'tank for attack (bull)', health: 295, dodge: 339, hide: 571, leadership: 189, fbdefense: 12, fbresistance: 90 },
-  { name: 'tank for defense (cortina)', health: 320, dodge: 331, pitfall: 487, leadership: 195, fbdefense: 11, fbresistance: 70 },
-  { name: 'damager for defense (john astor)', aim: 331, pitfall: 404, leadership: 447, fboffense: 6, fbresistance: 0 },
-  { name: 'damager for attack (ron)', hide: 301, aim: 349, pitfall: 207, leadership: 294, fboffense: 12, fbresistance: 0 },
-  { name: 'booster (murrieta)', health: 0, dodge: 0, hide: 294, aim: 264, pitfall: 304, leadership: 269, fboffense: 0, fbdamage: 60 },
-  { name: 'booster (generic)', health: 0, dodge: 0, hide: 0, aim: 0, pitfall: 0, leadership: 1, fboffense_sector: 500, fbdefense_sector: 500, fbdamage: 5 }
+  { name: 'tank/att', health: 5, aim: 1, dodge: 5, hide: 6, leadership: 5, fboffense: 1, fboffense_sector: 2, fbdefense: 50, fbdefense_sector: 50, fbresistance: 5, fbdamage: 1 },
+  { name: 'tank/def', health: 5, aim: 1, dodge: 10, pitfall: 12, leadership: 10, fboffense: 2, fboffense_sector: 4, fbdefense: 20, fbdefense_sector: 40, fbresistance: 10, fbdamage: 1 },
+  { name: 'dmg/att', health: -1, aim: 5, dodge: 0, hide: 6, leadership: 6, fboffense: 10, fboffense_sector: 10, fbdefense: 1, fbdefense_sector: 2, fbresistance: 1, fbdamage: 5 },
+  { name: 'dmg/def', health: -1, aim: 5, dodge: 0, pitfall: 6, leadership: 6, fboffense: 10, fboffense_sector: 10, fbdefense: 1, fbdefense_sector: 2, fbresistance: 1, fbdamage: 5 },
+  { name: 'booster/damage', health: 0, dodge: 0, hide: 294, aim: 264, pitfall: 304, leadership: 269, fboffense: 0, fbdamage: 60 },
+  { name: 'booster/generic', health: 0, dodge: 0, hide: 0, aim: 0, pitfall: 0, leadership: 1, fboffense_sector: 500, fbdefense_sector: 500, fbdamage: 5 }
   // { name: 'john bull', health: 0, dodge: 0, hide: 0, aim: 0, pitfall: 0, leadership: 0, fbdefense: 0, fbresistance: 0},
   // { name: 'john bull', health: 0, dodge: 0, hide: 0, aim: 0, pitfall: 0, leadership: 0, fbdefense: 0, fbresistance: 0},
   // { name: 'john bull', health: 0, dodge: 0, hide: 0, aim: 0, pitfall: 0, leadership: 0, fbdefense: 0, fbresistance: 0},
@@ -41,22 +46,92 @@ TWDS.calculator.data = [
   { kind: 'group', name: 'weapontype', cls: 'boostgroup' },
   { kind: 'weaponselect' },
   { kind: 'group', name: 'fortbattle', cls: 'boostgroup' },
-  { kind: 'bonus', name: 'fboffense', img: '/images/fort/battle/button_attack.png', title: 'multiplayer attack' },
-  { kind: 'bonus', name: 'fboffense_sector', img: 'https://en21.the-west.net/images/fort/battle/help01.png', title: 'multiplayer attack (sector damage)' },
-  { kind: 'bonus', name: 'fbdefense', img: '/images/fort/battle/button_defend.png', title: 'multiplayer defense' },
-  { kind: 'bonus', name: 'fbdefense_sector', img: 'https://en21.the-west.net/images/fort/battle/help01.png', title: 'multiplayer defense (sector damage)' },
-  { kind: 'bonus', name: 'fbresistance', img: '/images/icons/Hearts.png', title: 'resistance' },
-  { kind: 'bonus', name: 'fbdamage', img: '/images/items/left_arm/golden_rifle.png', title: 'sector damage' },
+  {
+    kind: 'bonus',
+    name: 'fboffense',
+    img: '/images/fort/battle/button_attack.png',
+    title: TWDS._('CALCULATOR_MP_ATTACK', 'multiplayer attack')
+  },
+  {
+    kind: 'bonus',
+    name: 'fboffense_sector',
+    img: 'https://en21.the-west.net/images/fort/battle/help01.png',
+    title: TWDS._('CALCULATOR_SECTOR_ATTACK', 'multiplayer attack (sector bonus)')
+  },
+  {
+    kind: 'bonus',
+    name: 'fbdefense',
+    img: '/images/fort/battle/button_defend.png',
+    title: TWDS._('CALCULATOR_MP_DEFENSE', 'multiplayer defense')
+  },
+  {
+    kind: 'bonus',
+    name: 'fbdefense_sector',
+    img: 'https://en21.the-west.net/images/fort/battle/help01.png',
+    title: TWDS._('CALCULATOR_SECTOR_DEFENSE', 'multiplayer defense (sector bonus)')
+  },
+  {
+    kind: 'bonus',
+    name: 'fbresistance',
+    img: '/images/icons/Hearts.png',
+    title: TWDS._('CALCULATOR_RESISTANCE', 'resistance')
+  },
+  {
+    kind: 'bonus',
+    name: 'fbdamage',
+    img: '/images/items/left_arm/golden_rifle.png',
+    title: TWDS._('CALCULATOR_SECTOR_DAMAGE', 'sector damage')
+  },
   { kind: 'group', name: 'boost1', cls: 'boostgroup' },
-  { kind: 'bonus', name: 'experience', img: '/images/items/yield/xp_boost.png', title: 'experience' },
-  { kind: 'bonus', name: 'dollar', img: '/images/items/yield/dollar_boost.png', title: 'dollar' },
-  { kind: 'bonus', name: 'luck', img: '/images/items/yield/luck_boost.png', title: 'luck' },
-  { kind: 'bonus', name: 'drop', img: '/images/items/yield/product_boost.png', title: 'drop chance' },
-  { kind: 'bonus', name: 'joball', img: 'images/window/job/jobstar_small_gold.png', title: 'job points (all jobs only)' },
+  {
+    kind: 'bonus',
+    name: 'experience',
+    img: '/images/items/yield/xp_boost.png',
+    title: TWDS._('CALCULATOR_EXPERIENCE', 'experience')
+  },
+  {
+    kind: 'bonus',
+    name: 'dollar',
+    img: '/images/items/yield/dollar_boost.png',
+    title: TWDS._('CALCULATOR_DOLLAR', 'dollar')
+  },
+  {
+    kind: 'bonus',
+    name: 'luck',
+    img: '/images/items/yield/luck_boost.png',
+    title: TWDS._('CALCULATOR_LUCK', 'luck')
+  },
+  {
+    kind: 'bonus',
+    name: 'drop',
+    img: '/images/items/yield/product_boost.png',
+    title: TWDS._('CALCULATOR_DROP', 'drop chance')
+  },
+  {
+    kind: 'bonus',
+    name: 'joball',
+    img: 'images/window/job/jobstar_small_gold.png',
+    title: TWDS._('CALCULATOR_JP', 'job points (all jobs only)')
+  },
   { kind: 'group', name: 'boost2', cls: 'boostgroup' },
-  { kind: 'bonus', name: 'speed', img: '/images/jobs/walk.png' },
-  { kind: 'bonus', name: 'regen', img: '/images/jobs/sleep.png' },
-  { kind: 'bonus', name: 'pray', img: '/images/jobs/pray.png' },
+  {
+    kind: 'bonus',
+    name: 'speed',
+    img: '/images/jobs/walk.png',
+    title: TWDS._('CALCULATOR_SPEED', 'speed (use the calculator in the equipment tab instead)')
+  },
+  {
+    kind: 'bonus',
+    name: 'regen',
+    img: '/images/jobs/sleep.png',
+    title: TWDS._('CALCULATOR_REGEN', 'regeneration')
+  },
+  {
+    kind: 'bonus',
+    name: 'pray',
+    img: '/images/jobs/pray.png',
+    title: TWDS._('CALCULATOR_PRAY', 'pray')
+  },
   { kind: 'group', name: 'red', cls: 'attrgroup' },
   { kind: 'skill', name: 'build', img: '/images/window/skills/skillicon_build.png' },
   { kind: 'skill', name: 'punch', img: '/images/window/skills/skillicon_punch.png' },
@@ -90,7 +165,6 @@ TWDS.calculator.data = [
 ]
 
 TWDS.calculator.showbonus = function (all, area) {
-  console.log('SB', all)
   const one = function (all, k, str, tr, mult, pre, post) {
     if (mult === undefined) mult = 1
     if (pre === undefined) pre = ''
@@ -191,10 +265,8 @@ TWDS.calculator.exec = function (filterarea, sels, resultarea) {
   }
   let include = 0
   const x = TWDS.q('.TWDS_calc_filterarea input:checked')
-  console.log('X', x, x.length)
   for (let i = 0; i < x.length; i++) {
     include |= parseInt(x[i].value)
-    console.log('INC', x[i].value, include)
   }
   const w = TWDS.q1('.TWDS_calc_wgroup input:checked')
   if (w.value === 'shot') bonusweights.range = 1
@@ -209,7 +281,6 @@ TWDS.calculator.exec = function (filterarea, sels, resultarea) {
   })
 
   const gc = TWDS.genCalc.exec(bonusweights, skillweights, include)
-  console.log('GC', gc)
   for (let i = 0; i < gc.combos.length; i++) {
     TWDS.createEle({
       nodeName: 'p',
@@ -223,9 +294,9 @@ TWDS.calculator.exec = function (filterarea, sels, resultarea) {
       const t = new tw2widget.InventoryItem(ItemManager.get(id)).setCharacter(Character).getMainDiv()[0]
       resultarea.appendChild(t)
     }
-    if (i === 0) {
+    if (i < 10) {
       TWDS.createEle('button', {
-        textContent: 'wear',
+        textContent: TWDS._('CALCULATOR_WEAR', 'wear'),
         dataset: {
           ids: JSON.stringify(o)
         },
@@ -298,12 +369,13 @@ TWDS.calculator.openwindow = function () {
     })
   }
   s.onchange = function () {
-    console.log('preset change', this, this.value)
     const job = JobList.getJobById(this.value)
     const c = this.closest('.TWDS_calc_container')
     const inp = TWDS.q('.TWDS_calc_selectarea input', c)
     for (let i = 0; i < inp.length; i++) {
-      inp[i].value = 0
+      if (inp[i].type !== 'radio') {
+        inp[i].value = 0
+      }
       if (job !== undefined) {
         const bo = inp[i].parentNode.dataset.bonusname
         if (job.skills[bo]) { inp[i].value = job.skills[bo] }
@@ -334,7 +406,6 @@ TWDS.calculator.openwindow = function () {
     })
   }
   s.onchange = function () {
-    console.log('preset change', this, this.value)
     const c = this.closest('.TWDS_calc_container')
     let preset = null
     for (let i = 0; i < TWDS.calculator.presets.length; i++) {
@@ -345,7 +416,9 @@ TWDS.calculator.openwindow = function () {
     }
     const inp = TWDS.q('.TWDS_calc_selectarea input', c)
     for (let i = 0; i < inp.length; i++) {
-      inp[i].value = 0
+      if (inp[i].type !== 'radio') {
+        inp[i].value = 0
+      }
     }
     if (preset !== null) {
       for (const k in preset) {
@@ -481,7 +554,6 @@ TWDS.calculator.openwindow = function () {
     last: content
   })
   b.onclick = function () {
-    console.log('click', this)
     TWDS.calculator.exec(filterarea, selectarea, resultarea)
   }
   const e = []
@@ -501,6 +573,18 @@ TWDS.calculator.openwindow = function () {
 
   win.appendToContentPane(sp.getMainDiv())
 }
+TWDS.registerStartFunc(function () {
+  TWDS.delegate(document.body, 'click', '.TWDS_calc_window .item_inventory', function (ev) {
+    const id = this.dataset.twds_item_id
+    if (id) {
+      const bi = Bag.getItemByItemId(id)
+      if (bi) { // calculator may be used to find things to shop for.
+        Wear.carry(bi)
+      }
+    }
+  })
+})
+
 TWDS.registerExtra('TWDS.calculator.openwindow',
   TWDS._('CALCULATUR_EXTRA_TITLE', 'Calculator'),
   TWDS._('CALCULATOR_EXTRA_DESC', 'Job point / bonus calculator')
