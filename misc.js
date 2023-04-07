@@ -244,14 +244,14 @@ TWDS.registerSetting('bool', 'fixRecruitHealth',
   })
 
 TWDS.registerStartFunc(function () {
-  west.gui.payHandler.prototype._TWDS_backup_addPayOption = west.gui.payHandler.prototype.addPayOption;
-  west.gui.payHandler.prototype.addPayOption = function(e) {
-    this._TWDS_backup_addPayOption.apply(this, arguments);
+  west.gui.payHandler.prototype._TWDS_backup_addPayOption = west.gui.payHandler.prototype.addPayOption
+  west.gui.payHandler.prototype.addPayOption = function (e) {
+    this._TWDS_backup_addPayOption.apply(this, arguments)
     if (TWDS.settings.misc_avoid_nuggets) {
-      if (false === e || "nugget" === e || 2 === e || 2 === e.id) {
+      if (e === false || e === 'nugget' || e === 2 || e.id === 2) {
         return this
       }
-      this.setSelectedPayId(e.id || e);
+      this.setSelectedPayId(e.id || e)
       return this
     }
     return this
