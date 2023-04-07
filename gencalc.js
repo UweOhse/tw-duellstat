@@ -11,41 +11,41 @@ TWDS.genCalc.exec = function (bonusNames, skills, include) {
   const bires = TWDS.genCalc.getBestItems(bonusNames, skills, include)
   const bestItems = bires[0]
   const goodItems = bires[1]
-  console.log('bestItems', bestItems)
-  console.log('goodItems', goodItems)
+  // console.log('bestItems', bestItems)
+  // console.log('goodItems', goodItems)
 
   for (let i = 0; i < bestItems.length; i++) {
     bestItems[i] = ItemManager.get(bestItems[i])
   }
-  console.log('bestItems', TWDS.describeItemCombo(bestItems))
+  // console.log('bestItems', TWDS.describeItemCombo(bestItems))
 
   const bestItemsContainer = new west.item.ItemSetContainer()
   for (let i = 0; i < bestItems.length; i++) { bestItemsContainer.addItem(bestItems[i].getId()) }
 
-  console.log('availableSets', availableSets)
+  // console.log('availableSets', availableSets)
   let sets = TWDS.genCalc.createSubsets(availableSets, bestItems, bonusNames, skills)
-  console.log('subsets', sets)
+  // console.log('subsets', sets)
   // klappt nichts, so kann man speed nicht optimieren
   // MUSS man aber vielleicht?
   sets = TWDS.genCalc.filterUneffectiveSets(sets, bonusNames, skills)
-  console.log('subsets after filter', sets)
+  // console.log('subsets after filter', sets)
   if (sets.length > 1000) { return }
 
   // Was fehlt: FillEmpty(combinesets, BestItems,AllItemsWithSpeedBonus)
 
   sets = west.item.Calculator.fillEmptySlots(west.item.Calculator.combineSets(sets), bestItems)
   sets.push(bestItemsContainer)
-  console.log('mergedsets', sets)
+  // console.log('mergedsets', sets)
 
   let bestPoints = -1
-  let best = null
+  // let best = null
   const setsandpoints = []
   for (let i = 0; i < sets.length; i++) {
     const spd = TWDS.genCalc.calcCombinedSet(sets[i], bonusNames, skills)
     setsandpoints[i] = [spd, sets[i]]
     if (spd > bestPoints) {
       bestPoints = spd
-      best = sets[i]
+      // best = sets[i]
       console.log(TWDS.describeItemCombo(TWDS.genCalc.getItems(sets[i])), sets[i],
         TWDS.genCalc.getItems(sets[i]), spd)
     }
@@ -53,9 +53,9 @@ TWDS.genCalc.exec = function (bonusNames, skills, include) {
   setsandpoints.sort(function (a, b) {
     return (b[0] - a[0])
   })
-  console.log('best', bestPoints, best)
-  console.log('bestx', setsandpoints)
-  console.log('bestItems', bestItems)
+  // console.log('best', bestPoints, best)
+  // console.log('bestx', setsandpoints)
+  // console.log('bestItems', bestItems)
   for (let i = 0; i < bestItems.length; i++) {
     bestItems[i] = bestItems[i].getId()
   }
@@ -91,7 +91,7 @@ TWDS.genCalc.exec = function (bonusNames, skills, include) {
   return ret
 }
 TWDS.genCalc.setfilter = function (include) {
-  console.log('INC', include)
+  // console.log('INC', include)
   const availableSets = []
   const allSets = west.storage.ItemSetManager.getAll()
   for (let i = 0; i < allSets.length; i++) {
@@ -317,7 +317,7 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
       const sl = slots[i]
       const it = Wear.get(sl)
       if (it) {
-        console.log('ADD8', it.obj.name)
+        // console.log('ADD8', it.obj.name)
         add(it.obj.item_base_id, it.obj.item_id)
       }
     }
@@ -341,7 +341,7 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
     // const value = item.getValue(skills)
     const value = TWDS.genCalc.getGenValues(item, bonusNames, skills)
     if (item.getId() === 53065000 || item.getId() === 52278000) {
-      console.log('I', item, item.getId, value)
+      // console.log('I', item, item.getId, value)
     }
 
     if ((value.theBonus || value.theSecondary) && (item.wearable() || (include & 16))) {
@@ -391,8 +391,8 @@ TWDS.genCalc.getGenValues = function (item, bonusNames, skills) {
   let skillArr
   let i
   let memo = 'TWDSgC'
-  let debug = false
-  if (item.item_id === 51006000) { debug = true; console.log('GG', item) }
+  const debug = false
+  // if (item.item_id === 51006000) { debug = true; console.log('GG', item) }
   for (const bonusname in bonusNames) {
     bonusNames[bonusname] = parseInt(bonusNames[bonusname])
     if (bonusNames[bonusname]) {
@@ -577,6 +577,7 @@ TWDS.genCalc.getSetBonusGenValues = function (set, bonusNames, skills) {
 
   if (!('_memo' in set)) set._memo = {} // this happens for merged sets.
   //  if (set.key === "set_oktoberfest_2016_1") { console.log("CC",set.key,set,bonusNames,bonus); }
+  if (set.key === 'dod_2018_set_6') { console.log('CC', set.key, set, bonusNames, bonus) }
 
   // if (!(memo in set._memo)) console.log("merge",set,bonus)
 
@@ -602,6 +603,7 @@ TWDS.genCalc.getSetBonusGenValues = function (set, bonusNames, skills) {
       if ('fortbattlesector' in bonus && 'offense' in bonus.fortbattlesector) { boni.theBonus += bonus.fortbattlesector.offense * factor }
     } else if (k === 'fbdamage') {
       if ('fortbattle' in bonus && 'damage' in bonus.fortbattle) { boni.theBonus += bonus.fortbattle.damage * factor }
+      if ('fortbattlesector' in bonus && 'damage' in bonus.fortbattlesector) { boni.theBonus += bonus.fortbattlesector.damage * factor }
     } else if (k === 'fbresistance') {
       if ('fortbattle' in bonus && 'resistance' in bonus.fortbattle) { boni.theBonus += bonus.fortbattle.resistance * factor }
     } else if (k === 'joball') {
@@ -644,7 +646,7 @@ TWDS.genCalc.ItemSet.getMergedBonus = function (set) {
     experience: 0
   }; const bonusObjects = TWDS.genCalc.ItemSet.getMergedStages(set); let i; let b; const bonusExtractor = new west.item.BonusExtractor(Character)
   const merge = function (b, value) {
-    if (set.key === 'set_oktoberfest_2016_1') console.log('MERGE', b, value)
+    // if (set.key === 'set_oktoberfest_2016_1') console.log('MERGE', b, value)
     switch (b.type) {
       case 'skill':
       case 'attribute':
