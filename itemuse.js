@@ -47,20 +47,20 @@ TWDS.itemuse.adventhandler = function (calendarid, resp) {
   window.localStorage.setItem('TWDS_itemuse_cache', JSON.stringify(TWDS.itemuse.chests))
 }
 TWDS.itemuse.wofhandler = function (container, resp) {
-  console.log('advent used', container, resp)
+  let found = 0
+  console.log('wofhandler used', container, resp)
   if (resp.error) return
   const loaded = window.localStorage.getItem('TWDS_itemuse_cache')
   if (!loaded) { TWDS.itemuse.chests = {} } else { TWDS.itemuse.chests = JSON.parse(loaded) }
   if (!TWDS.itemuse.chests[container]) { TWDS.itemuse.chests[container] = { count: 0, items: {} } }
   if ('picked' in resp) {
-    const found = resp.picked[0]
-    if (!(found in TWDS.itemuse.chests[container].items)) {
-      TWDS.itemuse.chests[container].items[found] = 0
-    }
-    TWDS.itemuse.chests[container].items[found] += 1
-    TWDS.itemuse.chests[container].count++
+    found = resp.picked[0]
   } else if ('prize' in resp) {
-    const found = resp.prize.itemId
+    found = resp.prize.itemId
+  } else if ('outcome' in resp) {
+    found = resp.outcome.itemId
+  }
+  if (found) {
     if (!(found in TWDS.itemuse.chests[container].items)) {
       TWDS.itemuse.chests[container].items[found] = 0
     }
@@ -99,7 +99,10 @@ TWDS.itemuse.openwindow = function () {
   const a = Object.keys(TWDS.itemuse.chests)
   a.sort(function (x, y) { return y - x })
   for (let i = 0; i < a.length; i++) {
-    const chestid = a[i]
+    let chestid = a[i]
+    if (chestid === 2347000) { // fair kitten
+      chestid = 40035000
+    }
     const count = TWDS.itemuse.chests[chestid].count
     const items = TWDS.itemuse.chests[chestid].items
     const ci = ItemManager.get(chestid)
@@ -160,6 +163,9 @@ TWDS.itemuse.prehandler = function (ev, xhr, settings) {
       TWDS.itemuse.wofhandler(container, xhr.responseJSON)
     } else if (xhr.responseJSON.prize && xhr.responseJSON.prize.itemId) {
       const container = 52361000 // valentine rose cake
+      TWDS.itemuse.wofhandler(container, xhr.responseJSON)
+    } else if (xhr.responseJSON.outcome && xhr.responseJSON.outcome.itemId) {
+      const container = 2698000 // easter nest
       TWDS.itemuse.wofhandler(container, xhr.responseJSON)
     }
   }
