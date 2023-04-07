@@ -18,7 +18,7 @@ TWDS.townlog.updategarbage = function (ele) {
   ele.textContent = ''
   for (const [building, v0] of Object.entries(TWDS.townlog.sum)) {
     let bname = building
-    if (building === 'Church') bname = 'The altar of the unholy demon of gunpowder'
+    if (building === 'Church') bname = 'The unholy altar of the demon of gunpowder'
     if (building === 'Kirche') bname = 'Die unheilige Opferstätte des Dämonen des Schießpulvers'
     TWDS.createEle('h5', { textContent: bname, last: ele })
     const tab = TWDS.createEle('table', { last: ele, className: 'constructing' })
@@ -47,7 +47,7 @@ TWDS.townlog.do = function () {
   function (json) {
     const x = TWDS.q1('.waitinfo', TWDS.townlog.win.divMain)
     if (x) {
-      x.textContent = 'Page ' + json.page + '/' + json.count + ' read'
+      x.textContent = TWDS._('TOWNLOG_STATUS', 'Page $cur$ / $total$ read', { cur: json.page, total: json.count })
     }
     const useful = TWDS.q1('.useful', TWDS.townlog.win.divMain)
     const g = TWDS.q1('.garbage', TWDS.townlog.win.divMain)
@@ -100,23 +100,22 @@ TWDS.townlog.do = function () {
   })
 }
 TWDS.townlog.openwindow = function () {
-  const win = wman.open('TWDS_townlog_window', 'Townlog', 'TWDS_townlog_window')
-  win.setMiniTitle('Townlog')
+  const titlestr = TWDS._('TOWNLOG_TOWNLOG', 'Townlog')
+  const win = wman.open('TWDS_townlog_window', titlestr, 'TWDS_townlog_window')
+  win.setMiniTitle(titlestr)
   TWDS.townlog.win = win
 
   const sp = new west.gui.Scrollpane()
   const content = TWDS.createEle('div', {
     className: 'TWDS_townlog_container',
     children: [
-      { nodeName: 'p', className: 'waitinfo', textContent: 'please wait' },
-      { nodeName: 'button', className: 'TWDS_button', textContent: 'paused. click to continue' },
+      { nodeName: 'p', className: 'waitinfo', textContent: TWDS._('TOWNLOG_PLEASE_WAIT', 'please wait') },
+      { nodeName: 'button', className: 'TWDS_button', textContent: TWDS._('TOWNLOG_PAUSED', 'paused. click to continue') },
       { nodeName: 'h2', className: 'dateinfo' },
-      { nodeName: 'h2', textContent: 'Information' },
+      { nodeName: 'h2', textContent: TWDS._('TOWNLOG_INFORMATION', 'Information') },
       { nodeName: 'p', className: 'useful', textContent: '' },
-      { nodeName: 'h2', textContent: 'Noise' },
-      { nodeName: 'p', className: 'garbage', textContent: '' },
-      { nodeName: 'h2', textContent: 'Note' },
-      { nodeName: 'p', textContent: 'The author is not interested in any improvement of this. Use it, or ignore it, but do NOT remember me of this.' }
+      { nodeName: 'h2', textContent: TWDS._('TOWNLOG_NOISE', 'Noise') },
+      { nodeName: 'p', className: 'garbage', textContent: '' }
     ]
 
   })

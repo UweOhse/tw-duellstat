@@ -1,0 +1,8 @@
+TOWNLOG_EXTRA_TITLE:  "Stadtlog",
+TOWNLOG_EXTRA_DESC: "Zeigt Zusammenfassung des Stadtlogs",
+TOWNLOG_PLEASE_WAIT: "Bitte warten",
+TOWNLOG_PAUSED: "Pausiert. Zum Fortführen klicken.",
+TOWNLOG_NOISE: "Rauschen",
+TOWNLOG_INFORMATION: "Information",
+TOWNLOG_STATUS: "Seite $cur$ / $total$ gelesen.",
+TOWNLOG_TOWNLOG: "Stadtlog",
