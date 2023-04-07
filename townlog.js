@@ -138,4 +138,7 @@ TWDS.townlog.openwindow = function () {
   }
 }
 // this is not translated, because it runs quite early
-// TWDS.registerExtra('TWDS.townlog.openwindow', 'Townlog', 'Show townlog summary')
+TWDS.registerExtra('TWDS.townlog.openwindow',
+  TWDS._('TOWNLOG_EXTRA_TITLE', 'Townlog'),
+  TWDS._('TOWNLOG_EXTRA_DESC', 'Show townlog summary')
+)
