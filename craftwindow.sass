@@ -1,0 +1,97 @@
+.TWDS_craftwindow_content {
+  height:373px;
+  overflow-y: auto !important;
+  overflow-x: auto !important;
+  .head {
+    display:flex;
+    justify-content:space-between;
+  }
+  .head h3 {
+        margin-top:0.25em;
+        margin-bottom:0.15em;
+  }
+  .head h3 span:last-child {
+        padding-left:0.5em;
+  }
+}
+.TWDS_craftwindow_table {
+  min-width:90%;
+  margin:0.15em auto;
+  border-collapse: collapse;
+  .recipeline {
+    th,td {
+         padding:2px;
+    }
+  }
+  tbody {
+    border-bottom:1px solid #1d150a;
+  }
+  td:first-child { border-left:1px solid #1d150a;}
+  td:last-child { border-right:1px solid #1d150a;}
+  .recipeline td,
+  .recipeline th {
+    border-top:1px solid #1d150a;
+  }
+  .recipeline .toggle {
+       text-decoration:none;
+  }
+  .recipeline.cangetpoints th {
+    color:green;
+  }
+  .theinput {
+    width:4em;
+  }
+  .max {
+    font-weight:bold;
+  }
+  .levels {
+    span:nth-child(1) { color:#92753a; }
+    span:nth-child(3) { color:#3c903c; }
+    span:nth-child(5) { color:#229aaa; }
+    .current {
+        font-weight:bold;
+    }
+  }
+  .dobuy {
+  }
+  .dolearn {
+        background-color:green;
+        color:white;
+  }
+  button {
+       margin-left:0.33em;
+  }
+  button:first-child {
+   margin-left:0;
+  }
+  .resourceline {
+    display:none;
+    &.active {
+      display:table-row;
+    }
+    img {
+      max-height:43px;
+    }
+    section {
+      display:inline-grid;
+      border:1px solid #888;
+      margin:2px;
+      .imgwrapper {
+        grid-row:1;
+        grid-column:1;
+        background: url(//westen.innogamescdn.com/images/inventory/itembox.png?9);
+      }
+      .numbers {
+        grid-row:2;
+        grid-column:1;
+      }
+      .functions {
+        grid-row:1 / span 2;
+        grid-column:2;
+        width:18px;
+        padding-left:0.2em;
+        border-left:1px solid #888;
+      }
+    }
+  }
+}
