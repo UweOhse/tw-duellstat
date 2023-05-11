@@ -164,7 +164,7 @@ TWDS.registerStartFunc(function () {
       'A click on your profile text opens the profile text in the settings.'), true)
   // the itemmanager_loaded is sent after Character.init is called.
   EventHandler.listen('itemmanager_loaded', function () {
-    TWDS.delegate(document, 'click', '.tw2gui_window.playerprofile-' + Character.playerId, function () {
+    TWDS.delegate(document, 'click', '.tw2gui_window.playerprofile-' + Character.playerId + ' .profile-desc', function () {
       if (TWDS.settings.misc_profile_text_click) {
         /* eslint-disable no-new */
         new window.OptionsWindow()
