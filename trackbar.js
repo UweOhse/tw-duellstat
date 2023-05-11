@@ -162,6 +162,7 @@ TWDS.trackbar.backgroundjob = function () {
 
 TWDS.trackbar.click = function (e) {
   if (this.classList.contains('TWDS_trackbar_xp')) { return }
+  if (this.classList.contains('TWDS_trackbar_storage')) { TWDS.opentab('storage') }
   if (this.classList.contains('TWDS_trackbar_achievement')) {
     // Character.untrackAchievement
     const status = Character.getTrackingAchievement()
