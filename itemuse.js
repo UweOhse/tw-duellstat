@@ -12,6 +12,10 @@ TWDS.itemuse.itemusehandler = function (itemid, resp) {
   if (!loaded) { TWDS.itemuse.chests = {} } else { TWDS.itemuse.chests = JSON.parse(loaded) }
   for (let i = 0; i < effs.length; i++) {
     const eff = effs[i]
+    if (eff.type === 'learn_recipe') {
+      TWDS.crafting.start()
+      continue
+    }
     if (eff.type !== 'lottery' && eff.type !== 'content') {
       console.log('TWDS.itemuse.handler', 'unhandled effect type', eff.type, 'in', resp)
       continue
