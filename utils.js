@@ -241,6 +241,27 @@ TWDS.itemBidButton = function (id) {
     ]
   })
 }
+TWDS.itemAnyCraftButton = function (id) {
+  const it = ItemManager.get(id)
+  if (!it) return null
+
+  if (it.type !== 'yield') return null
+  if (it.spec_type !== 'crafting') return null
+
+  return TWDS.createElement({
+    nodeName: 'span',
+    className: 'TWDS_craft_button',
+    title: TWDS._('ITEMCRAFTBUTTON_TITLE', 'Craft it'),
+    dataset: { item_id: id },
+    childNodes: [
+      {
+        nodeName: 'img',
+        src: Game.cdnURL + '/images/items/yield/toolbox.png',
+        alt: ''
+      }
+    ]
+  })
+}
 TWDS.itemCraftButton = function (id) {
   const it = ItemManager.get(id)
   if (!it) return null
