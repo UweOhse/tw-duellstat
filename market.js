@@ -9,8 +9,7 @@ TWDS.marketwindow.createMarketOffer = function (source) {
   TWDS.marketwindow.item = ItemManager.get(source)
 }
 TWDS.marketwindow.enhanceit = function (thing) {
-  console.log('enhanceit', thing)
-  window.uwe = thing
+  thing.divMain[0].classList.add('TWDS_enhanced') // for utils.js
 
   // description.
   const savedesc = TWDS.createElement('div', {
