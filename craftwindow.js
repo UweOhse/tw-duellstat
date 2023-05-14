@@ -68,14 +68,6 @@ TWDS.craftwindow.recalcmax = function (win) {
     inputele.min = 0
     const v = parseInt(inputele.value)
     if (v > max) { inputele.value = max }
-    const orderbutton = TWDS.q1('.doorder', tr)
-    if (orderbutton) {
-      if (max === 0) {
-        orderbutton.disabled = true
-      } else {
-        orderbutton.disabled = false
-      }
-    }
     let mid
     if (rec.skillcolor) {
       mid = rec.max_level
@@ -150,7 +142,7 @@ TWDS.craftwindow.getcontent = function (win) {
     nodeName: 'input',
     type: 'text',
     className: 'search',
-    placeholder: 'search/filter',
+    placeholder: TWDS._('CRAFTWINDOW_SEARCH_FILTER', 'search/filter'),
     last: myhead
   })
 
@@ -242,35 +234,6 @@ TWDS.craftwindow.getcontent = function (win) {
         }
       ]
     })
-    const bcon = TWDS.createEle({
-      nodeName: 'td',
-      last: tr
-    })
-    TWDS.createEle({
-      nodeName: 'button',
-      textContent: TWDS._('CRAFTWINDOW_BUY', 'buy'),
-      className: 'dobuy TWDS_clicktarget TWDS_storage_market_button',
-      title: TWDS._('CRAFTWINDOW_TITLE_BUY', 'Search for the product on the market'),
-      last: bcon,
-      dataset: {
-        item_id: it
-      }
-    })
-    const items = []
-    const rs = rec.resources
-    for (let j = 0; j < rs.length; j++) {
-      items.push(rs[j].item)
-    }
-    TWDS.createEle({
-      nodeName: 'button',
-      textContent: TWDS._('CRAFTWINDOW_ORDER', 'order'),
-      className: 'doorder TWDS_clicktarget',
-      title: TWDS._('CRAFTWINDOW_TITLE_ORDER', 'Sell resources on the market, so another crafter can use them'),
-      last: bcon,
-      dataset: {
-        items: JSON.stringify(items)
-      }
-    })
     const ccon = TWDS.createEle({
       nodeName: 'td',
       last: tr
@@ -296,6 +259,20 @@ TWDS.craftwindow.getcontent = function (win) {
       className: 'profinfo',
       textContent: Game.InfoHandler.getLocalString4ProfessionId(rec.profession_id),
       last: ccon
+    })  
+    let inbag = Bag.getItemByItemId(it)
+    if (inbag) {
+      inbag = inbag.count
+    } else {
+      inbag = ""
+    }
+    TWDS.createEle({
+      nodeName: 'td',
+      last: tr,
+      children: [{
+        nodeName: "span",
+        textContent:inbag
+      }]
     })
 
     TWDS.createEle({
@@ -332,17 +309,6 @@ TWDS.craftwindow.getcontent = function (win) {
   TWDS.delegate(content, 'change', '.theinput', function (ev) {
     const tr = this.closest('tr')
     TWDS.craftwindow.updateresourceline(tr, tr.nextSibling)
-  })
-  TWDS.delegate(content, 'click', '.doorder', function (ev) {
-    const items = JSON.parse(this.dataset.items)
-    MarketWindow.open(Character.homeTown.town_id, 1, '???')
-    document.querySelector('.tw2gui_window_tab._tab_id_sell').click()
-    const a = []
-    for (let i = 0; i < items.length; i++) {
-      a.push(Bag.getItemByItemId(items[i]))
-    }
-    console.log('order', a)
-    Inventory.showCustomItems(a)
   })
   TWDS.delegate(content, 'click', '.dolearn', function (ev) {
     window.ItemUse.use(this.dataset.item_id, null, 'recipe')
@@ -388,7 +354,7 @@ TWDS.craftwindow.getcontent = function (win) {
 
   return content
 }
-TWDS.craftwindow.craftitemdisplay = function (rsitemid, flagproduct) {
+TWDS.craftwindow.craftitemdisplay = function (rsitemid, flagproduct, itemid) {
   const it = ItemManager.get(rsitemid)
   const popup = new ItemPopup(it, {}).popup.getXHTML()
   const container = TWDS.createEle('section', {
@@ -422,6 +388,19 @@ TWDS.craftwindow.craftitemdisplay = function (rsitemid, flagproduct) {
       : TWDS._('CRAFTWINDOW_TITLE_NUMBERS_RS', 'resources needed / resources in your inventory.'),
     last: container
   })
+  let sellcontainer=TWDS.createEle({
+    nodeName: 'div',
+    className: 'sell',
+    last:container,
+  });
+  if (!flagproduct) {
+    let it2=ItemManager.get(itemid);
+    let b=TWDS.itemSellButton(rsitemid,1, it2.name);
+    if (b) sellcontainer.appendChild(b);
+  } else {
+    let b=TWDS.itemSellButton(rsitemid,1, "");
+    if (b) sellcontainer.appendChild(b);
+  }
   // functions
   const fnc = TWDS.createEle({
     nodeName: 'div',
@@ -508,7 +487,7 @@ TWDS.craftwindow.updateresourceline = function (tr0, tr1) {
       last: tr1
     })
     for (let j = 0; j < rs.length; j++) {
-      rsele.appendChild(TWDS.craftwindow.craftitemdisplay(rs[j].item, 0))
+      rsele.appendChild(TWDS.craftwindow.craftitemdisplay(rs[j].item, 0, itemid))
     }
     itele.appendChild(TWDS.craftwindow.craftitemdisplay(itemid, true))
   }
@@ -534,6 +513,7 @@ TWDS.craftwindow.updateresourceline = function (tr0, tr1) {
     TWDS.createEle({ nodeName: 'span', textContent: t, last: div })
     TWDS.createEle({ nodeName: 'span', textContent: ' / ', last: div })
     TWDS.createEle({ nodeName: 'span', textContent: inbag, last: div })
+    TWDS.q1(".TWDS_item_sell_button",e).dataset.count=count*value
   }
   const div = TWDS.q1('.numbers', itele)
   let inbag = Bag.getItemByItemId(itemid)
@@ -545,7 +525,7 @@ TWDS.craftwindow.updateresourceline = function (tr0, tr1) {
   div.textContent = inbag
 }
 
-TWDS.craftwindow.open = function () {
+TWDS.craftwindow.open = function (initialid) {
   const wid = 'TWDS_craftwindow'
   const win = wman.open(wid, 'set', 'TWDS_craftwindow')
   win.setTitle(TWDS._('CRAFTCALC_WINDOW_TITLE', 'Crafting'))
@@ -566,6 +546,12 @@ TWDS.craftwindow.open = function () {
 
   win.appendToContentPane(sp.getMainDiv())
   TWDS.craftwindow.recalcmax(win)
+  if (initialid) {
+    const r = TWDS.q1(".recipeline[data-item-id='" + initialid + "']", content)
+    if (r) {
+      r.scrollIntoView(true)
+    }
+  }
 }
 TWDS.craftwindow.togglemenudone = false
 TWDS.craftwindow.togglemenu = function (val) {
@@ -592,6 +578,16 @@ TWDS.registerStartFunc(function () {
     TWDS.craftwindow.togglemenu,
     'misc'
   )
+  TWDS.delegate(document, 'click', '.TWDS_craft_button', function (ev) {
+    const ii = this.dataset.item_id
+    if (TWDS.settings.craftwindow_replace) {
+      TWDS.craftwindow.open(ii)
+    } else if ('TW_Calc' in window) {
+      window.TW_Calc.openCraftRecipeWindow(ii)
+    } else {
+      CharacterWindow.open('crafting')
+    }
+  })
 })
 TWDS.registerExtra('TWDS.craftwindow.open',
   TWDS._('CRAFTWINDOW_TITLE', 'Crafting'),
