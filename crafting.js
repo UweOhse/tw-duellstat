@@ -5,8 +5,12 @@
 TWDS.crafting = {}
 TWDS.crafting.mycraftableitems = {}
 TWDS.crafting.mycraftresources = {}
+TWDS.crafting.myrecipes = {}
+TWDS.crafting.callback = null
 
 TWDS.crafting.storemyrecipes = function (x) {
+  const cb = TWDS.crafting.callback
+  TWDS.crafting.callback = null
   if (x.error) return
   if (x.recipes_content) {
     for (let i = 0; i < x.recipes_content.length; i++) {
@@ -19,10 +23,15 @@ TWDS.crafting.storemyrecipes = function (x) {
           TWDS.crafting.mycraftresources[ri] = true
         }
       }
+      TWDS.crafting.myrecipes[rid] = x.recipes_content[i].last_craft
     }
   }
+  if (cb) {
+    cb()
+  }
 }
-TWDS.crafting.start = function () {
+TWDS.crafting.start = function (cb) {
+  if (cb) { TWDS.crafting.callback = cb }
   if (!ItemManager.isLoaded()) {
     window.setTimeout(TWDS.crafting.start, 250)
     return
