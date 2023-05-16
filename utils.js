@@ -203,6 +203,22 @@ TWDS.createButton = function (text, par) {
   return TWDS.createEle(par)
 }
 
+TWDS.employerOpenButton = function (id) {
+  return TWDS.createEle({
+    nodeName: 'span',
+    className: 'TWDS_quest_employer_link TWDS_clickable',
+    dataset: { id: id },
+    title: TWDS._('UTIL_QUEST_EMPLOYER_LINK', 'Center the map on the employer'),
+    children: [
+      {
+        nodeName: 'img',
+        src: '/images/map/minimap/icons/miniicon_quests.png',
+        alt: 'Quests'
+      }
+    ]
+  })
+}
+
 TWDS.jobOpenButton = function (id) {
   if (Premium.hasBonus('automation')) {
     return TWDS.createElement({
@@ -220,6 +236,36 @@ TWDS.jobOpenButton = function (id) {
     })
   }
   return null
+}
+TWDS.jobOpenButton2 = function (id) {
+  if (!Premium.hasBonus('automation')) return null
+  return TWDS.createEle({
+    nodeName: 'span',
+    className: 'tw2gui-iconset tw2gui-icon-hammer TWDS_job_open_button TWDS_clickable',
+    dataset: { jobid: id },
+    title: TWDS._('UTIL_JOBOPENBUTTON_TITLE', 'Open the job at the nearest possible position')
+  })
+}
+
+TWDS.itemSellButton = function (id, count, desc) {
+  const it = ItemManager.get(id)
+  if (!it) return null
+
+  if (!it.auctionable) return null
+
+  return TWDS.createElement({
+    nodeName: 'span',
+    className: 'TWDS_item_sell_button',
+    dataset: { item_id: id, count: count, desc: desc },
+    title: TWDS._('ITEMSELLBUTTON_TITLE', 'Sell on the market'),
+    childNodes: [
+      {
+        nodeName: 'span',
+        textContent: '$$',
+        color: 'green'
+      }
+    ]
+  })
 }
 TWDS.itemBidButton = function (id) {
   const it = ItemManager.get(id)
@@ -375,4 +421,59 @@ TWDS.marketsearchlinkhandler = function (ev) {
     y.dispatchEvent(event)
   }
 }
-TWDS.delegate(document.body, 'click', '.TWDS_marketsearchlink', TWDS.marketsearchlinkhandler)
+TWDS.market_item_sell_handler = function (ev) {
+  console.log('MISH', ev, this, this.dataset)
+  const ds = this.dataset
+  const patcher = function () {
+    console.log('PATCHER running')
+    const x = TWDS.q1('#market_createoffer_window')
+    if (!x) {
+      console.log('PATCHER restarted because no window')
+      setTimeout(patcher, 50)
+      return
+    }
+    if (!(x.classList.contains('TWDS_enhanced'))) {
+      console.log('PATCHER restarted because window not enhanced')
+      setTimeout(patcher, 50)
+      return
+    }
+    console.log('PATCHER working', ds)
+    TWDS.q1('#market_sell_itemStack').value = ds.count
+    if (ds.desc > '') { TWDS.q1('#auction_description').value = ds.desc }
+  }
+  Ajax.remoteCallMode('town', 'get_town', Character.position, function (json) {
+    if (json.error) {
+      return new UserMessage(json.msg).show()
+    }
+    MarketWindow.open(json.town_id, json.allBuildings.market.stage, json.town_name)
+    MarketWindow.showTab('sell')
+    MarketWindow.createMarketOffer(parseInt(ds.item_id))
+    setTimeout(patcher, 20)
+    console.log('PATCHER process started')
+  })
+}
+TWDS.job_open_button_handler = function () {
+  const id = this.dataset.jobid
+  if (!id || !Premium.hasBonus('automation')) { return false }
+  Ajax.remoteCall('work', 'get_nearest_job', {
+    job_id: id
+  }, function (json) {
+    if (json.error) { return new UserMessage(json.msg).show() }
+    JobWindow.open(id, json.x, json.y)
+  })
+}
+TWDS.quest_employer_link_handler = function () {
+  const id = this.dataset.id
+  Ajax.get('map', 'get_minimap', {}, function (data) {
+    const pos = data.quest_locations[id]
+    if (!pos) return ''
+    Map.center(pos[0][0], pos[0][1])
+  })
+}
+
+TWDS.registerStartFunc(function () {
+  TWDS.delegate(document.body, 'click', '.TWDS_job_open_button', TWDS.job_open_button_handler)
+  TWDS.delegate(document.body, 'click', '.TWDS_quest_employer_link', TWDS.quest_employer_link_handler)
+  TWDS.delegate(document.body, 'click', '.TWDS_marketsearchlink', TWDS.marketsearchlinkhandler)
+  TWDS.delegate(document.body, 'click', '.TWDS_item_sell_button', TWDS.market_item_sell_handler)
+})
