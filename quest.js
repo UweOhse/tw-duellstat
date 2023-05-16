@@ -4,7 +4,7 @@ TWDS.quest = {}
 TWDS.quest.getMinimapLink = function (req) {
   if (!req) return ''
   const li = document.createElement('span')
-  li.className = 'TWDS_minimaplink'
+  li.className = 'TWDS_questentry_functions'
   if (TWDS.settings.quest_add_util_buttons) {
     if (req.type === 'inventory_changed') {
       let x = TWDS.itemAnyCraftButton(req.id)
@@ -13,8 +13,26 @@ TWDS.quest.getMinimapLink = function (req) {
       if (x) {
         li.appendChild(x)
       }
+    /*
+    } else if (req.type === 'task-finish-job') {
+      const id = req.id
+      const x = TWDS.jobOpenButton2(id)
+      if (x) { li.appendChild(x) }
+      const jobdata = JobList.getJobById(id)
+      let ql=MinimapWindow.getQuicklink(jobdata.name, 'task-finish-job')
+      if (ql>"") {
+        let y=TWDS.createEle({
+          nodeName:"span",
+          innerHTML: ql
+        });
+        li.appendChild(y.firstChild);
+      }
+    } else if (req.type === 'task-finish-walk') {
+      let x=TWDS.employerOpenButton(req.value);
+      if (x) { li.appendChild(x) }
     } else {
       console.log('unhandled', req.type, req)
+    */
     }
   }
   const old = Quest.prototype._TWDS_backup_getMinimapLink(req)
