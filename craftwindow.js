@@ -61,6 +61,17 @@ TWDS.craftwindow.recalcmax = function (win) {
     }
     if (max === -1) max = 0
     if (rec.blocktime && max) { max = 1 }
+    const blocktimeinfo = TWDS.q1('.blocktimeinfo', tr)
+    let blocked = false
+    blocktimeinfo.style.display = 'none'
+    if (rec.blocktime) {
+      const lastcraft = TWDS.crafting.myrecipes[recid]
+      if (lastcraft) {
+        blocktimeinfo.textContent = lastcraft.formatDurationBuffWay()
+        blocktimeinfo.style.display = 'inline'
+        blocked = true
+      }
+    }
     const maxele = TWDS.q1('.max', tr)
     const inputele = TWDS.q1('.theinput', tr)
     maxele.textContent = '(' + max + ')'
@@ -96,7 +107,7 @@ TWDS.craftwindow.recalcmax = function (win) {
     bc.style.display = 'none'
     bl.style.display = 'none'
     pi.style.display = 'inline'
-    if (Character.professionId === rec.profession_id) {
+    if (Character.professionId === rec.profession_id && !blocked) {
       if (itemid in TWDS.crafting.mycraftableitems) {
         bc.style.display = 'inline'
         pi.style.display = 'none'
@@ -107,6 +118,9 @@ TWDS.craftwindow.recalcmax = function (win) {
           pi.style.display = 'none'
         }
       }
+    }
+    if (blocked) {
+      pi.style.display = 'none'
     }
 
     TWDS.craftwindow.updateresourceline(tr, tr.nextSibling)
@@ -157,13 +171,10 @@ TWDS.craftwindow.getcontent = function (win) {
     last: table
   })
 
-  const a = win._TWDS_recipes
+  const a = win._TWDS_craftitems
   const b = []
-  const did = {}
-  for (const recid of Object.keys(a)) {
-    const itemid = a[recid]
-    if (itemid in did) continue
-    did[itemid] = true
+  for (const itemid of Object.keys(a)) {
+    const recid = a[itemid]
     b.push([itemid, ItemManager.get(itemid).name, recid])
   }
   b.sort(function (a, b) {
@@ -256,22 +267,29 @@ TWDS.craftwindow.getcontent = function (win) {
     })
     TWDS.createEle({
       nodeName: 'span',
+      textContent: '',
+      className: 'blocktimeinfo',
+      title: TWDS._('CRAFTWINDOW_BLOCKTIME_INFO', 'This recipe as a cooldown period'),
+      last: ccon
+    })
+    TWDS.createEle({
+      nodeName: 'span',
       className: 'profinfo',
       textContent: Game.InfoHandler.getLocalString4ProfessionId(rec.profession_id),
       last: ccon
-    })  
+    })
     let inbag = Bag.getItemByItemId(it)
     if (inbag) {
       inbag = inbag.count
     } else {
-      inbag = ""
+      inbag = ''
     }
     TWDS.createEle({
       nodeName: 'td',
       last: tr,
       children: [{
-        nodeName: "span",
-        textContent:inbag
+        nodeName: 'span',
+        textContent: inbag
       }]
     })
 
@@ -294,7 +312,6 @@ TWDS.craftwindow.getcontent = function (win) {
   TWDS.delegate(content, 'click', '.max', function (ev) {
     const tr = this.closest('tr')
     const input = TWDS.q1('.theinput', tr)
-    console.log(tr, input)
     if (input) {
       input.value = input.max
     }
@@ -348,7 +365,6 @@ TWDS.craftwindow.getcontent = function (win) {
     }
   })
   TWDS.delegate(content, 'change', '.search', function (ev) {
-    console.log('SEARCH CHANGE')
     TWDS.craftwindow.recalcmax(win)
   })
 
@@ -388,18 +404,18 @@ TWDS.craftwindow.craftitemdisplay = function (rsitemid, flagproduct, itemid) {
       : TWDS._('CRAFTWINDOW_TITLE_NUMBERS_RS', 'resources needed / resources in your inventory.'),
     last: container
   })
-  let sellcontainer=TWDS.createEle({
+  const sellcontainer = TWDS.createEle({
     nodeName: 'div',
     className: 'sell',
-    last:container,
-  });
+    last: container
+  })
   if (!flagproduct) {
-    let it2=ItemManager.get(itemid);
-    let b=TWDS.itemSellButton(rsitemid,1, it2.name);
-    if (b) sellcontainer.appendChild(b);
+    const it2 = ItemManager.get(itemid)
+    const b = TWDS.itemSellButton(rsitemid, 1, it2.name)
+    if (b) sellcontainer.appendChild(b)
   } else {
-    let b=TWDS.itemSellButton(rsitemid,1, "");
-    if (b) sellcontainer.appendChild(b);
+    const b = TWDS.itemSellButton(rsitemid, 1, '')
+    if (b) sellcontainer.appendChild(b)
   }
   // functions
   const fnc = TWDS.createEle({
@@ -513,7 +529,8 @@ TWDS.craftwindow.updateresourceline = function (tr0, tr1) {
     TWDS.createEle({ nodeName: 'span', textContent: t, last: div })
     TWDS.createEle({ nodeName: 'span', textContent: ' / ', last: div })
     TWDS.createEle({ nodeName: 'span', textContent: inbag, last: div })
-    TWDS.q1(".TWDS_item_sell_button",e).dataset.count=count*value
+    const x = TWDS.q1('.TWDS_item_sell_button', e)
+    if (x) { x.dataset.count = count * value }
   }
   const div = TWDS.q1('.numbers', itele)
   let inbag = Bag.getItemByItemId(itemid)
@@ -526,17 +543,31 @@ TWDS.craftwindow.updateresourceline = function (tr0, tr1) {
 }
 
 TWDS.craftwindow.open = function (initialid) {
+  // load recipes again
+  TWDS.crafting.start(function () {
+    TWDS.craftwindow.realopen(initialid)
+  })
+}
+TWDS.craftwindow.realopen = function (initialid) {
   const wid = 'TWDS_craftwindow'
   const win = wman.open(wid, 'set', 'TWDS_craftwindow')
   win.setTitle(TWDS._('CRAFTCALC_WINDOW_TITLE', 'Crafting'))
   win.setMiniTitle(TWDS._('CRAFTCALC_WINDOW_MINITITLE', 'Craft'))
-  if (!('_TWDS_recipes' in win)) {
+  if (!('_TWDS_craftitems' in win)) {
     const a = ItemManager.getAll()
-    win._TWDS_recipes = {}
+    win._TWDS_craftitems = {}
+    const done = {}
     for (const iid of Object.keys(a)) {
       const it = a[iid]
       if ('craftitem' in it) {
-        win._TWDS_recipes[it.item_id] = it.craftitem
+        // 4 difference recipes for the same item, the 15th birthday cake. Make sure we show that of our profession.
+        if (done[it.craftitem]) {
+          if (it.profession_id !== Character.professionId) {
+            continue
+          }
+        }
+        win._TWDS_craftitems[it.craftitem] = it.item_id
+        done[it.craftitem] = 1
       }
     }
   }
