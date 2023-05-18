@@ -76,7 +76,7 @@ TWDS.TWDBcalcDanger = function (pts, mal, magic, mot, fac) {
 TWDS.TWDBcalcProductRate = function (pts, mal, magic, mot, fac) {
   return TWDS.TWDBcalcStepFormula('round', 'round', function (lp, stars) { return stars < 15 ? 6.25 : 9.375 }, pts, mal, magic, 100, fac)
 }
-TWDS.joblist.initDisplay = function (container, serverdata) {
+TWDS.joblist.initDisplay = function (container, serverdata, isupdate) {
   const charPremium = Number(Premium.hasBonus('character'))
   const duration = TWDS.joblist.curJobDuration
   let durationIdx = 0
@@ -106,8 +106,17 @@ TWDS.joblist.initDisplay = function (container, serverdata) {
   const row = function (tab, jobId, best) {
     const jobdata = JobList.getJobById(jobId)
 
-    const tr = document.createElement('tr')
-    tab.appendChild(tr)
+    let tr
+    if (isupdate) {
+      tr = TWDS.q1('tr.job' + jobId, tab)
+      tr.textContent = ''
+    } else {
+      tr = document.createElement('tr')
+      tr.classList.add('job' + jobId)
+      tab.appendChild(tr)
+    }
+    tr.classList.remove('gold')
+    tr.classList.remove('silver')
     if (jobId in golds) {
       tr.classList.add('gold')
     }
@@ -375,13 +384,22 @@ TWDS.joblist.initDisplay = function (container, serverdata) {
     tr.appendChild(th)
   }
 
-  const tab = document.createElement('table')
-  container.appendChild(tab)
-  tab.id = 'TWDS_jobs'
-  headrow(tab)
   const jl = JobList.getSortedJobs()
-  const tbody = document.createElement('tbody')
-  tab.appendChild(tbody)
+  let tab = null
+  let tbody
+  if (isupdate) {
+    tab = TWDS.q1('#TWDS_jobs')
+    if (tab) { tbody = TWDS.q1('tbody', tab) }
+  }
+  if (!tab) {
+    isupdate = false
+    tab = document.createElement('table')
+    container.appendChild(tab)
+    tab.id = 'TWDS_jobs'
+    headrow(tab)
+    tbody = document.createElement('tbody')
+    tab.appendChild(tbody)
+  }
   for (const job of jl) {
     const best = TWDS.getJobBestFromCache(job.id)
     row(tbody, job.id, best)
@@ -446,6 +464,12 @@ TWDS.joblist.sort = function (tab, key) {
   for (let i = 0; i < rows.length; i++) {
     tbody.appendChild(rows[i])
   }
+}
+TWDS.joblist.getcurrentdata = function (cb) {
+  Ajax.remoteCallMode('work', 'index', {}, function (x) {
+    TWDS.joblist.currentList = x
+    if (cb) cb(x)
+  })
 }
 
 TWDS.joblist.curJobDuration = 15
@@ -516,9 +540,8 @@ TWDS.joblist.getcontent = function () {
   opt.textContent = '1h'
   if (TWDS.joblist.curJobDuration === 3600) opt.setAttribute('selected', 'selected')
 
-  Ajax.remoteCallMode('work', 'index', {}, function (x) {
-    TWDS.joblist.currentList = x
-    TWDS.joblist.initDisplay(div, x)
+  TWDS.joblist.getcurrentdata(function (x) {
+    TWDS.joblist.initDisplay(div, x, false)
     fig.appendChild(TWDS.joblist.addFilters())
     TWDS.joblist.refilter(div)
     const oldsort = window.localStorage.getItem('TWDS_job_cursort')
@@ -724,9 +747,8 @@ TWDS.joblist.startFunction = function () {
 
       const t = document.querySelector('#TWDS_jobs')
       const pa = t.parentNode
-      pa.removeChild(t)
 
-      TWDS.joblist.initDisplay(pa, TWDS.joblist.currentList)
+      TWDS.joblist.initDisplay(pa, TWDS.joblist.currentList, true)
     }
   })
   $(document).on('click', '#TWDS_job_filter', function (ev) {
@@ -781,9 +803,37 @@ TWDS.joblist.startFunction = function () {
       }
     }
   })
+  window.EventHandler.listen(['wear_changed'], TWDS.joblist.wearchangehandler)
 }
-TWDS.joblist.openwindow = function (key) {
-  const wid = 'TWDS_joblist_' + key
+TWDS.joblist.wearchangehandler = function () { TWDS.joblist.wearchangehandlerOverloadFix() }
+TWDS.joblist.wearchange_timestamp = 0
+TWDS.joblist.wearchange_timeout = -1
+
+TWDS.joblist.wearchangehandlerOverloadFix = function () {
+  TWDS.joblist.wearchange_timestamp = (new Date()).getTime()
+  if (TWDS.joblist.wearchange_timeout > -1) {
+    window.clearTimeout(TWDS.joblist.wearchange_timeout)
+    TWDS.joblist.wearchange_timeout = -1
+  }
+  TWDS.joblist.wearchange_timeout = window.setTimeout(function () {
+    TWDS.joblist.wearchange_timeout = -1
+    TWDS.joblist.wearchangehandlerReal()
+  }, 1000)
+}
+TWDS.joblist.wearchangehandlerReal = function () {
+  const wid = 'TWDS_joblist_window'
+  if (wman.isWindowCreated(wid)) {
+    TWDS.joblist.getcurrentdata(function () {
+      const t = document.querySelector('#TWDS_jobs')
+      if (t) {
+        const pa = t.parentNode
+        TWDS.joblist.initDisplay(pa, TWDS.joblist.currentList, true)
+      }
+    })
+  }
+}
+TWDS.joblist.openwindow = function () {
+  const wid = 'TWDS_joblist_window'
   const win = wman.open(wid, 'set', 'TWDS_joblist')
   win.setTitle(TWDS._('JOBLIST_WINDOW_TITLE', 'Job list'))
   win.setMiniTitle(TWDS._('JOBLIST_MINITITLE', 'Joblist'))
