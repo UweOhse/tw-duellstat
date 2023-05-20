@@ -77,6 +77,11 @@ TWDS.minimap.radialmenu = function (e) {
     // gold job gone?
     delete TWDS.minimap.cache[key]
   } else {
+    let marked={}
+    for (const i in TWDS.minimap.cache[key]) {
+      if (TWDS.minimap.cache[key][i].marked)
+        marked[TWDS.minimap.cache[key][i].job_id]=true
+    }
     const r = window.Map.JobHandler.Featured[t.x + '-' + t.y]
     TWDS.minimap.cache[key] = {}
     for (const i in r) {
@@ -84,6 +89,8 @@ TWDS.minimap.radialmenu = function (e) {
         continue
       }
       TWDS.minimap.cache[key][i] = r[i]
+      if (marked[r[i].job_id])
+        TWDS.minimap.cache[key][i].marked=true
       TWDS.minimap.cache[key][i].time = (new Date()).getTime()
     }
   }
@@ -119,7 +126,7 @@ TWDS.minimap.findjob = function (jname) {
 TWDS.minimap.updateReal = function () {
   TWDS.minimap.uiinit()
 
-  const handleonebonusposition = function (x, y, withgold, a, withtracked, withsearched,
+  const handleonebonusposition = function (x, y, withgold, markflag, a, withtracked, withsearched,
     withmissing, withalways, withcollection) {
     const o = 0.00513
     const x1 = parseInt(x * o, 10) - 3
@@ -135,6 +142,7 @@ TWDS.minimap.updateReal = function () {
     if (withmissing) { cl += ' storagemissing' }
     if (withalways) { cl += ' hl_always' }
     if (withcollection) { cl += ' collection' }
+    if (markflag) { cl += ' marked' }
     const style = 'left:' + x1 + 'px;top:' + y1 + 'px;' + mayrotate
     const str = "<div class='TWDS_bonusjob " + cl + "' style='" + style + "' />"
     const ele = $(str)
@@ -221,6 +229,7 @@ TWDS.minimap.updateReal = function () {
       let withmissing = false
       let withalways = false
       let withcollection = false
+      let marked = false
       for (const onejobkey in oneposdata) {
         const onejob = oneposdata[onejobkey]
         x = onejob.x
@@ -230,6 +239,7 @@ TWDS.minimap.updateReal = function () {
         const jid = onejob.job_id
         const job = JobList.getJobById(jid)
         if (gold) withgold = true
+        if (onejob.marked) marked = true
         if (jid in tracked) { withtracked = true }
         if (jid === jobid) withsearched = true
         if (jid in missingStorage) withmissing = true
@@ -246,7 +256,7 @@ TWDS.minimap.updateReal = function () {
         a.push(str)
       }
       if (a.length > 0) {
-        handleonebonusposition(x, y, withgold, a, withtracked, withsearched, withmissing,
+        handleonebonusposition(x, y, withgold, marked, a, withtracked, withsearched, withmissing,
           withalways, withcollection)
       }
     }
@@ -727,6 +737,26 @@ TWDS.minimap.keyup = function (ev) {
     x.dispatchEvent(event)
   }
 }
+// middle click on a bonus job adds a mark (outline dotted red) or deletes it
+TWDS.minimap.mousedownhandlerReal = function (ev) {
+  const workaround = (ev.which !== 0)
+  const x = ev.target.dataset.posx
+  const y = ev.target.dataset.posy
+  const poskey = x + '-' + y
+  if (ev.which !== 2) return
+  const oneposdata = TWDS.minimap.cache[poskey]
+  for (const onejobkey in oneposdata) {
+    const onejobdata = oneposdata[onejobkey]
+    onejobdata.marked = !onejobdata.marked
+    oneposdata[onejobkey] = onejobdata
+    if (workaround) { break }
+  }
+  TWDS.minimap.savecache()
+  TWDS.minimap.updateIfOpen()
+}
+TWDS.minimap.mousedownhandler = function (ev) {
+  TWDS.minimap.mousedownhandlerReal(ev)
+}
 
 TWDS.registerStartFunc(function () {
   TWDS.minimap.init()
@@ -800,6 +830,7 @@ TWDS.registerStartFunc(function () {
   TWDS.delegate(document.body, 'change', '.minimap .tw2gui_jobsearch_string',
     function () { TWDS.minimap.updateIfOpen() }
   )
+  TWDS.delegate(document.body, 'mousedown', '#minimap_worldmap .TWDS_bonusjob', TWDS.minimap.mousedownhandler)
 })
 
 // vim: tabstop=2 shiftwidth=2 expandtab
