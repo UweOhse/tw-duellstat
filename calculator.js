@@ -19,9 +19,9 @@ TWDS.calculator.presets = [
   { name: 'mclaughlin: def / dodge / resistance / melee damage', punch: 308, tough: 308, dodge: 302, reflex: 326, tactic: 386 },
   { name: 'nat: aim / health / melee damange / shot resistance', punch: 350, tough: 139, health: 517, reflex: 725, aim: 653 },
   { name: 'owens: att / aim / dodge / melee damage', punch: 489, dodge: 412, aim: 381, appearance: 389 },
-  { name: 'pearl: att / aim / dodge / show damange ', dodge: 582, aim: 583, shot: 553, appearance: 243 },
+  { name: 'pearl: att / aim / dodge / shot damange ', dodge: 582, aim: 583, shot: 553, appearance: 243 },
   { name: 'sarah astor: def / aim / dodge / health / melee damange', punch: 450, health: 232, dodge: 238, aim: 247, tactic: 489 },
-  { name: 'thomas: def / aim / dodge / helath', health: 107, dodge: 536, aim: 453, tactic: 297 },
+  { name: 'thomas: def / aim / dodge / health', health: 107, dodge: 536, aim: 453, tactic: 297 },
   { name: 'vaquero: att / aim / show', dodge: 138, aim: 493, shot: 478, appearance: 312 },
   //
   { name: 'fort battle', disabled: true },
