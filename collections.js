@@ -7,6 +7,7 @@ TWDS.collections.missing_items = {}
 TWDS.collections.unfinished = {}
 TWDS.collections.loaded = {}
 TWDS.collections.missing_collectible_jobs = {}
+TWDS.collections.collectible_jobs = {}
 TWDS.collections.getMissingList = function () {
   return TWDS.collections.missing_collectible_jobs
 }
@@ -201,6 +202,7 @@ TWDS.collections.load = function () {
             if (ii in TWDS.collections.dropdata && TWDS.collections.dropdata[ii]) {
               const jobno = TWDS.collections.dropdata[ii]
               TWDS.collections.missing_collectible_jobs[jobno] = ii
+              TWDS.collections.collectible_jobs[jobno] = ii
             }
           } else {
             TWDS.collections.seen_items[ii] = title
