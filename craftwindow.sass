@@ -6,6 +6,9 @@
     display:flex;
     justify-content:space-between;
   }
+  .head select, .head input {
+        align-self:start
+  }
   .head h3 {
         margin-top:0.25em;
         margin-bottom:0.15em;
@@ -13,10 +16,22 @@
   .head h3 span:last-child {
         padding-left:0.5em;
   }
+  .TWDS_craftwindow_divider1 {
+    background-image:url('https://westde.innogamescdn.com/images/window/market/wood_devider.png');
+    height: 12px;
+    width: 90%;
+    background-repeat: no-repeat;
+    margin: 0 auto;
+    background-position: top -13px right;
+    background-clip: border-box;
+    background-size: cover;
+    background-attachment: local;
+    margin-top:0.15em;
+  }
 }
 .TWDS_craftwindow_table {
   min-width:90%;
-  margin:0.15em auto;
+  margin:0 auto 0.15em;
   border-collapse: collapse;
   .recipeline {
     th,td {
@@ -28,9 +43,13 @@
   }
   td:first-child { border-left:1px solid #1d150a;}
   td:last-child { border-right:1px solid #1d150a;}
+  th:first-child { border-left:1px solid #1d150a;}
+  th:last-child { border-right:1px solid #1d150a;}
+  thead th,
   .recipeline td,
   .recipeline th {
     border-top:1px solid #1d150a;
+    border-bottom:1px solid #1d150a;
   }
   .recipeline .toggle {
        text-decoration:none;
@@ -64,6 +83,8 @@
   button:first-child {
    margin-left:0;
   }
+}
+.TWDS_craftwindow_table {
   .resourceline {
     display:none;
     &.active {

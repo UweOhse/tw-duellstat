@@ -6,11 +6,14 @@ TWDS.craftwindow.searchitem = function (str) {
 
 TWDS.craftwindow.recalcmax = function (win) {
   // TWDS.delegate(content, 'change', '.search', function (ev) {
-  const filter = TWDS.q1('.head .search', win.divMain).value.trim()
+  const searchfilter = TWDS.q1('.head .searchfilter', win.divMain).value.trim()
+  const quickfilter = TWDS.q1('.head .quickfilter', win.divMain).value.trim()
+  const proffilter = parseInt(TWDS.q1('.head .proffilter', win.divMain).value)
+  const pointfilter = TWDS.q1('.head .pointfilter', win.divMain).checked
   const allrows = TWDS.q('.recipeline', win.divMain)
   let rx
-  if (filter > '') {
-    rx = new RegExp(filter, 'i')
+  if (searchfilter > '') {
+    rx = new RegExp(searchfilter, 'i')
   }
   for (let i = 0; i < allrows.length; i++) {
     const tr = allrows[i]
@@ -25,7 +28,7 @@ TWDS.craftwindow.recalcmax = function (win) {
     let hide = false
     tr.style.display = ''
     tr.nextSibling.style.display = ''
-    if (filter > '') {
+    if (searchfilter > '') {
       hide = true
       if (rec.name.search(rx) > -1) {
         hide = false
@@ -40,6 +43,15 @@ TWDS.craftwindow.recalcmax = function (win) {
           hide = false
         }
       }
+    }
+    if (quickfilter > '') {
+      if (!TWDS.quickusables.match(item, quickfilter)) { hide = true }
+    }
+    if (proffilter !== 0) {
+      if (proffilter !== rec.profession_id) { hide = true }
+    }
+    if (pointfilter) {
+      if (!(tr.classList.contains('cangetpoints'))) { hide = true }
     }
     if (hide) {
       tr.style.display = 'none'
@@ -75,6 +87,7 @@ TWDS.craftwindow.recalcmax = function (win) {
     const maxele = TWDS.q1('.max', tr)
     const inputele = TWDS.q1('.theinput', tr)
     maxele.textContent = '(' + max + ')'
+    maxele.dataset.sortval = max
     inputele.max = max
     inputele.min = 0
     const v = parseInt(inputele.value)
@@ -86,6 +99,8 @@ TWDS.craftwindow.recalcmax = function (win) {
       mid = rec.min_level + Math.round((rec.max_level - rec.min_level) / 2)
     }
     tr.classList.remove('cangetpoints')
+    TWDS.q1('.levels', tr).dataset.sortval = rec.min_level
+    TWDS.q1('.levels', tr).dataset.sortval2 = mid
     TWDS.q1('.levels .midlevel', tr).classList.remove('current')
     TWDS.q1('.levels .maxlevel', tr).classList.remove('current')
     if (Character.professionId === rec.profession_id &&
@@ -100,27 +115,35 @@ TWDS.craftwindow.recalcmax = function (win) {
         tr.classList.add('cangetpoints')
       }
     }
+    const ib = TWDS.q1('.inbag', tr)
+    const inbag = Bag.getItemByItemId(itemid)
+    ib.textContent = ''
+    ib.dataset.sortval = 0
+    if (inbag && inbag.count) {
+      ib.textContent = inbag.count
+      ib.dataset.sortval = inbag.count
+    }
 
-    const bc = TWDS.q1('.docraft', tr)
-    const bl = TWDS.q1('.dolearn', tr)
-    const pi = TWDS.q1('.profinfo', tr)
-    bc.style.display = 'none'
-    bl.style.display = 'none'
-    pi.style.display = 'inline'
+    const craftbutton = TWDS.q1('.docraft', tr)
+    const learnbutton = TWDS.q1('.dolearn', tr)
+    const profinfo = TWDS.q1('.profinfo', tr)
+    craftbutton.style.display = 'none'
+    learnbutton.style.display = 'none'
+    profinfo.style.display = 'inline'
     if (Character.professionId === rec.profession_id && !blocked) {
       if (itemid in TWDS.crafting.mycraftableitems) {
-        bc.style.display = 'inline'
-        pi.style.display = 'none'
+        craftbutton.style.display = 'inline'
+        profinfo.style.display = 'none'
       } else if (Character.professionSkill >= rec.min_level) {
         const inbag = Bag.getItemByItemId(recid)
         if (inbag) {
-          bl.style.display = 'inline'
-          pi.style.display = 'none'
+          learnbutton.style.display = 'inline'
+          profinfo.style.display = 'none'
         }
       }
     }
     if (blocked) {
-      pi.style.display = 'none'
+      profinfo.style.display = 'none'
     }
 
     TWDS.craftwindow.updateresourceline(tr, tr.nextSibling)
@@ -152,22 +175,101 @@ TWDS.craftwindow.getcontent = function (win) {
     textContent: Character.professionSkill,
     last: h3
   })
+
+  TWDS.createEle({
+    nodeName: 'label',
+    last: myhead,
+    title: TWDS._('CRAFTWINDOW_POINTS_TITLE', 'show only recipes giving craft points'),
+    children: [
+      { nodeName: 'input', type: 'checkbox', value: 1, className: 'pointfilter' },
+      { nodeName: 'span', textContent: TWDS._('CRAFTWINDOW_CHECKBOX_LABEL_POINTS', 'points only') }
+    ]
+  })
+  const profsel = TWDS.createEle({
+    nodeName: 'select',
+    className: 'proffilter',
+    placeholder: TWDS._('CRAFTWINDOW_PROF_FILTER', 'profession filter'),
+    last: myhead
+  })
+  TWDS.createEle({ nodeName: 'option', value: 0, last: profsel, textContent: TWDS._('CRAFTWINDOW_PROF_FILTER', 'Profession') })
+  for (let i = 1; i <= 4; i++) {
+    TWDS.createEle({ nodeName: 'option', value: i, last: profsel, textContent: Game.InfoHandler.getLocalString4ProfessionId(i) })
+  }
+
+  const sel = TWDS.createEle({
+    nodeName: 'select',
+    className: 'quickfilter',
+    last: myhead
+  })
+  const qc = TWDS.quickusables.getcategories()
+  TWDS.createEle({
+    nodeName: 'option',
+    value: '',
+    last: sel,
+    textContent: TWDS._('CRAFTWINDOW_QUICK_FILTER', 'Effects')
+  })
+  for (let i = 0; i < qc.length; i++) {
+    TWDS.createEle({
+      nodeName: 'option',
+      value: qc[i],
+      last: sel,
+      textContent: TWDS.quickusables.getcatdesc(qc[i])
+    })
+  }
+
   TWDS.createEle({
     nodeName: 'input',
     type: 'text',
-    className: 'search',
-    placeholder: TWDS._('CRAFTWINDOW_SEARCH_FILTER', 'search/filter'),
+    className: 'searchfilter',
+    placeholder: TWDS._('CRAFTWINDOW_SEARCH_FILTER', 'Search/filter'),
     last: myhead
   })
 
+  TWDS.createEle({ nodeName: 'div', className: 'TWDS_craftwindow_divider1', last: content })
   const table = TWDS.createEle({
     nodeName: 'table',
-    className: 'TWDS_craftwindow_table',
+    className: 'TWDS_craftwindow_table TWDS_sortable',
     last: content
+  })
+  TWDS.createEle({
+    nodeName: 'thead',
+    last: table,
+    children: [
+      {
+        nodeName: 'tr',
+        children: [
+          { nodeName: 'th', textContent: '+/-' },
+          { nodeName: 'th', textContent: TWDS._('CRAFTWINDOW_TH_PRODUCTNAME', 'Product'), dataset: { colsel: '.name' } },
+          {
+            nodeName: 'th',
+            textContent: TWDS._('CRAFTWINDOW_TH_POINTS', 'C. Level'),
+            dataset: { sortmode: 'number', colsel: '.levels' },
+            title: TWDS._('CRAFTWINDOW_TH_POINTS_TITLE', 'Crafting levels. High chance to gain a level / low chance / no chance.')
+          },
+          {
+            nodeName: 'th',
+            textContent: TWDS._('CRAFTWINDOW_TH_INPUT', '# To Craft'),
+            dataset: { sortmode: 'number', colsel: '.numcraftable', sortdefaultorder: -1 },
+            title: TWDS._('CRAFTWINDOW_TH_INPUT_TITLE',
+              'The number of items you want to craft, and the number of items you have the resources to craft.')
+          },
+          {
+            nodeName: 'th',
+            textContent: TWDS._('CRAFTWINDOW_TH_CRAFTORJOB', 'Craft'),
+            title: TWDS._('CRAFTWINDOW_TH_CRAFTORJOB_TITLE', 'Either the crafting button, or the name of the craft needed for the job. If it shows your craft name, then you have not learned that recipe')
+          },
+          {
+            nodeName: 'th',
+            textContent: TWDS._('CRAFTWINDOW_TH_INBAG', '#'),
+            dataset: { sortmode: 'number', colsel: '.inbag', sortdefaultorder: -1 },
+            title: TWDS._('CRAFTWINDOW_TH_INBAG_TITLE', 'Nummer of item in your inventory')
+          }
+        ]
+      }
+    ]
   })
   const tbody = TWDS.createEle({
     nodeName: 'tbody',
-    className: 'TWDS_craftwindow_table',
     last: table
   })
 
@@ -217,6 +319,7 @@ TWDS.craftwindow.getcontent = function (win) {
     })
     TWDS.createEle({
       nodeName: 'th',
+      className: 'name',
       textContent: n,
       last: tr
     })
@@ -240,7 +343,7 @@ TWDS.craftwindow.getcontent = function (win) {
         {
           nodeName: 'span',
           textContent: '0',
-          className: 'max TWDS_clicktarget',
+          className: 'numcraftable max TWDS_clicktarget',
           title: TWDS._('CRAFTWINDOW_TITLE_MAX', 'Sets the maximum amount - 1 if the recipe has a cooldown')
         }
       ]
@@ -287,6 +390,7 @@ TWDS.craftwindow.getcontent = function (win) {
     TWDS.createEle({
       nodeName: 'td',
       last: tr,
+      className: 'inbag',
       children: [{
         nodeName: 'span',
         textContent: inbag
@@ -295,7 +399,7 @@ TWDS.craftwindow.getcontent = function (win) {
 
     TWDS.createEle({
       nodeName: 'tr',
-      className: 'resourceline',
+      className: 'resourceline sortgrouped',
       dataset: {
         recipeId: r,
         itemId: b[i][0]
@@ -303,7 +407,7 @@ TWDS.craftwindow.getcontent = function (win) {
       last: tbody
     })
   }
-  TWDS.delegate(content, 'click', '.toggle, th', function (ev) {
+  TWDS.delegate(content, 'click', '.toggle, th.name', function (ev) {
     const tr0 = this.closest('tr')
     const tr1 = tr0.nextSibling
     tr1.classList.toggle('active')
@@ -361,10 +465,24 @@ TWDS.craftwindow.getcontent = function (win) {
 
     const r = TWDS.q1(".recipeline[data-item-id='" + ii + "']", content)
     if (r) {
+      TWDS.q1('.head .searchfilter', win.divMain).value = ''
+      TWDS.q1('.head .quickfilter', win.divMain).value = ''
+      TWDS.q1('.head .proffilter', win.divMain).value = 0
+      TWDS.q1('.head .pointfilter', win.divMain).checked = false
+      TWDS.craftwindow.recalcmax(win)
       r.scrollIntoView(true)
     }
   })
-  TWDS.delegate(content, 'change', '.search', function (ev) {
+  TWDS.delegate(content, 'change', '.searchfilter', function (ev) {
+    TWDS.craftwindow.recalcmax(win)
+  })
+  TWDS.delegate(content, 'change', '.quickfilter', function (ev) {
+    TWDS.craftwindow.recalcmax(win)
+  })
+  TWDS.delegate(content, 'change', '.proffilter', function (ev) {
+    TWDS.craftwindow.recalcmax(win)
+  })
+  TWDS.delegate(content, 'change', '.pointfilter', function (ev) {
     TWDS.craftwindow.recalcmax(win)
   })
 
@@ -551,8 +669,8 @@ TWDS.craftwindow.open = function (initialid) {
 TWDS.craftwindow.realopen = function (initialid) {
   const wid = 'TWDS_craftwindow'
   const win = wman.open(wid, 'set', 'TWDS_craftwindow')
-  win.setTitle(TWDS._('CRAFTCALC_WINDOW_TITLE', 'Crafting'))
-  win.setMiniTitle(TWDS._('CRAFTCALC_WINDOW_MINITITLE', 'Craft'))
+  win.setTitle(TWDS._('CRAFTWINDOW_TITLE', 'Crafting'))
+  win.setMiniTitle(TWDS._('CRAFTWINDOW_MINITITLE', 'Craft'))
   if (!('_TWDS_craftitems' in win)) {
     const a = ItemManager.getAll()
     win._TWDS_craftitems = {}
@@ -594,6 +712,11 @@ TWDS.craftwindow.togglemenu = function (val) {
     if (TWDS.craftwindow.togglemenudone) { entry.off('click') }
   }
 }
+TWDS.craftwindow.sorter = function (ev) { TWDS.craftwindow.sorterReal(ev) }
+TWDS.craftwindow.sorterReal = function (ev) {
+
+}
+
 TWDS.craftwindow.reload = function (win) {
   const content = TWDS.craftwindow.getcontent(win)
   const old = TWDS.q1('.TWDS_craftwindow_content', win.getMainDiv())
@@ -609,6 +732,7 @@ TWDS.registerStartFunc(function () {
     TWDS.craftwindow.togglemenu,
     'misc'
   )
+  TWDS.delegate(document, 'click', '.TWDS_craftwindow_table thead th[data-colsel]', TWDS.sortable.do)
   TWDS.delegate(document, 'click', '.TWDS_craft_button', function (ev) {
     const ii = this.dataset.item_id
     if (TWDS.settings.craftwindow_replace) {
