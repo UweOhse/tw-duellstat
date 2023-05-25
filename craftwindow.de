@@ -1,0 +1,23 @@
+CRAFTWINDOW_TITLE: "Handwerk",
+CRAFTWINDOW_DESC: "Handwerksübersicht",
+CRAFTWINDOW_SETTING_REPLACE: "Ersetze das Handwerksfenster",
+CRAFTWINDOW_TITLE_MAX: "Setze die Anzahl auf das Maximum (1 wenn das Rezept eine zeitliche Beschränkung hat)",
+CRAFTWINDOW_BUY: "Kaufen",
+CRAFTWINDOW_TITLE_BUY: "Die Zutat auf dem Markt suchen",
+CRAFTWINDOW_ORDER: "Bestellen",
+CRAFTWINDOW_TITLE_ORDER: "Verkaufe die benötigten Produkte auf dem Markt",
+CRAFTWINDOW_CRAFT: "Herstellen",
+CRAFTWINDOW_LEARN: "Lernen",
+CRAFTWINDOW_TITLE_NUMBERS_PROD: "Anzahl Einheiten des Produkts im Inventar",
+CRAFTWINDOW_TITLE_NUMBERS_RS: "Benötigtes Material / Material im Inventar",
+CRAFTWINDOW_SEARCH_FILTER: "Suchen / Filtern",
+TWDS_CRAFTWINDOW_JUMP: "Zum Rezept springen",
+CRAFTWINDOW_MINITITLE: "Handwerk",
+CRAFTWINDOW_PROF_FILTER: "Beruf",
+CRAFTWINDOW_CHECKBOX_LABEL_POINTS: "Punkte",
+CRAFTWINDOW_POINTS_TITLE: "Zeige nur Rezepte, für die es Punkte geben kann.",
+CRAFTWINDOW_QUICK_FILTER: "Effekte",
+CRAFTWINDOW_BLOCKTIME_INFO: "Dieses Rezept hat eine Cooldown-Zeit.",
+
+
+
