@@ -80,7 +80,7 @@ TWDS.overlay.getregendata = function () {
   return s
 }
 */
-TWDS.overlay.getbattledata = function () {
+TWDS.overlay.getbattledata = function (badchange) {
   const getone = function (x) {
     const y = CharacterSkills.getSkill(x)
     return y.bonus + y.points // bonus: skill. points: attr
@@ -91,11 +91,12 @@ TWDS.overlay.getbattledata = function () {
   const health = Character.maxHealth
   const level = Character.level
 
-  let dodge = getone('dodge')
-  let aim = getone('aim')
+  const dodge = getone('dodge')
+  const aim = getone('aim')
   let lead = getone('leadership')
-  const hide = getone('hide')
-  const trap = getone('pitfall')
+  const build = getone('build')
+  let hide = getone('hide')
+  let trap = getone('pitfall')
   const bo = TWDS.bonuscalc.getComboBonus()
   let multiplayerAttack = 0
   let multiplayerDefense = 0
@@ -104,6 +105,11 @@ TWDS.overlay.getbattledata = function () {
   let sectorDamage = 0
   let fortResistance = 0
   console.log('bo', bo)
+  if (Character.charClass === 'worker' && badchange) {
+    console.log('BADCHANGE', hide, trap, build)
+    if (build > hide) hide = build
+    if (build > trap) trap = build
+  }
 
   if ('fort_attack' in bo) {
     multiplayerAttack += bo.fort_attack
@@ -147,39 +153,51 @@ TWDS.overlay.getbattledata = function () {
   if (Character.charClass === 'soldier') {
     if (prem) { lead = lead * 1.5 } else { lead = lead * 1.25 }
   }
+  /*
   if (Character.charClass === 'worker') {
-    if (prem) {
-      aim *= 1.4
-      dodge *= 1.4
+    if (badchange) {
+      if (prem) {
+        aim *= 1.3
+        dodge *= 1.3
+      } else {
+        aim *= 1.15
+        dodge *= 1.15
+      }
     } else {
-      aim *= 1.2
-      dodge *= 1.2
+      if (prem) {
+        aim *= 1.4
+        dodge *= 1.4
+      } else {
+        aim *= 1.2
+        dodge *= 1.2
+      }
     }
   }
+  */
   const beginnerBonus = 15 * (1 - level / 250.0)
 
-  const attAttack = Math.pow(lead, 0.5) +
+  let attAttack = Math.pow(lead, 0.5) +
     Math.pow(aim, 0.5) +
     Math.pow(hide, 0.6) +
     multiplayerAttack +
     sectorAttack +
     beginnerBonus +
     10
-  const attDefend = Math.pow(lead, 0.5) +
+  let attDefend = Math.pow(lead, 0.5) +
     Math.pow(dodge, 0.5) +
     Math.pow(hide, 0.6) +
     multiplayerDefense +
     sectorDefense +
     beginnerBonus +
     10
-  const defAttack = Math.pow(lead, 0.5) +
+  let defAttack = Math.pow(lead, 0.5) +
     Math.pow(aim, 0.5) +
     Math.pow(trap, 0.6) +
     multiplayerAttack +
     sectorAttack +
     beginnerBonus +
     10
-  const defDefend = Math.pow(lead, 0.5) +
+  let defDefend = Math.pow(lead, 0.5) +
     Math.pow(dodge, 0.5) +
     Math.pow(trap, 0.6) +
     multiplayerDefense +
@@ -189,6 +207,26 @@ TWDS.overlay.getbattledata = function () {
   const attPrimaryRes = 300 * hide / health
   const defPrimaryRes = 300 * trap / health
   const secondaryRes = fortResistance
+  if (Character.charClass === 'worker') {
+    let f
+    if (badchange) {
+      if (prem) {
+        f = 1.3
+      } else {
+        f = 1.15
+      }
+    } else {
+      if (prem) {
+        f = 1.4
+      } else {
+        f = 1.2
+      }
+    }
+    attAttack *= f
+    attDefend *= f
+    defAttack *= f
+    defDefend *= f
+  }
 
   const la = Wear.get('left_arm')
   let dmg = {
@@ -253,6 +291,11 @@ TWDS.overlay.getbattledata = function () {
   s += '<td>' + sectorDefense
   s += '<td colspan="2">'
   s += '</table>'
+  /*
+  if (Character.charClass === 'worker' && !badchange) {
+    s+=TWDS.overlay.getbattledata(true); // may change
+  }
+  */
   return s
 }
 TWDS.overlay.getdueldata = function () {
