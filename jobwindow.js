@@ -99,6 +99,19 @@ TWDS.jobwindow.initView2 = function () {
     hack('middle', this.job.basis)
     hack('long', this.job.basis)
   }
+
+  if (TWDS.settings.jobwindow_show_collectibles) {
+    const ii = TWDS.collections.collectible_jobs[this.jobId]
+    if (ii) {
+      const it = ItemManager.get(ii)
+      let ins = new tw2widget.InventoryItem(it)
+      const out = TWDS.q1('.tw2gui_inner_window_title', d)
+      ins = ins.getMainDiv()[0]
+      ins.classList.add('TWDS_jobwindow_collectible')
+      out.appendChild(ins)
+    }
+  }
+
   const longdurationbar = TWDS.q1('.job_durationbar_long', d)
   if (TWDS.settings.jobwindow_smart_start && longdurationbar) { // we might have too few jobpoints
     const o = TWDS.q('.TWDS_smartstart', d)
@@ -360,6 +373,8 @@ TWDS.registerStartFunc(function () {
   JobWindow.prototype.initView = TWDS.jobwindow.initView
   JobWindow.prototype._TWDS_backup_updateMotivation = JobWindow.prototype.updateMotivation
   JobWindow.prototype.updateMotivation = TWDS.jobwindow.updateMotivation
+  TWDS.registerSetting('bool', 'jobwindow_show_collectibles',
+    TWDS._('JOBWINDOW_SHOW_COLLECTIBLES', 'Show the collectibles items dropped by this job.'), true, null, 'Jobwindow')
 })
 if (JobWindow.prototype._TWDS_backup_initView) {
   // helper for the reload
