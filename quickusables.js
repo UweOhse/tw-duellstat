@@ -21,6 +21,7 @@ TWDS.quickusables.catnames = {
   fortbattle: TWDS._('QUICKUSABLES_FB', 'Fort battle'),
   multiplayer: TWDS._('QUICKUSABLES_MPI', 'Multiplayer'),
   movement: TWDS._('QUICKUSABLES_MOVEMENT', 'Movement'),
+  openunpack: TWDS._('QUICKUSABLES_OPENUNPACK', 'Open/unpack'),
   laborpoints: TWDS._('QUICKUSABLES_LP', 'Labor points')
 }
 TWDS.quickusables.getcatdesc = function (cat) {
@@ -53,9 +54,9 @@ TWDS.quickusables.initusables = function () {
     luck: [],
     duel: [],
     fortbattle: [],
-    fortbattle_x: [],
-    multiplayer: [],
     laborpoints: [],
+    multiplayer: [],
+    openunpack: [],
     movement: []
   }
   const clean = function (str) {
@@ -100,7 +101,8 @@ TWDS.quickusables.initusables = function () {
   doit(1946, 'fortbattle', 1) // amulett, lp
   doit(2525, 'fortbattle', 1) // zaubertinte, fallen stellen
   doit(2525, 'fortbattle', 2) // zaubertinte, verstecken
-  doit(1940, 'fortbattle_x', 0) // stück torte, arbeitspunkte
+  doit(51775, 'openunpack', 0) // Motivationsbox, "Etwas zum Auspacken".
+  doit(51595, 'openunpack', 0) // Metallschädel,  "Enthält eine der folgenden Sammelkarten"
 }
 TWDS.quickusables.match = function (item, cat) {
   if (TWDS.quickusables.usables === null) {
