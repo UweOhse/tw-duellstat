@@ -1,21 +1,43 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 //
 TWDS.quest = {}
-TWDS.quest.getMinimapLink = function (req) {
-  if (!req) return ''
-  const li = document.createElement('span')
-  li.className = 'TWDS_questentry_functions'
-  if (TWDS.settings.quest_add_util_buttons) {
-    if (req.type === 'inventory_changed') {
-      let x = TWDS.itemAnyCraftButton(req.id)
-      if (x) { li.appendChild(x) }
-      x = TWDS.itemBidButton(req.id)
+// can't reliably use Quest.getMinimaplink, because TW-Calc uses that, and doesn't call the original/backup function.
+TWDS.quest.renderRequirement = function (req, cls) {
+  const li = Quest.prototype._TWDS_backup_renderRequirement.apply(this, arguments)
+  const jsinfo = req.jsInfo
+
+  if (TWDS.settings.quest_add_util_buttons && jsinfo) {
+    li.addClass('TWDS_questentry_functions')
+    if (jsinfo.type === 'inventory_changed') {
+      let x = TWDS.itemAnyCraftButton(jsinfo.id)
       if (x) {
-        li.appendChild(x)
+        li.append(x)
+        li.addClass('with_craftlink')
+      }
+      x = TWDS.itemBidButton(jsinfo.id)
+      if (x) {
+        li.append(x)
+        li.addClass('with_bidbutton')
+      }
+      const bagitem = Bag.getItemByItemId(jsinfo.id)
+      if (bagitem) {
+        if (TWDS.settings.quest_show_itemcount) {
+          let str = bagitem.count
+          const si = TWDS.storage.iteminfo(jsinfo.id)
+          if (si[0]) { // want <> 0
+            str += '/' + si[0]
+          }
+          const ele = TWDS.createEle({
+            nodeName: 'span',
+            className: 'TWDS_quest_itemcount',
+            textContent: '[' + str + ']'
+          })
+          li.append(ele)
+        }
       }
     /*
-    } else if (req.type === 'task-finish-job') {
-      const id = req.id
+    } else if (jsinfo.type === 'task-finish-job') {
+      const id = jsinfo.id
       const x = TWDS.jobOpenButton2(id)
       if (x) { li.appendChild(x) }
       const jobdata = JobList.getJobById(id)
@@ -25,47 +47,19 @@ TWDS.quest.getMinimapLink = function (req) {
           nodeName:"span",
           innerHTML: ql
         });
-        li.appendChild(y.firstChild);
+        li.append(y.firstChild);
       }
-    } else if (req.type === 'task-finish-walk') {
-      let x=TWDS.employerOpenButton(req.value);
-      if (x) { li.appendChild(x) }
+    } else if (jsinfo.type === 'task-finish-walk') {
+      let x=TWDS.employerOpenButton(jsinfo.value);
+      if (x) { li.append(x) }
     } else {
-      console.log('unhandled', req.type, req)
+      console.log('unhandled', jsinfo, jsinfo.type);
     */
     }
   }
-  const old = Quest.prototype._TWDS_backup_getMinimapLink(req)
-  return li.outerHTML + old
+  return li
 }
 
-TWDS.quest.render = function (requirement, clsFinish) {
-  Quest.prototype._TWDS_backup_render.apply(this, arguments)
-  const details = this.el
-  const tracker = this.questTrackerEl
-  if (TWDS.settings.quest_show_itemcount || TWDS.settings.questtracker_show_itemcount) {
-    if (this.requirements.length) {
-      for (let i = 0; i < this.requirements.length; i++) {
-        const req = this.requirements[i]
-        if (req.jsInfo && req.jsInfo.type === 'inventory_changed') {
-          const li = $('ul.requirement_container li:nth-child(' + (i + 1) + ')', details)
-          const trackerli = $('ul.requirement_container li:nth-child(' + (i + 1) + ')', tracker)
-          const bagitem = Bag.getItemByItemId(req.jsInfo.id)
-          if (bagitem) {
-            if (TWDS.settings.quest_show_itemcount) {
-              const sp = $("<span class='TWDS_quest_itemcount'> [" + bagitem.count + ']</span>')
-              li.append(sp)
-            }
-            if (TWDS.settings.questtracker_show_itemcount) {
-              const sp = $("<span class='TWDS_questtracker_itemcount'> [" + bagitem.count + ']</span>')
-              trackerli.append(sp)
-            }
-          }
-        }
-      }
-    }
-  }
-}
 TWDS.quest.getQuestTrackerEl = function () {
   const x = Quest.prototype._TWDS_backup_getQuestTrackerEl.apply(this)
   if (TWDS.settings.questtracker_show_booklinks) {
@@ -126,14 +120,15 @@ TWDS.registerSetting('bool', 'questtracker_show_booklinks',
   true, null, 'Quests', null, 5)
 
 TWDS.registerStartFunc(function () {
-  Quest.prototype._TWDS_backup_render = Quest.prototype.render
-  Quest.prototype.render = TWDS.quest.render
   Quest.prototype._TWDS_backup_getQuestTrackerEl = Quest.prototype.getQuestTrackerEl
   Quest.prototype.getQuestTrackerEl = TWDS.quest.getQuestTrackerEl
-  Quest.prototype._TWDS_backup_getMinimapLink = Quest.prototype.getMinimapLink
-  Quest.prototype.getMinimapLink = TWDS.quest.getMinimapLink
+  Quest.prototype._TWDS_backup_renderRequirement = Quest.prototype.renderRequirement
+  Quest.prototype.renderRequirement = TWDS.quest.renderRequirement
   window.QuestWindow._TWDS_backup_cancelQuest = window.QuestWindow.cancelQuest
   window.QuestWindow.cancelQuest = TWDS.quest.cancelQuest
+  TWDS.delegate(document.body, 'click', '.quest_requirement.shorten', function () {
+    this.classList.remove('shorten')
+  })
 })
 
 // vim: tabstop=2 shiftwidth=2 expandtab
