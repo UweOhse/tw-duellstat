@@ -77,10 +77,9 @@ TWDS.minimap.radialmenu = function (e) {
     // gold job gone?
     delete TWDS.minimap.cache[key]
   } else {
-    let marked={}
+    const marked = {}
     for (const i in TWDS.minimap.cache[key]) {
-      if (TWDS.minimap.cache[key][i].marked)
-        marked[TWDS.minimap.cache[key][i].job_id]=true
+      if (TWDS.minimap.cache[key][i].marked) { marked[TWDS.minimap.cache[key][i].job_id] = true }
     }
     const r = window.Map.JobHandler.Featured[t.x + '-' + t.y]
     TWDS.minimap.cache[key] = {}
@@ -89,8 +88,7 @@ TWDS.minimap.radialmenu = function (e) {
         continue
       }
       TWDS.minimap.cache[key][i] = r[i]
-      if (marked[r[i].job_id])
-        TWDS.minimap.cache[key][i].marked=true
+      if (marked[r[i].job_id]) { TWDS.minimap.cache[key][i].marked = true }
       TWDS.minimap.cache[key][i].time = (new Date()).getTime()
     }
   }
