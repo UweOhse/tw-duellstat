@@ -86,88 +86,96 @@ TWDS.simulator.updateresult = function (ra, ia, jobsel) {
     ],
     last: tab
   })
-  let jobid=parseInt(jobsel.value)
+  const jobid = parseInt(jobsel.value)
   if (jobid) {
     const job = JobList.getJobById(jobid)
-    let laborpoints=0
-    for (const [skillname,mult] of Object.entries(job.skills)) {
-       if (t[skillname]) {
-         laborpoints+=t[skillname]*mult
-       }
-       let attr=CharacterSkills.skills[skillname].attr_key
-       if (attr) {
-         laborpoints+=t[attr]*mult
-       }
-       laborpoints+=CharacterSkills.skills[skillname].points*mult
+    let laborpoints = 0
+    for (const [skillname, mult] of Object.entries(job.skills)) {
+      if (t[skillname]) {
+        laborpoints += t[skillname] * mult
+      }
+      const attr = CharacterSkills.skills[skillname].attr_key
+      if (attr) {
+        laborpoints += t[attr] * mult
+      }
+      laborpoints += CharacterSkills.skills[skillname].points * mult
     }
     if (t.job) {
-      laborpoints+=t.job
+      laborpoints += t.job
     }
-    let jc = new JobCalculator(laborpoints, job.malus + 1)
+    const jc = new JobCalculator(laborpoints, job.malus + 1)
     jc.calcStars((laborpoints / (job.malus + 1)))
     const curstars = jc.getJobstarsValue()
-    let stars="";
-    let color="#CD7F32";
-    let workstars=curstars
-    if (workstars>10) {
-      color="gold";
-      workstars-=10
-    } else if (workstars>5) {
-      color="silver";
-      workstars-=5
+    let stars = ''
+    let color = '#CD7F32'
+    let workstars = curstars
+    if (workstars > 10) {
+      color = 'gold'
+      workstars -= 10
+    } else if (workstars > 5) {
+      color = 'silver'
+      workstars -= 5
     }
-    for (let j=1;j<workstars+1;j++) {
-      stars+="*";
+    for (let j = 1; j < workstars + 1; j++) {
+      stars += '*'
     }
     TWDS.createEle('tr', {
       children: [
         { nodeName: 'th', textContent: 'laborpoints' },
-        { nodeName: 'td', textContent: laborpoints},
-        { nodeName: 'td', textContent: ""},
-        { nodeName: 'td', textContent: stars, rowSpan: 2, style: {color: color, fontSize: "xx-large", backgroundColor:"white"}},
-        { nodeName: 'th', textContent: "exp/h"},
-        { nodeName: 'th', textContent: "$/h"},
-        { nodeName: 'th', textContent: "luck"},
-        { nodeName: 'th', textContent: "danger"}
+        { nodeName: 'td', textContent: laborpoints },
+        { nodeName: 'td', textContent: '' },
+        { nodeName: 'td', textContent: stars, rowSpan: 2, style: { color: color, fontSize: 'xx-large', backgroundColor: 'white' } },
+        { nodeName: 'th', textContent: 'exp/h' },
+        { nodeName: 'th', textContent: '$/h' },
+        { nodeName: 'th', textContent: 'luck' },
+        { nodeName: 'th', textContent: 'danger' }
       ],
       last: tab
     })
-    let tmoney=1
-    if (t.dollar)
-      tmoney=1+t.dollar
+    let tmoney = 1
+    if (t.dollar) { tmoney = 1 + t.dollar }
 
-    let charxpmult=1
+    let charxpmult = 1
     if (Character.charClass === 'worker') {
-      if (charPremium) charxpmult=1.1
-      else charxpmult=1.05
+      if (charPremium) charxpmult = 1.1
+      else charxpmult = 1.05
     }
-    let txpmult=1
-    if (t.xp)
-      txpmult=1+t.xp
-    let dangmult=1
+    let txpmult = 1
+    if (t.xp) { txpmult = 1 + t.xp }
+    let dangmult = 1
     if (Character.charClass === 'adventurer') {
-      if (charPremium) dangmult=0.8
-      else charxpmult=0.9
+      if (charPremium) dangmult = 0.8
+      else charxpmult = 0.9
     }
-
 
     TWDS.createEle('tr', {
       children: [
         { nodeName: 'th', textContent: 'jobpoints' },
-        { nodeName: 'td', textContent: laborpoints-job.malus-1},
-        { nodeName: 'td', textContent: curstars+"*"},
-        { nodeName: 'td', textContent: 
-          TWDS.TWDBcalcExp(laborpoints, job.malus+1, TWDS.jobData['job_' + jobid].job_exp, 100, 1) * charxpmult * txpmult},
-        { nodeName: 'td', textContent: 
-          Math.round(TWDS.TWDBcalcWage(laborpoints, job.malus+1, TWDS.jobData['job_' + jobid].job_wages, 100, 1) * (moneyPremium ? 1.5 : 1) * tmoney)},
-        { nodeName: 'td', textContent: 
-          Math.round(TWDS.TWDBcalcLuck(laborpoints, job.malus+1, TWDS.jobData['job_' + jobid].job_luck, 100, 1) *3 * (charPremium ? 1.5 : 1))},
-        { nodeName: 'td', textContent: 
-          (TWDS.TWDBcalcDanger(laborpoints, job.malus+1, TWDS.jobData['job_' + jobid].job_danger, 100, 1) *dangmult).toFixed(1)+"%"},
+        { nodeName: 'td', textContent: laborpoints - job.malus - 1 },
+        { nodeName: 'td', textContent: curstars + '*' },
+        {
+          nodeName: 'td',
+          textContent:
+          TWDS.TWDBcalcExp(laborpoints, job.malus + 1, TWDS.jobData['job_' + jobid].job_exp, 100, 1) * charxpmult * txpmult
+        },
+        {
+          nodeName: 'td',
+          textContent:
+          Math.round(TWDS.TWDBcalcWage(laborpoints, job.malus + 1, TWDS.jobData['job_' + jobid].job_wages, 100, 1) * (moneyPremium ? 1.5 : 1) * tmoney)
+        },
+        {
+          nodeName: 'td',
+          textContent:
+          Math.round(TWDS.TWDBcalcLuck(laborpoints, job.malus + 1, TWDS.jobData['job_' + jobid].job_luck, 100, 1) * 3 * (charPremium ? 1.5 : 1))
+        },
+        {
+          nodeName: 'td',
+          textContent:
+          (TWDS.TWDBcalcDanger(laborpoints, job.malus + 1, TWDS.jobData['job_' + jobid].job_danger, 100, 1) * dangmult).toFixed(1) + '%'
+        }
       ],
       last: tab
     })
-
   }
 }
 TWDS.simulator.openwindow = function (paraitems) {
@@ -200,12 +208,12 @@ TWDS.simulator.openwindow = function (paraitems) {
   })
   TWDS.createEle('div', {
     last: content,
-    innerHTML: "<p>Here you can combine any equipment to see what would happen before you buy."
-      + "<p>When you click on an image a new selectbox will be shown where you can select anything which might be worn in that slot, "
-      + "even if gender, class or level wouldn't allow to wear it."
+    innerHTML: '<p>Here you can combine any equipment to see what would happen before you buy.' +
+      '<p>When you click on an image a new selectbox will be shown where you can select anything which might be worn in that slot, ' +
+      "even if gender, class or level wouldn't allow to wear it."
   })
 
-  let jobsel = TWDS.createEle('select', { last: jobselectarea })
+  const jobsel = TWDS.createEle('select', { last: jobselectarea })
   TWDS.createEle('option', {
     last: jobsel,
     value: 0,
@@ -220,17 +228,16 @@ TWDS.simulator.openwindow = function (paraitems) {
     })
   }
 
-  let itemstouse={}
+  const itemstouse = {}
   if (paraitems) {
-    for (let i=0;i<paraitems.length;i++) {
+    for (let i = 0; i < paraitems.length; i++) {
       if (paraitems[i]) {
-        let it=ItemManager.get(paraitems[i]);
-        if (it)
-          itemstouse[it.type]=it
+        const it = ItemManager.get(paraitems[i])
+        if (it) { itemstouse[it.type] = it }
       }
     }
   }
-  let myslots=["head","neck","body","belt","pants","foot","right_arm","left_arm", "animal", "yield"];
+  const myslots = ['head', 'neck', 'body', 'belt', 'pants', 'foot', 'right_arm', 'left_arm', 'animal', 'yield']
   for (let i = 0; i < myslots.length; i++) {
     const sl = myslots[i]
     TWDS.createEle({
@@ -241,9 +248,8 @@ TWDS.simulator.openwindow = function (paraitems) {
       },
       last: itemarea
     })
-    let w=null
-    if (!paraitems)
-      w = Wear.get(sl)
+    let w = null
+    if (!paraitems) { w = Wear.get(sl) }
     if (itemstouse[sl]) {
       TWDS.simulator.switchslot(itemarea, sl, itemstouse[sl].item_id)
     } else if (w) {
@@ -273,7 +279,7 @@ TWDS.simulator.openwindow = function (paraitems) {
     TWDS.simulator.switchslot(itemarea, it.type, it.item_id)
     TWDS.simulator.updateresult(resultarea, itemarea, jobsel)
   })
-  jobsel.onchange=function() {
+  jobsel.onchange = function () {
     TWDS.simulator.updateresult(resultarea, itemarea, jobsel)
   }
   TWDS.simulator.updateresult(resultarea, itemarea, jobsel)
