@@ -88,7 +88,7 @@ TWDS.craftwindow.recalcmax = function (win) {
     const inputele = TWDS.q1('.theinput', tr)
     maxele.textContent = '(' + max + ')'
     maxele.dataset.sortval = max
-    inputele.max = max
+    inputele.max = max > 1000 ? max : 1000
     inputele.min = 0
     const v = parseInt(inputele.value)
     if (v > max) { inputele.value = max }
@@ -191,9 +191,9 @@ TWDS.craftwindow.getcontent = function (win) {
     placeholder: TWDS._('CRAFTWINDOW_PROF_FILTER', 'profession filter'),
     last: myhead
   })
-  TWDS.createEle({ nodeName: 'option', value: 0, last: profsel, selected: 0===Character.professionId, textContent: TWDS._('CRAFTWINDOW_PROF_FILTER', 'Profession') })
+  TWDS.createEle({ nodeName: 'option', value: 0, last: profsel, selected: Character.professionId === 0, textContent: TWDS._('CRAFTWINDOW_PROF_FILTER', 'Profession') })
   for (let i = 1; i <= 4; i++) {
-    TWDS.createEle({ nodeName: 'option', value: i, last: profsel, selected: i===Character.professionId, textContent: Game.InfoHandler.getLocalString4ProfessionId(i) })
+    TWDS.createEle({ nodeName: 'option', value: i, last: profsel, selected: i === Character.professionId, textContent: Game.InfoHandler.getLocalString4ProfessionId(i) })
   }
 
   const sel = TWDS.createEle({
@@ -743,14 +743,37 @@ TWDS.registerStartFunc(function () {
       CharacterWindow.open('crafting')
     }
   })
+  const handler = function (x) {
+    const win = wman.getById('TWDS_craftwindow')
+    if (win) {
+      setTimeout(function () {
+        const win = wman.getById('TWDS_craftwindow')
+        if (typeof (win) !== 'undefined') {
+          TWDS.craftwindow.recalcmax(win)
+        }
+      }, 2500)
+    }
+  }
+  EventHandler.listen('inventory_changed', function () { handler('inventory_changed') })
+  EventHandler.listen('bag_add', function () { handler('bag_add') })
+  EventHandler.listen('wear_changed', function () { handler('wear_changed') })
+  /*
+  EventHandler.listen(['bag_add', 'inventory_changed', 'wear_changed'], function (e) {
+    const win = wman.getById('TWDS_craftwindow')
+    if (win) {
+      console.log("CHANGE", Bag.getItemByItemId(708000).count)
+      setTimeout(function() {
+        const win = wman.getById('TWDS_craftwindow')
+        if (typeof (win) !== 'undefined') {
+          console.log("CHANGE call recalcmax", Bag.getItemByItemId(708000).count)
+          TWDS.craftwindow.recalcmax(win);
+        }
+      },500);
+    }
+  })
+  */
 })
 TWDS.registerExtra('TWDS.craftwindow.open',
   TWDS._('CRAFTWINDOW_TITLE', 'Crafting'),
   TWDS._('CRAFTWINDOW_DESC', 'Crafting overview')
 )
-EventHandler.listen(['bag_add', 'inventory_changed', 'wear_changed'], function (e) {
-  const win = wman.getById('TWDS_craftwindow')
-  if (typeof (win) !== 'undefined') {
-    TWDS.craftwindow.recalcmax(win)
-  }
-})
