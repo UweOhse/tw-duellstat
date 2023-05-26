@@ -306,6 +306,18 @@ TWDS.calculator.exec = function (filterarea, sels, resultarea) {
         },
         last: resultarea
       })
+      TWDS.createEle('button', {
+        textContent: TWDS._('CALCULATOR_SIMULATE', 'simulate'),
+        dataset: {
+          ids: JSON.stringify(o)
+        },
+        onclick: function () {
+          const x = JSON.parse(this.dataset.ids)
+          // TWDS.wearItemsHandler(x)
+          TWDS.simulator.openwindow(x)
+        },
+        last: resultarea
+      })
     }
     const t = TWDS.bonuscalc.getComboBonus(o, true)
     TWDS.calculator.showbonus(t, resultarea)
