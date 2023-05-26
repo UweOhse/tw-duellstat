@@ -167,7 +167,7 @@ PLEASE_SELECT: "Bitte wählen",
   CLOTHCACHE_DS_EQ_SETS: "$n$ Duellstat-Ausrüstungssets",
   CLOTHCACHE_TC_EQ_SETS: "$n$ TW-Calc-Ausrüstungssets",
 
-CLOTHECACHE_SETTING_INTRO: "Die Ergebnisse der Kalkulationen, welche Ausrüstung die meisten Arbeitspunkte liefert, werden im Cache gespeichert, und können im Arbeitsfenser erneut verwendet werden ('Gemerkt'). Das spart insbesondere auf langsamen Computern und beim Besitz von vielen Setgegenständen viel Zeit, und erlaubt es außerdem weitere Features. Hier kannst Du den Cache löschen, füllen oder auch einfach updaten, wobei das unter den eben genannte Umständen länger dauern kann.",
+CLOTHECACHE_SETTING_INTRO: "Die Ergebnisse der Kalkulationen, welche Ausrüstung die meisten Arbeitspunkte liefert, werden im Cache gespeichert, und können im Arbeitsfenster erneut verwendet werden ('Gemerkt'). Das spart insbesondere auf langsamen Computern und beim Besitz von vielen Setgegenständen viel Zeit, und erlaubt außerdem weitere Features. Hier kannst Du den Cache löschen, füllen oder auch einfach updaten, wobei das unter den eben genannte Umständen länger dauern kann.",
 CLOTHCACHE_BUTTON_CLEAR: "Cache löschen",
 CLOTHCACHE_RELOAD_ALL: "Alle",
 CLOTHCACHE_RELOAD_ALL_MOUSEOVER: "Den Cache für alle Arbeiten neu aufbauen.",
