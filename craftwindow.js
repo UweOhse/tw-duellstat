@@ -191,9 +191,9 @@ TWDS.craftwindow.getcontent = function (win) {
     placeholder: TWDS._('CRAFTWINDOW_PROF_FILTER', 'profession filter'),
     last: myhead
   })
-  TWDS.createEle({ nodeName: 'option', value: 0, last: profsel, textContent: TWDS._('CRAFTWINDOW_PROF_FILTER', 'Profession') })
+  TWDS.createEle({ nodeName: 'option', value: 0, last: profsel, selected: 0===Character.professionId, textContent: TWDS._('CRAFTWINDOW_PROF_FILTER', 'Profession') })
   for (let i = 1; i <= 4; i++) {
-    TWDS.createEle({ nodeName: 'option', value: i, last: profsel, textContent: Game.InfoHandler.getLocalString4ProfessionId(i) })
+    TWDS.createEle({ nodeName: 'option', value: i, last: profsel, selected: i===Character.professionId, textContent: Game.InfoHandler.getLocalString4ProfessionId(i) })
   }
 
   const sel = TWDS.createEle({
