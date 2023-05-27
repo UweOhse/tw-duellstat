@@ -574,16 +574,6 @@ TWDS.registerSetting('bool', 'marketwindow_enhancements',
 TWDS.registerSetting('bool', 'saleProtection',
   TWDS._('CLOTHCACHE_PROTECT', 'Mark the best items for any job, and the items of managed sets (game, tw-calc, tw-duellstat) unsalable and unauctionable. Page reload needed'),
   true, null, 'Market')
-TWDS.registerSetting('bool', 'misc_trader_show_max_button',
-  TWDS._('MISC_SETTING_SHOW_MAX_BUTTON',
-    'Show the "max" button while selling at the traveling merchant.'),
-  false, function (v) {
-    if (v) {
-      document.body.classList.add('TWDS_show_trader_max_value')
-    } else {
-      document.body.classList.remove('TWDS_show_trader_max_value')
-    }
-  }, 'Market')
 
 TWDS.registerStartFunc(function () {
   MarketWindow._TWDS_backup_createMarketOffer = MarketWindow.createMarketOffer
