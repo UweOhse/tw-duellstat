@@ -814,7 +814,8 @@ TWDS.registerStartFunc(function () {
     const key = tr.dataset.key
     const tmp = window.localStorage.getItem(key)
     if (!tmp) return
-    TWDS.wearItemsHandler(JSON.parse(o.item_ids))
+    const o = JSON.parse(tmp)
+    TWDS.wearItemsHandler(o.item_ids)
   })
 })
 
