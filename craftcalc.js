@@ -6,10 +6,7 @@ TWDS.craftcalc.searchitem = function (str) {
 TWDS.craftcalc.getcontent = function (win) {
   const content = TWDS.createEle({
     nodeName: 'div',
-    className: 'TWDS_craftcalc_content',
-    children: [
-      { nodeName: 'h1', textContent: TWDS._('CRAFTCALC_TITLE', 'Craftcalc') }
-    ]
+    className: 'TWDS_craftcalc_content'
   })
   const inputarea = TWDS.createEle({
     nodeName: 'div',
@@ -191,6 +188,12 @@ TWDS.craftcalc.getcontent = function (win) {
         src: cit.image,
         alt: cit.name,
         title: popup
+      }, {
+        nodeName: 'span',
+        className: 'result_in_inventory',
+        textContent: TWDS._('CRAFTCALC_PRODUCT_IN_BAG', '$count$ in bag.', {
+          count: Bag.getItemCount(cid)
+        })
       }
     ]
   })
@@ -204,6 +207,7 @@ TWDS.craftcalc.getcontent = function (win) {
 
   const resulttable = TWDS.createEle({
     nodeName: 'table',
+    className: 'needed',
     last: resultarea
   })
   TWDS.createEle({
@@ -213,9 +217,10 @@ TWDS.craftcalc.getcontent = function (win) {
       {
         nodeName: 'tr',
         children: [
-          { nodeName: 'th', textContent: '#' },
           { nodeName: 'th', textContent: TWDS._('CRAFTCALC_ITEM', 'item') },
-          { nodeName: 'th', textContent: TWDS._('CRAFTCALC_ITEM_NAME', 'name') }
+          { nodeName: 'th', textContent: TWDS._('CRAFTCALC_ITEM_NAME', 'name') },
+          { nodeName: 'th', textContent: TWDS._('CRAFTCALC_ITEM_NEEDED', 'needed') },
+          { nodeName: 'th', textContent: TWDS._('CRAFTCALC_ITEM_AVAILABLE', 'available') }
         ]
       }
     ]
@@ -230,11 +235,6 @@ TWDS.craftcalc.getcontent = function (win) {
     const tr = TWDS.createEle({
       nodeName: 'tr',
       last: tbody
-    })
-    TWDS.createEle({
-      nodeName: 'td',
-      textContent: allitems[i][1],
-      last: tr
     })
     TWDS.createEle({
       nodeName: 'td',
@@ -254,6 +254,19 @@ TWDS.craftcalc.getcontent = function (win) {
       textContent: allitems[i][2],
       last: tr
     })
+    TWDS.createEle({
+      nodeName: 'td',
+      textContent: allitems[i][1],
+      last: tr
+    })
+
+    const count = Bag.getItemCount(allitems[i][0])
+    TWDS.createEle({
+      nodeName: 'td',
+      textContent: count,
+      className: count < allitems[i][1] ? 'available red' : 'available green',
+      last: tr
+    })
   }
   TWDS.createEle({ nodeName: 'hr', last: resultarea })
   TWDS.createEle({
@@ -263,6 +276,7 @@ TWDS.craftcalc.getcontent = function (win) {
   })
   const resultchat = TWDS.createEle({
     nodeName: 'div',
+    className: 'forcopying',
     last: resultarea
   })
   resultchat.textContent = win._TWDS_number
@@ -281,7 +295,7 @@ TWDS.craftcalc.getcontent = function (win) {
   })
   const resultstorage = TWDS.createEle({
     nodeName: 'div',
-    className: 'TWDS_craftcalc_storagearea',
+    className: 'TWDS_craftcalc_storagearea forcopying',
     last: resultarea
   })
   const tmp = {}
