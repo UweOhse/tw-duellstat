@@ -199,6 +199,11 @@ TWDS.questlist.openwindow = function () {
 }
 
 TWDS.registerStartFunc(function () {
+  TWDS.registerExtra('TWDS.questlist.openwindow',
+    TWDS._('EXTRAS_QUESTS_TEXT', 'Quests by employers'),
+    TWDS._('EXTRAS_QUESTS_HELP', 'Shows the availaible chest at the various employers')
+  )
+
   // wait 2.5 seconds to avoid a thundering herd.
   // setTimeout(TWDS.collections.load, 2500)
   TWDS.delegate(document.body, 'click', '.TWDS_questlist_employerlink', function (ev) {

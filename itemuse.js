@@ -179,6 +179,10 @@ TWDS.registerStartFunc(function () {
     TWDS._('MISC_SETTING_CHESTANALYZER',
       'Analyze the contents of chests. In the future the collected data will be shown somewhere.'),
     true)
+  TWDS.registerExtra('TWDS.itemuse.openwindow',
+    TWDS._('EXTRAS_CHESTS_TEXT', 'Chests contents'),
+    TWDS._('EXTRAS_CHESTS_HELP', 'Shows the contents of chest you opened')
+  )
 
   // it's either this hack, or patching the original function.
   // this here isn't beautiful, but at least less prone to fuckups.

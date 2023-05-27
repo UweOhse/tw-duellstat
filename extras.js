@@ -23,30 +23,20 @@ TWDS.extras.getTabContent = function () {
   const div = document.createElement('div')
   div.id = 'TWDS_extras'
   TWDS.createEle('h2', { beforeend: div, textContent: TWDS._('EXTRAS_TITLE', 'Extras') })
-  TWDS.createEle('ul', { beforeend: div })
-  div.appendChild(TWDS.extras.button('TWDS.wuw.openwindow',
-    TWDS._('EXTRAS_WUW_TEXT', 'What is used where?'),
-    TWDS._('EXTRAS_WUW_HELP', 'Shows which equipment is used for which job / equipment set')
-  ))
-  div.appendChild(TWDS.extras.button('TWDS.itemuse.openwindow',
-    TWDS._('EXTRAS_CHESTS_TEXT', 'Chests contents?'),
-    TWDS._('EXTRAS_CHESTS_HELP', 'Shows the contents of chest you opened')
-  ))
-  div.appendChild(TWDS.extras.button('TWDS.questlist.openwindow',
-    TWDS._('EXTRAS_QUESTS_TEXT', 'Quests by employers?'),
-    TWDS._('EXTRAS_QUESTS_HELP', 'Shows the availaible chest at the various employers')
-  ))
-  div.appendChild(TWDS.extras.button('TWDS.collections.openwindow',
-    TWDS._('EXTRAS_COLLECTIONS_TEXT', 'Collections?'),
-    TWDS._('EXTRAS_COLLECTIONS_HELP', 'Shows missing collection items.')
-  ))
-  div.appendChild(TWDS.extras.button('TWDS.altinv.openwindow',
-    TWDS._('EXTRAS_COLLECTIONS_TEXT', 'Tabular inventory'),
-    TWDS._('EXTRAS_COLLECTIONS_HELP', 'Shows your inventory as one big table, sorted by set and name.')
-  ))
+  const ul = TWDS.createEle('ul', { beforeend: div })
+
+  const a = []
   for (let i = 0; i < TWDS.extraList.length; i++) {
     const e = TWDS.extraList[i]
-    div.appendChild(TWDS.extras.button(e.fn, e.text, e.help))
+    a.push([i, e.text.toLocaleLowerCase()])
+  }
+  a.sort(function (a, b) {
+    return a[1].localeCompare(b[1])
+  })
+  for (let i = 0; i < TWDS.extraList.length; i++) {
+    const j = a[i][0]
+    const e = TWDS.extraList[j]
+    ul.appendChild(TWDS.extras.button(e.fn, e.text, e.help))
   }
   return div
 }

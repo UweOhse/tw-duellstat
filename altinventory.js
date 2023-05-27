@@ -352,3 +352,9 @@ TWDS.altinv.openwindow = function () {
 
   win.appendToContentPane(sp.getMainDiv())
 }
+TWDS.registerStartFunc(function () {
+  TWDS.registerExtra('TWDS.altinv.openwindow',
+    TWDS._('EXTRAS_ALTINTV_TEXT', 'Tabular inventory'),
+    TWDS._('EXTRAS_ALTINV_HELP', 'Shows your inventory as one big table, sorted by set and name.')
+  )
+})

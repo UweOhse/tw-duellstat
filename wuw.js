@@ -182,23 +182,11 @@ TWDS.wuw.openwindow = function (scrollto) {
   }
 }
 
-/*
-TWDS.wuw.getWUWContent = function () {
-  const div = document.createElement('div')
-  div.id = 'TWDS_wuw'
-  TWDS.wuw.initWUWDisplay(div)
-  return div
-}
-TWDS.wuw.activateWUWTab = function () {
-  TWDS.activateTab('wuw')
-}
 TWDS.registerStartFunc(function () {
-  TWDS.registerTab('wuw',
-    TWDS._('TABNAME_WUW', 'Usage'),
-    TWDS.wuw.getWUWContent,
-    TWDS.wuw.activateWUWTab,
-    true)
+  TWDS.registerExtra('TWDS.wuw.openwindow',
+    TWDS._('EXTRAS_WUW_TEXT', 'What is used where?'),
+    TWDS._('EXTRAS_WUW_HELP', 'Shows which equipment is used for which job / equipment set')
+  )
 })
-*/
 
 // vim: tabstop=2 shiftwidth=2 expandtab

@@ -1360,5 +1360,6 @@ TWDS.itemsettab.openwindow = function (paraitems) {
   win.appendToContentPane(sp.getMainDiv())
 }
 
-TWDS.registerStartFunc(TWDS.itemsettab.startFunction)
-TWDS.registerExtra('TWDS.itemsettab.openwindow', 'Itemsets', 'List all itemsets')
+TWDS.registerStartFunc(function () {
+  TWDS.registerExtra('TWDS.itemsettab.openwindow', 'Itemsets', 'List all itemsets')
+})

@@ -216,4 +216,8 @@ TWDS.collections.load = function () {
 TWDS.registerStartFunc(function () {
   // wait 2.5 seconds to avoid a thundering herd.
   setTimeout(TWDS.collections.load, 2500)
+  TWDS.registerExtra('TWDS.collections.openwindow',
+    TWDS._('EXTRAS_COLLECTIONS_TEXT', 'Collections'),
+    TWDS._('EXTRAS_COLLECTIONS_HELP', 'Shows missing collection items.')
+  )
 })
