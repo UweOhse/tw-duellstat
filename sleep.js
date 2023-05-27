@@ -45,9 +45,6 @@ TWDS.sleep.open = function (eventdata) {
   let needexpire = false
   if (now - ts >= 86400 * 1000) {
     needexpire = true
-    console.log("NEEDEXPIRE");
-  } else {
-    console.log("NO EXPIRE");
   }
   TWDS.sleep.cache = cache
 
@@ -165,7 +162,6 @@ TWDS.sleep.open = function (eventdata) {
         })
       }
     }
-    console.log("TODOS",todos);
 
     // the following uses a cache for barrack / hotel levels.
 
