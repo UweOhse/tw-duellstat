@@ -814,22 +814,7 @@ TWDS.registerStartFunc(function () {
     const key = tr.dataset.key
     const tmp = window.localStorage.getItem(key)
     if (!tmp) return
-    const o = JSON.parse(tmp)
-    if (Premium.hasBonus('automation')) {
-      Wear.open()
-      for (const i in o.item_ids) {
-        const ii = o.item_ids[i]
-        const b = Bag.getItemByItemId(Number(ii))
-        if (b) {
-          Wear.carry(b)
-        }
-      }
-    } else {
-      if (!wman.getById(Inventory.uid)) { Inventory.open() }
-      Wear.open()
-      const items = Bag.getItemsByItemIds(o.item_ids)
-      Inventory.showSearchResult(items)
-    }
+    TWDS.wearItemsHandler(JSON.parse(o.item_ids))
   })
 })
 
