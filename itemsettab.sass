@@ -1,0 +1,63 @@
+div.tw2gui_window.TWDS_wide_window {
+  width:Max(50vw,748px);
+  height:Max(66vh,471px);
+  .tw2gui_window_inset {
+    background-size:cover;
+  }
+}
+#TWDS_tab_itemsets,
+.TWDS_itemset_window {
+  #TWDS_itemsettable_plus,
+  #TWDS_itemsettable_minus {
+    min-width:2em;
+    margin-right:0.5em;
+  }
+  .TWDS_itemsets_filterline {
+    display:flex;
+    justify-content:space-between;
+    div, label {
+        grid-row:1;
+    }
+    label:last-child {
+      grid-row:2;
+      grid-column: 3 / span 2;
+    }
+  }
+  .TWDS_itemsets_options select,
+  .TWDS_itemsets_options label {
+    margin-left:1em;
+  }
+  #TWDS_itemset_table {
+    border-collapse: collapse;
+    thead { 
+      position:sticky;
+      top:0;
+      background-color: wheat;
+    } 
+    td.perlevel {
+      font-style: italic;
+    }
+    td,
+    tbody th {
+      border:1px solid #888;
+      padding:2px;
+      font-size:inherit;
+    }
+    thead th {
+      border:1px solid #888;
+      padding:2px;
+      font-size:inherit;
+    }
+    thead tr.colspanrow th {
+      border-top:none;
+    }
+    tbody th.setname {
+      cursor:pointer;
+    }
+  }
+}
+body.TWDS_itemsettable_hidemany #TWDS_tab_itemsets .maybehidden {
+  display:none;
+} 
+
+

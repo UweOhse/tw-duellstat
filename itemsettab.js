@@ -138,6 +138,27 @@ TWDS.itemsettab.createfilters = function (allsets, checkedWithItems) {
     },
     {
       nodeName: 'label',
+      children: [
+        { nodeName: 'input', type: 'checkbox', id: 'TWDS_itemsets_filter_clothes', value: 1 },
+        { nodeName: 'span', textContent: TWDS._('ITEMSETS_CLOTHES', 'clothes') }
+      ]
+    },
+    {
+      nodeName: 'label',
+      children: [
+        { nodeName: 'input', type: 'checkbox', id: 'TWDS_itemsets_filter_weapons', value: 1 },
+        { nodeName: 'span', textContent: TWDS._('ITEMSETS_WEAPONS', 'weapons') }
+      ]
+    },
+    {
+      nodeName: 'label',
+      children: [
+        { nodeName: 'input', type: 'checkbox', id: 'TWDS_itemsets_filter_animals', value: 1 },
+        { nodeName: 'span', textContent: TWDS._('ITEMSETS_ANIMALYIELD', 'animal/yield') }
+      ]
+    },
+    {
+      nodeName: 'label',
       children: [{
         nodeName: 'input',
         type: 'checkbox',
@@ -1073,12 +1094,29 @@ TWDS.itemsettab.getContent1 = function () {
     if (k === 'instance_set_1') {
       console.log('Bandit', sum)
     }
+    let hasw = false
+    let hasa = false
+    let hasc = false
+    for (let j = 0; j < items.length; j++) {
+      const iid = items[j]
+      const item = ItemManager.getByBaseId(iid)
+      if (item.type === 'animal' || item.type === 'yield') {
+        hasa = true
+      } else if (item.type === 'left_arm' || item.type === 'left_arm') {
+        hasw = true
+      } else if (item.type === 'head' || item.type === 'neck' || item.type === 'body' || item.type === 'foot' || item.type === 'belt' || item.type === 'pants') {
+        hasc = true
+      }
+    }
 
     const tr = TWDS.createEle({
       nodeName: 'tr',
       dataset: {
         year: year,
-        event: eventcode
+        event: eventcode,
+        hasweapon: hasw,
+        hasanimal: hasa,
+        hasclothes: hasc
       },
       children: [
         {
@@ -1164,6 +1202,15 @@ TWDS.itemsettab.getContent1 = function () {
   TWDS.q1('#TWDS_itemsets_filter_event', div).addEventListener('change', function (e) {
     TWDS.itemsettab.dofilter()
   })
+  TWDS.q1('#TWDS_itemsets_filter_weapons', div).addEventListener('change', function (e) {
+    TWDS.itemsettab.dofilter()
+  })
+  TWDS.q1('#TWDS_itemsets_filter_clothes', div).addEventListener('change', function (e) {
+    TWDS.itemsettab.dofilter()
+  })
+  TWDS.q1('#TWDS_itemsets_filter_animals', div).addEventListener('change', function (e) {
+    TWDS.itemsettab.dofilter()
+  })
   TWDS.q1('#TWDS_itemsettable_download', div).addEventListener('click', function (e) {
     TWDS.download_table('itemsets', '#TWDS_tab_itemsets')
   })
@@ -1235,10 +1282,31 @@ TWDS.itemsettab.dofilter = function () {
   const wantyear = TWDS.q1('#TWDS_itemsets_filter_year').value
   const wantfunction = TWDS.q1('#TWDS_itemsets_filter_function').value
   const wantevent = TWDS.q1('#TWDS_itemsets_filter_event').value
+  const wantweapons = TWDS.q1('#TWDS_itemsets_filter_weapons').checked
+  const wantclothes = TWDS.q1('#TWDS_itemsets_filter_clothes').checked
+  const wantanimals = TWDS.q1('#TWDS_itemsets_filter_animals').checked
   const tr = TWDS.q('#TWDS_itemset_table tbody tr')
   console.log('filtering', wantfunction, wantyear)
   for (let i = 0; i < tr.length; i++) {
     tr[i].style.display = 'table-row'
+    if (wantweapons) {
+      if (tr[i].dataset.hasweapon !== 'true') {
+        tr[i].style.display = 'none'
+        continue
+      }
+    }
+    if (wantclothes) {
+      if (tr[i].dataset.hasclothes !== 'true') {
+        tr[i].style.display = 'none'
+        continue
+      }
+    }
+    if (wantanimals) {
+      if (tr[i].dataset.hasanimal !== 'true') {
+        tr[i].style.display = 'none'
+        continue
+      }
+    }
     if (wantyear === 'missing') {
       const y = parseInt(tr[i].dataset.year)
       if (y !== 0) {
@@ -1282,12 +1350,15 @@ TWDS.itemsettab.activate = function () {
     }
   })
 }
-
-TWDS.itemsettab.startFunction = function () {
-  TWDS.registerTab('itemsets',
-    TWDS._('TABNAME_SETS', 'Sets'),
-    TWDS.itemsettab.getContent,
-    TWDS.itemsettab.activate,
-    true)
+TWDS.itemsettab.openwindow = function (paraitems) {
+  const myname = 'TWDS_itemset_window'
+  const win = wman.open(myname, TWDS._('ITEMSETS_TITLE', 'Itemsets'), 'TWDS_wide_window')
+  win.setMiniTitle('Itemsets')
+  const sp = new west.gui.Scrollpane()
+  const content = TWDS.itemsettab.getContent()
+  sp.appendContent(content)
+  win.appendToContentPane(sp.getMainDiv())
 }
+
 TWDS.registerStartFunc(TWDS.itemsettab.startFunction)
+TWDS.registerExtra('TWDS.itemsettab.openwindow', 'Itemsets', 'List all itemsets')
