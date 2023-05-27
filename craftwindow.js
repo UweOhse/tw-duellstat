@@ -522,19 +522,6 @@ TWDS.craftwindow.craftitemdisplay = function (rsitemid, flagproduct, itemid) {
       : TWDS._('CRAFTWINDOW_TITLE_NUMBERS_RS', 'resources needed / resources in your inventory.'),
     last: container
   })
-  const sellcontainer = TWDS.createEle({
-    nodeName: 'div',
-    className: 'sell',
-    last: container
-  })
-  if (!flagproduct) {
-    const it2 = ItemManager.get(itemid)
-    const b = TWDS.itemSellButton(rsitemid, 1, it2.name)
-    if (b) sellcontainer.appendChild(b)
-  } else {
-    const b = TWDS.itemSellButton(rsitemid, 1, '')
-    if (b) sellcontainer.appendChild(b)
-  }
   // functions
   const fnc = TWDS.createEle({
     nodeName: 'div',
@@ -571,6 +558,15 @@ TWDS.craftwindow.craftitemdisplay = function (rsitemid, flagproduct, itemid) {
     x.classList.add('TWDS_crafting_jump')
     x.dataset.itemid = rsitemid
     fnc.appendChild(x)
+  }
+
+  if (!flagproduct) {
+    const it2 = ItemManager.get(itemid)
+    const b = TWDS.itemSellButton(rsitemid, 1, it2.name)
+    if (b) fnc.appendChild(b)
+  } else {
+    const b = TWDS.itemSellButton(rsitemid, 1, '')
+    if (b) fnc.appendChild(b)
   }
   return container
 }
