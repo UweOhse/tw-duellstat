@@ -458,12 +458,14 @@ TWDS.bonusStartFunction = function () {
     TWDS.getBonusContent,
     TWDS.activateBonusTab,
     true)
+  /*
   window.EventHandler.listen('wear_changed', function () {
     if (!wman.isWindowCreated('TWDS')) return
     if (!TWDS.window) return
     if (TWDS.window.currentActiveTabId !== 'bonus') return
     TWDS.activateTab('bonus')
   })
+  */
 }
 TWDS.registerStartFunc(TWDS.bonusStartFunction)
 
