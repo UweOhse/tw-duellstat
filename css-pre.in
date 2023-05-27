@@ -507,19 +507,19 @@ TWDS.insertStyles = function () {
     .TWDS_quickusableshelper .tw2gui_scrollpane li:nth-child(4) {
       border-bottom: 3px solid black;
     }
-    .TWDS_sleephelper .tw2gui_scrollpane li span span {
+    .TWDS_sleephelper li span span {
       float:right;
       font-width:bold;
       font-family:fixed;
       line-height:20px;
     }
-    .TWDS_sleephelper .tw2gui_scrollpane li span span.stars5, 
-    .TWDS_sleephelper .tw2gui_scrollpane li span span.stars6 {
+    .TWDS_sleephelper li span span.stars5, 
+    .TWDS_sleephelper li span span.stars6 {
       color:green;
     }
-    .TWDS_sleephelper .tw2gui_scrollpane li span span.stars1, 
-    .TWDS_sleephelper .tw2gui_scrollpane li span span.stars2 {
-      color:orange;
+    .TWDS_sleephelper li span span.stars1, 
+    .TWDS_sleephelper li span span.stars2 {
+      color:red;
     }
     .TWDS_clickable {
       cursor:pointer;

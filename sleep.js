@@ -45,6 +45,9 @@ TWDS.sleep.open = function (eventdata) {
   let needexpire = false
   if (now - ts >= 86400 * 1000) {
     needexpire = true
+    console.log("NEEDEXPIRE");
+  } else {
+    console.log("NO EXPIRE");
   }
   TWDS.sleep.cache = cache
 
@@ -162,6 +165,7 @@ TWDS.sleep.open = function (eventdata) {
         })
       }
     }
+    console.log("TODOS",todos);
 
     // the following uses a cache for barrack / hotel levels.
 
@@ -203,10 +207,12 @@ TWDS.sleep.open = function (eventdata) {
         }
         if (todo.fort_id) {
           const lv = cache.forts[todo.fort_id]
-          addit('fort-' + todo.fort_id + '-' + todo.x + '-' + todo.y,
-            todo.waytime,
-            todo.name,
-            TWDS._('SLEEP_BARRACK', 'Barrack'), lv)
+          if (lv) {
+            addit('fort-' + todo.fort_id + '-' + todo.x + '-' + todo.y,
+              todo.waytime,
+              todo.name,
+              TWDS._('SLEEP_BARRACK', 'Barrack'), lv)
+          }
         }
         handletodos() // recursion. Urks.
         return
@@ -247,6 +253,8 @@ TWDS.sleep.open = function (eventdata) {
               todo.waytime,
               todo.name,
               'Barrack', data.barrackStage)
+          } else {
+            cache.forts[todo.fort_id] = 0
           }
           handletodos() // recursion. Urks.
         })
