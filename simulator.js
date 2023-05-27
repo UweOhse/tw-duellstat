@@ -66,13 +66,13 @@ TWDS.simulator.switchslot = function (area, sl, ii) {
     })
   }
 }
-TWDS.simulator.updateresult = function (ra, ia, jobsel) {
+TWDS.simulator.updateresult = function (ra, ia, jobsel, da) {
   const charPremium = Number(Premium.hasBonus('character'))
   const moneyPremium = Number(Premium.hasBonus('money'))
   const o = []
   const a = TWDS.q('.target .item', ia)
   for (let i = 0; i < a.length; i++) {
-    o.push(a[i].dataset.twds_item_id)
+    o.push(parseInt(a[i].dataset.twds_item_id))
   }
   const t = TWDS.bonuscalc.getComboBonus(o, true)
   ra.innerHTML = ''
@@ -177,6 +177,7 @@ TWDS.simulator.updateresult = function (ra, ia, jobsel) {
       last: tab
     })
   }
+  da.textContent = TWDS.describeItemCombo(o)
 }
 TWDS.simulator.openwindow = function (paraitems) {
   const myname = 'TWDS_simulator_window'
@@ -201,6 +202,10 @@ TWDS.simulator.openwindow = function (paraitems) {
   })
   const resultarea = TWDS.createEle('div', {
     className: 'TWDS_simulator_resultarea',
+    last: content
+  })
+  const descarea = TWDS.createEle('div', {
+    className: 'TWDS_simulator_descarea',
     last: content
   })
   TWDS.createEle('hr', {
@@ -266,7 +271,7 @@ TWDS.simulator.openwindow = function (paraitems) {
     sel.onchange = function () {
       TWDS.simulator.switchslot(itemarea, sl, this.value)
       sel.remove()
-      TWDS.simulator.updateresult(resultarea, itemarea, jobsel)
+      TWDS.simulator.updateresult(resultarea, itemarea, jobsel, descarea)
     }
   })
   TWDS.delegate(content, 'change', '.target .leveling', function () {
@@ -277,12 +282,12 @@ TWDS.simulator.openwindow = function (paraitems) {
     let it = ItemManager.get(cur)
     it = ItemManager.get(it.item_base_id * 1000 + parseInt(this.value))
     TWDS.simulator.switchslot(itemarea, it.type, it.item_id)
-    TWDS.simulator.updateresult(resultarea, itemarea, jobsel)
+    TWDS.simulator.updateresult(resultarea, itemarea, jobsel, descarea)
   })
   jobsel.onchange = function () {
-    TWDS.simulator.updateresult(resultarea, itemarea, jobsel)
+    TWDS.simulator.updateresult(resultarea, itemarea, jobsel, descarea)
   }
-  TWDS.simulator.updateresult(resultarea, itemarea, jobsel)
+  TWDS.simulator.updateresult(resultarea, itemarea, jobsel, descarea)
 
   sp.appendContent(content)
   win.appendToContentPane(sp.getMainDiv())
