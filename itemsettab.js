@@ -1220,6 +1220,12 @@ TWDS.itemsettab.getContent1 = function () {
   TWDS.q1('#TWDS_itemsettable_minus', div).addEventListener('click', function (e) {
     TWDS.itemsets_fontsize(-1)
   })
+  TWDS.q1('#TWDS_itemset_table', div).addEventListener('click', function (e) {
+    const t = e.target
+    if (t.classList.contains('setname')) {
+      TWDS.showset.open(t.dataset.setkey)
+    }
+  })
   console.log('itemsettab done, dofilter version')
   const h4 = TWDS.createEle({
     nodeName: 'h4',
