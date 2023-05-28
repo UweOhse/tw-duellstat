@@ -262,7 +262,9 @@ TWDS.itemSellButton = function (id, count, desc) {
       {
         nodeName: 'span',
         textContent: '$$',
-        color: 'green'
+        style: {
+          color: 'green'
+        }
       }
     ]
   })
