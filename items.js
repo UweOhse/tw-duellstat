@@ -136,7 +136,7 @@ TWDS.items.makedata = function () {
         if (info.err) {
           out.err = true
         } else {
-          out.time += info.time
+          out.time += info.time * count
           out.shopitems += info.shopitems * count
           out.founditems += info.founditems * count
           out.crafteditems += info.crafteditems * count
