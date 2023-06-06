@@ -158,62 +158,51 @@ TWDS.clothcache.recalcItemUsage = function () {
   })
 }
 
-TWDS.clothcache.startFunction = function () {
-  try {
-    west.item.Calculator._TWDS_backup_getBestSet = west.item.Calculator.getBestSet
-    west.item.Calculator.getBestSet = TWDS.getBestSetWrapper
-  } catch (e) {
-  }
+TWDS.clothcache.invItemInitDisplay = function () {
+  tw2widget.InventoryItem.prototype._TWDS_backup_initDisplay.apply(this, arguments)
 
-  try {
-    tw2widget.InventoryItem.prototype._TWDS_backup_initDisplay = tw2widget.InventoryItem.prototype.initDisplay
-    tw2widget.InventoryItem.prototype.initDisplay = function () {
-      tw2widget.InventoryItem.prototype._TWDS_backup_initDisplay.apply(this, arguments)
+  const ii = this.obj.item_id
+  this.divMain[0].dataset.twds_item_id = ii // for ease of scripting
 
-      const ii = this.obj.item_id
-      this.divMain[0].dataset.twds_item_id = ii // for ease of scripting
+  let iu = window.localStorage.getItem('TWDS_itemusage')
+  if (iu !== null) {
+    iu = JSON.parse(iu)
 
-      let iu = window.localStorage.getItem('TWDS_itemusage')
-      if (iu === null) return
-      iu = JSON.parse(iu)
-
-      let title = ''
-      let count = 0
-      if (ii in iu) {
-        iu = iu[ii]
-        if (iu.job.length) {
-          title = title + TWDS._('CLOTHCACHE_JOBS', '$n$ jobs', { n: iu.job.length })
-          count += iu.job.length
-        }
-        if (iu.eq.length) {
-          if (title > '') title += ', '
-          title = title + TWDS._('CLOTHCACHE_TW_EQ_SETS', '$n$ equipment sets', { n: iu.eq.length })
-          count += iu.eq.length
-        }
-        if (iu.ds.length) {
-          if (title > '') title += ', '
-          title = title + TWDS._('CLOTHCACHE_DS_EQ_SETS', '$n$ duellstat equipment sets', { n: iu.ds.length })
-          count += iu.ds.length
+    let title = ''
+    let count = 0
+    if (ii in iu) {
+      iu = iu[ii]
+      if (iu.job.length) {
+        title = title + TWDS._('CLOTHCACHE_JOBS', '$n$ jobs', { n: iu.job.length })
+        count += iu.job.length
+      }
+      if (iu.eq.length) {
+        if (title > '') title += ', '
+        title = title + TWDS._('CLOTHCACHE_TW_EQ_SETS', '$n$ equipment sets', { n: iu.eq.length })
+        count += iu.eq.length
+      }
+      if (iu.ds.length) {
+        if (title > '') title += ', '
+        title = title + TWDS._('CLOTHCACHE_DS_EQ_SETS', '$n$ duellstat equipment sets', { n: iu.ds.length })
+        count += iu.ds.length
+      }
+    }
+    let twcalc = window.localStorage.getItem('TWCalc_Wardrobe')
+    if (twcalc !== null) {
+      twcalc = JSON.parse(twcalc)
+      let wcnt = 0
+      for (let i = 0; i < twcalc.length; i++) {
+        for (let j = 0; j < 10; j++) {
+          if (twcalc[i].items[j] === ii) { wcnt++ }
         }
       }
-      let twcalc = window.localStorage.getItem('TWCalc_Wardrobe')
-      if (twcalc !== null) {
-        twcalc = JSON.parse(twcalc)
-        let wcnt = 0
-        for (let i = 0; i < twcalc.length; i++) {
-          for (let j = 0; j < 10; j++) {
-            if (twcalc[i].items[j] === ii) { wcnt++ }
-          }
-        }
-        if (wcnt) {
-          if (title > '') title += ', '
-          title = title + TWDS._('CLOTHCACHE_TC_EQ_SETS', '$n$ TW-Calc equipment sets', { n: wcnt })
-          count += wcnt
-        }
+      if (wcnt) {
+        if (title > '') title += ', '
+        title = title + TWDS._('CLOTHCACHE_TC_EQ_SETS', '$n$ TW-Calc equipment sets', { n: wcnt })
+        count += wcnt
       }
-      if (!count) {
-        return
-      }
+    }
+    if (count) {
       title += TWDS._('CLOTHCACHE_SHIFT_CLICK_FOR', '. Shift-Click for more information.')
       const span = document.createElement('span')
       span.classList.add('TWDS_itemusageinfo')
@@ -226,6 +215,26 @@ TWDS.clothcache.startFunction = function () {
         this.divMain[0].classList.add('not_sellable')
       }
     }
+  }
+  const st = TWDS.storage.iteminfo(ii)
+  const want = parseInt(st[0])
+  if (want > 0) {
+    const countele = TWDS.q1('.count', this.divMain[0])
+    countele.textContent = countele.textContent + ' / ' + want
+    console.log('countele', countele, this.divMain[0])
+  }
+}
+
+TWDS.clothcache.startFunction = function () {
+  try {
+    west.item.Calculator._TWDS_backup_getBestSet = west.item.Calculator.getBestSet
+    west.item.Calculator.getBestSet = TWDS.getBestSetWrapper
+  } catch (e) {
+  }
+
+  try {
+    tw2widget.InventoryItem.prototype._TWDS_backup_initDisplay = tw2widget.InventoryItem.prototype.initDisplay
+    tw2widget.InventoryItem.prototype.initDisplay = TWDS.clothcache.invItemInitDisplay
     document.addEventListener('click', function (ev) {
       if (ev.target.classList.contains('TWDS_itemusageinfo')) {
         if (ev.shiftKey) {
