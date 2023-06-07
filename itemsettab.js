@@ -189,10 +189,62 @@ TWDS.itemsettab.createfilters = function (allsets, checkedWithItems) {
   return p
 }
 TWDS.itemsettab.fixinfo = {
+  set_goodnight: { year: 1, event: 'friendship' },
+  set_meischdas: { year: 1, event: 'friendship' },
+  set_snowi: { year: 1, event: 'friendship' },
+  set_akoya: { year: 1, event: 'friendship' },
+  set_dark_templar: { year: 1, event: 'friendship' },
+  set_giony4you: { year: 1, event: 'friendship' },
+  set_matsacolthan: { year: 1, event: 'friendship' },
+  set_multi_account: { year: 1, event: 'friendship' },
+  set_orichyto: { year: 1, event: 'friendship' },
+  set_ilpresidento: { year: 1, event: 'friendship' },
+  set_stelladelwest: { year: 1, event: 'friendship' },
+  set_merlin: { year: 1, event: 'friendship' },
+  set_svetlanaili: { year: 1, event: 'friendship' },
+  set_lucabadoer: { year: 1, event: 'friendship' },
+  set_luckyday: { year: 1, event: 'friendship' },
+  set_texasladys: { year: 1, event: 'friendship' },
+  set_meta: { year: 1, event: 'friendship' },
+  set_hassan: { year: 1, event: 'friendship' },
+  set_dorafix: { year: 1, event: 'friendship' },
+  set_lordlamar: { year: 1, event: 'friendship' },
+  set_txankete: { year: 1, event: 'friendship' },
+  set_chinski: { year: 1, event: 'friendship' },
+  set_xque69: { year: 1, event: 'friendship' },
+  set_montxi: { year: 1, event: 'friendship' },
+  set_gogoboom: { year: 1, event: 'friendship' },
+  set_sar_pepita: { year: 1, event: 'friendship' },
+  set_r0mpehues0s: { year: 1, event: 'friendship' },
+  set_damed: { year: 1, event: 'friendship' },
+  set_flopsinchen: { year: 1, event: 'friendship' },
+  set_kolac015: { year: 1, event: 'friendship' },
+  set_deanie_obanion: { year: 1, event: 'friendship' },
+  set_mrs_dreamer: { year: 1, event: 'friendship' },
+  set_wolfskin: { year: 1, event: 'friendship' },
+  set_childerich: { year: 1, event: 'friendship' },
+  set_killstreak1: { year: 1, event: 'friendship' },
+  set_olga: { year: 1, event: 'friendship' },
+  set_jerznero: { year: 1, event: 'friendship' },
+  set_gobnit: { year: 1, event: 'friendship' },
+  set_rambo: { year: 1, event: 'friendship' },
+  set_volka: { year: 1, event: 'friendship' },
+  set_rompehuesos: { year: 1, event: 'friendship' },
+  set_agetn_pinky: { year: 1, event: 'friendship' },
+  set_agent_brain: { year: 1, event: 'friendship' },
+  set_ninja123: { year: 1, event: 'friendship' },
+
+  set_veteran_horse: { year: 2014, event: 'outgame' },
+
+  fireworker_set: { year: 1, event: 'ingame' }, // der Eimer
+  tw_times_set: { year: 1, event: 'outgame' }, // Gewinnspiele der Times
+  wooden_magician_set: { year: 2012, event: 'shop' }, // Gewinnspiele der Times
+
   curling_set_1: { year: 2021, event: 'sale' },
   curling_set_2: { year: 2021, event: 'sale' },
-  legendary_set_1: { year: 2021, event: 'sale' },
-  legendary_set_2: { year: 2021, event: 'sale' },
+  set_free_to_use_dummy: { year: 2021, event: 'ingame' },
+  legendary_set_1: { year: 2021, event: 'ingame' },
+  legendary_set_2: { year: 2021, event: 'ingame' },
   set_duelist: { year: 2012, event: 'xmas' },
   set_fort: { year: 2012, event: 'xmas' },
   set_fortunehunter: { year: 2012, event: 'xmas' },
@@ -238,19 +290,19 @@ TWDS.itemsettab.fixinfo = {
   set_pilgrim_female: { year: 1, event: 'ingame' },
   set_quackery: { year: 1, event: 'ingame' },
   set_sleeper: { year: 1, event: 'ingame' },
-  season_set: { year: 1, event: 'otherevent' },
+  season_set: { year: 1, event: 'ingame' },
   set_walker: { year: 1, event: 'ingame' },
   gold_set: { year: 1, event: 'ingame' },
   greenhorn_set: { year: 1, event: 'ingame' },
   collector_set: { year: 1, event: 'ingame' },
-  set_party: { year: 1, event: 'otherevent' },
-  set_parade: { year: 1, event: 'otherevent' },
+  set_party: { year: 1, event: 'ingame' },
+  set_parade: { year: 1, event: 'ingame' },
   green_set_2021: { year: 1, event: 'ingame' },
   fancy_set_2021: { year: 1, event: 'ingame' },
 
   malachite_set_1: { year: 1, event: 'otherevent' },
 
-  set_st_patrick: { year: 1, event: 'otherevent' },
+  set_st_patrick: { year: 1, event: 'ingame' },
 
   instance_set_1: { year: 1, event: 'adventures' },
   set_veteran_2017_1: { year: 2017, event: 'adventures' },
@@ -262,12 +314,12 @@ TWDS.itemsettab.fixinfo = {
   set_dedmoroz_2016_animal: { year: 2016, event: 'xmas' },
   set_dedmoroz_2016: { year: 2016, event: 'xmas' },
 
-  harvets_set_2021_1: { year: 2021, event: 'otherevent' },
+  harvets_set_2021_1: { year: 2021, event: 'ingame' },
 
   set_fair: { year: 1, event: 'fair' },
 
-  set_soap: { year: 1, event: 'otherevent' },
-  labor_day: { year: 1, event: 'otherevent' },
+  set_soap: { year: 1, event: 'shop' },
+  labor_day: { year: 1, event: 'ingame' },
   set_cupid: { year: 1, event: 'shop' },
   bunny_set: { year: 1, event: 'shop' },
 
@@ -279,14 +331,14 @@ TWDS.itemsettab.fixinfo = {
   set_carnival_2018_1: { year: 2018, event: 'ingame' },
   set_carnival_2018_2: { year: 2018, event: 'ingame' }, // one piece for bonds.
   '2018_achievement_set': { year: 2018, event: 'ingame' }, // still not complete
-  '2018_10th_set_1': { year: 2018, event: 'otherevent' },
-  '2018_10th_set_2': { year: 2018, event: 'otherevent' },
-  '2018_10th_set_3': { year: 2018, event: 'otherevent' },
-  '2018_soccer_event': { year: 2018, event: 'otherevent' },
+  '2018_10th_set_1': { year: 2018, event: 'outgame' },
+  '2018_10th_set_2': { year: 2018, event: 'outgame' },
+  '2018_10th_set_3': { year: 2018, event: 'outgame' },
+  '2018_soccer_event': { year: 2018, event: 'ingame' },
   '2018_doldenset': { year: 2018, event: 'ingame' }, // dolden.
-  gold_rush_animal: { year: 2018, event: 'otherevent' },
-  gold_rush_clothes: { year: 2018, event: 'otherevent' },
-  gold_rush_weapons: { year: 2018, event: 'otherevent' },
+  gold_rush_animal: { year: 2018, event: 'outgame' }, // Gringo
+  gold_rush_clothes: { year: 2018, event: 'outgame' }, // Gringo
+  gold_rush_weapons: { year: 2018, event: 'outgame' }, // Gringo
   chef_set_1: { year: 2018, event: 'sale' },
   chef_set_2: { year: 2018, event: 'sale' },
   community_events_set: { year: 2018, event: 'otherevent' },
@@ -308,7 +360,13 @@ TWDS.itemsettab.fixinfo = {
   harvester_set_clothing: { year: 2020, event: 'sale' },
   harvester_set_weapon: { year: 2020, event: 'sale' },
   set_halloween: { year: 2020, event: 'ingame' },
-  creativity_set: { year: 2020, event: 'ingame' }
+  creativity_set: { year: 2020, event: 'ingame' },
+  creative_set: { year: 1, event: 'outgame' },
+  birthay_set_2021: { year: 2021, event: 'outgame' }, // birthay, really.
+
+  '15_b_day_set_weapon': { year: 2023, event: 'outgame' },
+  '15_b_day_set_animal': { year: 2023, event: 'outgame' },
+  '15_b_day_set': { year: 2023, event: 'outgame' }
 
 }
 TWDS.itemsettab.fixallsets = function (allsets) {
@@ -376,13 +434,16 @@ TWDS.itemsettab.fixallsets = function (allsets) {
       eventcode = 'fair'
     }
     if (k.match(/(^|_)(ifbc\d*|speedworld)_/)) {
-      eventcode = 'otherevent'
+      eventcode = 'outgame'
+    }
+    if (k.match(/(^|_)friendship(_|$)/)) {
+      eventcode = 'friendship'
     }
     if (k.match(/(^|_)eire/)) {
-      eventcode = 'otherevent'
+      eventcode = 'ingame'
     }
     if (k.match(/^community_event_.*_march/)) {
-      eventcode = 'otherevent'
+      eventcode = 'ingame'
     }
     allsets[i].eventcode = eventcode
     if (k in TWDS.itemsettab.fixinfo) {
@@ -403,6 +464,10 @@ TWDS.itemsettab.fixallsets = function (allsets) {
       case 'otherevent': allsets[i].eventname = 'Other events'; break
       case 'adventures': allsets[i].eventname = 'Adventures'; break
       case 'fair': allsets[i].eventname = 'Fair'; break
+      case 'outgame': allsets[i].eventname = 'Outgame'; break
+      case 'friendship': allsets[i].eventname = 'Friendship'; break
+      default:
+        console.log('no event match for', k, s.name, s.items)
     }
   }
   let last = 0
@@ -1212,7 +1277,7 @@ TWDS.itemsettab.getContent1 = function () {
     TWDS.itemsettab.dofilter()
   })
   TWDS.q1('#TWDS_itemsettable_download', div).addEventListener('click', function (e) {
-    TWDS.download_table('itemsets', '#TWDS_tab_itemsets')
+    TWDS.download_table('itemsets', '#TWDS_itemset_table')
   })
   TWDS.q1('#TWDS_itemsettable_plus', div).addEventListener('click', function (e) {
     TWDS.itemsets_fontsize(+1)
