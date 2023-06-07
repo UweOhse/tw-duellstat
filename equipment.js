@@ -741,13 +741,13 @@ TWDS.getEquipmentContent.specialButtons = function (div) {
 
   skills = [
     ['SPECIAL_FB_TANK_ATT', 'Tank, att.', 'fbtank',
-      JSON.stringify({ health: 0.4, dodge: 0.15, hide: 0.25, aim: 0.10, pitfall: 0.00, leadership: 0.1 })],
+      JSON.stringify({ health: 40, dodge: 15, hide: 25, aim: 10, pitfall: 0, leadership: 10 })],
     ['SPECIAL_FB_TANK_DEF', 'Tank, def.', 'fbtank',
-      JSON.stringify({ health: 0.4, dodge: 0.15, hide: 0.00, aim: 0.10, pitfall: 0.25, leadership: 0.1 })],
+      JSON.stringify({ health: 40, dodge: 15, hide: 0, aim: 10, pitfall: 25, leadership: 10 })],
     ['SPECIAL_FB_DMG_ATT', 'Damager, att.', 'fbdamager',
-      JSON.stringify({ health: -0.1, dodge: 0.10, hide: 0.30, aim: 0.30, pitfall: 0.00, leadership: 0.4 })],
+      JSON.stringify({ health: -10, dodge: 10, hide: 30, aim: 30, pitfall: 0, leadership: 40 })],
     ['SPECIAL_FB_DMG_DEF', 'Damager, def.', 'fbdamager',
-      JSON.stringify({ health: -0.1, dodge: 0.10, hide: 0.00, aim: 0.30, pitfall: 0.30, leadership: 0.4 })]
+      JSON.stringify({ health: -10, dodge: 10, hide: 0, aim: 30, pitfall: 30, leadership: 40 })]
   ]
   appendOneBlock(div, skills, 'TWDS_SPEC_duel_dmg', true, false)
 }
@@ -786,25 +786,25 @@ TWDS.registerStartFunc(function () {
     } else if (key1 === 'fbtank') {
       const p = JSON.parse(key2)
       items = TWDS.genCalc({
-        fboffense: 0.1,
-        fbdefense: 2.0,
-        fbdamage: 0.1,
-        fbresistance: 0.3
+        fboffense: 10,
+        fbdefense: 200,
+        fbdamage: 10,
+        fbresistance: 30
       }, p)
     } else if (key1 === 'fbdamager') {
       const p = JSON.parse(key2)
       items = TWDS.genCalc({
-        fboffense: 2.0,
-        fbdefense: 0.1,
-        fbdamage: 0.3,
-        fbresistance: 0.1
+        fboffense: 200,
+        fbdefense: 10,
+        fbdamage: 30,
+        fbresistance: 10
       }, p)
     } else if (key1 === 'range') {
       const p = JSON.parse(key2)
-      items = TWDS.genCalc({ range: 1 }, p)
+      items = TWDS.genCalc({ range: 100 }, p)
     } else if (key1 === 'melee') {
       const p = JSON.parse(key2)
-      items = TWDS.genCalc({ melee: 1 }, p)
+      items = TWDS.genCalc({ melee: 100 }, p)
     }
 
     TWDS.wearItemsHandler(items)
