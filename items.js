@@ -7,41 +7,66 @@ TWDS.items.date = 0
 
 TWDS.items.popupenhancementReal = function () {
   let x = window.ItemPopup._twds_backup_getXHTML.call(this)
+  let enhanced = null
+
+  const makeit = function () {
+    if (enhanced) return
+    enhanced = document.createElement('div')
+    enhanced.innerHTML = x
+  }
+
   const ii = this.item_obj.item_id
-  if (!(ii in TWDS.items.data)) {
-    return x
-  }
-  const e = document.createElement('div')
-  e.innerHTML = x
-  const p = e.querySelector('.inventory_popup_prices')
-  if (!p) {
-    return x
-  }
-  const d = TWDS.items.data[ii]
-  const ti = d.time * 3600
-  let str = ''
-  if (d.crafteditems > 0) {
-    if (d.founditems) {
-      str += TWDS._('ITEMPOPUP_CRAFTED', 'Crafted')
-      str += TWDS._('ITEMPOPUP_CRAFTED_FOUNDITEMS', ', $n$ items to find (<= $time$)', {
-        n: d.founditems,
+  if (ii in TWDS.items.data) {
+    makeit()
+    const p = enhanced.querySelector('.inventory_popup_prices')
+    if (!p) {
+      return x
+    }
+    const d = TWDS.items.data[ii]
+    const ti = d.time * 3600
+    let str = ''
+    if (d.crafteditems > 0) {
+      if (d.founditems) {
+        str += TWDS._('ITEMPOPUP_CRAFTED', 'Crafted')
+        str += TWDS._('ITEMPOPUP_CRAFTED_FOUNDITEMS', ', $n$ items to find (<= $time$)', {
+          n: d.founditems,
+          time: ti.formatDuration()
+        })
+      }
+      if (d.shopitems > 0) { str += TWDS._('ITEMPOPUP_SHOPITEMS', ', $n$ items to buy', { n: d.shopitems }) }
+    } else {
+      str += TWDS._('ITEMPOPUP_FOUNDITEM_WORKTIME', 'Found, <= $time$ to collect', {
         time: ti.formatDuration()
       })
     }
-    if (d.shopitems > 0) { str += TWDS._('ITEMPOPUP_SHOPITEMS', ', $n$ items to buy', { n: d.shopitems }) }
-  } else {
-    str += TWDS._('ITEMPOPUP_FOUNDITEM_WORKTIME', 'Found, <= $time$ to collect', {
-      time: ti.formatDuration()
+
+    TWDS.createElement({
+      nodeName: 'div',
+      className: 'TWDS_popup_enhance',
+      afterend: p,
+      textContent: str
     })
   }
 
-  TWDS.createElement({
-    nodeName: 'div',
-    className: 'TWDS_popup_enhance',
-    afterend: p,
-    textContent: str
-  })
-  x = e.innerHTML
+  if (ii in TWDS.collections.dropdata) {
+    makeit()
+    const head = TWDS.q1('.invPopup_head', enhanced)
+    const jid = TWDS.collections.dropdata[ii]
+    if (head) {
+      const jd = JobList.getJobById(jid)
+      if (jd) {
+        TWDS.createElement({
+          nodeName: 'img',
+          className: 'TWDS_popup_enhance2',
+          src: '/images/jobs/' + jd.shortname + '.png',
+          afterbegin: head
+        })
+      }
+    }
+  }
+  if (enhanced) {
+    x = enhanced.innerHTML
+  }
   return x
 }
 TWDS.items.popupenhancement = function () {
