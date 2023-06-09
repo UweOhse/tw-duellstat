@@ -84,6 +84,8 @@ TWDS.jobwindow.initView2 = function () {
       p.style.display = 'block'
     }
   }
+
+  // luck %
   if (TWDS.settings.jobwindow_show_luckp) {
     const hack = function (what, basis) {
       const b = TWDS.q1('.job_durationbar_' + what, d)
@@ -110,6 +112,33 @@ TWDS.jobwindow.initView2 = function () {
       ins.classList.add('TWDS_jobwindow_collectible')
       out.appendChild(ins)
     }
+  }
+  // annotation
+  if (TWDS.settings.jobwindow_offer_note) {
+    const out = TWDS.q1('.tw2gui_window_content_pane', d)
+    const key = 'TWDS_jw_freetext_' + this.jobId
+    const str = window.localStorage[key] || ''
+    let classadd = ''
+    if (str === '') classadd = ' emptyeditable'
+    const e = TWDS.createEle({
+      nodeName: 'div',
+      className: 'TWDS_jw_editable' + classadd,
+      contentEditable: true,
+      textContent: str,
+      last: out,
+      oninput: function (ev) {
+        const text = this.innerHTML.trim()
+        window.localStorage[key] = text
+        ev.preventDefault()
+        if (text === '') {
+          this.classList.add('emptyeditable')
+        } else {
+          this.classList.remove('emptyeditable')
+        }
+        return true
+      }
+    })
+    console.log('ISC', e.isContentEditable)
   }
 
   const longdurationbar = TWDS.q1('.job_durationbar_long', d)
@@ -360,6 +389,8 @@ TWDS.registerSetting('bool', 'jobwindow_smart_start',
   'Add buttons to start multiple jobs', true, null, 'Jobwindow')
 TWDS.registerSetting('bool', 'jobwindow_show_luckp',
   'Show the chance to make a lucky find.', true, null, 'Jobwindow')
+TWDS.registerSetting('bool', 'jobwindow_offer_note',
+  TWDS._('JOBWINDOW_SETTING_NOTEPAD', 'Implement a notepad in the jobwindow.'), false, null, 'Jobwindow')
 
 TWDS.registerStartFunc(function () {
   TWDS.registerSetting('info', 'AAAAA',

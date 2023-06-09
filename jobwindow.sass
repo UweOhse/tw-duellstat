@@ -11,3 +11,25 @@
                 margin-top:0;
         }
 }
+.jobwindow .TWDS_jw_editable {
+        position:absolute;
+        left:-16px;
+        top:-37px;
+        min-width:19px;
+        min-height:19px;
+        color:#eee;
+        &:hover {
+          outline:2px dashed #888;
+        }
+        &.emptyeditable:hover:after {
+          position: absolute;
+          content:'✏';
+          right: 0em;
+          bottom: -0.25em;
+          font-size: 2em;
+          color:#FFF;
+          transform: rotate(45deg);
+          cursor:text;
+          z-index:2;
+        }
+}
