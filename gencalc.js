@@ -90,9 +90,97 @@ TWDS.genCalc.exec = function (bonusNames, skills, include) {
   }
   return ret
 }
+TWDS.genCalc.blacklist = {}
+TWDS.genCalc.fillblacklist = function () {
+  const a = [
+    51266000, // goldener westenland reiter,
+    51267000, // silberner westenland reiter,
+    51268000, // bronze westenland reiter,
+    51461000, // goldmedaille 2019
+    51462000, // silberj 2019
+    51463000, // bronze 2019
+    53368000, // goldenes ticket
+    52116000, // IFBC 3 shirt
+    1017000, // creativity weapon
+    1018000, // creativity weapon
+    53364000, // goldenes eventwelt pferd
+    53365000, // goldenes eventwelt pferd
+    53366000, // goldenes eventwelt pferd
+    53367000 // goldenes eventwelt pferd
+  ]
+  if (a[0] in TWDS.genCalc.blacklist) return
+  const whitesets = {
+    gold_set: true, // old golden set
+    '2018_doldenset': true, // new golden set, (sic)
+    malachit_set_1: true, // malachit-set, gab es bei Speedwelten?
+    community_event_2020_march_2: true, // clover, event-set
+    eire_set_3: true // event
+  }
+  for (let i = 0; i < a.length; i++) {
+    TWDS.genCalc.blacklist[a[i]] = 1
+  }
+  west.storage.ItemSetManager.getAll().forEach(cl => {
+    if (cl.items.length === 3 && !(cl.key in whitesets)) {
+      let isweaponset = true
+      let anyauctionable = false
+      for (let j = 0; j < cl.items.length; j++) {
+        const it = ItemManager.getByBaseId(cl.items[j])
+        if (it.type !== 'right_arm' && it.type !== 'left_arm') {
+          isweaponset = false
+        }
+        anyauctionable |= it.auctionable
+      }
+      if (isweaponset && !anyauctionable) {
+        for (let j = 0; j < cl.items.length; j++) {
+          const it = ItemManager.getByBaseId(cl.items[j])
+          TWDS.genCalc.blacklist[it.item_id] = 2
+        }
+      }
+    }
+  })
+}
+TWDS.genCalc.blacklistwindow = function () {
+  const myname = 'TWDS_gencalc_blackwindow'
+  const win = wman.open(myname, TWDS._('GENCALC_BLACKLIST_TITLE', 'Blacklist'), 'TWDS_gencalc_blackwindow')
+  win.setMiniTitle('Blacklist')
+  const sp = new west.gui.Scrollpane()
+  const content = TWDS.createEle('div', {
+    className: 'TWDS_gencalc_blackcontainer'
+  })
+  TWDS.createEle('p', {
+    innerHTML: 'This blacklist includes a number of items you can only get/win on event worlds, and not auctionable weapon sets, meaning in-game event winner (pay-to-win) and personal sets. It removes a lot of noise from the calculator window.<br>Black list entries are ignored if you own the item, so the very few who won an event do not need to worry.',
+    last: content
+  })
+  const dl = TWDS.createEle('table', {
+    last: content
+  })
+  TWDS.genCalc.fillblacklist()
+  for (const [id, d] of Object.entries(TWDS.genCalc.blacklist)) {
+    const it = ItemManager.get(id)
+    const tr = TWDS.createEle('tr', { last: dl })
+    const w = new tw2widget.InventoryItem(it).setCharacter(Character).getMainDiv()
+    TWDS.createEle('th', {
+      children: w,
+      last: tr
+    })
+    TWDS.createEle('th', {
+      textContent: it.name,
+      last: tr
+    })
+    TWDS.createEle('td', {
+      textContent: d === 1 ? 'hardcoded blacklisted item' : 'not auctionable weapon set',
+      last: tr
+    })
+  }
+  sp.appendContent(content)
+
+  win.appendToContentPane(sp.getMainDiv())
+}
+
 TWDS.genCalc.setfilter = function (include) {
   // console.log('INC', include)
   const availableSets = []
+  TWDS.genCalc.fillblacklist()
   const allSets = west.storage.ItemSetManager.getAll()
   for (let i = 0; i < allSets.length; i++) {
     const set = allSets[i]
@@ -125,9 +213,17 @@ TWDS.genCalc.setfilter = function (include) {
             continue
           }
         }
-        if (include & 8) {
-          o.push(item.getId())
-          continue
+        if (include & 8) { // not auctionable stuff
+          if (!item.auctionable) {
+            let blacklisted = false
+            if (!(include & 32)) {
+              if (item.getId() in TWDS.genCalc.blacklist) {
+                blacklisted = true
+              }
+            }
+            if (!blacklisted) { o.push(item.getId()) }
+            continue
+          }
         }
       }
     }
@@ -276,6 +372,7 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
   const bestItems = {}
   const result = []
   const itemsByBase = {}
+  TWDS.genCalc.fillblacklist()
   const add = function (base, lng) {
     const x = ItemManager.getByBaseId(base)
     if (!x) return
@@ -295,20 +392,29 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
         add(bid, y[0])
       }
     }
+    const item = all[bid]
     if (include & 2) { // auction
-      const item = all[bid]
       if (item.auctionable) {
         add(bid, item.item_id)
       }
     }
     if (include & 4) { // trader
-      const item = all[bid]
       if (item.tradeable && item.traderlevel < 66 && item.traderlevel !== null) {
         add(bid, item.item_id)
       }
     }
     if (include & 8) {
-      add(bid, all[bid].item_id)
+      if (!item.auctionable) {
+        let blacklisted = false
+        if (!(include & 32)) {
+          if (item.item_id in TWDS.genCalc.blacklist) {
+            blacklisted = true
+          }
+        }
+        if (!blacklisted) {
+          add(bid, all[bid].item_id)
+        }
+      }
     }
   }
   if (include & 1) { // owned shall include worn

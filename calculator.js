@@ -458,15 +458,6 @@ TWDS.calculator.openwindow = function () {
   TWDS.createEle({
     nodeName: 'label',
     children: [
-      { nodeName: 'input', type: 'checkbox', value: 2 },
-      { nodeName: 'span', textContent: TWDS._('CALCULATOR_AUCTIONABLE', 'auctionable, ') }
-    ],
-    id: 'TWDS_CALC_include_auctionable',
-    beforeend: filterarea
-  })
-  TWDS.createEle({
-    nodeName: 'label',
-    children: [
       { nodeName: 'input', type: 'checkbox', value: 4 },
       { nodeName: 'span', textContent: TWDS._('CALCULATOR_TOWN_TRADERS', 'town traders, ') }
     ],
@@ -476,8 +467,17 @@ TWDS.calculator.openwindow = function () {
   TWDS.createEle({
     nodeName: 'label',
     children: [
+      { nodeName: 'input', type: 'checkbox', value: 2 },
+      { nodeName: 'span', textContent: TWDS._('CALCULATOR_AUCTIONABLE', 'auctionable, ') }
+    ],
+    id: 'TWDS_CALC_include_auctionable',
+    beforeend: filterarea
+  })
+  TWDS.createEle({
+    nodeName: 'label',
+    children: [
       { nodeName: 'input', type: 'checkbox', value: 8 },
-      { nodeName: 'span', textContent: TWDS._('CALCULATOR_EVENTS', 'events and others, ') }
+      { nodeName: 'span', textContent: TWDS._('CALCULATOR_NOTAUCTIONABLE', 'not auctionable') }
     ],
     id: 'TWDS_CALC_include_else',
     beforeend: filterarea
@@ -485,9 +485,25 @@ TWDS.calculator.openwindow = function () {
   TWDS.createEle({
     nodeName: 'label',
     children: [
+      { nodeName: 'span', textContent: ' (' },
+      { nodeName: 'input', type: 'checkbox', value: 32 },
+      {
+        nodeName: 'a',
+        href: '#',
+        onclick: function () { TWDS.genCalc.blacklistwindow(); return false },
+        textContent: TWDS._('CALCULATOR_BLACKLISTED', 'incl. blacklisted items')
+      },
+      { nodeName: 'span', textContent: '), ' }
+    ],
+    id: 'TWDS_CALC_include_blacklisted',
+    beforeend: filterarea
+  })
+  TWDS.createEle({
+    nodeName: 'label',
+    children: [
       { nodeName: 'span', textContent: TWDS._('CALCULATOR_AND', 'and ') },
       { nodeName: 'input', type: 'checkbox', value: 16 },
-      { nodeName: 'span', textContent: TWDS._('CALCULATOR_UNWEARABLE', 'even unwearable items') }
+      { nodeName: 'span', textContent: TWDS._('CALCULATOR_UNWEARABLE', 'unwearable items') }
     ],
     id: 'TWDS_CALC_include_unwearable',
     beforeend: filterarea
