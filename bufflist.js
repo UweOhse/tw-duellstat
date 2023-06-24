@@ -56,6 +56,15 @@ TWDS.bufflist.row = function (it, tbody, searchstrings) {
       td.dataset.sortval = d.time * 3600
     }
   }
+  td = TWDS.createEle('td', { className: 'type', last: tr })
+  td.textContent = it.usetype
+  if (it.has_cooldown) {
+    TWDS.createEle('span', {
+      last: td,
+      innerHTML: ' &#128337;',
+      title: 'this item has a cooldown period'
+    })
+  }
   td = TWDS.createEle('td', { className: 'functions', last: tr })
   let t
   if (it.spec_type === 'crafting') {
@@ -91,13 +100,13 @@ TWDS.bufflist.doit = function (container, effect) {
   TWDS.createEle('th', { last: tr, textContent: '#', dataset: { colsel: '.count', sortmode: 'number' } })
   TWDS.createEle('th', { last: tr, textContent: _('price'), dataset: { nocolsel: '.price', sortmode: 'number' } })
   TWDS.createEle('th', { last: tr, textContent: _('time'), dataset: { colsel: '.time', sortmode: 'number' } })
+  TWDS.createEle('th', { last: tr, textContent: _('type'), dataset: { colsel: '.type' } })
   TWDS.createEle('th', { last: tr, textContent: _('functions') })
   const tbody = TWDS.createEle({
     nodeName: 'tbody',
     last: tab
   })
   const searchstrings = TWDS.quickusables.usables[effect]
-  console.log('DOIT', effect, searchstrings)
 
   const items = ItemManager.getAll()
   for (const it of Object.values(items)) {
@@ -128,7 +137,7 @@ TWDS.bufflist.openwindowReal = function () {
   })
   const sel = TWDS.createEle({
     nodeName: 'select',
-    className: 'quickfilter',
+    className: 'quickfilter_effect',
     last: myhead
   })
   const qc = TWDS.quickusables.getcategories()
@@ -136,7 +145,7 @@ TWDS.bufflist.openwindowReal = function () {
     nodeName: 'option',
     value: '',
     last: sel,
-    textContent: TWDS._('CRAFTWINDOW_QUICK_FILTER', 'Effects')
+    textContent: TWDS._('BUFFLIST_QUICK_FILTER', 'Effects')
   })
   for (let i = 0; i < qc.length; i++) {
     TWDS.createEle({
@@ -146,13 +155,14 @@ TWDS.bufflist.openwindowReal = function () {
       textContent: TWDS.quickusables.getcatdesc(qc[i])
     })
   }
+
   sp.appendContent(content)
 
   sel.onchange = function () {
-    const v = this.value
-    if (v > '') {
-      TWDS.bufflist.doit(mymain, v)
-    }
+    const h = this.closest('.TWDS_bufflist_header')
+    if (!h) return
+    const e = TWDS.q1('.quickfilter_effect', h).value
+    if (e > '') { TWDS.bufflist.doit(mymain, e) }
   }
   TWDS.delegate(content, 'click', '.TWDS_bufflist_table thead th[data-colsel]', TWDS.sortable.do)
 
