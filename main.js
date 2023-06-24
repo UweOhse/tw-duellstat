@@ -25,6 +25,8 @@ TWDS.opentab = function (tabname, scrollto) {
 
     if (tabname === null) { tabname = defaultTab }
   }
+  if (wman.isMinimized('TWDS')) {
+    wman.reopen('TWDS')
   TWDS.activateTab(tabname)
   if (scrollto) {
     const x = TWDS.q1(scrollto, TWDS.window.divMain)
