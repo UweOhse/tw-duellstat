@@ -169,7 +169,10 @@ TWDS.itemuse.prehandler = function (ev, xhr, settings) {
       const container = 52361000 // valentine rose cake
       TWDS.itemuse.wofhandler(container, xhr.responseJSON)
     } else if (xhr.responseJSON.outcome && xhr.responseJSON.outcome.itemId) {
-      const container = 2698000 // easter nest
+      let container = 2698000 // easter nest
+      if (Game.sesData.Independence) {
+        container = 51483000 // efficient firework container
+      }
       TWDS.itemuse.wofhandler(container, xhr.responseJSON)
     }
   }
