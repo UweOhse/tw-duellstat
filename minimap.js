@@ -288,7 +288,7 @@ TWDS.minimap.showtaskjobgroups = function () {
   const ls4mm = window.localStore4Minimap
   let countyno = ls4mm.minimapData.current_county
   const div = TWDS.q1('.mmap_countybox', '#mmap_countymap')
-  if (!div || !div.id) return;
+  if (!div || !div.id) return
   const mat = div.id.match(/^mmap_countybox_(\d+)$/)
   if (mat) {
     countyno = mat[1]
@@ -753,19 +753,17 @@ TWDS.minimap.uiinit = function () {
   }
   $('.TWDS_minimap_taskjob_button').remove()
   if (TWDS.settings.minimap_use_taskjobdisplay) {
-    TWDS.createEle('div', {
-      className: 'TWDS_minimap_taskjob_button',
-      textContent: TWDS._('MINIMAP_TASKJOB_BUTTON', 'Show task job groups'),
-      last: TWDS.q1('.mmap_others'),
-      onclick: function (x) {
-        TWDS.minimap.showtaskjobgroups()
-      }
-    })
-    $('#TWDS_minimap_taskjobdisplaycontainer input').on('change', function (e) {
-      TWDS.settings.minimap_taskjobdisplay_active = this.checked ? 1 : 0
-      TWDS.saveSettings()
-      TWDS.minimap.updateIfOpen()
-    })
+    const pa = TWDS.q1('.mmap_others')
+    if (pa) {
+      TWDS.createEle('div', {
+        className: 'TWDS_minimap_taskjob_button',
+        textContent: TWDS._('MINIMAP_TASKJOB_BUTTON', 'Show task job groups'),
+        last: TWDS.q1('.mmap_others'),
+        onclick: function (x) {
+          TWDS.minimap.showtaskjobgroups()
+        }
+      })
+    }
   }
   if (TWDS.settings.minimap_coordinput) {
     $('.tw2gui_jobsearch_string').on('keyup', function (e) {
