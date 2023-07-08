@@ -103,9 +103,11 @@ TWDS.minimap.updateWhenOpen = function () {
   TWDS.minimap.updateReal()
 }
 TWDS.minimap.updateIfOpen = function () {
+  console.log('MINIMAP UIO 1')
   if (!TWDS.minimap.isOpen()) {
     return
   }
+  console.log('MINIMAP UIO 2')
   TWDS.minimap.updateReal()
 }
 TWDS.minimap.findjob = function (jname) {
@@ -119,6 +121,24 @@ TWDS.minimap.findjob = function (jname) {
     }
   }
   return null
+}
+TWDS.minimap.gettrackedjobs = function () {
+  const tracked = {}
+  for (const q of Object.values(window.QuestTrackerWindow.trackedQuests)) {
+    for (let i = 0; i < q.requirements.length; i++) {
+      const r = q.requirements[i]
+      if (r.solved === false && r.jsInfo) {
+        if (r.jsInfo.type === 'task-finish-job') {
+          tracked[r.jsInfo.id] = true
+        }
+        if (r.jsInfo.type === 'inventory_changed') {
+          const x = JobList.getJobsIdsByItemId(r.jsInfo.id)
+          for (let y = 0; y < x.length; y++) { tracked[x[y]] = true }
+        }
+      }
+    }
+  }
+  return tracked
 }
 
 TWDS.minimap.updateReal = function () {
@@ -185,22 +205,9 @@ TWDS.minimap.updateReal = function () {
     })
     $('#minimap_worldmap').append(ele)
   }
-  const tracked = {}
+  let tracked = {}
   if (TWDS.settings.minimap_silvergold && TWDS.settings.minimap_silvergold_trackerhelper) {
-    for (const q of Object.values(window.QuestTrackerWindow.trackedQuests)) {
-      for (let i = 0; i < q.requirements.length; i++) {
-        const r = q.requirements[i]
-        if (r.solved === false && r.jsInfo) {
-          if (r.jsInfo.type === 'task-finish-job') {
-            tracked[r.jsInfo.id] = true
-          }
-          if (r.jsInfo.type === 'inventory_changed') {
-            const x = JobList.getJobsIdsByItemId(r.jsInfo.id)
-            for (let y = 0; y < x.length; y++) { tracked[x[y]] = true }
-          }
-        }
-      }
-    }
+    tracked = TWDS.minimap.gettrackedjobs()
   }
 
   // $("#minimap_worldmap").css("position","relative"); not good, messes up map
@@ -275,6 +282,63 @@ TWDS.minimap.updateReal = function () {
       }
     }
   }
+}
+
+TWDS.minimap.showtaskjobgroups = function () {
+  const ls4mm = window.localStore4Minimap
+  let countyno = ls4mm.minimapData.current_county
+  const div = TWDS.q1('.mmap_countybox', '#mmap_countymap')
+  if (!div || !div.id) return;
+  const mat = div.id.match(/^mmap_countybox_(\d+)$/)
+  if (mat) {
+    countyno = mat[1]
+  }
+
+  const displayedCounty = Map.Counties.getCounty(countyno)
+  const layer = TWDS.q1('#mmap_layer_' + countyno + '_jobs')
+  if (!layer) {
+    return
+  }
+
+  const tracked = TWDS.minimap.gettrackedjobs()
+  console.log('tracked jobs', tracked)
+  const trackedgroups = []
+  Object.keys(tracked).forEach(jid => {
+    const jd = JobList.getJobById(jid)
+    const gid = jd.groupid
+    if (!trackedgroups[gid]) { trackedgroups[gid] = [jd.name, [jid], gid] } else {
+      trackedgroups[gid][0] += ', ' + jd.name
+      trackedgroups[gid][1].push(jid)
+    }
+  })
+  console.log('tracked groups', trackedgroups)
+
+  trackedgroups.forEach(gd => {
+    const gid = gd[2]
+    const gplaces = ls4mm.minimapData.job_groups[gid]
+    // console.log("handle g",gid,gplaces);
+    for (let i = 0; i < gplaces.length; i++) {
+      const coord = displayedCounty.calcCoord4Map([gplaces[i][0], gplaces[i][1]])
+      if (coord) {
+        // console.log("TG ADD",gid,gd,i,coord);
+        TWDS.createEle({
+          nodeName: 'div',
+          style: {
+            left: coord.x + 'px',
+            top: coord.y + 'px',
+            position: 'absolute',
+            border: '1px solid red',
+            backgroundColor: '#4448',
+            color: '#fff',
+            fontSize: 'smaller'
+          },
+          last: layer,
+          textContent: gid,
+          title: gd[0]
+        })
+      }
+    }
+  })
 }
 
 TWDS.minimap.import = function () {
@@ -455,6 +519,14 @@ TWDS.minimap.export_center_handler = function () {
   const pos = this.textContent.split('-', 2)
   Map.center(pos[0], pos[1])
 }
+TWDS.minimap.ajaxCompletehandler = function (event, xhr, settings) {
+  const url = settings.url
+  if (url.search('window=map') !== -1) {
+    if (url.search('ajax=get_minimap') !== -1) {
+      TWDS.minimap.updateIfOpen()
+    }
+  }
+}
 
 TWDS.minimap.interval = -1
 TWDS.minimap.isOpen = function () {
@@ -503,8 +575,9 @@ TWDS.minimap.init = function () {
       MinimapWindow._twds_minimap_refreshWindow = MinimapWindow.refreshWindow
       MinimapWindow.refreshWindow = function () {
         try {
+          console.log('inrefresh')
           MinimapWindow._twds_minimap_refreshWindow()
-          TWDS.minimap.updateWhenOpen()
+          window.setTimeout(TWDS.minimap.updateIfOpen, 2100)
         } catch (e) {
           console.error(e, 'MinimapWindow.refreshWindow')
         }
@@ -513,9 +586,11 @@ TWDS.minimap.init = function () {
   } catch (t) {
     console.error(t, 'manipulate MinimapWindow.refreshWindow')
   }
+  // MinimapWindow.refreshWindow() uses setTimeout and an ajax request in it, and updating the minimap after that is painful, unless ajaxcomplete is used. oh well.
+  $(document).on('ajaxComplete', function (a, b, c) { TWDS.minimap.ajaxCompletehandler(a, b, c) })
 }
+
 TWDS.minimap.opacityhandler = function (ev) {
-  console.log('OP', this.checked, this, ev)
   if (this.checked) { document.body.classList.add('TWDS_searchmode') } else { document.body.classList.remove('TWDS_searchmode') }
 }
 TWDS.minimap.arrowclickhandler = function (ev) {
@@ -676,6 +751,22 @@ TWDS.minimap.uiinit = function () {
       TWDS.minimap.updateIfOpen()
     })
   }
+  $('.TWDS_minimap_taskjob_button').remove()
+  if (TWDS.settings.minimap_use_taskjobdisplay) {
+    TWDS.createEle('div', {
+      className: 'TWDS_minimap_taskjob_button',
+      textContent: TWDS._('MINIMAP_TASKJOB_BUTTON', 'Show task job groups'),
+      last: TWDS.q1('.mmap_others'),
+      onclick: function (x) {
+        TWDS.minimap.showtaskjobgroups()
+      }
+    })
+    $('#TWDS_minimap_taskjobdisplaycontainer input').on('change', function (e) {
+      TWDS.settings.minimap_taskjobdisplay_active = this.checked ? 1 : 0
+      TWDS.saveSettings()
+      TWDS.minimap.updateIfOpen()
+    })
+  }
   if (TWDS.settings.minimap_coordinput) {
     $('.tw2gui_jobsearch_string').on('keyup', function (e) {
       if (e.keyCode === 13) {
@@ -806,6 +897,13 @@ TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'minimap_use_worldmapmarket',
     TWDS._('MINIMAP_SETTING_WORLDMAPMARKET',
       'Add a checkbox allowing to show the market items on the mini world map.'), true, function (v) {
+      TWDS.minimap.uiinit()
+    },
+    'Minimap'
+  )
+  TWDS.registerSetting('bool', 'minimap_use_taskjobdisplay',
+    TWDS._('MINIMAP_SETTING_TASKJOBDISPLAY',
+      'Add a button to display active job groups on the county map.'), true, function (v) {
       TWDS.minimap.uiinit()
     },
     'Minimap'

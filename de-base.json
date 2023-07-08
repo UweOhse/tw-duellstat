@@ -371,12 +371,6 @@ JOBOPENBUTTON_TITLE: "Öffne ein Fenster, um die Arbeit am nächstmöglichen Ort
 ITEMBIDBUTTON_TITLE: "Auf dem Markt suchen",
 ITEMCRAFTBUTTON_TITLE: "Herstellen",
 
-MINIMAP_MARKET_ITEMS_ON_WORLDMAP: "Marktgegenstände (Weltkarte)",
-MINIMAP_SETTING_SILVERGOLD: "Bekannte Bonus-Arbeiten auf der Minimap zeigen.",
-MINIMAP_SETTING_COORDINPUT: "Arbeits-Eingabefeld verarbeitet auch Koordinaten.",
-MINIMAP_SETTING_WORLDMAPMARKET: "Zeige eine Checkbox, die das Zeigen von Marktgegenständen auf der Weltkarte erlaubt.",
-MINIMAP_SETTING_NAVIGATION: "Ergänze den rechten Bereich der Minimap um Navigationspfeile.",
-
 OVERLAY_FULL_HEALTH: "Volle Gesundheit",
 OVERLAY_FULL_ENERGY: "Volle Erholung",
 OVERLAY_RES_MELEE: "Widerstand/Schlag",

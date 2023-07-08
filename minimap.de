@@ -1,0 +1,9 @@
+
+MINIMAP_MARKET_ITEMS_ON_WORLDMAP: "Marktgegenstände (Weltkarte)",
+MINIMAP_SETTING_SILVERGOLD: "Bekannte Bonus-Arbeiten auf der Minimap zeigen.",
+MINIMAP_SETTING_COORDINPUT: "Arbeits-Eingabefeld verarbeitet auch Koordinaten.",
+MINIMAP_SETTING_WORLDMAPMARKET: "Zeige eine Checkbox, die das Zeigen von Marktgegenständen auf der Weltkarte erlaubt.",
+MINIMAP_SETTING_NAVIGATION: "Ergänze den rechten Bereich der Minimap um Navigationspfeile.",
+MINIMAP_OPACITY_CHECKBOX_TITLE: 'Benutzerinterface größtenteils transparent machen (Suchmodus)',
+MINIMAP_TASKJOB_BUTTON: "Zeige aktive Job Gruppen",
+MINIMAP_SETTING_TASKJOBDISPLAY: "Biete eine Schaltfläche zum Aufzeigen aller aktiven Jobgruppen in der County-Karte.",
