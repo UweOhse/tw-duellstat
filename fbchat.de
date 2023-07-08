@@ -1,0 +1,4 @@
+FBCHAT_WITH_DELTA: "--- LP: Ang. <span style='color:#ff2222'>$atthp$ ($attdelta$)</span>, Vert. <span style='color:#00ccff'>$defhp$ ($defdelta$)</span>",
+FBCHAT_WITHOUT_DELTA: "--- LP: Ang. <span style='color:#ff2222'>$atthp$</span>, Vert. <span style='color:#00ccff'>$defhp$</span>",
+FBCHAT_ROUND: "--- Runde $roundno$ ",
+FBCHAT_SETTING: "Zeige Informationen zum Lebenspunkt-Stand im Fortkampf-Chat",
