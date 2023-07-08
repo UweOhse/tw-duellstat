@@ -29,14 +29,13 @@ TWDS.iteminfo.getcontent = function (win) {
     last: inputarea
   })
 
-
   const itemno = parseInt(win._TWDS_number)
-  if (!itemno || itemno<1000 || itemno > 2147483647 ) {
-    TWDS.createEle("p",{
-      innerHTML: "Here you can see all information about an item available to the frontend of the game (the browser). It's not meant to be beautiful.<br>"
-                +"Usage: type the item number (the full one, not the basic one) in the input field and press enter",
-      last: content,
-    });
+  if (!itemno || itemno < 1000 || itemno > 2147483647) {
+    TWDS.createEle('p', {
+      innerHTML: "Here you can see all information about an item available to the frontend of the game (the browser). It's not meant to be beautiful.<br>" +
+                'Usage: type the item number (the full one, not the basic one) in the input field and press enter',
+      last: content
+    })
     return content
   }
 
