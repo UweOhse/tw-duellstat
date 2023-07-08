@@ -27,6 +27,7 @@ TWDS.opentab = function (tabname, scrollto) {
   }
   if (wman.isMinimized('TWDS')) {
     wman.reopen('TWDS')
+  }
   TWDS.activateTab(tabname)
   if (scrollto) {
     const x = TWDS.q1(scrollto, TWDS.window.divMain)
@@ -159,5 +160,3 @@ TWDS.waitready = function () {
   }
 }
 TWDS.waitready()
-
-// vim: tabstop=2 shiftwidth=2 expandtab
