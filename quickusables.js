@@ -15,6 +15,7 @@ TWDS.quickusables.catnames = {
   duelmotivation: TWDS._('QUICKUSABLES_DMOT', 'Duel motivation'),
   drop: TWDS._('QUICKUSABLES_DROP', 'Drop chance'),
   experience: TWDS._('QUICKUSABLES_XP', 'Experience'),
+  experiencelevel: TWDS._('QUICKUSABLES_XPLEVEL', 'Exp. as % of level'),
   luck: TWDS._('QUICKUSABLES_LUCK', 'Luck'),
   money: TWDS._('QUICKUSABLES_MONEY', 'Money'),
   duel: TWDS._('QUICKUSABLES_DUEL', 'Duel'),
@@ -22,7 +23,8 @@ TWDS.quickusables.catnames = {
   multiplayer: TWDS._('QUICKUSABLES_MPI', 'Multiplayer'),
   movement: TWDS._('QUICKUSABLES_MOVEMENT', 'Movement'),
   openunpack: TWDS._('QUICKUSABLES_OPENUNPACK', 'Open/unpack'),
-  laborpoints: TWDS._('QUICKUSABLES_LP', 'Labor points')
+  laborpoints: TWDS._('QUICKUSABLES_LP', 'Labor points'),
+  bonds: TWDS._('QUICKUSABLES_BONDS', 'Bonds')
 }
 TWDS.quickusables.getcatdesc = function (cat) {
   if (cat in TWDS.quickusables.catnames) { return TWDS.quickusables.catnames[cat] }
@@ -50,6 +52,7 @@ TWDS.quickusables.initusables = function () {
     duelmotivation: [],
     drop: [],
     experience: [],
+    experiencelevel: [],
     money: [],
     luck: [],
     duel: [],
@@ -57,7 +60,8 @@ TWDS.quickusables.initusables = function () {
     laborpoints: [],
     multiplayer: [],
     openunpack: [],
-    movement: []
+    movement: [],
+    bonds: []
   }
   const clean = function (str) {
     str = str.replace(/([0-9]+)-([0-9]+)/, '')
@@ -70,6 +74,7 @@ TWDS.quickusables.initusables = function () {
     try {
       TWDS.quickusables.usables[key].push(clean(it.usebonus[idx || 0]))
     } catch (e) {
+      console.log('strange', 'no item for #', id, 'needed for quickusable', key, idx)
     }
   }
   doit(1943, 'energy')
@@ -103,6 +108,8 @@ TWDS.quickusables.initusables = function () {
   doit(2525, 'fortbattle', 2) // zaubertinte, verstecken
   doit(51775, 'openunpack', 0) // Motivationsbox, "Etwas zum Auspacken".
   doit(51595, 'openunpack', 0) // Metallschädel,  "Enthält eine der folgenden Sammelkarten"
+  doit(2136, 'bonds', 0) // bonds
+  doit(2196, 'experiencelevel', 0) // experience to your next level
 }
 TWDS.quickusables.match = function (item, cat) {
   if (TWDS.quickusables.usables === null) {
@@ -118,6 +125,7 @@ TWDS.quickusables.match = function (item, cat) {
   let found = false
   for (let i = 0; i < ub.length; i++) {
     const b = ub[i]
+    if (b === null) continue
     for (let j = 0; j < searchstrings.length; j++) {
       if (b.search(searchstrings[j]) !== -1) {
         found = true
@@ -137,6 +145,36 @@ TWDS.quickusables.match = function (item, cat) {
     }
   }
   return true
+}
+TWDS.quickusables.matchnumber = function (item, cat) {
+  if (TWDS.quickusables.usables === null) {
+    TWDS.quickusables.initusables()
+  }
+  if (!('usetype' in item)) return 0
+  if (item.usetype === 'none') return 0
+  const ub = item.usebonus
+  const searchstrings = TWDS.quickusables.usables[cat]
+  if (searchstrings === undefined) { // no known cat
+    return 0
+  }
+  let found = false
+  let num = 0
+  for (let i = 0; i < ub.length; i++) {
+    const b = ub[i]
+    if (b === null) continue
+    for (let j = 0; j < searchstrings.length; j++) {
+      if (b.search(searchstrings[j]) !== -1) {
+        found = true
+        const rx = /(\d+)/
+        const t = b.match(rx)
+        if (t !== null) {
+          num += parseFloat(t[1])
+        }
+      }
+    }
+  }
+  if (!found) return 0
+  return num
 }
 TWDS.quickusables.showusables = function (choice) {
   console.log('C', choice)
