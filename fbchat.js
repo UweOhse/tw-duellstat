@@ -18,11 +18,13 @@ TWDS.fbchat.sendmsg = function (fortid, msg) {
   console.log('strange: no fort battle chat found for id', fortid, 'in', rooms)
 }
 TWDS.fbchat.makemsg = function (roundno, defhp, atthp, defdelta, attdelta) {
+  let pre = ''
+  if (roundno) { pre = TWDS._('FBCHAT_ROUND', '--- Round $roundno$ ', { roundno: roundno }) }
   if (attdelta > 0 || defdelta > 0) {
     attdelta = -attdelta
     defdelta = -defdelta
-    return TWDS._('FBCHAT_WITH_DELTA',
-      "$roundprefix$--- HP: att. <span style='color:#ff2222'>$atthp$ ($attdelta$)</span>, def. <span style='color:#00ccff'>$defhp$ ($defdelta$)</span>",
+    return pre + TWDS._('FBCHAT_WITH_DELTA',
+      "--- HP: att. <span style='color:#ff2222'>$atthp$ ($attdelta$)</span>, def. <span style='color:#00ccff'>$defhp$ ($defdelta$)</span>",
       {
         atthp: atthp,
         defhp: defhp,
@@ -31,8 +33,8 @@ TWDS.fbchat.makemsg = function (roundno, defhp, atthp, defdelta, attdelta) {
       }
     )
   }
-  return TWDS._('FBCHAT_WITHOUT_DELTA',
-    "$roundprefix$--- HP: att. <span tyle='color:#ff2222'>$atthp$</span>, def. <span style='color:#00ccff'>$defhp$</span>",
+  return pre + TWDS._('FBCHAT_WITHOUT_DELTA',
+    "--- HP: att. <span style='color:#ff2222'>$atthp$</span>, def. <span style='color:#00ccff'>$defhp$</span>",
     {
       atthp: atthp,
       defhp: defhp
@@ -56,10 +58,8 @@ TWDS.fbchat.roundhandlerreal = function (that, roundno) {
     hpd0 = TWDS.fbchat.oldhp[0] - hp[0]
     hpd1 = TWDS.fbchat.oldhp[1] - hp[1]
   }
-  let pre = ''
-  if (roundno) { pre = TWDS._('FBCHAT_ROUND', '--- Round $roundno$ ', { roundno: roundno }) }
   const msg = TWDS.fbchat.makemsg(roundno, hp[0], hp[1], hpd0, hpd1)
-  TWDS.fbchat.sendmsg(that.fortId, pre + msg)
+  TWDS.fbchat.sendmsg(that.fortId, msg)
   TWDS.fbchat.oldhp = hp
 }
 TWDS.fbchat.playerhandler = function (playerinfo) { // start of the battle
@@ -70,7 +70,7 @@ TWDS.fbchat.playerhandler = function (playerinfo) { // start of the battle
 TWDS.fbchat.roundhandler = function (roundinfo) { // start of a round
   window.FortBattleWindow._TWDS_backup_handleRoundInfoSignal.call(this, roundinfo)
   console.log('TWDS FBCHAT ROUNDHANDLER', roundinfo, this)
-  TWDS.fbchat.roundhandlerreal(this, roundinfo.roundno)
+  TWDS.fbchat.roundhandlerreal(this, roundinfo.roundnumber)
 }
 TWDS.fbchat.startfunc = function () {
   if (!window.FortBattleWindow._TWDS_backup_handleRoundInfoSignal) {
