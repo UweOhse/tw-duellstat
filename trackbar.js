@@ -123,7 +123,7 @@ TWDS.trackbar.backgroundjob = function () {
     const want = TWDS.storage.gettarget(id)
     const count = Bag.getItemCount(id)
     let e = TWDS.q(".TWDS_trackbar_product[data-product='" + id + "']")
-    if (!e) {
+    if (!e.length) {
       e = TWDS.trackbar.createOneTracker('TWDS_trackbar_product',
         count, want, ItemManager.get(id).name)
       e.dataset.product = id
