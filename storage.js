@@ -1,9 +1,23 @@
 TWDS.storage = {}
 
 TWDS.storage.data = {}
+TWDS.storage.dropperhour = {}
 TWDS.storage.reload = function () {
   const d = window.localStorage.getItem('TWDS_storage') || '{}'
   TWDS.storage.data = JSON.parse(d) || {}
+  const aj = JobsModel.Jobs
+  for (let i = 0; i < aj.length; i++) {
+    const job = aj[i]
+    const yields = job.jobObj.yields
+    for (const [itemid, d] of Object.entries(yields)) {
+      const n = TWDS.TWDBcalcProductRate(300, 50, d.prop * 63.98, 100, 1)
+      if (!(itemid in TWDS.storage.dropperhour)) {
+        TWDS.storage.dropperhour[itemid] = n
+      } else if (n > TWDS.storage.dropperhour[itemid]) {
+        TWDS.storage.dropperhour[itemid] = n
+      }
+    }
+  }
 }
 TWDS.storage.save = function () {
   const d = JSON.stringify(TWDS.storage.data)
@@ -168,9 +182,40 @@ TWDS.storage.initListArea = function (container) {
   })
   tbody.appendChild(tr)
 
+  TWDS.minimap.loadcache()
+  const silvers = {}
+  const golds = {}
+  for (const poskey in TWDS.minimap.cache) {
+    for (const j in TWDS.minimap.cache[poskey]) {
+      if (TWDS.minimap.cache[poskey][j].silver) {
+        silvers[j] = true
+      }
+      if (TWDS.minimap.cache[poskey][j].gold) {
+        golds[j] = true
+      }
+    }
+  }
+
   for (const ii of Object.keys(TWDS.storage.data)) {
-    const tr = TWDS.storage.initListArea.element(ii)
+    const tr = TWDS.storage.initListArea.element(ii, silvers, golds)
     if (tr !== null) { tbody.appendChild(tr) }
+  }
+  for (const ii of Object.keys(TWDS.storage.dropperhour)) {
+    if (!(ii in TWDS.storage.data)) {
+      const tr = TWDS.storage.initListArea.element(ii, silvers, golds)
+      if (tr !== null) { tbody.appendChild(tr) }
+    }
+  }
+}
+TWDS.storage.getitemdata = function (itemid) {
+  const have = Bag.getItemCount(itemid)
+  let want = 0
+  if (itemid in TWDS.storage.data) {
+    want += parseInt(TWDS.storage.data[itemid][0])
+  }
+  return {
+    have: have,
+    want: want
   }
 }
 TWDS.storage.getsummary = function () {
@@ -178,16 +223,25 @@ TWDS.storage.getsummary = function () {
     current: 0,
     required: 0
   }
-  for (const id of Object.keys(TWDS.storage.data)) {
-    const have = Bag.getItemCount(id)
-    const want = parseInt(TWDS.storage.data[id][0])
-    s.current += (have > want) ? want : have
-    s.required += want
+  for (const itemid of Object.keys(TWDS.storage.dropperhour)) {
+    const t = TWDS.storage.getitemdata(itemid)
+    s.current += (t.have > t.want ? t.want : t.have)
+    s.required += t.want
+  }
+  // things not found during work
+  for (const itemid of Object.keys(TWDS.storage.data)) {
+    if (!(itemid in TWDS.storage.dropperhour)) {
+      const t = TWDS.storage.getitemdata(itemid)
+      s.current += (t.have > t.want) ? t.want : t.have
+      s.required += t.want
+    }
   };
+
   return s
 }
-TWDS.storage.initListArea.element = function (ii) {
-  const e = TWDS.storage.data[ii]
+TWDS.storage.initListArea.element = function (ii, silvers, golds) {
+  let e = TWDS.storage.data[ii]
+  const classlist = ['datarow']
   const it = ItemManager.get(ii)
   if (!it) return null
   const popup = new ItemPopup(it, {}).popup.getXHTML()
@@ -196,7 +250,10 @@ TWDS.storage.initListArea.element = function (ii) {
     const jl = JobList.getJobsByItemId(ii)
     let best = null
     for (const job of jl) {
-      if (best === null || job.yields[ii].prop > best.yields[ii].prop) {
+      // NOTE: habaneros and such things are found be getJobsByItemId, but are NOT mentioned in job.yields
+      if (best === null || ! (ii in job.yields) ) {
+        best = job
+      } else if (job.yields[ii].prop > best.yields[ii].prop) {
         best = job
       }
     }
@@ -206,6 +263,12 @@ TWDS.storage.initListArea.element = function (ii) {
       const b = TWDS.jobOpenButton(best.id)
       if (b != null) { // null if !automation
         searchthings += b.outerHTML
+      }
+      if (best.id in silvers) {
+        classlist.push('silver')
+      }
+      if (best.id in golds) {
+        classlist.push('gold')
       }
     }
   }
@@ -217,14 +280,18 @@ TWDS.storage.initListArea.element = function (ii) {
   if (craft !== null) { // null if !found || !auctionable
     searchthings += craft.outerHTML
   }
+  const mydata = TWDS.storage.getitemdata(it.item_id)
+  if (e === null || typeof e === 'undefined') {
+    e = [0, '']
+  }
 
-  const count = Bag.getItemCount(it.item_id)
-  const rawpercent = count / (e[0] ? e[0] : 1) * 100
+  const count = mydata.have
+  const rawpercent = count / (mydata.want ? mydata.want : 1) * 100
   const percent = Math.round(rawpercent) + '%'
 
   const tr = TWDS.createElement({
     nodeName: 'tr',
-    className: 'datarow',
+    classList: classlist,
     dataset: { item_id: ii },
     childNodes: [
       {
@@ -248,9 +315,19 @@ TWDS.storage.initListArea.element = function (ii) {
       { nodeName: 'td', textContent: count, className: 'TWDS_storage_count', dataset: { key: 'count', sortval: count } },
       {
         nodeName: 'td',
-        dataset: { key: 'target', sortval: e[0] },
+        dataset: { key: 'target', sortval: mydata.want },
         childNodes: [
-          { nodeName: 'input', type: 'number', size: 5, min: 0, value: e[0], classList: ['TWDS_storage_countinput'] }
+          { nodeName: 'input', type: 'number', size: 5, min: 0, value: e[0], classList: ['TWDS_storage_countinput'] },
+          {
+            nodeName: 'div',
+            textContent: mydata.want > e[0] ? '+' + (mydata.want - e[0]) : '',
+            title: TWDS._('STORAGE_X_TITLE', 'additional items/minimal items to keep, see below.'),
+            classList: ['TWDS_storage_extra'],
+            dataset: {
+              mydata: mydata.want,
+              e: e[0]
+            }
+          }
         ],
         onchange: function () {
           EventHandler.signal('twds_storage_tracking_changed', [this.parentNode.dataset.item_id])
@@ -343,36 +420,27 @@ TWDS.storage.calcCrafting = function () {
   }
 }
 TWDS.storage.gettarget = function (pr) {
-  if (pr in TWDS.storage.data) {
-    return TWDS.storage.data[pr][0]
-  }
+  const t = TWDS.storage.getitemdata(pr)
+  if (t.want) return t.want
   return null
 }
 TWDS.storage.reload()
 TWDS.storage.isMissing = function (ii) {
   const id = parseInt(ii)
-  if (id in TWDS.storage.data) {
-    const want = TWDS.storage.data[id][0]
-    const have = Bag.getItemCount(id)
-    if (want > have) return true
-  }
+  const t = TWDS.storage.getitemdata(id)
+  if (t.want > t.have) return true
   return false
 }
 TWDS.storage.iteminfo = function (ii) {
   const id = parseInt(ii)
-  if (id in TWDS.storage.data) {
-    const want = TWDS.storage.data[id][0]
-    const have = Bag.getItemCount(id)
-    return [want, have]
-  }
-  return [0, 0]
+  const t = TWDS.storage.getitemdata(id)
+  return [t.want, t.have]
 }
 TWDS.storage.getMissingList = function () {
   const out = {}
   for (const id of Object.keys(TWDS.storage.data)) {
-    const want = TWDS.storage.data[id][0]
-    const have = Bag.getItemCount(id)
-    if (want > have) {
+    const t = TWDS.storage.getitemdata(id)
+    if (t.want > t.have) {
       if (JobsModel.Jobs.length) {
         const jl = JobList.getJobsByItemId(id)
         for (const job of jl) {
