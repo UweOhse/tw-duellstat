@@ -249,6 +249,7 @@ TWDS.craftcalc.getcontent = function (win) {
         }
       ]
     })
+    const bb = TWDS.itemBidButton(allitems[i][0])
     TWDS.createEle({
       nodeName: 'td',
       textContent: allitems[i][2],
@@ -257,16 +258,24 @@ TWDS.craftcalc.getcontent = function (win) {
     TWDS.createEle({
       nodeName: 'td',
       textContent: allitems[i][1],
-      last: tr
+      LAST: tr
     })
 
     const count = Bag.getItemCount(allitems[i][0])
-    TWDS.createEle({
+    const td = TWDS.createEle({
       nodeName: 'td',
-      textContent: count,
-      className: count < allitems[i][1] ? 'available red' : 'available green',
+      children: [{
+        nodeName: 'span',
+        textContent: count,
+        className: count < allitems[i][1] ? 'available red' : 'available green'
+      }],
       last: tr
     })
+    if (bb) {
+      td.appendChild(bb)
+    }
+    const sb = TWDS.itemSellButton(allitems[i][0], allitems[i][1], cit.name)
+    td.appendChild(sb)
   }
   TWDS.createEle({ nodeName: 'hr', last: resultarea })
   TWDS.createEle({
