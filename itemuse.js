@@ -63,6 +63,8 @@ TWDS.itemuse.wofhandler = function (container, resp) {
     found = resp.prize.itemId
   } else if ('outcome' in resp) {
     found = resp.outcome.itemId
+  } else if ('attribute' in resp) {
+    found = resp.itemId
   }
   if (found) {
     if (!(found in TWDS.itemuse.chests[container].items)) {
@@ -173,6 +175,9 @@ TWDS.itemuse.prehandler = function (ev, xhr, settings) {
       if (Game.sesData.Independence) {
         container = 51483000 // efficient firework container
       }
+      TWDS.itemuse.wofhandler(container, xhr.responseJSON)
+    } else if (xhr.responseJSON.attribute && xhr.responseJSON.itemId && Game.sesData.Octoberfest) {
+      const container = 50691000 // pretzel bag
       TWDS.itemuse.wofhandler(container, xhr.responseJSON)
     }
   }
