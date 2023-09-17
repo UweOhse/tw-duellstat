@@ -368,7 +368,7 @@ TWDS.speedcalc.getBestItems = function (skills) {
     // const value = item.getValue(skills)
     bestItems[type] = bestItems[type] || []
     const value = TWDS.speedcalc.getSpeedyValues(item)
-    if ((value.ride || value.speedBonus) && item.wearable()) {
+    if ((value.ride || value.speedBonus || value.speed) && item.wearable()) {
       bestItems[type].push({
         item: item,
         id: item.getId(),
