@@ -2,20 +2,36 @@
 TWDS.bonuscalc = {}
 TWDS.bonuscalc.lasthash = null
 TWDS.bonuscalc.lastbonus = null
+
 TWDS.bonuscalc.getSpeed = function (itemids) {
+  if (itemids === null || itemids === undefined) {
+    itemids = []
+    for (const e of Object.entries(Wear.slots)) {
+      const x = Wear.get(e[1])
+      if (x) { itemids.push(x.obj.item_id) }
+    }
+  }
   const bo = TWDS.bonuscalc.getComboBonus(itemids)
   let speed = 100
-  if (Wear.wear.animal) {
+
+  let animal=null
+  for (let i=0; i<itemids.length;i++) {
+    let it=ItemManager.get(itemids[i]);
+    if (it.type==="animal") {
+      animal=it
+    }
+  }
+
+  if (animal) {
     speed += CharacterSkills.getSkill('ride').points // includes mobility
     if (bo.flexibility) speed += bo.flexibility
     if (bo.ride) speed += bo.ride
-    let x = Wear.wear.animal.obj.speed
+    let x = animal.speed
     x = Character.defaultSpeed / (Character.defaultSpeed * x) * 100 - 100
     speed += x
     if (bo.speed) {
       speed = speed * (1 + bo.speed)
     }
-    console.log('SPD5', speed)
   }
   if (Premium.hasBonus('greenhorn')) { speed *= 2 }
   return speed
