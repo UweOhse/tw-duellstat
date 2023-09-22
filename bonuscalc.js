@@ -14,11 +14,11 @@ TWDS.bonuscalc.getSpeed = function (itemids) {
   const bo = TWDS.bonuscalc.getComboBonus(itemids)
   let speed = 100
 
-  let animal=null
-  for (let i=0; i<itemids.length;i++) {
-    let it=ItemManager.get(itemids[i]);
-    if (it.type==="animal") {
-      animal=it
+  let animal = null
+  for (let i = 0; i < itemids.length; i++) {
+    const it = ItemManager.get(itemids[i])
+    if (it.type === 'animal') {
+      animal = it
     }
   }
 
