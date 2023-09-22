@@ -52,6 +52,156 @@ TWDS.speedcalc.confirm = function () {
   }
   return []
 }
+TWDS.speedcalc.doit3 = function () {
+  console.time('SpeedCalc3')
+
+  // for the list of useful things we need the set boni
+  const setvalues = {}
+  const calcsetvalues = function () {
+    const avs = west.item.Calculator.filterUnavailableSets(west.storage.ItemSetManager.getAll())
+    for (let i = 0; i < avs.length; i++) {
+      const sv = TWDS.speedcalc.getSetSpeedyValues(avs[i])
+      const k = avs[i].key
+      setvalues[k] = sv
+    }
+    console.log('doit3', 'setvalues', setvalues)
+  }
+  calcsetvalues()
+
+  const bestItems = TWDS.speedcalc.getBestItems() // a heuristical baseline,
+  const bestItemsArray = []
+  const bestItemValueBySlot = []
+  const bestItemBySlot = []
+  for (const it of Object.values(bestItems)) {
+    bestItemsArray.push(it.item_id)
+    const slot = it.type
+    bestItemValueBySlot[slot] = TWDS.speedcalc.getSpeedyValues(it)
+    bestItemBySlot[slot] = it
+  }
+
+  const baseline = TWDS.bonuscalc.getSpeed(bestItemsArray)
+  console.log('doit3', 'bi', TWDS.describeItemCombo(bestItemsArray), baseline)
+
+  const itemsBySlot = {}
+
+  const highestBonusBySlot = []
+  const highestRideBySlot = []
+
+  const additemifusefull = function (it) {
+    const slot = it.type
+    if (!it.wearable()) return
+    const value = TWDS.speedcalc.getSpeedyValues(it)
+    /* a useful item is one which has:
+     * - a higher ride+speed as anything else in the slot,
+     * - or has the best speedbonus for the slot, because that is a multiplier
+     * - or is part of a set with ride/speed above the bestitem in the slot
+     * - or is part of a set with speed multiplier
+    */
+
+    let flag = 0
+
+    let sval = value.ride
+    if (value.speed) {
+      sval += 100 / value.speed - 100
+    }
+    if (sval > highestRideBySlot[slot]) {
+      highestRideBySlot[slot] = sval
+      flag += 1
+    }
+    if (value.speedbonus > highestBonusBySlot[slot]) {
+      highestBonusBySlot[slot] = value.speedbonus
+      flag += 2
+    }
+    if (it.set !== null) {
+      if (setvalues[it.set]) { // paranoida
+        const v = setvalues[it.set].ride + setvalues[it.set].speed
+        const cmp = bestItemValueBySlot[slot].ride + bestItemValueBySlot[slot].speed
+        if (v > cmp) {
+          flag += 4
+        }
+        if (setvalues[it.set].speedbonus) {
+          flag += 8
+        }
+      }
+    }
+    if (flag) {
+      console.log('ADDITEM', it.name, flag)
+      itemsBySlot[slot].push(it)
+    }
+  }
+  // init counters
+  for (let i = 0; i < Wear.slots.length; i++) {
+    const slot = Wear.slots[i]
+    itemsBySlot[slot] = []
+    highestBonusBySlot[slot] = 0
+    highestRideBySlot[slot] = 0
+  }
+
+  for (const it of Object.values(bestItems)) {
+    additemifusefull(it)
+  }
+
+  for (let i = 0; i < Wear.slots.length; i++) {
+    const slot = Wear.slots[i]
+    const it = Wear.get(slot)
+    additemifusefull(it.obj)
+  }
+  const baglist = Bag.getItemsIdsByBaseItemIds()
+  const ba = []
+  for (const a of Object.values(baglist)) {
+    const it = ItemManager.get(a[0])
+    ba.push(it)
+    additemifusefull(it)
+  }
+  console.log('BA', ba)
+  // reverse, assuming newer things are faster.
+  for (let i = ba.length - 1; i >= 0; i--) {
+    additemifusefull(ba[i])
+  }
+  console.log('doit3', 'base list', itemsBySlot)
+
+  const out = []
+  const slots = Wear.slots
+  const work = []
+  let bestspd = 0
+  let cnt = 0
+  const rec = function (idx) {
+    const slot = slots[idx]
+    const items = itemsBySlot[slot]
+    for (let i = 0; i < items.length; i++) {
+      work[idx] = items[i].item_id
+      if (idx < 9) {
+        rec(idx + 1)
+      } else {
+        const copy = []
+        for (let j = 0; j < work.length; j++) { copy[j] = work[j] }
+
+        const spd = TWDS.bonuscalc.getSpeedFast(copy)
+        if (spd > bestspd) {
+          bestspd = spd
+          for (let j = 0; j < work.length; j++) { out[j] = work[j] }
+          console.log('doit3', 'rec', spd, TWDS.describeItemCombo(copy))
+        }
+        cnt++
+        if (cnt % 5000 === 0) {
+          console.log('cnt', cnt)
+          break
+        }
+      }
+    }
+  }
+  let p = 1
+  for (let i = 0; i < slots.length; i++) {
+    const slot = slots[i]
+    p *= itemsBySlot[slot].length
+  }
+  TWDS.bonuscalc.getSpeedFast(true) // init the caches
+  console.log('oh, ', p, 'possibilities')
+  rec(0)
+
+  console.timeEnd('SpeedCalc3')
+  return out
+}
 TWDS.speedcalc.doit = function (mode) {
   if (mode === null) mode = 0
   const skills = { ride: 1 }
@@ -65,7 +215,7 @@ TWDS.speedcalc.doit = function (mode) {
   let bonusItems = []
   if (mode) {
     bonusItems = TWDS.speedcalc.getBonusItems()
-    console.log('#bonusItems-all', bonusItems.length)
+    console.log('#bonusItems-all', bonusItems.length, TWDS.describeItemCombo(bonusItems))
     const merk = {}
     for (let i = 0; i < bonusItems.length; i++) {
       const item = bonusItems[i]
@@ -108,15 +258,15 @@ TWDS.speedcalc.doit = function (mode) {
   TWDS.dolog('info', 'SpeedCalc: available sets:', availableSets.length)
   let sets = TWDS.speedcalc.createSubsets(availableSets, bestItems, bonusItems)
   TWDS.dolog('info', 'SpeedCalc: subsets:', sets.length)
-  console.log('#sets', sets.length)
+  console.log('#sets', sets.length, sets)
 
   sets = TWDS.speedcalc.filterUneffectiveSets(sets, mode)
   TWDS.dolog('info', 'SpeedCalc: filtered sets:', sets.length)
-  console.log('#fsets', sets.length)
+  console.log('#fsets', sets.length, sets)
 
   sets = west.item.Calculator.combineSets(sets)
   TWDS.dolog('info', 'SpeedCalc: subsets:', sets.length)
-  console.log('#csets', sets.length)
+  console.log('#csets', sets.length, sets)
   // return [];
 
   sets = west.item.Calculator.fillEmptySlots(sets, bestItems)
@@ -136,7 +286,7 @@ TWDS.speedcalc.doit = function (mode) {
     if (spd > bestPoints) {
       bestPoints = spd
       best = sets[i]
-      console.log(TWDS.describeItemCombo(TWDS.speedcalc.getItems(sets[i])), sets[i],
+      console.log('better:', TWDS.describeItemCombo(TWDS.speedcalc.getItems(sets[i])), sets[i],
         TWDS.speedcalc.getItems(sets[i]), spd)
     }
   }
@@ -242,30 +392,7 @@ TWDS.speedcalc.calcCombinedSet = function (set) {
   const tmp = TWDS.speedcalc.getCombinedSetSpeedyValues(set)
   return TWDS.speedcalc.calc3(tmp.speed, tmp.ride, tmp.speedBonus)
 }
-/*
-var bestItems, bestItemsContainer, sets, i, best, points = 0, tmp, availableSets;
-// availableSets = this.filterUnavailableSets(west.storage.ItemSetManager.getAll());
-// bestItems = this.getBestItems(skills, true);
-//bestItemsContainer = new west.item.ItemSetContainer;
-//for (i = 0; i < bestItems.length; i++)
-//bestItemsContainer.addItem(bestItems[i].getId());
-sets = this.createSubsets(availableSets, bestItems, skills, jobId);
-if (window.__limitclothcalc && sets.length > 500) {
-sets = this.createSubsets(availableSets, bestItems, skills, jobId, true);
-console && console.log('using approximation...');
-}
-sets = this.filterUneffectiveSets(sets, skills, jobId);
-sets = this.fillEmptySlots(this.combineSets(sets), bestItems);
-sets.push(bestItemsContainer);
-for (i = 0; i < sets.length; i++) {
-tmp = sets[i].getValue(skills, jobId);
-if (tmp > points) {
-points = tmp;
-best = sets[i];
-}
-}
-return best;
-*/
+
 TWDS.speedcalc.createCombinations = function (items, k) {
   let i, j, combs, head, tailcombs
   if (k > items.length || k <= 0) {
@@ -292,11 +419,15 @@ TWDS.speedcalc.createCombinations = function (items, k) {
   return combs
 }
 TWDS.speedcalc.createSubsets = function (fullSets, bestItems, bonusItems) {
-  let i; const sets = []; let set; let j; let permutations; let k; let l; let tmpSet
-  for (i = 0; i < fullSets.length; i++) {
+  let set
+  let permutations
+  let tmpSet
+  const sets = []
+  for (let i = 0; i < fullSets.length; i++) {
     set = fullSets[i]
     sets.push(set)
-    for (j = set.items.length; j > 0; j--) {
+    for (let j = set.items.length; j > 0; j--) {
+      let k, l
       if (!Object.prototype.hasOwnProperty.call(set.bonus, j)) { continue }
       // if (!set.bonus.hasOwnProperty(j)) { continue }
       permutations = TWDS.speedcalc.createCombinations(set.items, j)
@@ -351,14 +482,22 @@ TWDS.speedcalc.getBonusItems = function () {
   west.common.forEach(itemsByBase, function (items, baseId) {
     const item = ItemManager.get(items[0])
     const value = TWDS.speedcalc.getSpeedyValues(item)
-    if (value.speedBonus && item.wearable()) {
+    // take all items with a speed bonus - and all animals, because their base speed without bonus might be faster.
+    if ((value.speedBonus || value.speed) && item.wearable()) {
       result.push(item)
+    }
+  })
+  west.common.forEach(Wear.slots, function (sl) {
+    const it = Wear.get(sl)
+    const value = TWDS.speedcalc.getSpeedyValues(it.obj)
+    if ((value.speedBonus || value.ride || value.speed) && it.obj.wearable()) {
+      result.push(it.obj)
     }
   })
   return result
 }
 
-TWDS.speedcalc.getBestItems = function (skills) {
+TWDS.speedcalc.getBestItems = function () {
   const bestItems = {}
   const result = []
   const itemsByBase = Bag.getItemsIdsByBaseItemIds()
