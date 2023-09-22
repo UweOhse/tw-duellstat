@@ -251,7 +251,7 @@ TWDS.storage.initListArea.element = function (ii, silvers, golds) {
     let best = null
     for (const job of jl) {
       // NOTE: habaneros and such things are found be getJobsByItemId, but are NOT mentioned in job.yields
-      if (best === null || ! (ii in job.yields) ) {
+      if (best === null || !(ii in job.yields)) {
         best = job
       } else if (job.yields[ii].prop > best.yields[ii].prop) {
         best = job
