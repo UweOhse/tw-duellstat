@@ -34,6 +34,7 @@ TWDS.craftcalc.getcontent = function (win) {
       console.log('CHANGE', this, this.value)
       if (this.value) {
         win._TWDS_item = this.value
+        win._TWDS_split = []
         TWDS.craftcalc.reload(win)
       }
     },
@@ -77,6 +78,7 @@ TWDS.craftcalc.getcontent = function (win) {
         ],
         onchange: function () {
           win._TWDS_deref = this.value
+          win._TWDS_split = []
           TWDS.craftcalc.reload(win)
         },
         style: {
@@ -152,6 +154,13 @@ TWDS.craftcalc.getcontent = function (win) {
           }
         }
       }
+      console.log('splitcheck', '_TWDS_split' in win)
+      if ('_TWDS_split' in win) {
+        if (win._TWDS_split.includes(itemid)) {
+          handlerecipe(win._TWDS_craftitems[itemid], count * it.resources[i].count)
+          continue
+        }
+      }
       if (!(itemid in things)) {
         things[itemid] = 0
       }
@@ -220,7 +229,8 @@ TWDS.craftcalc.getcontent = function (win) {
           { nodeName: 'th', textContent: TWDS._('CRAFTCALC_ITEM', 'item') },
           { nodeName: 'th', textContent: TWDS._('CRAFTCALC_ITEM_NAME', 'name') },
           { nodeName: 'th', textContent: TWDS._('CRAFTCALC_ITEM_NEEDED', 'needed') },
-          { nodeName: 'th', textContent: TWDS._('CRAFTCALC_ITEM_AVAILABLE', 'available') }
+          { nodeName: 'th', textContent: TWDS._('CRAFTCALC_ITEM_AVAILABLE', 'available') },
+          { nodeName: 'th', textContent: TWDS._('CRAFTCALC_ITEM_FUNCTIONS', 'functions') }
         ]
       }
     ]
@@ -229,8 +239,10 @@ TWDS.craftcalc.getcontent = function (win) {
     nodeName: 'tbody',
     last: resulttable
   })
+
   for (let i = 0; i < allitems.length; i++) {
-    const it = ItemManager.get(allitems[i][0])
+    const itemid = allitems[i][0]
+    const it = ItemManager.get(itemid)
     const popup = new ItemPopup(it, {}).popup.getXHTML()
     const tr = TWDS.createEle({
       nodeName: 'tr',
@@ -252,17 +264,17 @@ TWDS.craftcalc.getcontent = function (win) {
     const bb = TWDS.itemBidButton(allitems[i][0])
     TWDS.createEle({
       nodeName: 'td',
-      textContent: allitems[i][2],
+      textContent: allitems[i][2], // name
       last: tr
     })
     TWDS.createEle({
       nodeName: 'td',
-      textContent: allitems[i][1],
-      LAST: tr
+      textContent: allitems[i][1], // number needed
+      last: tr
     })
 
     const count = Bag.getItemCount(allitems[i][0])
-    const td = TWDS.createEle({
+    TWDS.createEle({
       nodeName: 'td',
       children: [{
         nodeName: 'span',
@@ -271,12 +283,69 @@ TWDS.craftcalc.getcontent = function (win) {
       }],
       last: tr
     })
+    // functions
+    const td = TWDS.createEle({
+      nodeName: 'td',
+      className: 'functions',
+      last: tr
+    })
     if (bb) {
       td.appendChild(bb)
     }
+
     const sb = TWDS.itemSellButton(allitems[i][0], allitems[i][1], cit.name)
-    td.appendChild(sb)
+    if (sb) {
+      td.appendChild(sb)
+    }
+
+    if (it.item_id in win._TWDS_craftitems) {
+      TWDS.createEle({
+        nodeName: 'span',
+        textContent: TWDS._('CRAFTCALC_SPLIT', 'split'),
+        className: 'TWDS_clickable',
+        title: TWDS._('CRAFTCALC_SPLIT_TITLE', 'split into components'),
+        last: td,
+        dataset: {
+          itemid: it.item_id
+        },
+        onclick: function () {
+          if (!('_TWDS_split' in win)) {
+            win._TWDS_split = []
+          }
+          if (!win._TWDS_split.includes(this.dataset.itemid)) {
+            win._TWDS_split.push(parseInt(this.dataset.itemid))
+            console.log('split: ', win._TWDS_split)
+            TWDS.craftcalc.reload(win)
+          }
+        }
+      })
+    }
   }
+  /* damned, only one sell dialog possible.
+  if (allitems.length && allsellable) {
+    TWDS.createEle({
+      nodeName: 'p',
+      last: resultarea,
+      textContent: "sell all this",
+      className: "TWDS_clickable",
+      dataset: {
+        allitems: JSON.stringify(allitems),
+        name: cit.name
+      },
+      onclick: function() {
+        let allitems=JSON.parse(this.dataset.allitems);
+        console.log("OC AI",this,allitems,this.dataset.name);
+        for (let i = 0; i < allitems.length; i++) {
+          const sb = TWDS.itemSellButton(allitems[i][0], allitems[i][1], this.dataset.name)
+          console.log("OC I",i,allitems[i],sb);
+          if (sb) {
+             TWDS.market_item_sell_handler.apply(sb);
+          }
+        }
+      }
+    })
+  }
+  */
   TWDS.createEle({ nodeName: 'hr', last: resultarea })
   TWDS.createEle({
     nodeName: 'h2',
@@ -296,6 +365,26 @@ TWDS.craftcalc.getcontent = function (win) {
     resultchat.textContent += ' [item=' + allitems[i][0]
     resultchat.textContent += ']'
   }
+  TWDS.createEle({ nodeName: 'hr', last: resultarea })
+  TWDS.createEle({
+    nodeName: 'h2',
+    textContent: TWDS._('CRAFTCALC_PLAINTEXT', 'In plain text'),
+    last: resultarea
+  })
+  const resultplain = TWDS.createEle({
+    nodeName: 'div',
+    className: 'forcopying',
+    last: resultarea
+  })
+  resultplain.textContent = win._TWDS_number
+  resultplain.textContent += ' ' + cit.name + ' = '
+  for (let i = 0; i < allitems.length; i++) {
+    const itemid = allitems[i][0]
+    const it = ItemManager.get(itemid)
+    if (i) { resultplain.textContent += ' + ' }
+    resultplain.textContent += allitems[i][1] + ' ' + it.name
+  }
+
   TWDS.createEle({ nodeName: 'hr', last: resultarea })
   TWDS.createEle({
     nodeName: 'h2',
