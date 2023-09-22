@@ -1,5 +1,40 @@
 TWDS.fbchat = {}
 TWDS.fbchat.oldhp = null
+TWDS.fbchat.characters = null
+TWDS.fbchat.charIcons = null
+TWDS.fbchat.clickhelperreal = function (ev) {
+  if (!TWDS.fbchat.characters) return
+  const t = ev.target
+  const name = t.textContent
+  const ai = Object.values(TWDS.fbchat.charIcons)
+  for (let i = 0; i < ai.length; i++) {
+    ai[i][0].classList.remove('highlight')
+  }
+  for (let i = 0; i < TWDS.fbchat.characters.length; i++) {
+    const r = TWDS.fbchat.characters[i]
+    if (r.name === name) {
+      const x = r.characterid
+      if (TWDS.fbchat.charIcons && TWDS.fbchat.charIcons[x]) {
+        const y = TWDS.fbchat.charIcons[x][0]
+        let z = 50
+        const interval = setInterval(function () {
+          if (z % 2) {
+            y.classList.add('highlight')
+          } else {
+            y.classList.remove('highlight')
+          }
+          z--
+          if (z < 1) {
+            clearInterval(interval)
+          }
+        }, 50)
+      }
+      break
+    }
+  }
+}
+TWDS.fbchat.clickhelper = function (ev) { TWDS.fbchat.clickhelperreal(ev) }
+
 TWDS.fbchat.sendmsg = function (fortid, msg) {
   const rooms = window.Chat.Resource.Manager.getRooms()
   fortid = parseInt(fortid)
@@ -46,6 +81,8 @@ TWDS.fbchat.roundhandlerreal = function (that, roundno) {
     return
   }
   const hp = [0, 0]
+  TWDS.fbchat.characters = that.characters
+  TWDS.fbchat.charIcons = that.charIcons
   for (let i = 0; i < that.characters.length; i++) {
     const c = that.characters[i]
     if (c.team >= 0 && c.team <= 1) {
@@ -64,12 +101,10 @@ TWDS.fbchat.roundhandlerreal = function (that, roundno) {
 }
 TWDS.fbchat.playerhandler = function (playerinfo) { // start of the battle
   window.FortBattleWindow._TWDS_backup_handlePlayerInfoSignal.call(this, playerinfo)
-  console.log('TWDS FBCHAT PLAYERHANDLER', playerinfo, this)
   TWDS.fbchat.roundhandlerreal(this, 0)
 }
 TWDS.fbchat.roundhandler = function (roundinfo) { // start of a round
   window.FortBattleWindow._TWDS_backup_handleRoundInfoSignal.call(this, roundinfo)
-  console.log('TWDS FBCHAT ROUNDHANDLER', roundinfo, this)
   TWDS.fbchat.roundhandlerreal(this, roundinfo.roundnumber)
 }
 TWDS.fbchat.startfunc = function () {
@@ -86,6 +121,9 @@ TWDS.fbchat.startfunc = function () {
   TWDS.registerSetting('bool', 'misc_fortbattle_chatext',
     TWDS._('FBS_SETTING', 'Add health point information to the fort battle chat.'),
     true, null, 'misc')
+
+  TWDS.delegate(document.body, 'click', '#windows .chat .chat_from .client_name', TWDS.fbchat.clickhelper)
+  TWDS.delegate(document.body, 'click', '#windows .chat_contacts .contact_client .client_name', TWDS.fbchat.clickhelper)
 }
 TWDS.registerStartFunc(function () {
   TWDS.fbchat.startfunc()
