@@ -262,3 +262,20 @@ TWDS.registerStartFunc(function () {
       'Default to other payment methods than nuggets, if possible.'),
     false)
 })
+TWDS.highlightTeles = function () {
+  if (!('read' in Character)) return
+  const x = TWDS.q1('#ui_bottombar .button.message')
+  x.style.outline = 'none'
+  if (TWDS.settings.misc_highlight_telegrams) {
+    if (!Character.read.messages) return
+    x.style.outline = '2px solid red'
+  }
+}
+TWDS.registerStartFunc(function () {
+  setInterval(TWDS.highlightTeles, 5000) // to delete the outline
+  EventHandler.listen('player-toread-messages', TWDS.highlightTeles)
+  TWDS.registerSetting('bool', 'misc_highlight_telegrams',
+    TWDS._('MISC_HIGHLIGHT_TELEGRAMS',
+      'Highlight the message button with red borders of you have unread telegrams.'),
+    false)
+})
