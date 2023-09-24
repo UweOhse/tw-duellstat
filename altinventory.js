@@ -287,7 +287,7 @@ TWDS.altinv.openwindow = function () {
       }
       if (u.ds.length) {
         if (str > '') { str += ', ' }
-        str += u.ds.length + ' duellstat equipment sets'
+        str += u.ds.length + ' ' + TWDS.scriptname + ' equipment sets'
       }
       x.title = str
       x.textContent = 'used'

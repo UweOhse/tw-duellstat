@@ -43,7 +43,7 @@ TWDS.fbchat.sendmsg = function (fortid, msg) {
     const r = rooms[rid]
     if (r.room === 'fortbattle' && r.fortId === fortid) {
       const ti = window.Chat.Formatter.formatTime(new Date().getTime(), false)
-      const x = '<div>[' + ti + ']</span> duellstat: ' + msg + '</div>'
+      const x = '<div>[' + ti + ']</span> ' + TWDS.scriptname + ': ' + msg + '</div>'
       r.addMessage(x)
       console.log('send', msg, 'to', r)
       return

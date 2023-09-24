@@ -67,7 +67,7 @@ TWDS.wuw.initWUWDisplay = function (container) {
       }
       if (one.ds.length) {
         if (flag) { h += ', ' }
-        h += one.ds.length + ' duellstat sets'
+        h += one.ds.length + ' ' + TWDS.scriptname + ' sets'
         flag = 1
       }
       td.innerHTML = h
@@ -125,7 +125,7 @@ TWDS.wuw.initWUWDisplay = function (container) {
         }
         const span = document.createElement('span')
         span.textContent = ds
-        span.title = 'duellstat equipment set'
+        span.title = TWDS.scriptname + ' equipment set'
         td.appendChild(span)
         counteq++
       }

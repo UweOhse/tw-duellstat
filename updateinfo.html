@@ -1,4 +1,39 @@
 <dl>
+<dt>0.55 - 2023-09-xx
+<dd>New: renamed the thing to clothcache. goodbye, duellstat.
+<dd>New: fortbattle chat: a click on the player name highlight the position on the battle field.
+<dd>New: fortbattle chat: shows health points and health point losses in each round.
+<dd>New: it's possible to highlight the messages button in the bottom row with a red border if there is a new tele. This is not too beautiful, but works, and has to be enable in the options (misc). Note that group teles also trigger the function, so... don't you hate group teles? 
+<dd>New: an inventory statistics (extra). your inventories worth, the worth of the useless stuff, bonds in letter, exp. potions (% of level thing). Some things might be useful, some things are missing (like how many easter egg (think points, not buffs) i already have for the next event).
+<dd>New: a new extra "iteminfo". Type in the number of the thing, and you'll see what's known about it. it's for me, not for you.
+<dd>New: minimap: add a quick and dirty display of the tracked job groups to the county map. this is not useful if you have many open jobs, but nice there are just a few.
+<dd>New: added an achievements page to the extras. it really helps if you need to find an achievement, and don't want to read 31 pages for that. there's a search function, too.
+<dd>New: a new extra "buffs" lists all known buffs in the game. it's sortable. 
+
+<dd>Improvement: craftcalc window shows the number of resources available, allows to buy / sell them on the market, and also allows a bit more flexibility when dividing resources. 
+<dd>Improvement: chest statistics now includes the wins of the pretzel event. rockets event, too. Wow, it's been a long time since 0.54.
+<dd>Improvement: storage: show if a silver/gold job is known.
+<dd>Improvement: you can add short note into the title of the job window (far left of the title, needs to be enabled in the settings). You might use this to remember which bonus equipment you can use, or whatever you need, but keep it short.
+<dd>Improvement: show which job drops an collectible (0.54 added the reverse thing).
+<dd>Improvement: inventory shows the number of items wanted in the storage (still not perfect, deactivated when that thing drops from a job, but an improment anyway).
+<dd>Improvement: itemsettab: make it a large window.
+<dd>Improvement: don't switch the main window to the bonus tab if the equipment changes. 
+<dd>Improvement: sort the extras by alphabet.
+
+<dd>Change: calculator: renamed 'event and others' to non-auctionable, to be more clear. added a blacklist for pay-to-win shit and extremely rare stuff.
+<dd>Bugfix: craftwindow: it had a limit of 1000 units per crafting action, which has been removed. As a side effect the click on the max. number (in paratheses left of it) now doesn't use the 1000 anymore, and just works as intended.
+<dd>Bugfix: craftwindow: solved the issue with the order of events, causing slow updates.
+<dd>Bugfix: the speedcalc function judged animals by their speed bonus, not their base speed. Fixed.
+<dd>Bugfix: speedcalc might have miscalculated by using the currently equipped animal. The bug was there, but whether it really is another question.
+<dd>Bugfix: the storage tab could not be opened is you had one of the rare things for the level 600 crafting recipes in it (habaneros, cobra teeth and ...). in general it would fail if you included an item which is dropable, but without a specific job.
+<dd>Bugfix: fixed the redraw problem of the minimap (extensions vanished)
+<dd>Bugfix: since 0.52 the equipment calculator didn't like floating point input anymore, but i still sent that. Stupid me.
+<dd>Bugfix: the calculation of the time needed to collect resources for crafted stuff did almost everything right, but didn't multiply the times with the number of resources. "Almost right" is the same as "totally wrong".
+<dd>Bugfix: removed a duplicate setting for the market.
+<dd>Bugfix: equipment tab: wear button didn't work.
+<dd>Bugfix: sleep helper: now caches forts w/o barracks, too, for dying montana.
+<dd>Bugfix: item set tab: click on the set didn't open the set window.
+
 <dt>0.54 - 2023-05-26
 <dd>New: a new extra, the simulator, allows targeted exploration of any equipment known to the game (you can see how usefull a new piece of equipment would be).
 <dd>New: a replacement for the craftwindow, allowing you to buy from and sell on the market, start a job, ... and craft, of course.

@@ -394,7 +394,7 @@ TWDS.registerSetting('bool', 'jobwindow_offer_note',
 
 TWDS.registerStartFunc(function () {
   TWDS.registerSetting('info', 'AAAAA',
-    'The names of set to offer in place of the higher income button. This only works if you have the Higher Income premium, and if the names are those of ingame or tw-duellstat sets.',
+    'The names of set to offer in place of the higher income button. This only works if you have the Higher Income premium, and if the names are those of ingame or ' + TWDS.scriptname + ' sets.',
     '', null, 'Jobwindow', 'Setnames')
 
   for (let i = 0; i < 10; i++) {

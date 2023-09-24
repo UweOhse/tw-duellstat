@@ -183,7 +183,7 @@ TWDS.clothcache.invItemInitDisplay = function () {
       }
       if (iu.ds.length) {
         if (title > '') title += ', '
-        title = title + TWDS._('CLOTHCACHE_DS_EQ_SETS', '$n$ duellstat equipment sets', { n: iu.ds.length })
+        title = title + TWDS._('CLOTHCACHE_DS_EQ_SETS', '$n$ $s$ equipment sets', { n: iu.ds.length, s: TWDS.scriptname })
         count += iu.ds.length
       }
     }

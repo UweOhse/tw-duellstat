@@ -572,7 +572,7 @@ TWDS.registerSetting('bool', 'marketwindow_enhancements',
   TWDS._('AUCTION_SETTING', 'Enhance the market offering window'),
   false, null, 'Market')
 TWDS.registerSetting('bool', 'saleProtection',
-  TWDS._('CLOTHCACHE_PROTECT', 'Mark the best items for any job, and the items of managed sets (game, tw-calc, tw-duellstat) unsalable and unauctionable. Page reload needed'),
+  TWDS._('CLOTHCACHE_PROTECT', 'Mark the best items for any job, and the items of managed sets (game, tw-calc, ' + TWDS.scriptname + ') unsalable and unauctionable. Page reload needed'),
   true, null, 'Market')
 
 TWDS.registerStartFunc(function () {

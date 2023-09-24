@@ -5,7 +5,7 @@ TWDS.opentab = function (tabname, scrollto) {
   }
   if (TWDS.window == null) {
     // TWDS.updateData()
-    TWDS.window = wman.open('TWDS', 'Duellstat', 'noreload nocloseall').setMiniTitle('Duellstat')
+    TWDS.window = wman.open('TWDS', TWDS.scriptnameTitle, 'noreload nocloseall').setMiniTitle(TWDS.scriptnameMiniTitle)
 
     let defaultTab = ''
     for (const tabData of Object.values(TWDS.knownTabs)) {
@@ -40,7 +40,7 @@ TWDS.createSideButton = function () {
   const d = document.createElement('div')
   d.classList.add('menulink')
   d.onClick = 'TWDS.open();'
-  d.title = 'Duellstat'
+  d.title = TWDS.scriptnameTitle
   d.style.backgroundImage = 'none !important'
   d.textContent = 'DS'
   d.id = 'TWDS_innerbutton'
