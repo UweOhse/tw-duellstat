@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Duellstat
 // @name:de     Clothcache (früher Duellstat)
-// @name:de     Clothcache (ex-Duellstat)
+// @name:en     Clothcache (ex-Duellstat)
 // @author      xyzabcd
 // @namespace   xyzabcd
 // @description create a duell statistik
