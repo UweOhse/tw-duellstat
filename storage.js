@@ -200,12 +200,6 @@ TWDS.storage.initListArea = function (container) {
     const tr = TWDS.storage.initListArea.element(ii, silvers, golds)
     if (tr !== null) { tbody.appendChild(tr) }
   }
-  for (const ii of Object.keys(TWDS.storage.dropperhour)) {
-    if (!(ii in TWDS.storage.data)) {
-      const tr = TWDS.storage.initListArea.element(ii, silvers, golds)
-      if (tr !== null) { tbody.appendChild(tr) }
-    }
-  }
 }
 TWDS.storage.getitemdata = function (itemid) {
   const have = Bag.getItemCount(itemid)
