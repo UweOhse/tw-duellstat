@@ -387,6 +387,18 @@ TWDS.storage.initSearchArea = function (container) {
     textContent: TWDS._('STORAGE_IMPORT', 'Import'),
     title: TWDS._('STORAGE_IMPORT_TITLE', 'Import records from the clipboard. You will have a chance to review any changes before they happen.')
   }))
+  div.appendChild(TWDS.createElement({
+    nodeName: 'button',
+    id: 'TWDS_storage_remove_selected',
+    textContent: TWDS._('STORAGE_REMOVE_SELECTED', 'Remove selected'),
+    title: TWDS._('STORAGE_REMOVE_SELECTED_TITLE', 'You will be asked for a search string, then comment entries matching that will be removed and their target numbers will be calculated anew.')
+  }))
+  div.appendChild(TWDS.createElement({
+    nodeName: 'button',
+    id: 'TWDS_storage_recalc_sums',
+    innerHTML: TWDS._('STORAGE_RECALC_SUMS', '&sum;'),
+    title: TWDS._('STORAGE_RECALC_SUMS_TITLE', 'Recalculate the target numbers from the entries in the comments.')
+  }))
 
   const sdiv = TWDS.createElement({
     nodeName: 'div',
@@ -481,6 +493,110 @@ TWDS.storage.activateTab = function () {
   TWDS.storage.sortList('percent')
   document.getElementById('TWDS_storage_search_name').focus()
 }
+TWDS.storage.recalcsums = function () {
+  TWDS.storage.reload()
+  let did = 0
+  let alerts = ''
+  const rx1 = /(\d+)\s+/
+  for (const [k, v] of Object.entries(TWDS.storage.data)) {
+    const comment = v[1]
+    const lines = comment.split('\n')
+    let sum = 0
+    let okay = 1
+    for (let i = 0; i < lines.length; i++) {
+      const m = lines[i].match(rx1)
+      if (m !== null) {
+        sum += parseInt(m[1])
+      } else if (lines[i] > '') {
+        okay = 0
+      }
+    }
+    if (okay) {
+      if (parseInt(v[0]) !== sum) {
+        console.log('changing', ItemManager.get(k), 'from', v[0], 'to', sum, v[1])
+        v[0] = sum
+        did = 1
+      }
+    } else {
+      alerts += ItemManager.get(k).name + '\n'
+    }
+  }
+  if (did) {
+    TWDS.storage.save()
+    TWDS.storage.activateTab()
+  }
+  if (alerts > '') {
+    window.alert('I failed to understand one or more entries, and left them alone:\n' + alerts)
+  }
+}
+TWDS.storage.removeselected = function (term) {
+  TWDS.storage.reload()
+  let report = ''
+  const indent = function (text) {
+    const lines = text.split('\n')
+    let out = ''
+    for (let i = 0; i < lines.length; i++) {
+      out += '  ' + lines[i] + '\n'
+    }
+    return out
+  }
+
+  let x
+  if (term) { // debug hack
+    x = term
+  } else {
+    x = window.prompt('searchterm (case insensitive prefix search)')
+  }
+  if (x === null || x.trim() === '') { return }
+  x = x.toLocaleLowerCase()
+
+  const rx1 = new RegExp('(\\d+)\\s*' + x)
+  const rx2 = new RegExp('\\W' + x + '\\W')
+  const overwrites = {}
+  for (const [k, v] of Object.entries(TWDS.storage.data)) {
+    const old = v[1]
+    const lines = old.split('\n')
+    let comment = ''
+    let done = 0
+    for (let i = 0; i < lines.length; i++) {
+      let doit = 0
+      const tmp = lines[i].toLocaleLowerCase()
+
+      let m = tmp.match(rx1)
+      if (m !== null) doit = 1
+      m = tmp.match(rx2)
+      if (m !== null) doit = 2
+
+      if (lines[i] === '') doit = 3
+      if (!doit) {
+        if (comment > '') comment += '\n'
+        comment += lines[i]
+      } else if (doit !== 3) {
+        console.log('MATCH', lines[i], doit)
+        done++
+      }
+    }
+    if (done) {
+      if (!report) { report = 'Please check:\n' }
+      report += 'Old entry for item ' + ItemManager.get(k).name + ':\n'
+      report += indent(old)
+      report += 'New entry:\n' + indent(comment)
+      v[1] = comment
+      overwrites[k] = v
+    }
+  }
+  if (report) {
+    if (window.confirm(report)) {
+      for (const [k, v] of Object.entries(overwrites)) {
+        TWDS.storage.data[k] = v
+      }
+      TWDS.storage.save()
+      TWDS.storage.recalcsums()
+      TWDS.storage.activateTab()
+    }
+  }
+}
+
 TWDS.storageStartFunction = function () {
   TWDS.registerTab('storage',
     TWDS._('TABNAME_STORAGE', 'Storage'),
@@ -586,6 +702,12 @@ TWDS.storageStartFunction = function () {
       // Promise rejected.
       console.error('Unable to write to clipboard. :-(')
     })
+  })
+  $(document).on('click', '#TWDS_storage_remove_selected', function () {
+    TWDS.storage.removeselected()
+  })
+  $(document).on('click', '#TWDS_storage_recalc_sums', function () {
+    TWDS.storage.recalcsums()
   })
   $(document).on('click', '#TWDS_storage_import', function () {
     navigator.clipboard.readText().then(function (str) {
