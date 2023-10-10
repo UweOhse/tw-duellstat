@@ -332,11 +332,16 @@ TWDS.marketwindow.filter = function (mode, cat) {
     } else if (mode === 'noset') {
       if (item.set) { $(p[i]).hide() }
     } else if (mode === 'craft') {
-      if (!(item.item_id in TWDS.crafting.resources)) {
+      if (!(item.item_id in TWDS.crafting.mycraftresources)) {
         $(p[i]).hide()
       }
     } else if (mode === 'collect') {
       if (!TWDS.collections.isMissing(item.item_id)) {
+        $(p[i]).hide()
+      }
+    } else if (mode === 'missing') {
+      const x = Bag.getItemsByBaseItemId(item.item_base_id)
+      if (x.length) {
         $(p[i]).hide()
       }
     } else {
@@ -380,7 +385,8 @@ TWDS.marketwindow.updateCategoryReal = function (category, data) {
     combo.addItem('noset', TWDS._('MARKETWINDOW_FILTER_NOSET', 'items without set '))
     combo.addItem('collect', TWDS._('MARKETWINDOW_FILTER_COLLECT', 'collect'))
     combo.addItem('craft', TWDS._('MARKETWINDOW_FILTER_CRAFT', 'crafting'))
-    const qc = TWDS.quickusables.getcategories()
+    combo.addItem('missing', TWDS._('MARKETWINDOW_FILTER_MISSING', 'missing'))
+    const qc = TWDS.quickusables.getcategories(1) // kind 1: market
     for (let i = 0; i < qc.length; i++) {
       combo.addItem(qc[i], TWDS.quickusables.getcatdesc(qc[i]))
     }
