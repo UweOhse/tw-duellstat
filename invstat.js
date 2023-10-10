@@ -42,7 +42,12 @@ TWDS.invstat.openwindow = function () {
     totalitems: 0,
     distinctitems: 0,
     xplevel: 0,
-    bonds: 0
+    bonds: 0,
+    pretzels: 0,
+    hearts: 0,
+    cempasuchils: 0,
+    fireworks: 0,
+    eastereggs: 0
   }
   let warncount = 0
 
@@ -114,9 +119,6 @@ TWDS.invstat.openwindow = function () {
       erg.distinctopenunpack += 1
       did = 1
     }
-    if (it.item_id === 2393000) {
-      console.log('check', it)
-    }
     let n = TWDS.quickusables.matchnumber(it, 'bonds')
     if (n) {
       erg.bonds += n * count
@@ -126,12 +128,23 @@ TWDS.invstat.openwindow = function () {
     n = TWDS.quickusables.matchnumber(it, 'experiencelevel')
     if (n) {
       erg.xplevel += n * count
-      console.log(it, n, '=>', erg.xplevel)
       did = 1
+    }
+    if (!it.unique) { // "unique" catches things like the 24h heart bag
+      n = TWDS.quickusables.matchnumber(it, 'pretzels')
+      if (n) { erg.pretzels += n * count; did = 1 }
+      n = TWDS.quickusables.matchnumber(it, 'hearts')
+      if (n) { erg.hearts += n * count; did = 1 }
+      n = TWDS.quickusables.matchnumber(it, 'cempasuchils')
+      if (n) { erg.cempasuchils += n * count; did = 1 }
+      n = TWDS.quickusables.matchnumber(it, 'fireworks')
+      if (n) { erg.fireworks += n * count; did = 1 }
+      n = TWDS.quickusables.matchnumber(it, 'eastereggs')
+      if (n) { erg.eastereggs += n * count; did = 1 }
     }
     if (!did) {
       if (warncount++ < 10) {
-        console.log(it)
+        console.log('unhandled thing', it)
       }
     }
   }
@@ -208,12 +221,20 @@ TWDS.invstat.openwindow = function () {
   TWDS.createEle('td', { beforeend: tr, textContent: erg.bonds + Character.upb, style: ra })
   TWDS.createEle('th', { beforeend: tr, textContent: 'in letters' })
   TWDS.createEle('td', { beforeend: tr, textContent: erg.bonds, style: ra })
-  tr = TWDS.createEle('tr', { beforeend: tbody, className: '' })
-  TWDS.createEle('th', { beforeend: tr, textContent: 'experience' })
-  TWDS.createEle('th', { beforeend: tr, textContent: 'in % of level' })
-  TWDS.createEle('td', { beforeend: tr, textContent: erg.xplevel, style: ra })
-  TWDS.createEle('th', { beforeend: tr, textContent: '' })
-  TWDS.createEle('td', { beforeend: tr, textContent: '', style: ra })
+  const trivial = function (t1, t2, val) {
+    const tr = TWDS.createEle('tr', { beforeend: tbody, className: '' })
+    TWDS.createEle('th', { beforeend: tr, textContent: t1 })
+    TWDS.createEle('th', { beforeend: tr, textContent: t2 })
+    TWDS.createEle('td', { beforeend: tr, textContent: val, style: ra })
+    TWDS.createEle('th', { beforeend: tr, textContent: '' })
+    TWDS.createEle('td', { beforeend: tr, textContent: '', style: ra })
+  }
+  trivial('Experience', 'in % of a level', erg.xplevel)
+  trivial('Hearts', '', erg.hearts)
+  trivial('Easter eggs', '', erg.eastereggs)
+  trivial('Fireworks', '', erg.fireworks)
+  trivial('Pretzels', '', erg.pretzels)
+  trivial('Cempasúchil', '', erg.cempasuchils)
 
   sp.appendContent(content)
 

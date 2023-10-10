@@ -61,7 +61,12 @@ TWDS.quickusables.initusables = function () {
     multiplayer: [],
     openunpack: [],
     movement: [],
-    bonds: []
+    bonds: [],
+    pretzels: [],
+    hearts: [],
+    fireworks: [],
+    cempasuchils: [],
+    eastereggs: []
   }
   const clean = function (str) {
     str = str.replace(/([0-9]+)-([0-9]+)/, '')
@@ -110,6 +115,12 @@ TWDS.quickusables.initusables = function () {
   doit(51595, 'openunpack', 0) // Metallschädel,  "Enthält eine der folgenden Sammelkarten"
   doit(2136, 'bonds', 0) // bonds
   doit(2196, 'experiencelevel', 0) // experience to your next level
+  doit(2196, 'experiencelevel', 0) // experience to your next level
+  doit(371, 'pretzels', 0)
+  doit(2562, 'hearts', 0)
+  doit(2675, 'cempasuchils', 0)
+  doit(2619, 'fireworks', 0)
+  doit(51981, 'eastereggs', 0)
 }
 TWDS.quickusables.match = function (item, cat) {
   if (TWDS.quickusables.usables === null) {
