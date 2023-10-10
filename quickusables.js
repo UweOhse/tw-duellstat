@@ -33,41 +33,51 @@ TWDS.quickusables.getcatdesc = function (cat) {
 TWDS.quickusables.hascat = function (cat) {
   return (cat in TWDS.quickusables.catnames)
 }
-TWDS.quickusables.getcategories = function () {
+TWDS.quickusables.getcategories = function (kind) {
   if (TWDS.quickusables.usables === null) {
     TWDS.quickusables.initusables()
   }
   const out = []
   for (const i of Object.keys(TWDS.quickusables.usables)) {
     if (i.match(/_x$/)) continue
-    out.push(i)
+    if (kind === 0 || TWDS.quickusables.flags[i] & kind) { out.push(i) }
   }
   return out
 }
+TWDS.quickusables.addcat = function (what, where) {
+  TWDS.quickusables.usables[what] = {}
+  TWDS.quickusables.flags[what] = where
+}
 TWDS.quickusables.initusables = function () {
-  TWDS.quickusables.usables = {
-    energy: [],
-    health: [],
-    workmotivation: [],
-    duelmotivation: [],
-    drop: [],
-    experience: [],
-    experiencelevel: [],
-    money: [],
-    luck: [],
-    duel: [],
-    fortbattle: [],
-    laborpoints: [],
-    multiplayer: [],
-    openunpack: [],
-    movement: [],
-    bonds: [],
-    pretzels: [],
-    hearts: [],
-    fireworks: [],
-    cempasuchils: [],
-    eastereggs: []
+  // 1 is market, 2 is event currency
+  TWDS.quickusables.flags = {
+    energy: 1,
+    health: 1,
+    workmotivation: 1,
+    duelmotivation: 1,
+    drop: 1,
+    experience: 1,
+    experiencelevel: 0,
+    money: 1,
+    luck: 1,
+    duel: 1,
+    fortbattle: 1,
+    laborpoints: 1,
+    multiplayer: 1,
+    openunpack: 1,
+    movement: 1,
+    bonds: 0,
+    pretzels: 2,
+    hearts: 2,
+    fireworks: 2,
+    cempasuchils: 2,
+    eastereggs: 2
   }
+  TWDS.quickusables.usables = {}
+  for (const i of Object.keys(TWDS.quickusables.flags)) {
+    TWDS.quickusables.usables[i] = []
+  }
+
   const clean = function (str) {
     str = str.replace(/([0-9]+)-([0-9]+)/, '')
     str = str.replace(/([0-9]+)/, '')
