@@ -26,7 +26,7 @@ TWDS.updatetab.activate = function () {
 
 TWDS.updatetab.startFunction = function () {
   TWDS.registerTab('updates',
-    TWDS._('TABNAME_SETS', 'Updates'),
+    TWDS._('TABNAME_UPDATES', 'Updates'),
     TWDS.updatetab.getContent,
     TWDS.updatetab.activate,
     true)
