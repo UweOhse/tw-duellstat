@@ -200,6 +200,11 @@ TWDS.storage.initListArea = function (container) {
     const tr = TWDS.storage.initListArea.element(ii, silvers, golds)
     if (tr !== null) { tbody.appendChild(tr) }
   }
+  TWDS.createEle({
+    nodeName: 'p',
+    innerHTML: '<br>You can use the <b>Comment</b> as you please, but the functions to import, to remove selected comment lines and to recalculate the target expect the lines in the comments to have have this format:<br><br>NUMBER some text, for example:<br>50 for daily quests.',
+    last: container
+  })
 }
 TWDS.storage.getitemdata = function (itemid) {
   const have = Bag.getItemCount(itemid)
@@ -311,17 +316,7 @@ TWDS.storage.initListArea.element = function (ii, silvers, golds) {
         nodeName: 'td',
         dataset: { key: 'target', sortval: mydata.want },
         childNodes: [
-          { nodeName: 'input', type: 'number', size: 5, min: 0, value: e[0], classList: ['TWDS_storage_countinput'] },
-          {
-            nodeName: 'div',
-            textContent: mydata.want > e[0] ? '+' + (mydata.want - e[0]) : '',
-            title: TWDS._('STORAGE_X_TITLE', 'additional items/minimal items to keep, see below.'),
-            classList: ['TWDS_storage_extra'],
-            dataset: {
-              mydata: mydata.want,
-              e: e[0]
-            }
-          }
+          { nodeName: 'input', type: 'number', size: 5, min: 0, value: e[0], classList: ['TWDS_storage_countinput'] }
         ],
         onchange: function () {
           EventHandler.signal('twds_storage_tracking_changed', [this.parentNode.dataset.item_id])
