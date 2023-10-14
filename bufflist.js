@@ -140,7 +140,7 @@ TWDS.bufflist.openwindowReal = function () {
     className: 'quickfilter_effect',
     last: myhead
   })
-  const qc = TWDS.quickusables.getcategories()
+  const qc = TWDS.quickusables.getcategories(0)
   TWDS.createEle({
     nodeName: 'option',
     value: '',
