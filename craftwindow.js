@@ -201,7 +201,7 @@ TWDS.craftwindow.getcontent = function (win) {
     className: 'quickfilter',
     last: myhead
   })
-  const qc = TWDS.quickusables.getcategories()
+  const qc = TWDS.quickusables.getcategories(0)
   TWDS.createEle({
     nodeName: 'option',
     value: '',
