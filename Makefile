@@ -56,7 +56,7 @@ sass.css: $(SASS_SOURCES)
 
 tw-duellstat.user.js: $(ALL_SOURCES) Makefile updateinfo.html
 	cat $(ALL_SOURCES) \
-	| awk '/@REPLACEUPDATEINFO@/{file="updateinfo.html";while ((getline<file) > 0) {print} next} {print}' \
+	| awk '/@REPLACEUPDATEINFO@/{file="updateinfo.html";while ((getline<file) > 0) {if ($$0 ~ /obsolete-marker/) {print "</dl>"; break;} print} next} {print}' \
 		>$@.t
 	sed -i s/@REPLACEMYVERSION@/$(VGET)/ $@.t
 	mv $@.t $@
