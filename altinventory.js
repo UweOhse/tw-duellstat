@@ -85,17 +85,17 @@ TWDS.altinv.openwindow = function () {
       Inventory.search(t.dataset.itemname)
     }
     if (t.classList.contains('TWDS_altinv_auction_away')) {
-        Ajax.remoteCallMode('town', 'get_town', {
-          x: Character.position.x,
-          y: Character.position.y
-        }, function (json) {
-          if (json.error) {
-            return new UserMessage(json.msg).show()
-          }
-          MarketWindow.open(json.town_id, json.allBuildings.market.stage, json.town_name)
-          MarketWindow.showTab('sell')
-          Inventory.search(t.dataset.itemname)
-        })
+      Ajax.remoteCallMode('town', 'get_town', {
+        x: Character.position.x,
+        y: Character.position.y
+      }, function (json) {
+        if (json.error) {
+          return new UserMessage(json.msg).show()
+        }
+        MarketWindow.open(json.town_id, json.allBuildings.market.stage, json.town_name)
+        MarketWindow.showTab('sell')
+        Inventory.search(t.dataset.itemname)
+      })
     }
     if (t.classList.contains('TWDS_altinv_market_search')) {
       MarketWindow.open(Character.homeTown.town_id, 1, '???')
@@ -313,9 +313,8 @@ TWDS.altinv.openwindow = function () {
     }
 
     ac = TWDS.createEle('td', { beforeend: tr, className: 'sell' })
-    let sb=TWDS.itemSellButton(id, 1, "")
-    if (sb)
-      ac.appendChild(sb);
+    const sb = TWDS.itemSellButton(id, 1, '')
+    if (sb) { ac.appendChild(sb) }
     if (it.sellable) {
       const b = TWDS.createEle({
         nodeName: 'span',
