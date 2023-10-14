@@ -2,6 +2,8 @@
 //
 TWDS.marketwindow = {}
 TWDS.marketwindow.item = null
+TWDS.marketwindow.bulkmodeactive = false
+TWDS.marketwindow.bulkmodetimeout = -1
 TWDS.marketwindow.createMarketOffer = function (source) {
   // MarketWindow._TWDS_backup_createMarketOffer.apply(this, arguments)
   MarketWindow._TWDS_backup_createMarketOffer(source)
@@ -10,6 +12,10 @@ TWDS.marketwindow.createMarketOffer = function (source) {
 }
 TWDS.marketwindow.enhanceit = function (thing) {
   thing.divMain[0].classList.add('TWDS_enhanced') // for utils.js
+  const te = TWDS.q1('.tw2gui_inner_window_title .textart_title', thing.divMain)
+  if (te) {
+    te.textContent = TWDS.marketwindow.item.name
+  }
 
   // description.
   const savedesc = TWDS.createElement('div', {
@@ -200,6 +206,86 @@ TWDS.marketwindow.enhanceit = function (thing) {
     e[0].type = 'number'
     e[0].min = 1
     e[0].max = Bag.getItemByItemId(TWDS.marketwindow.item.item_id).count
+  }
+
+  // bulk mode
+  const oo = document.querySelector('#mps_otheroffers')
+  if (oo) {
+    const p = oo.parentNode
+    TWDS.createEle({
+      nodeName: 'div',
+      last: p,
+      className: 'TWDS_market_bulkmode_container ' + (TWDS.marketwindow.bulkmodeactive ? 'TWDS_market_bulkmode_active' : ''),
+      children: [
+        {
+          nodeName: 'input',
+          type: 'checkbox',
+          checked: TWDS.marketwindow.bulkmodeactive,
+          onchange: function (x) {
+            TWDS.marketwindow.bulkmodeactive = this.checked
+            if (this.checked) {
+              this.parentNode.classList.add('TWDS_market_bulkmode_active')
+            } else {
+              this.parentNode.classList.remove('TWDS_market_bulkmode_active')
+              TWDS.marketwindow.bulkmodetimeoutfn()
+            }
+          },
+          id: 'TWDS_market_bulkmode_input'
+        }, {
+          nodeName: 'b',
+          textContent: TWDS._('MARKETWINDOW_BULKMODE', 'bulk mode')
+        }, {
+          nodeName: 'div',
+          innerHTML: TWDS._('MARKETWINDOW_BULKMODE_HELP', 'Inventory and sale list will updated after a pause of some seconds.<br>This seriously reduces the number of streak of bad luck events.')
+        }
+      ]
+    })
+  }
+  // +1/2 feature
+  const mmb = document.querySelector('#market_min_bid')
+  if (mmb) {
+    const tr = mmb.closest('tr')
+    const addfn = function (mod, ele) {
+      console.log('ADD', mod, ele, ele.value)
+      ele.value = ele.value * (1.0 + parseFloat(mod))
+      $(ele).trigger('change')
+      console.log('ADD-END', mod, ele, ele.value)
+    }
+    const addfn1 = function () {
+      const i = TWDS.q1('#market_min_bid')
+      if (i) {
+        addfn(this.dataset.mod, i)
+      }
+    }
+    const addfn2 = function () {
+      const i = TWDS.q1('#market_max_price')
+      if (i) {
+        addfn(this.dataset.mod, i)
+      }
+    }
+    TWDS.createEle({
+      after: tr,
+      nodeName: 'tr',
+      className: 'TWDS_surcharge_line',
+      children: [
+        { nodeName: 'td', textContent: TWDS._('MARKETWINDOW_SURCHARGE', 'Surcharge:') },
+        {
+          nodeName: 'td',
+          children: [
+            { nodeName: 'span', textContent: '+100%', dataset: { mod: 1 }, onclick: addfn1 },
+            { nodeName: 'span', textContent: '+200%', dataset: { mod: 2 }, onclick: addfn1 }
+          ]
+        },
+        { nodeName: 'td', textContent: '' },
+        {
+          nodeName: 'td',
+          children: [
+            { nodeName: 'span', textContent: '+50%', dataset: { mod: 0.5 }, onclick: addfn2 },
+            { nodeName: 'span', textContent: '+100%', dataset: { mod: 1 }, onclick: addfn2 }
+          ]
+        }
+      ]
+    })
   }
 
   // save button: auction length
@@ -580,10 +666,36 @@ TWDS.registerSetting('bool', 'marketwindow_enhancements',
 TWDS.registerSetting('bool', 'saleProtection',
   TWDS._('CLOTHCACHE_PROTECT', 'Mark the best items for any job, and the items of managed sets (game, tw-calc, ' + TWDS.scriptname + ') unsalable and unauctionable. Page reload needed'),
   true, null, 'Market')
+TWDS.marketwindow.offersend = function (obj) {
+  if (!TWDS.marketwindow.bulkmodeactive) {
+    MarketWindow.Offer._TWDS_backup_send(obj)
+    return
+  }
+  const params = obj
+  Ajax.remoteCall('building_market', 'putup', params, function (resp) {
+    if (resp.error) { return new UserMessage(resp.msg).show() } else {
+      Character.setMoney(resp.msg.money)
+      Character.setDeposit(resp.msg.deposit)
+      new UserMessage(
+        TWDS._('MARKETWINDOW_OFFERED_MSG', 'The goods are offered for sale; the fee is $ $fee$', { fee: resp.msg.costs }), UserMessage.TYPE_SUCCESS).show()
+      clearTimeout(TWDS.marketwindow.bulkmodetimeout)
+      TWDS.marketwindow.bulkmodetimeout = setTimeout(TWDS.marketwindow.bulkmodetimeoutfn, 8 * 1000)
+    }
+  }, MarketWindow)
+}
+TWDS.marketwindow.bulkmodetimeoutfn = function () {
+  clearTimeout(TWDS.marketwindow.bulkmodetimeout)
+  TWDS.marketwindow.bulkmodetimeout = -1
+  EventHandler.signal('inventory_changed')
+  MarketWindow.Sell.initData()
+}
 
 TWDS.registerStartFunc(function () {
   MarketWindow._TWDS_backup_createMarketOffer = MarketWindow.createMarketOffer
   MarketWindow.createMarketOffer = TWDS.marketwindow.createMarketOffer
+  MarketWindow.Offer._TWDS_backup_send = MarketWindow.Offer.send
+  MarketWindow.Offer.send = TWDS.marketwindow.offersend
+
   west.gui.Dialog.prototype._TWDS_marketwindow_backup_show = west.gui.Dialog.prototype.show
   west.gui.Dialog.prototype.show = TWDS.marketwindow.showwrapper
   const datalist = TWDS.createEle('datalist', {
@@ -633,6 +745,7 @@ TWDS.registerStartFunc(function () {
 // used when reloading, so the update code will be used.
 if ('_TWDS_backup_createMarketOffer' in MarketWindow) {
   MarketWindow.createMarketOffer = TWDS.marketwindow.createMarketOffer
+  MarketWindow.Offer.send = TWDS.marketwindow.offersend
   west.gui.Dialog.prototype.show = TWDS.marketwindow.showwrapper
   console.log('auction.js reloaded')
 }
