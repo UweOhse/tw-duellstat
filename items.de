@@ -1,0 +1,4 @@
+ITEMPOPUP_CRAFTED: "Handwerk",
+ITEMPOPUP_CRAFTED_FOUNDITEMS: ", $n$ Gegenstände zu finden (<= $time$)",
+ITEMPOPUP_SHOPITEMS: ", $n$ Gegenstände aus dem UP-Shop",
+ITEMPOPUP_FOUNDITEM_WORKTIME: "Gefunden, <= $time$ zum Sammeln",
