@@ -7,3 +7,6 @@ MINIMAP_SETTING_NAVIGATION: "Ergänze den rechten Bereich der Minimap um Navigat
 MINIMAP_OPACITY_CHECKBOX_TITLE: 'Benutzerinterface größtenteils transparent machen (Suchmodus)',
 MINIMAP_TASKJOB_BUTTON: "Zeige aktive Job Gruppen",
 MINIMAP_SETTING_TASKJOBDISPLAY: "Biete eine Schaltfläche zum Aufzeigen aller aktiven Jobgruppen in der County-Karte.",
+MINIMAP_SETTING_SILVERGOLD_STORAGEHELPER: "Markiere Bonusarbeiten für im Storage fehlende Gegenstände",
+MINIMAP_SETTING_SILVERGOLD_COLLECTHELPER: "Markiere Bonusarbeiten, bei denen noch fehlende Sammelgegenstände gefunden werden können",
+MINIMAP_SETTING_SILVERGOLD_TRACKERHELPER: "Markiere Bonusarbeiten für Arbeiten im Questtracker",

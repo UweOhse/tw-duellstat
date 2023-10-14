@@ -34,5 +34,6 @@ JOBLIST_MOTIVATION_TITLE: "Aktuelle Motivation für diese Arbeit.",
 JOBLIST_DANGER_TITLE: "Die Chance eines Unfalls in Prozent.",
 JOBLIST_LUCK_MOD: "Glücks-Modifikator für 15s/10m/1h",
 JOBLIST_HIGHLIGHT_TITLE: "Markiere bekannte Bonus-Jobs auf der Minimap.",
+JOBLIST_TITLE: "Arbeitsliste",
 
 
