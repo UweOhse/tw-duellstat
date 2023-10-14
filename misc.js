@@ -218,20 +218,8 @@ TWDS.registerStartFunc(function () {
     }, 'misc')
 })
 
-TWDS.registerSetting('bool', 'fixCompost',
-  TWDS._('COMPOST_RECIPE_FIX', 'Fix the display of the compost recipe (TW-Calc workaround).'),
-  false, function (val) {
-    const old = document.getElementById('TWDS_fix_compost_css')
-    if (old) old.parentNode.removeChild(old)
-    if (val) {
-      const sty = document.createElement('style')
-      sty.id = 'TWDS_fix_compost_css'
-      sty.textContent = "[data-recipe-craft-item-id='51580000'] .recipe_resources .item { zoom:0.92}"
-      document.body.appendChild(sty)
-    }
-  })
 TWDS.registerSetting('bool', 'fixRecruitHealth',
-  TWDS._('COMPOST_RECIPE_FIX', 'Fix overlong lines in the fort battle recruiting screen.'),
+  TWDS._('RECRUIT_HEALTH_FIX', 'Fix overlong lines in the fort battle recruiting screen.'),
   false, function (val) {
     const old = document.getElementById('TWDS_fix_recruit_health')
     if (old) old.parentNode.removeChild(old)
