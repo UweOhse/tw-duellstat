@@ -23,6 +23,9 @@ TWDS._ = function _ (s, def, para) {
     work = def
     if (TWDS.lang !== 'en') {
       if (!(s in TWDS.trans_warned)) {
+        if ('dolog' in TWDS) {
+          TWDS.info('using default translation for ', s, '=', def)
+        }
         console.log('_', 'using default translation for ', s, '=', def)
         TWDS.trans_warned[s] = true
       }
