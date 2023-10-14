@@ -614,6 +614,6 @@ TWDS.registerStartFunc(function () {
 })
 
 TWDS.registerExtra('TWDS.calculator.openwindow',
-  TWDS._('CALCULATUR_EXTRA_TITLE', 'Calculator'),
+  TWDS._('CALCULATOR_EXTRA_TITLE', 'Calculator'),
   TWDS._('CALCULATOR_EXTRA_DESC', 'Job point / bonus calculator')
 )
