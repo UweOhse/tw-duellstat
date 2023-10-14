@@ -1,4 +1,19 @@
 <dl>
+<dt>0.56 - 2023-10-14 
+<dd>Improvement: the market offer window (MOW) now shows the name of the thing in the title, like the travelling merchant sale does.
+<dd>Improvement: the MOW now has a bulk mode. Use this if you trigger the "streak of bad luck" when selling on the market. The bulk mode causes the updates to the inventory and the list of items you sell to be updated only if you paused 8 seconds while selling.
+<dd>Improvement: added a function to the MOW to add some percent of the current price. This is also a workaround for certain worlds where you can't sell named stuff at the minimum price, but have to use the immediate purchase price.
+<dd>Improvement: a function to delete entries from the storage with match a given search string.
+<dd>Improvement: a function to calculate the target sums in the storage from the comments.
+<dd>Improvement: the inventory statistic shows the event currencies (hearts, pretzels and such things).
+<dd>Improvement: added a 'missing item' filter to the market. Finally.
+<dd>Improvement: added many missing translations, and display missing, but intended, translations to the logging.
+<dd>Improvement: added a quick hack to include and display only a part of the update information with the script.
+<dd>Change: removed the fix for the compost filter display, as tw-calc includes a fix now.
+<dd>Bugfix: the storage showed all products (display problem).
+<dd>Bugfix: the crafting resources filter in the market did nothing.
+<dd>Bugfix: the tabular inventory item sell function used the wrong town (and even that was not done correctly), causing wrong fees to be shown.
+
 <dt>0.55 - 2023-09-24 
 <dd>New: renamed the thing to clothcache. goodbye, duellstat.
 <dd>New: fortbattle chat: a click on the player name highlight the position on the battle field.
@@ -42,7 +57,8 @@
 <dd>Improvement: a click on the storage area of the trackbar opens the storage tab.
 <dd>Bugfix: the profile text click was too greedy.
 <dd>Bugfix: overlay fortbattle value calculation should now match that of tw-calc (and the game, too).
-<dt>0.53 - 2023-04-07
+
+<dt class='obsolete-marker'>0.53 - 2023-04-07
 <dd>New: add a fortbattle data display to the overlay.
 <dd>New: add a generic calculator (jobs, duels, fortbattle, you name it) to the extras.
 <dd>New: add craftcalc, a calculator for the items needed when crafting.
