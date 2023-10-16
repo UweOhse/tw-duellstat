@@ -68,7 +68,7 @@ TWDS.clothcache.info = function (ele) {
       agestr = (avg / 3600).toFixed(1)
       agestr = TWDS._('CLOTHCACHE_STATUS_AGE_HOURS', '$n$ hours', { n: agestr })
     } else {
-      agestr += (avg / 60).toFixed(1)
+      agestr = (avg / 60).toFixed(1)
       agestr = TWDS._('CLOTHCACHE_STATUS_AGE_MINUTES', '$n$ minutes', { n: agestr })
     }
     t += ' '
