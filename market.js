@@ -211,9 +211,9 @@ TWDS.marketwindow.enhanceit = function (thing) {
   // bulk mode
   const h4 = TWDS.q1('#market_createoffer_window .txcenter > span')
   if (h4) {
-    let prev=h4.previousSibling
-    if (prev.nodeType===1 && prev.nodeName==="BR") {
-      prev.remove();
+    const prev = h4.previousSibling
+    if (prev.nodeType === 1 && prev.nodeName === 'BR') {
+      prev.remove()
     }
     TWDS.createEle({
       nodeName: 'div',
@@ -249,23 +249,23 @@ TWDS.marketwindow.enhanceit = function (thing) {
         nodeName: 'div',
         className: 'TWDS_market_bulkmode_help',
         last: p,
-        style: { border:"1px solid #000"},
+        style: { border: '1px solid #000' },
         children: [
           {
-            nodeName: "div",
+            nodeName: 'div',
             innerHTML: TWDS._('MARKETWINDOW_BULKMODE_HELP', 'bulk mode: inventory and sale list will updated after a pause of some seconds.<br>This seriously reduces the number of streak of bad luck events.')
           },
           {
-            nodeName: "button",
-            textContent: TWDS._("MARKETWINDOW_BULKMODE_READ","read and understand, now remove the help text"),
-            onclick: function() {
-              this.closest(".TWDS_market_bulkmode_help").remove();
-              TWDS.settings.market_bulkmode_help_read=true;
+            nodeName: 'button',
+            textContent: TWDS._('MARKETWINDOW_BULKMODE_READ', 'read and understand, now remove the help text'),
+            onclick: function () {
+              this.closest('.TWDS_market_bulkmode_help').remove()
+              TWDS.settings.market_bulkmode_help_read = true
               TWDS.saveSettings()
             }
           }
         ]
-      });
+      })
     }
   }
   // +1/2 feature
