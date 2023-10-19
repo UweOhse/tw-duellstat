@@ -2,19 +2,31 @@
 
 // pinning mode
 TWDS.pinning = {}
+TWDS.pinning.cooldowninterval = 0
+TWDS.pinning.cooldownhandler = function () {
+  const d = TWDS.q1('#TWDS_pinning_cooldowninfo')
+  if (!d) return
+  const now = new Date().getTime()
+  const dt = Character.cooldown - now / 1000
+  if (dt <= 0) {
+    d.textContent = ''
+    return
+  }
+  d.textContent = dt.formatDurationBuffWay()
+}
 TWDS.pinning.onclick = function () {
-  console.log('clock', this)
   const id = this.dataset.twds_item_id
   const bi = Bag.getItemByItemId(id)
   if (bi) {
-    console.log(bi)
     Inventory.clickHandler(id, {})
   }
 }
 TWDS.pinning.handledrop = function (ele, inbucket) {
-  if (!ele) return
-  if (!ele[0]) return
-  if (!ele[0].parentNode) return // paranoia, but i've seen this a long time ago.
+  if (!ele) return false
+  if (!ele[0]) return false
+  if (!ele[0].parentNode) return false // paranoia, but i've seen this a long time ago.
+  // need to return false, else the onclick handler is not run
+  if (!inbucket && ele[0].classList.contains('TWDS_pinned_thing')) return false
 
   const id = parseInt(ele[0].parentNode.dataset.twds_item_id)
   const str = window.localStorage.TWDS_pinned_items || '[]'
@@ -58,9 +70,8 @@ TWDS.pinning.getcontent = function () {
 }
 
 TWDS.pinning.openwindow = function (ev) {
-  console.log('EV', ev)
   const win = wman.open('TWDS_pinning_window', 'Pinned items', 'TWDS_pinning_window')
-  win.setMiniTitle('Pinne')
+  win.setMiniTitle('Pinning')
 
   const sp = new west.gui.Scrollpane()
   const content = TWDS.createEle('div', {
@@ -96,6 +107,11 @@ TWDS.pinning.openwindow = function (ev) {
     })
     $(img).asDropzone('.item_inventory_img.TWDS_pinned_thing', false, function (ele) {
       TWDS.pinning.handledrop(ele, true)
+    })
+    TWDS.createEle({
+      nodeName: 'div',
+      id: 'TWDS_pinning_cooldowninfo',
+      last: ti
     })
   }
 
@@ -133,4 +149,5 @@ TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'misc_pinning_bucket',
     TWDS._('MISC_SETTING_PINNING', 'Show a pinning bucket in the top bar. You can also open the pinning window if you cick on the duel motivation bar below the character information.'),
     true, TWDS.pinning.start)
+  TWDS.pinning.cooldowninterval = window.setInterval(TWDS.pinning.cooldownhandler, 1000)
 })
