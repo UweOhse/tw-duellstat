@@ -40,8 +40,10 @@ TWDS.jobwindow.initView = function () {
   return TWDS.jobwindow.initView2.call(this)
 } // for TWDS.reload()
 TWDS.jobwindow.initView2 = function () {
-  console.log('TWDS.jobwindow.initView', this)
   const d = this.window.divMain
+  if (!d) return // often exists even though the window is closed
+  const innertitle = TWDS.q1('.tw2gui_inner_window_title', d)
+  if (!innertitle) return // but this isn't there then.
   const old = TWDS.q1('.TWDS_jobwindow_setbuttons', d)
   if (old) {
     old.remove()
@@ -120,7 +122,7 @@ TWDS.jobwindow.initView2 = function () {
     const str = window.localStorage[key] || ''
     let classadd = ''
     if (str === '') classadd = ' emptyeditable'
-    const e = TWDS.createEle({
+    TWDS.createEle({
       nodeName: 'div',
       className: 'TWDS_jw_editable' + classadd,
       contentEditable: true,
@@ -138,7 +140,6 @@ TWDS.jobwindow.initView2 = function () {
         return true
       }
     })
-    console.log('ISC', e.isContentEditable)
   }
 
   const longdurationbar = TWDS.q1('.job_durationbar_long', d)
@@ -279,9 +280,9 @@ TWDS.jobwindow.initView2 = function () {
       par.appendChild(s)
     }
   }
-  TWDS.jobwindow.updateMotivationMeter(this)
+  TWDS.jobwindow.updateMotivationMeter(this, false)
 }
-TWDS.jobwindow.updateMotivationMeter = function (o) {
+TWDS.jobwindow.updateMotivationMeter = function (o, overcount) {
   const mot = o.jobmotivation
   const jpdisplay = $('.TWDS_jobpoints_display', o.DOM)
   const dangermeter = $('.TWDS_maxdmg_meter', o.DOM)
@@ -347,9 +348,33 @@ TWDS.jobwindow.updateMotivationMeter = function (o) {
     let maxpossible = 4
     if (hasa) { maxpossible = 9 }
     // now the smart buttons.
-    let tonextborder = mot % 25
+    let motwithq = mot
+    for (let i = 0; i < TaskQueue.queue.length; i++) {
+      if (TaskQueue.queue[i].type !== 'job') { // not walking or riding or duelling or ff
+        continue
+      }
+      const qjid = TaskQueue.queue[i].data.job.id
+      const qdur = TaskQueue.queue[i].data.duration
+      if (qjid === o.jobId) {
+        if (qdur === 3600) {
+          motwithq -= 12
+        } else if (qdur === 600) {
+          motwithq -= 5
+        } else {
+          motwithq--
+        }
+      }
+    }
+    if (overcount && motwithq !== mot) {
+      motwithq++
+    }
+    let tonextborder = motwithq % 25
     if (tonextborder === 0) { tonextborder = 25 }
     let t = Math.min(maxpossible, tonextborder, Character.energy)
+    if (Math.floor((motwithq - 1) / 25) !== Math.floor((mot - 1) / 25)) {
+      // we will leave the current mot. class with the things in the queue
+      t = 0
+    }
     TWDS.jobwindow.ssb1.textContent = t + 'x'
     TWDS.jobwindow.ssb1.dataset.smartstart = t
 
@@ -377,7 +402,11 @@ TWDS.jobwindow.smartstart = function (e, y) {
 }
 TWDS.jobwindow.updateMotivation = function (jobdata) {
   JobWindow.prototype._TWDS_backup_updateMotivation.apply(this, arguments)
-  TWDS.jobwindow.updateMotivationMeter(this)
+  let overcount = 0
+  if (jobdata && jobdata.job.id === this.jobId) {
+    overcount = 1
+  }
+  TWDS.jobwindow.updateMotivationMeter(this, overcount)
 }
 TWDS.registerSetting('bool', 'jobwindow_show_maxdmg',
   'Show the maximum damage in the job window', true, null, 'Jobwindow')
@@ -406,6 +435,14 @@ TWDS.registerStartFunc(function () {
   JobWindow.prototype.updateMotivation = TWDS.jobwindow.updateMotivation
   TWDS.registerSetting('bool', 'jobwindow_show_collectibles',
     TWDS._('JOBWINDOW_SHOW_COLLECTIBLES', 'Show the collectibles items dropped by this job.'), true, null, 'Jobwindow')
+
+  // - this is done to update the smartstart counter.
+  // - JobWindow.updateMotivation, the original function, is not free of side effects, it will decrease the
+  //   shown motivation by 1/5/12, depending on the duration, so we set duration to 0.
+  EventHandler.listen('taskqueue-task-canceling',
+    function (data) { data.data.duration = 0; EventHandler.signal('jobmotivation_change', data.data) })
+  EventHandler.listen('taskqueue-task-adding taskqueue-updated taskqueue-updated',
+    function () { EventHandler.signal('jobmotivation_change') })
 })
 if (JobWindow.prototype._TWDS_backup_initView) {
   // helper for the reload
