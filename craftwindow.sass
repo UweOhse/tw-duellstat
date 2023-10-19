@@ -3,18 +3,41 @@
   overflow-y: auto !important;
   overflow-x: auto !important;
   .head {
-    display:flex;
+    display:grid;
     justify-content:space-between;
-  }
-  .head select, .head input {
-        align-self:start
-  }
-  .head h3 {
-        margin-top:0.25em;
-        margin-bottom:0.15em;
-  }
-  .head h3 span:last-child {
+    select, input {
+      align-self:start
+    }
+    h3 {
+      grid-column:1;
+      grid-row-start: 1;
+      grid-row-end: 3;
+      margin-top:0.25em;
+      margin-bottom:0.15em;
+      span:last-child {
         padding-left:0.5em;
+      }
+    }
+    .proffilter {
+      grid-row:1;
+      grid-column:2;
+    }
+    .quickfilter {
+      grid-row:1;
+      grid-column:3;
+    }
+    .searchfilter {
+      grid-row:1;
+      grid-column:4;
+    }
+    label.pointfilter {
+      grid-row:2;
+      grid-column:4;
+    }
+    label.blocktimefilter {
+      grid-row:2;
+      grid-column:3;
+    }
   }
   .TWDS_craftwindow_divider1 {
     background-image:url('https://westde.innogamescdn.com/images/window/market/wood_devider.png');

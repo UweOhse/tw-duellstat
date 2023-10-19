@@ -9,7 +9,8 @@ TWDS.craftwindow.recalcmax = function (win) {
   const searchfilter = TWDS.q1('.head .searchfilter', win.divMain).value.trim()
   const quickfilter = TWDS.q1('.head .quickfilter', win.divMain).value.trim()
   const proffilter = parseInt(TWDS.q1('.head .proffilter', win.divMain).value)
-  const pointfilter = TWDS.q1('.head .pointfilter', win.divMain).checked
+  const pointfilter = TWDS.q1('.head input.pointfilter', win.divMain).checked
+  const blocktimefilter = TWDS.q1('.head input.blocktimefilter', win.divMain).checked
   const allrows = TWDS.q('.recipeline', win.divMain)
   let rx
   if (searchfilter > '') {
@@ -53,6 +54,9 @@ TWDS.craftwindow.recalcmax = function (win) {
     if (pointfilter) {
       if (!(tr.classList.contains('cangetpoints'))) { hide = true }
     }
+    if (blocktimefilter) {
+      if (!(tr.classList.contains('hasblocktime'))) { hide = true }
+    }
     if (hide) {
       tr.style.display = 'none'
       tr.nextSibling.style.display = 'none'
@@ -83,6 +87,7 @@ TWDS.craftwindow.recalcmax = function (win) {
         blocktimeinfo.style.display = 'inline'
         blocked = true
       }
+      tr.classList.add('hasblocktime')
     }
     const maxele = TWDS.q1('.max', tr)
     const inputele = TWDS.q1('.theinput', tr)
@@ -178,11 +183,22 @@ TWDS.craftwindow.getcontent = function (win) {
 
   TWDS.createEle({
     nodeName: 'label',
+    className: 'pointfilter',
     last: myhead,
     title: TWDS._('CRAFTWINDOW_POINTS_TITLE', 'show only recipes giving craft points'),
     children: [
       { nodeName: 'input', type: 'checkbox', value: 1, className: 'pointfilter' },
       { nodeName: 'span', textContent: TWDS._('CRAFTWINDOW_CHECKBOX_LABEL_POINTS', 'points only') }
+    ]
+  })
+  TWDS.createEle({
+    nodeName: 'label',
+    className: 'blocktimefilter',
+    last: myhead,
+    title: TWDS._('CRAFTWINDOW_BLOCKTIMEFILTER_TITLE', 'show only recipes with a blocktime (cooldown period)'),
+    children: [
+      { nodeName: 'input', type: 'checkbox', value: 1, className: 'blocktimefilter' },
+      { nodeName: 'span', textContent: TWDS._('CRAFTWINDOW_CHECKBOX_LABEL_BLOCKTIME', 'blocktime only') }
     ]
   })
   const profsel = TWDS.createEle({
@@ -469,6 +485,7 @@ TWDS.craftwindow.getcontent = function (win) {
       TWDS.q1('.head .quickfilter', win.divMain).value = ''
       TWDS.q1('.head .proffilter', win.divMain).value = 0
       TWDS.q1('.head .pointfilter', win.divMain).checked = false
+      TWDS.q1('.head .blocktimefilter', win.divMain).checked = false
       TWDS.craftwindow.recalcmax(win)
       r.scrollIntoView(true)
     }
@@ -483,6 +500,9 @@ TWDS.craftwindow.getcontent = function (win) {
     TWDS.craftwindow.recalcmax(win)
   })
   TWDS.delegate(content, 'change', '.pointfilter', function (ev) {
+    TWDS.craftwindow.recalcmax(win)
+  })
+  TWDS.delegate(content, 'change', '.blocktimefilter', function (ev) {
     TWDS.craftwindow.recalcmax(win)
   })
 

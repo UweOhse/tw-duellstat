@@ -18,6 +18,8 @@ CRAFTWINDOW_CHECKBOX_LABEL_POINTS: "Punkte",
 CRAFTWINDOW_POINTS_TITLE: "Zeige nur Rezepte, für die es Punkte geben kann.",
 CRAFTWINDOW_QUICK_FILTER: "Effekte",
 CRAFTWINDOW_BLOCKTIME_INFO: "Dieses Rezept hat eine Cooldown-Zeit.",
+CRAFTWINDOW_CHECKBOX_LABEL_BLOCKTIME: "Blockzeit/Cooldown",
+CRAFTWINDOW_BLOCKTIMEFILTER_TITLE: "Zeige nur Rezepte mit einer Blockzeit (Cooldown)",
 
 
 
