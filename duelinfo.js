@@ -168,8 +168,21 @@ TWDS.duelinfo.init = function () {
     TWDS.duelinfo.interval = setInterval(TWDS.duelinfo.intervalhandler, 30 * 1000)
   })
 }
+/*
+TWDS.duelinfo.ajaxCompletehandler = function (event, xhr, settings) {
+  const url = settings.url
+  if (url.search('window=duel') !== -1) {
+    if (url.search('action=duel_npc') !== -1) {
+
+    }
+  }
+}
+*/
 TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'misc_duelinfo_display',
     TWDS._('MISC_SETTING_DUELINFO_DISPLAY', 'Show a duel status bar with your character information'),
     true, TWDS.duelinfo.init)
+  EventHandler.listen('duelmotivation_changed', function () {
+    TWDS.duelinfo.update()
+  })
 })
