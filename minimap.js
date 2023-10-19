@@ -103,11 +103,9 @@ TWDS.minimap.updateWhenOpen = function () {
   TWDS.minimap.updateReal()
 }
 TWDS.minimap.updateIfOpen = function () {
-  console.log('MINIMAP UIO 1')
   if (!TWDS.minimap.isOpen()) {
     return
   }
-  console.log('MINIMAP UIO 2')
   TWDS.minimap.updateReal()
 }
 TWDS.minimap.findjob = function (jname) {
