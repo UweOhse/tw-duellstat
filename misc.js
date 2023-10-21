@@ -267,3 +267,13 @@ TWDS.registerStartFunc(function () {
       'Highlight the message button with red borders of you have unread telegrams.'),
     false)
 })
+TWDS.registerSetting('bool', 'misc_tailor_scrollbar_fix',
+  TWDS._('MISC_SETTING_TAILOR_SCROLLBAR_FIX',
+    'Fix the tailor scrollbar overflow.'),
+  true, function (v) {
+    if (v) {
+      document.body.classList.add('TWDS_fix_tailor_scrollbar')
+    } else {
+      document.body.classList.remove('TWDS_fix_tailor_scrollbar')
+    }
+  })
