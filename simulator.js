@@ -95,7 +95,7 @@ TWDS.simulator.updateresult = function (ra, ia, jobsel, da) {
         laborpoints += t[skillname] * mult
       }
       const attr = CharacterSkills.skills[skillname].attr_key
-      if (attr) {
+      if (attr && attr[t]) {
         laborpoints += t[attr] * mult
       }
       laborpoints += CharacterSkills.skills[skillname].points * mult
