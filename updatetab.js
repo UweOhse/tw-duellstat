@@ -1,9 +1,9 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 
 TWDS.updatetab = {}
-TWDS.updateinfo = function () { /**
+TWDS.updateinfo = `
 @REPLACEUPDATEINFO@
-**/ }.toString().slice(17, -5)
+`
 
 TWDS.updatetab.getContent1 = function () {
   const d = TWDS.createEle({
