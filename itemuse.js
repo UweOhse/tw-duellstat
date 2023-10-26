@@ -108,13 +108,14 @@ TWDS.itemuse.openwindow = function () {
   a.sort(function (x, y) { return y - x })
   for (let i = 0; i < a.length; i++) {
     let chestid = a[i]
+    const oldchestid = chestid // for onclick handler
     if (chestid === 2347000) { // fair kitten
       chestid = 40035000
     }
     const count = TWDS.itemuse.chests[chestid].count
     const items = TWDS.itemuse.chests[chestid].items
     const ci = ItemManager.get(chestid)
-    const tr = TWDS.createEle('tr', { beforeend: tb })
+    const tr = TWDS.createEle('tr', { beforeend: tb, dataset: { chestid: oldchestid } })
     const outside = new tw2widget.InventoryItem(ci).setCount(count)
     TWDS.createEle({
       nodeName: 'th',
@@ -134,6 +135,21 @@ TWDS.itemuse.openwindow = function () {
       const inside = new tw2widget.InventoryItem(it).setCount(items[itno])
       ic.appendChild(inside.getMainDiv()[0])
     }
+    TWDS.createEle({
+      nodeName: 'button',
+      textContent: 'delete',
+      title: 'Delete the collected data',
+      last: ic,
+      onclick: function () {
+        let cid = this.closest('tr').dataset.chestid
+        cid = parseInt(cid)
+        if (cid in TWDS.itemuse.chests) {
+          delete (TWDS.itemuse.chests[cid])
+          this.closest('tr').remove()
+          window.localStorage.setItem('TWDS_itemuse_cache', JSON.stringify(TWDS.itemuse.chests))
+        }
+      }
+    })
   }
 
   const sp = new west.gui.Scrollpane()
