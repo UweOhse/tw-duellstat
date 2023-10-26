@@ -19,9 +19,7 @@ ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
 VGET=`git describe --tags --long --dirty --always --broken`
 VERSION:=$(shell git describe --tags --long --dirty --always --broken)
 RELEASEFNAME:=$(VGET).user.js
-x := foo
-y := $(x) bar
-x := later
+RELEASEFNAME:=$(VGET).min.user.js
 
 GLOBALS=--global Game --global TWDS --global Character --global wman --global Bag \
 	--global JobList --global CharacterSkills --global west --global Wear \
@@ -32,7 +30,14 @@ GLOBALS=--global Game --global TWDS --global Character --global wman --global Ba
 	--global MarketWindow --global CharacterWindow --global Crafting \
 	--global TaskQueue --global GameInject --global jQuery --global Blob --global Quest \
 	--global Node --global BankWindow --global CemeteryWindow --global WestUi
-all: precheck tw-duellstat.user.js
+all: precheck tw-duellstat.user.js tw-duellstat.min.user.js
+
+tw-duellstat.min.user.js: tw-duellstat.user.js
+	awk '{if (state!=1) print} /==\/UserScript==/ {state=1}' $^ >$@.t1
+	minify -o $@.t2 $^
+	cat $@.t1 $@.t2 >$@.t
+	rm $@.t1 $@.t2
+	mv $@.t $@
 
 de.json: de-base.json $(TRANS_DE) Makefile
 	echo "TWDS.translation_de = {" >$@.t
@@ -79,6 +84,8 @@ show-version:
 release: all
 	@cp tw-duellstat.user.js ../release
 	@cp tw-duellstat.user.js ../release/$(RELEASEFNAME)
+	@cp tw-duellstat.min.user.js ../release
+	@cp tw-duellstat.min.user.js ../release/$(RELEASEMINFNAME)
 	@cp updateinfo.html ../
 
 releasecheck:
