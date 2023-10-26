@@ -135,6 +135,13 @@ TWDS.createElement = function (par = {}, par2 = null) {
       }
     }
   }
+  let dotpos = par.nodeName.indexOf('.')
+  let classadd = null
+  if (dotpos !== -1) {
+    const n = par.nodeName.substring(0, dotpos)
+    classadd = par.nodeName.substring(dotpos + 1)
+    par.nodeName = n
+  }
   const thing = document.createElement(par.nodeName)
   for (const [k, v] of Object.entries(par)) {
     if (k === 'nodeName') continue
@@ -189,6 +196,16 @@ TWDS.createElement = function (par = {}, par2 = null) {
       thing.setAttribute(k, v)
     }
     */
+  }
+  if (classadd !== null) {
+    dotpos = classadd.indexOf('.')
+    while (dotpos !== -1) {
+      const p = classadd.substring(0, dotpos)
+      thing.classList.add(p)
+      classadd = classadd.substring(dotpos + 1)
+      dotpos = classadd.indexOf('.')
+    }
+    thing.classList.add(classadd)
   }
   return thing
 }
