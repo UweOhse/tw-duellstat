@@ -190,6 +190,10 @@ TWDS.createElement = function (par = {}, par2 = null) {
       }
       continue
     }
+    if (k === 'list') {
+      thing.setAttribute('list', v)
+      continue
+    }
     thing[k] = v
     /*
     if (!(k in thing) || thing.list !== v) {
@@ -496,3 +500,50 @@ TWDS.registerStartFunc(function () {
   TWDS.delegate(document.body, 'click', '.TWDS_marketsearchlink', TWDS.marketsearchlinkhandler)
   TWDS.delegate(document.body, 'click', '.TWDS_item_sell_button', TWDS.market_item_sell_handler)
 })
+
+// 2023. <select> still is a mess. typeahead? styling? intelligent limiting?
+// unfortunately input w/ datalist doesn't cut it, too.
+TWDS.createFilteredSelect = function (filltext, allthings) {
+  const d = TWDS.createEle('div.filteredselectcontainer')
+  const sf = TWDS.createEle('input', {
+    type: 'text',
+    placeholder: TWDS._('UTIL_SELECT_FILTERTEXT', 'filter -->'),
+    title: TWDS._('UTIL_SELECT_FILTERTITLE', 'Limit the long list. Javascript-RX: Skel|Heart works'),
+    last: d
+  })
+  const ss = TWDS.createEle('select', { type: 'text', last: d })
+
+  allthings.sort(function (a, b) {
+    return a[1].localeCompare(b[1])
+  })
+  TWDS.createEle('option', {
+    last: ss,
+    value: '',
+    textContent: filltext
+  })
+  for (let i = 0; i < allthings.length; i++) {
+    TWDS.createEle('option', {
+      last: ss,
+      value: allthings[i][0],
+      textContent: allthings[i][1]
+    })
+  }
+  sf.onchange = function () {
+    console.log('OC', this)
+    const searchstring = this.value.toLocaleLowerCase()
+    const d = this.closest('.filteredselectcontainer')
+    const ss = TWDS.q1('select', d)
+    const opts = TWDS.q('option', ss)
+    for (let i = 0; i < opts.length; i++) {
+      const o = opts[i]
+      o.style.display = 'block'
+      if (searchstring > '' && o.textContent.toLocaleLowerCase().search(searchstring) === -1) {
+        o.style.display = 'none'
+      }
+    }
+  }
+  sf.onblur = function () {
+    sf.onchange.apply(this)
+  }
+  return d
+}
