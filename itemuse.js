@@ -59,6 +59,8 @@ TWDS.itemuse.wofhandler = function (container, resp) {
   if (!TWDS.itemuse.chests[container]) { TWDS.itemuse.chests[container] = { count: 0, items: {} } }
   if ('picked' in resp) {
     found = resp.picked[0]
+  } else if ('rewards' in resp) {
+    found = resp.rewards.item
   } else if ('prize' in resp) {
     found = resp.prize.itemId
   } else if ('outcome' in resp) {
@@ -162,11 +164,24 @@ TWDS.itemuse.prehandler = function (ev, xhr, settings) {
     if (!TWDS.settings.misc_chestanalyzer) return
     console.log('itemuse? wheel', 2)
     if (url.search('action=gamble') === -1) return
-    const mat = settings.data.match('gametype=([a-z0-9_]+)')
+    console.log('itemuse? wheel', 3)
+
+    // dod: url contains action=gamble,  form data contains action=end&wofid=NNN
+    let dod=0
+    let mat = settings.data.match('action=end')
+    if (mat !== null) {
+      mat = settings.data.match('wofid=')
+      if (mat !== null) {
+        dod=1
+      }
+    }
+    mat = settings.data.match('gametype=([a-z0-9_]+)')
     if (mat !== null) {
       console.log('itemuse? wheel', 3)
       const container = 2347000 // fair kitten
       TWDS.itemuse.wofhandler(container, xhr.responseJSON)
+    } else if (dod) {
+      TWDS.itemuse.wofhandler(2666000, xhr.responseJSON.stages[0]) // big flower pot
     } else if (xhr.responseJSON.prize && xhr.responseJSON.prize.itemId) {
       const container = 52361000 // valentine rose cake
       TWDS.itemuse.wofhandler(container, xhr.responseJSON)
@@ -185,7 +200,7 @@ TWDS.itemuse.prehandler = function (ev, xhr, settings) {
 TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'misc_chestanalyzer',
     TWDS._('MISC_SETTING_CHESTANALYZER',
-      'Analyze the contents of chests. In the future the collected data will be shown somewhere.'),
+      'Analyze the contents of chests.'
     true)
   TWDS.registerExtra('TWDS.itemuse.openwindow',
     TWDS._('EXTRAS_CHESTS_TEXT', 'Chests contents'),
