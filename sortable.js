@@ -1,5 +1,46 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 TWDS.sortable = {}
+TWDS.sortable.search = function (ev) { TWDS.sortable.searchReal.apply(this, ev) }
+TWDS.sortable.searchReal = function (ev) {
+  const tab = this.closest('table')
+
+  let searchstring = ''
+  let colsel = 'td,th'
+  if (tab.dataset.searchfilter) {
+    const searchfilterselector = tab.dataset.searchfilter
+    searchstring = TWDS.q1(searchfilterselector, tab).value.toLocaleLowerCase()
+    colsel = tab.dataset.colsel || 'td,th'
+  }
+
+  const rows = [...TWDS.q('tbody tr', tab)]
+  let state = 0
+  for (let i = 0; i < rows.length; i++) {
+    rows[i].style.display = 'table-row'
+    if (rows[i].classList.contains('sortgrouped')) {
+      if (state === 1) {
+        rows[i].style.display = 'none'
+      }
+      continue
+    }
+    if (searchstring === '') {
+      state = 0
+    } else {
+      const cols = [...TWDS.q(colsel, rows[i])]
+      let found = 0
+      for (let j = 0; j < cols.length; j++) {
+        const t = cols[j].textContent
+        if (t.toLocaleLowerCase().search(searchstring) !== -1) {
+          found = 1
+        }
+      }
+      if (!found) {
+        state = 1
+        rows[i].style.display = 'none'
+      }
+    }
+  }
+}
+
 TWDS.sortable.do = function (ev) { TWDS.sortable.doReal.apply(this, ev) }
 TWDS.sortable.doReal = function (ev) {
   const tab = this.closest('table')
