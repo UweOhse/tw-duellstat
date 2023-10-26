@@ -440,7 +440,12 @@ TWDS.registerStartFunc(function () {
   // - JobWindow.updateMotivation, the original function, is not free of side effects, it will decrease the
   //   shown motivation by 1/5/12, depending on the duration, so we set duration to 0.
   EventHandler.listen('taskqueue-task-canceling',
-    function (data) { data.data.duration = 0; EventHandler.signal('jobmotivation_change', data.data) })
+    function (data) {
+      if (data.job) {
+        data.data.duration = 0
+        EventHandler.signal('jobmotivation_change', data.data)
+      }
+    })
   EventHandler.listen('taskqueue-task-adding taskqueue-updated taskqueue-updated',
     function () { EventHandler.signal('jobmotivation_change') })
 })
