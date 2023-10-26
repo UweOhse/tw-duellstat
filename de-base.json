@@ -422,3 +422,6 @@ TABNAME_UPDATES: "Updates",
 TABNAME_STORAGE: "Storage",
 TABNAME_SETTINGS: "Einstellungen",
 QUICKSILVER_SETTING: "Markiere bekannte Bonusarbeiten auf der Minimap.",
+
+UTIL_SETSELECT_FILTERTEXT: "Filtern -->",
+UTIL_SETSELECT_FILTERTITLE: "Die Riesenliste von Sets verkleinern. Javascript-Regex. Skel|Kolum funktioniert.",
