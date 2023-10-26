@@ -2,30 +2,24 @@
 //
 TWDS.simulator = {}
 TWDS.simulator.fillselectarea = function (area, slot, cur) {
-  const all = ItemManager.getAll()
   area.innerHTML = ''
-  const select = TWDS.createEle('select', { last: area })
-  select.dataset.currentslot = slot
-  const names = []
+
+  const all = ItemManager.getAll()
+  const allthings = []
   for (const it of Object.values(all)) {
     if (it.type === slot) {
       if (it.usetype === 'none') {
-        names.push([it.name.trim(), it.item_id])
+        allthings.push([it.item_id, it.name.trim()])
       }
     }
   }
-  names.sort(function (a, b) {
-    return a[0].localeCompare(b[0])
+  allthings.sort(function (a, b) {
+    return a[1].localeCompare(b[1])
   })
-  TWDS.createEle('option', { last: select, value: 0, textContent: '---' })
-  cur = parseInt(cur)
-  for (let i = 0; i < names.length; i++) {
-    const opt = TWDS.createEle('option', { last: select })
-    opt.textContent = names[i][0]
-    opt.value = names[i][1]
-    if (names[i][1] === cur) { opt.selected = true }
-  }
-  return select
+
+  const c = TWDS.createFilteredSelect('--- select an item to wear ---', allthings)
+  area.appendChild(c)
+  return c
 }
 TWDS.simulator.switchslot = function (area, sl, ii) {
   const div = TWDS.q1('.target.' + sl, area)
@@ -66,7 +60,7 @@ TWDS.simulator.switchslot = function (area, sl, ii) {
     })
   }
 }
-TWDS.simulator.updateresult = function (ra, ia, jobsel, da) {
+TWDS.simulator.updateresult = function (ra, ia, da) {
   const charPremium = Number(Premium.hasBonus('character'))
   const moneyPremium = Number(Premium.hasBonus('money'))
   const o = []
@@ -86,133 +80,63 @@ TWDS.simulator.updateresult = function (ra, ia, jobsel, da) {
     ],
     last: tab
   })
-  const jobid = parseInt(jobsel.value)
-  if (jobid) {
-    const job = JobList.getJobById(jobid)
-    let laborpoints = 0
-    for (const [skillname, mult] of Object.entries(job.skills)) {
-      if (t[skillname]) {
-        laborpoints += t[skillname] * mult
-      }
-      const attr = CharacterSkills.skills[skillname].attr_key
-      if (attr && attr[t]) {
-        laborpoints += t[attr] * mult
-      }
-      laborpoints += CharacterSkills.skills[skillname].points * mult
-    }
-    if (t.job) {
-      laborpoints += t.job
-    }
-    const jc = new JobCalculator(laborpoints, job.malus + 1)
-    jc.calcStars((laborpoints / (job.malus + 1)))
-    const curstars = jc.getJobstarsValue()
-    let stars = ''
-    let color = '#CD7F32'
-    let workstars = curstars
-    if (workstars > 10) {
-      color = 'gold'
-      workstars -= 10
-    } else if (workstars > 5) {
-      color = 'silver'
-      workstars -= 5
-    }
-    for (let j = 1; j < workstars + 1; j++) {
-      stars += '*'
-    }
-    TWDS.createEle('tr', {
-      children: [
-        { nodeName: 'th', textContent: 'laborpoints' },
-        { nodeName: 'td', textContent: laborpoints },
-        { nodeName: 'td', textContent: '' },
-        { nodeName: 'td', textContent: stars, rowSpan: 2, style: { color: color, fontSize: 'xx-large', backgroundColor: 'white' } },
-        { nodeName: 'th', textContent: 'exp/h' },
-        { nodeName: 'th', textContent: '$/h' },
-        { nodeName: 'th', textContent: 'luck' },
-        { nodeName: 'th', textContent: 'danger' }
-      ],
-      last: tab
-    })
-    let tmoney = 1
-    if (t.dollar) { tmoney = 1 + t.dollar }
-
-    let charxpmult = 1
-    if (Character.charClass === 'worker') {
-      if (charPremium) charxpmult = 1.1
-      else charxpmult = 1.05
-    }
-    let txpmult = 1
-    if (t.xp) { txpmult = 1 + t.xp }
-    let dangmult = 1
-    if (Character.charClass === 'adventurer') {
-      if (charPremium) dangmult = 0.8
-      else charxpmult = 0.9
-    }
-
-    TWDS.createEle('tr', {
-      children: [
-        { nodeName: 'th', textContent: 'jobpoints' },
-        { nodeName: 'td', textContent: laborpoints - job.malus - 1 },
-        { nodeName: 'td', textContent: curstars + '*' },
-        {
-          nodeName: 'td',
-          textContent:
-          TWDS.TWDBcalcExp(laborpoints, job.malus + 1, TWDS.jobData['job_' + jobid].job_exp, 100, 1) * charxpmult * txpmult
-        },
-        {
-          nodeName: 'td',
-          textContent:
-          Math.round(TWDS.TWDBcalcWage(laborpoints, job.malus + 1, TWDS.jobData['job_' + jobid].job_wages, 100, 1) * (moneyPremium ? 1.5 : 1) * tmoney)
-        },
-        {
-          nodeName: 'td',
-          textContent:
-          Math.round(TWDS.TWDBcalcLuck(laborpoints, job.malus + 1, TWDS.jobData['job_' + jobid].job_luck, 100, 1) * 3 * (charPremium ? 1.5 : 1))
-        },
-        {
-          nodeName: 'td',
-          textContent:
-          (TWDS.TWDBcalcDanger(laborpoints, job.malus + 1, TWDS.jobData['job_' + jobid].job_danger, 100, 1) * dangmult).toFixed(1) + '%'
-        }
-      ],
-      last: tab
-    })
-  }
   da.textContent = TWDS.describeItemCombo(o)
   const tab2 = TWDS.createEle('table.alljobs.TWDS_sortable', {
-    last: ra
+    last: ra,
+    dataset: {
+      searchfilter: '.searchfilter'
+    }
   })
   TWDS.delegate(tab2, 'click', 'thead th[data-colsel]', TWDS.sortable.do)
   TWDS.createEle('thead', {
     last: tab2,
     children: [
-      {nodeName:"tr", children: [
-        { nodeName: 'th', colSpan: 2, textContent: 'Job' },
-        { nodeName: 'th', colSpan: 6, textContent: 'Simulated' },
-        { nodeName: 'th', colSpan: 6, textContent: 'Best' },
-      ]},
-      {nodeName:"tr", children: [
-        { nodeName: 'th', textContent: '#', dataset:{colsel: ".jobid", sortmode:"number"} },
-        { nodeName: 'th', textContent: 'Name', dataset:{colsel: ".name"}},
+      {
+        nodeName: 'tr',
+        children: [
+          { nodeName: 'th', colSpan: 1, textContent: 'Job' },
+          {
+            nodeName: 'th',
+            colSpan: 1,
+            children: [
+              {
+                nodeName: 'input',
+                type: 'text',
+                className: 'searchfilter',
+                onchange: TWDS.sortable.search
+              }
+            ]
+          },
+          { nodeName: 'th', colSpan: 6, textContent: 'Simulated' },
+          { nodeName: 'th', colSpan: 6, textContent: 'Best' }
+        ]
+      },
+      {
+        nodeName: 'tr',
+        children: [
+          { nodeName: 'th', textContent: '#', dataset: { colsel: '.jobid', sortmode: 'number' } },
+          { nodeName: 'th', textContent: 'Name', dataset: { colsel: '.name' } },
 
-        { nodeName: 'th', textContent: 'LP' , dataset:{colsel: ".c.laborpoints", sortmode:"number"}},
-        { nodeName: 'th', textContent: 'Job Points' , dataset:{colsel: ".c.jobpoints", sortmode:"number"}},
-        { nodeName: 'th', textContent: '*' , dataset:{colsel: ".c.stars", sortmode:"number"}},
-        { nodeName: 'th', textContent: 'XP' , dataset:{colsel: ".c.xp", sortmode:"number"}},
-        { nodeName: 'th', textContent: '$' , dataset:{colsel: ".c.dollar", sortmode:"number"}},
-        { nodeName: 'th', textContent: 'Luck' , dataset:{colsel: ".c.luck", sortmode:"number"}},
-        { nodeName: 'th', textContent: 'Danger' , dataset:{colsel: ".c.danger", sortmode:"number"}},
+          { nodeName: 'th', textContent: 'LP', dataset: { colsel: '.c.laborpoints', sortmode: 'number' } },
+          { nodeName: 'th', textContent: 'Job Points', dataset: { colsel: '.c.jobpoints', sortmode: 'number' } },
+          { nodeName: 'th', textContent: '*', dataset: { colsel: '.c.stars', sortmode: 'number' } },
+          { nodeName: 'th', textContent: 'XP', dataset: { colsel: '.c.xp', sortmode: 'number' } },
+          { nodeName: 'th', textContent: '$', dataset: { colsel: '.c.dollar', sortmode: 'number' } },
+          { nodeName: 'th', textContent: 'Luck', dataset: { colsel: '.c.luck', sortmode: 'number' } },
+          { nodeName: 'th', textContent: 'Danger', dataset: { colsel: '.c.danger', sortmode: 'number' } },
 
-        { nodeName: 'th', textContent: 'LP' , dataset:{colsel: ".c.laborpoints", sortmode:"number"}},
-        { nodeName: 'th', textContent: '*' , dataset:{colsel: ".c.stars", sortmode:"number"}},
-        { nodeName: 'th', textContent: 'XP' , dataset:{colsel: ".c.xp", sortmode:"number"}},
-        { nodeName: 'th', textContent: '$', dataset:{colsel: ".c.dollar", sortmode:"number"} },
-        { nodeName: 'th', textContent: 'Luck', dataset:{colsel: ".c.luck", sortmode:"number"} },
-        { nodeName: 'th', textContent: 'Danger', dataset:{colsel: ".c.danger", sortmode:"number"} }
-      ]},
-    ],
+          { nodeName: 'th', textContent: 'LP', dataset: { colsel: '.c.laborpoints', sortmode: 'number' } },
+          { nodeName: 'th', textContent: '*', dataset: { colsel: '.c.stars', sortmode: 'number' } },
+          { nodeName: 'th', textContent: 'XP', dataset: { colsel: '.c.xp', sortmode: 'number' } },
+          { nodeName: 'th', textContent: '$', dataset: { colsel: '.c.dollar', sortmode: 'number' } },
+          { nodeName: 'th', textContent: 'Luck', dataset: { colsel: '.c.luck', sortmode: 'number' } },
+          { nodeName: 'th', textContent: 'Danger', dataset: { colsel: '.c.danger', sortmode: 'number' } }
+        ]
+      }
+    ]
   })
-  let tbody=TWDS.createEle('tbody', {last:tab2});
-  const calcit = function (jobid,t ) {
+  const tbody = TWDS.createEle('tbody', { last: tab2 })
+  const calcit = function (jobid, t) {
     const job = JobList.getJobById(jobid)
     let laborpoints = 0
     for (const [skillname, mult] of Object.entries(job.skills)) {
@@ -271,19 +195,19 @@ TWDS.simulator.updateresult = function (ra, ia, jobsel, da) {
       color: color,
       name: job.name,
       malus: job.malus,
-      starcount: curstars,
+      starcount: curstars
     }
   }
   for (let idx = 0; idx < JobsModel.Jobs.length; idx++) {
     const jobid = JobsModel.Jobs[idx].id
     const d = calcit(jobid, t)
-    let best=TWDS.getJobBestFromCache(jobid);
-    let e=null
+    const best = TWDS.getJobBestFromCache(jobid)
+    let e = null
     if (best) {
-      e = calcit(jobid, TWDS.bonuscalc.getComboBonus(best.items),true);
+      e = calcit(jobid, TWDS.bonuscalc.getComboBonus(best.items), true)
     }
 
-    let tr=TWDS.createEle('tr', {
+    const tr = TWDS.createEle('tr', {
       children: [
         { nodeName: 'th.jobid.ra', textContent: jobid },
         { nodeName: 'td.name', textContent: d.name },
@@ -296,63 +220,63 @@ TWDS.simulator.updateresult = function (ra, ia, jobsel, da) {
         {
           nodeName: 'td.c.xp.ra',
           textContent:
-          TWDS.TWDBcalcExp(d.laborpoints, d.malus + 1, 
+          TWDS.TWDBcalcExp(d.laborpoints, d.malus + 1,
             TWDS.jobData['job_' + jobid].job_exp, 100, 1) * d.charxpmult * d.txpmult
         },
         {
           nodeName: 'td.c.dollar.ra',
           textContent:
-          Math.round(TWDS.TWDBcalcWage(d.laborpoints, d.malus + 1, 
+          Math.round(TWDS.TWDBcalcWage(d.laborpoints, d.malus + 1,
             TWDS.jobData['job_' + jobid].job_wages, 100, 1) * (moneyPremium ? 1.5 : 1) * d.tmoney)
         },
         {
           nodeName: 'td.c.luck.ra',
           textContent:
-          Math.round(TWDS.TWDBcalcLuck(d.laborpoints, d.malus + 1, 
+          Math.round(TWDS.TWDBcalcLuck(d.laborpoints, d.malus + 1,
             TWDS.jobData['job_' + jobid].job_luck, 100, 1) * 3 * (charPremium ? 1.5 : 1))
         },
         {
           nodeName: 'td.c.danger.ra',
           textContent:
-          (TWDS.TWDBcalcDanger(d.laborpoints, d.malus + 1, 
+          (TWDS.TWDBcalcDanger(d.laborpoints, d.malus + 1,
             TWDS.jobData['job_' + jobid].job_danger, 100, 1) * d.dangmult).toFixed(1) + '%'
         },
-        { nodeName: 'td.b.laborpoints.ra'},
-        { nodeName: 'td.b.jobpoints.ra'},
-        { nodeName: 'td.b.stars.ra'},
-        { nodeName: 'td.b.xp.ra'},
-        { nodeName: 'td.b.dollar.ra'},
-        { nodeName: 'td.b.luck.ra'},
-        { nodeName: 'td.b.danger.ra'},
+        { nodeName: 'td.b.laborpoints.ra' },
+        { nodeName: 'td.b.jobpoints.ra' },
+        { nodeName: 'td.b.stars.ra' },
+        { nodeName: 'td.b.xp.ra' },
+        { nodeName: 'td.b.dollar.ra' },
+        { nodeName: 'td.b.luck.ra' },
+        { nodeName: 'td.b.danger.ra' }
       ],
       last: tbody
     })
     if (best) {
-      TWDS.q1(".b.laborpoints",tr).textContent=e.laborpoints
-      TWDS.q1(".b.jobpoints",tr).textContent=e.jobpoints
-      TWDS.q1(".b.stars",tr).textContent=e.starcount;
-      TWDS.q1(".b.xp",tr).textContent=
-          TWDS.TWDBcalcExp(e.laborpoints, e.malus + 1, 
-            TWDS.jobData['job_' + jobid].job_exp, 100, 1) * e.charxpmult * e.txpmult;
-      TWDS.q1(".b.dollar",tr).textContent=
-          Math.round(TWDS.TWDBcalcWage(e.laborpoints, e.malus + 1, 
+      TWDS.q1('.b.laborpoints', tr).textContent = e.laborpoints
+      TWDS.q1('.b.jobpoints', tr).textContent = e.jobpoints
+      TWDS.q1('.b.stars', tr).textContent = e.starcount
+      TWDS.q1('.b.xp', tr).textContent =
+          TWDS.TWDBcalcExp(e.laborpoints, e.malus + 1,
+            TWDS.jobData['job_' + jobid].job_exp, 100, 1) * e.charxpmult * e.txpmult
+      TWDS.q1('.b.dollar', tr).textContent =
+          Math.round(TWDS.TWDBcalcWage(e.laborpoints, e.malus + 1,
             TWDS.jobData['job_' + jobid].job_wages, 100, 1) * (moneyPremium ? 1.5 : 1) * e.tmoney)
-      TWDS.q1(".b.luck",tr).textContent=
-          Math.round(TWDS.TWDBcalcLuck(d.laborpoints, d.malus + 1, 
+      TWDS.q1('.b.luck', tr).textContent =
+          Math.round(TWDS.TWDBcalcLuck(d.laborpoints, d.malus + 1,
             TWDS.jobData['job_' + jobid].job_luck, 100, 1) * 3 * (charPremium ? 1.5 : 1))
-      TWDS.q1(".b.danger",tr).textContent=
-          (TWDS.TWDBcalcDanger(e.laborpoints, e.malus + 1, 
+      TWDS.q1('.b.danger', tr).textContent =
+          (TWDS.TWDBcalcDanger(e.laborpoints, e.malus + 1,
             TWDS.jobData['job_' + jobid].job_danger, 100, 1) * e.dangmult).toFixed(1) + '%'
-      let ar=[]
+      let ar = []
       if (d.laborpoints > e.laborpoints) {
-        ar=TWDS.q(".c",tr);
+        ar = TWDS.q('.c', tr)
       } else if (d.laborpoints < e.laborpoints) {
-        ar=TWDS.q(".b",tr);
+        ar = TWDS.q('.b', tr)
       } else {
-        ar=TWDS.q(".b, .c",tr);
+        ar = TWDS.q('.b, .c', tr)
       }
-      for (let i=0;i<ar.length;i++) {
-        ar[i].style.color="green";
+      for (let i = 0; i < ar.length; i++) {
+        ar[i].style.color = 'green'
       }
     }
   }
@@ -378,10 +302,6 @@ TWDS.simulator.openwindow = function (paraitems) {
     className: 'TWDS_simulator_selectarea',
     last: content
   })
-  const jobselectarea = TWDS.createEle('div', {
-    className: 'TWDS_simulator_jobselectarea',
-    last: content
-  })
   const resultarea = TWDS.createEle('div', {
     className: 'TWDS_simulator_resultarea',
     last: content
@@ -393,46 +313,25 @@ TWDS.simulator.openwindow = function (paraitems) {
   TWDS.createEle('hr', {
     last: content
   })
-  TWDS.createEle('div', {
+  TWDS.createEle('div.simhelp', {
     last: content,
     innerHTML: '<p>Here you can combine any equipment to see what would happen before you buy.' +
       '<p>When you click on an image a new selectbox will be shown where you can select anything which might be worn in that slot, ' +
       "even if gender, class or level wouldn't allow to wear it."
   })
 
-  const setsel = TWDS.createEle('select', { last: setselectarea })
   let allsets = west.storage.ItemSetManager._setArray.slice(0)
   allsets = TWDS.itemsettab.fixallsets(allsets)
-  allsets.sort(function(a,b) {
-    return a.name.localeCompare(b.name);
-  })
-  TWDS.createEle('option', {
-    last: setsel,
-    value: "",
-    textContent: '--- select a set to wear ---',
-  })
+  const par = []
   for (let i = 0; i < allsets.length; i++) {
-    TWDS.createEle('option', {
-      last: setsel,
-      value: allsets[i].key,
-      textContent: allsets[i].name
-    })
+    const k = allsets[i].key
+    const n = allsets[i].name
+    par.push([k, n])
   }
 
-  const jobsel = TWDS.createEle('select', { last: jobselectarea })
-  TWDS.createEle('option', {
-    last: jobsel,
-    value: 0,
-    textContent: '---'
-  })
-  const allJobs = JobList.getSortedJobs('name')
-  for (let i = 0; i < allJobs.length; i++) {
-    TWDS.createEle('option', {
-      last: jobsel,
-      value: allJobs[i].id,
-      textContent: allJobs[i].name
-    })
-  }
+  const setselcontainer = TWDS.createFilteredSelect('--- select a set to wear ---', par)
+  setselectarea.appendChild(setselcontainer)
+  const setsel = TWDS.q1('select', setselcontainer)
 
   const itemstouse = {}
   if (paraitems) {
@@ -468,11 +367,12 @@ TWDS.simulator.openwindow = function (paraitems) {
     const sl = this.parentNode.dataset.slot
     let cur = TWDS.q1('.target.' + sl + ' .item', itemarea)
     if (cur) cur = cur.dataset.twds_item_id
-    const sel = TWDS.simulator.fillselectarea(selectarea, sl, cur)
+    const selcontainer = TWDS.simulator.fillselectarea(selectarea, sl, cur)
+    const sel = TWDS.q1('select', selcontainer)
     sel.onchange = function () {
       TWDS.simulator.switchslot(itemarea, sl, this.value)
-      sel.remove()
-      TWDS.simulator.updateresult(resultarea, itemarea, jobsel, descarea)
+      sel.closest('.filteredselectcontainer').remove()
+      TWDS.simulator.updateresult(resultarea, itemarea, descarea)
     }
   })
   TWDS.delegate(content, 'change', '.target .leveling', function () {
@@ -483,27 +383,21 @@ TWDS.simulator.openwindow = function (paraitems) {
     let it = ItemManager.get(cur)
     it = ItemManager.get(it.item_base_id * 1000 + parseInt(this.value))
     TWDS.simulator.switchslot(itemarea, it.type, it.item_id)
-    TWDS.simulator.updateresult(resultarea, itemarea, jobsel, descarea)
+    TWDS.simulator.updateresult(resultarea, itemarea, descarea)
   })
-  jobsel.onchange = function () {
-    TWDS.simulator.updateresult(resultarea, itemarea, jobsel, descarea)
-  }
   setsel.onchange = function () {
     const key = setsel.value
-    if (key==="") return;
-    for (let i=0;i<allsets.length;i++) {
-      if (allsets[i].key===key) {
-        let items=allsets[i].items;
-        for (let j=0;j<items.length;j++) {
-          let bid=items[j];
-          let it=ItemManager.getByBaseId(bid);
-          TWDS.simulator.switchslot(itemarea, it.type, it.item_id)
-        }
-      }
+    if (key === '') return
+    const d = west.storage.ItemSetManager.get(key)
+    const items = d.items
+    for (let j = 0; j < items.length; j++) {
+      const bid = items[j]
+      const it = ItemManager.getByBaseId(bid)
+      TWDS.simulator.switchslot(itemarea, it.type, it.item_id)
     }
-    TWDS.simulator.updateresult(resultarea, itemarea, jobsel, descarea)
+    TWDS.simulator.updateresult(resultarea, itemarea, descarea)
   }
-  TWDS.simulator.updateresult(resultarea, itemarea, jobsel, descarea)
+  TWDS.simulator.updateresult(resultarea, itemarea, descarea)
 
   sp.appendContent(content)
   win.appendToContentPane(sp.getMainDiv())
