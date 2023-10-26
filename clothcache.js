@@ -221,7 +221,6 @@ TWDS.clothcache.invItemInitDisplay = function () {
   if (want > 0) {
     const countele = TWDS.q1('.count', this.divMain[0])
     countele.textContent = countele.textContent + ' / ' + want
-    console.log('countele', countele, this.divMain[0])
   }
 }
 
