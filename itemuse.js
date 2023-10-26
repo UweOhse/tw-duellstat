@@ -167,12 +167,12 @@ TWDS.itemuse.prehandler = function (ev, xhr, settings) {
     console.log('itemuse? wheel', 3)
 
     // dod: url contains action=gamble,  form data contains action=end&wofid=NNN
-    let dod=0
+    let dod = 0
     let mat = settings.data.match('action=end')
     if (mat !== null) {
       mat = settings.data.match('wofid=')
       if (mat !== null) {
-        dod=1
+        dod = 1
       }
     }
     mat = settings.data.match('gametype=([a-z0-9_]+)')
@@ -199,8 +199,7 @@ TWDS.itemuse.prehandler = function (ev, xhr, settings) {
 }
 TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'misc_chestanalyzer',
-    TWDS._('MISC_SETTING_CHESTANALYZER',
-      'Analyze the contents of chests.'
+    TWDS._('MISC_SETTING_CHESTANALYZER', 'Analyze the contents of chests.'),
     true)
   TWDS.registerExtra('TWDS.itemuse.openwindow',
     TWDS._('EXTRAS_CHESTS_TEXT', 'Chests contents'),
