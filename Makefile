@@ -8,10 +8,11 @@ CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js $(LANGSJSON) t
    updatetab.js fbs.js sleep.js quickusables.js trackbar.js quicksilver.js showset.js overlay.js craftcalc.js \
    altinventory.js friends.js calculator.js townlog.js craftwindow.js simulator.js bufflist.js achievements.js \
    iteminfo.js fbchat.js invstat.js pinning.js duelinfo.js calendar.js \
-   sortable.js extras.js main.js
+   sortable.js extras.js main.js 
+
 SASS_SOURCES=utils.sass minimap.sass joblist.sass market.sass craftwindow.sass quest.sass jobwindow.sass simulator.sass \
   craftcalc.sass itemsettab.sass extras.sass bufflist.sass achievements.sass items.sass iteminfo.sass storage.sass \
-  duelinfo.sass misc.sass pinning.sass
+  duelinfo.sass misc.sass pinning.sass 
 
 CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
