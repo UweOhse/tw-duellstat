@@ -17,6 +17,7 @@ TWDS.friends.openwindow = function () {
     className: 'TWDS_friends_container'
   })
   const info = TWDS.createEle('p', { beforeend: content })
+  const functions = TWDS.createEle('p', { beforeend: content })
   const table = TWDS.createEle('table', { beforeend: content, className: 'TWDS_with_border TWDS_padded TWDS_sortable' })
   const thead = TWDS.createEle('thead', { beforeend: table })
   const tbody = TWDS.createEle('tbody', { beforeend: table })
@@ -40,7 +41,21 @@ TWDS.friends.openwindow = function () {
       return
     }
     info.textContent = TWDS._('FRIENDS_COUNT_TEXT', 'You have $count$ friends.', { count: pl.length - 1 })
-
+    for (const eventName in Game.sesData) {
+      const ev = Game.sesData[eventName]
+      if (!ev.friendsbar || (window.buildTimestamp(ev.meta.end, true) <= new window.ServerDate().getTime())) {
+        continue
+      }
+      TWDS.createEle({
+        nodeName: 'button',
+        textContent: ev.friendsbar.label,
+        dataset: { event: eventName },
+        onclick: function () {
+          WestUi.FriendsBar.friendsBarUi.friendsBar.activateEventAll(this.dataset.event)
+        },
+        last: functions
+      })
+    }
     thead.appendChild(TWDS.createEle({
       nodeName: 'tr',
       children: [
