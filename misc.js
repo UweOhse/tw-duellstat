@@ -266,6 +266,17 @@ TWDS.registerStartFunc(function () {
     TWDS._('MISC_HIGHLIGHT_TELEGRAMS',
       'Highlight the message button with red borders of you have unread telegrams.'),
     false)
+  const donotibar = function (v) {
+    if (WestUi && WestUi.NotiBar && WestUi.NotiBar.main) {
+      WestUi.NotiBar.main.setMaxView(TWDS.settings.misc_notibar_main_max)
+      return
+    }
+    window.setTimeout(donotibar, 500)
+  }
+  TWDS.registerSetting('int', 'misc_notibar_main_max',
+    TWDS._('MISC_SETTING_NOTIBAR_MAIN_MAX',
+      'Set the number of elements shown in the main notification bar (saloon and so on).'),
+    { default: 4, min: 2, max: 8 }, donotibar)
 })
 TWDS.registerSetting('bool', 'misc_tailor_scrollbar_fix',
   TWDS._('MISC_SETTING_TAILOR_SCROLLBAR_FIX',
@@ -275,5 +286,23 @@ TWDS.registerSetting('bool', 'misc_tailor_scrollbar_fix',
       document.body.classList.add('TWDS_fix_tailor_scrollbar')
     } else {
       document.body.classList.remove('TWDS_fix_tailor_scrollbar')
+    }
+  })
+TWDS.registerSetting('bool', 'misc_large_inventory',
+  TWDS._('MISC_SETTING_LARGE_INVENTORY',
+    'Provide a larger inventory (TW Inventory Reloaded is better).'),
+  false, function (v) {
+    if (v) {
+      document.body.classList.add('TWDS_large_inventory')
+      Inventory.size = 40
+      Inventory.sizeSearch = 40
+      Inventory.sizeCustom = 40
+      Inventory.latestSize = 48
+    } else {
+      document.body.classList.remove('TWDS_large_inventory')
+      Inventory.size = 20
+      Inventory.sizeSearch = 16
+      Inventory.sizeCustom = 16
+      Inventory.latestSize = 20
     }
   })

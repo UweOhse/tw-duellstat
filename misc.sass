@@ -14,3 +14,40 @@ body.TWDS_fix_tailor_scrollbar {
     }
   }
 }
+#TWDS_settings {
+        input[type=number] {
+                width:7em;
+        }
+}
+body.TWDS_large_inventory {
+  #windows .inventory {
+    width: 544px;
+    .tw2gui_inner_window_bg {
+      background:inherit;
+    }
+    .filters {
+      width: calc(258px + 240px);
+      display:flex;
+      .filter_inventory {
+        transform:scale(0.75);
+      }
+    }
+    #bag {
+      width: calc(244px + 250px);
+      height: calc(305px + 40px);
+      color: white;
+
+    }
+    .actions .upgrade_items .textart_title::before {
+      content: "Upgrade";
+      display:inline;
+      visibility:visible;
+      display:block;
+    }
+    .actions .upgrade_items .textart_title {
+      visibility:hidden;
+      max-width:5em;
+      overflow:hidden;
+    }
+  }
+}
