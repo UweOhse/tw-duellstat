@@ -119,7 +119,7 @@ TWDS.fbchat.startfunc = function () {
   window.FortBattleWindow.handlePlayerInfoSignal = TWDS.fbchat.playerhandler
 
   TWDS.registerSetting('bool', 'misc_fortbattle_chatext',
-    TWDS._('FBS_SETTING', 'Add health point information to the fort battle chat.'),
+    TWDS._('FBCHAT_SETTING', 'Add health point information to the fort battle chat.'),
     true, null, 'misc')
 
   TWDS.delegate(document.body, 'click', '#windows .chat .chat_from .client_name', TWDS.fbchat.clickhelper)
