@@ -12,7 +12,7 @@ CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js $(LANGSJSON) t
 
 SASS_SOURCES=utils.sass minimap.sass joblist.sass market.sass craftwindow.sass quest.sass jobwindow.sass simulator.sass \
   craftcalc.sass itemsettab.sass extras.sass bufflist.sass achievements.sass items.sass iteminfo.sass storage.sass \
-  duelinfo.sass misc.sass pinning.sass 
+  duelinfo.sass misc.sass pinning.sass calendar.sass
 
 CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
@@ -30,7 +30,7 @@ GLOBALS=--global Game --global TWDS --global Character --global wman --global Ba
 	--global MarketWindow --global CharacterWindow --global Crafting \
 	--global TaskQueue --global GameInject --global jQuery --global Blob --global Quest \
 	--global Node --global BankWindow --global CemeteryWindow --global WestUi
-all: precheck tw-duellstat.user.js tw-duellstat.min.user.js
+all: precheck tw-duellstat.user.js
 
 tw-duellstat.min.user.js: tw-duellstat.user.js
 	awk '{if (state!=1) print} /==\/UserScript==/ {state=1}' $^ >$@.t1
