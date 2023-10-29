@@ -113,6 +113,7 @@ TWDS.getSettingsContentReal = function () {
       const name = one.name
       const text = one.text
       const group = one.group
+      const opts = one.opts
       if (group !== lastgroup && group !== '') {
         const h3 = document.createElement('h3')
         thing.appendChild(h3)
@@ -151,6 +152,8 @@ TWDS.getSettingsContentReal = function () {
         c.classList.add('TWDS_setting_int')
         c.classList.add('TWDS_setting')
         c.dataset.settingName = name
+        if ('min' in opts) c.setAttribute('min', opts.min)
+        if ('max' in opts) c.setAttribute('max', opts.max)
         div.appendChild(c)
         const span = document.createElement('span')
         span.textContent = text
