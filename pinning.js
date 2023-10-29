@@ -6,13 +6,39 @@ TWDS.pinning.cooldowninterval = 0
 TWDS.pinning.cooldownhandler = function () {
   const d = TWDS.q1('#TWDS_pinning_cooldowninfo')
   if (!d) return
+
   const now = new Date().getTime()
   const dt = Character.cooldown - now / 1000
   if (dt <= 0) {
     d.textContent = ''
-    return
+  } else {
+    d.textContent = dt.formatDurationBuffWay()
   }
-  d.textContent = dt.formatDurationBuffWay()
+
+  const x = window.localStorage.TWDS_pinned_items || '[]'
+  const list = JSON.parse(x)
+
+  for (let i = 0; i < list.length; i++) {
+    const itemid = list[i]
+    const it = Bag.getItemByItemId(itemid) // that's where we get the cooldown info
+    if (!it) continue
+    const st = new window.ServerDate().getTime()
+    const delta = (it.cooldown - st / 1000)
+    if (delta > 0) {
+      const ours = TWDS.q(".TWDS_pinning_container .item[data-twds_item_id='" + itemid + "'] .cooldown p")
+      for (let j = 0; j < ours.length; j++) {
+        ours[j].textContent = delta.formatDurationBuffWay()
+      }
+    }
+    const ours = TWDS.q(".TWDS_pinning_container .item[data-twds_item_id='" + itemid + "'] .count")
+    for (let j = 0; j < ours.length; j++) {
+      const old = parseInt(ours[j].textContent)
+      if (old !== it.count) {
+        ours[j].textContent = it.count
+        ours[j].style.display = 'block'
+      }
+    }
+  }
 }
 TWDS.pinning.onclick = function () {
   const id = this.dataset.twds_item_id
