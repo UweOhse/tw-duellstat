@@ -51,7 +51,8 @@ TWDS.friends.openwindow = function () {
         textContent: ev.friendsbar.label,
         dataset: { event: eventName },
         onclick: function () {
-          WestUi.FriendsBar.friendsBarUi.friendsBar.activateEventAll(this.dataset.event)
+          new west.storage.FriendsBar('friends', function () {}, function () {}, function () {})
+            .activateEventAll('DayOfDead')
         },
         last: functions
       })
