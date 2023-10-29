@@ -17,13 +17,19 @@ TWDS.loadSettings = function () {
 TWDS.registerExtra = function (fn, text, help) {
   TWDS.extraList.push({ fn: fn, text: text, help: help })
 }
-TWDS.registerSetting = function (mode, name, text, def, callBack, group, subgroup, ordervalue) {
+TWDS.registerSetting = function (mode, name, text, opts, callback, group, subgroup, ordervalue) {
+  if (typeof opts !== 'object') {
+    const tmp = opts
+    opts = {
+      default: tmp
+    }
+  }
   const o = {
     mode: mode,
     name: name,
     text: text,
-    def: def,
-    callback: callBack || null,
+    opts: opts,
+    callback: callback || null,
     group: group || 'misc',
     subgroup: subgroup || '',
     ordervalue: ordervalue || 0
@@ -36,9 +42,9 @@ TWDS.registerSetting = function (mode, name, text, def, callBack, group, subgrou
     }
   }
   if (!(name in TWDS.settings)) {
-    TWDS.settings[name] = def
+    TWDS.settings[name] = opts.default
   }
-  if (callBack) { callBack(TWDS.settings[name]) }
+  if (callback) { callback(TWDS.settings[name]) }
 }
 
 TWDS.wearItemsHandler = function (ids) {
