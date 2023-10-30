@@ -288,6 +288,7 @@ TWDS.registerSetting('bool', 'misc_tailor_scrollbar_fix',
       document.body.classList.remove('TWDS_fix_tailor_scrollbar')
     }
   })
+
 TWDS.registerSetting('bool', 'misc_large_inventory',
   TWDS._('MISC_SETTING_LARGE_INVENTORY',
     'Provide a larger inventory (TW Inventory Reloaded is better).'),
@@ -306,3 +307,46 @@ TWDS.registerSetting('bool', 'misc_large_inventory',
       Inventory.latestSize = 20
     }
   })
+
+TWDS.misc_sheriffwindow_open = function (townId, tabId, wanted) {
+  window.SheriffWindow._TWDS_backup_open.call(this, townId, tabId, wanted)
+  if (wanted) {
+    TWDS.misc_sheriff_bounty_namechange2(wanted)
+  }
+}
+
+TWDS.misc_sheriff_bounty_namechange2 = function (name) {
+  if (!TWDS.settings.misc_sheriff_minbounty) return false
+  name = name.trim().toLocaleLowerCase()
+  Ajax.remoteCallMode('ranking', 'get_data', { search: name, tab: 'experience', rank: 'NaN' }, function (d) {
+    for (let i = 0; i < d.ranking.length; i++) {
+      if (d.ranking[i].name.toLocaleLowerCase() === name) {
+        Ajax.remoteCallMode('profile', 'init', { playerId: d.ranking[i].player_id }, function (e) {
+          const container = TWDS.q1('#windows .sheriff .sheriff-create')
+          if (container) {
+            const rewinput = TWDS.q1('#tbsh_iReward')
+            if (rewinput) {
+              const reward = parseInt(rewinput.value)
+              if (reward < e.duelLevel * 10 || isNaN(reward)) {
+                rewinput.value = e.duelLevel * 10
+              }
+            }
+          }
+        })
+      }
+    }
+  })
+}
+TWDS.misc_sheriff_bounty_namechange = function () {
+  TWDS.misc_sheriff_bounty_namechange2(this.value)
+}
+TWDS.registerStartFunc(function () {
+  window.SheriffWindow._TWDS_backup_open = window.SheriffWindow.open
+  window.SheriffWindow.open = TWDS.misc_sheriffwindow_open
+  TWDS.registerSetting('bool', 'misc_sheriff_minbounty',
+    TWDS._('MISC_SETTING_SHERIFF_MINBOUNTY',
+      'In the "offer bounty" tab of the sheriff window set the offered reward to the minimum for the wanted characters duel level.'),
+    true)
+  TWDS.delegate(document.body, 'change', '#windows .sheriff .sheriff-create #tbsh_iCharname',
+    TWDS.misc_sheriff_bounty_namechange)
+})
