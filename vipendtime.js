@@ -13,17 +13,18 @@ TWDS.vipendtime.handler = function () {
   }
   if (dt) {
     dt = dt - now / 1000
-    if (!TWDS.vipendtime.element) {
+    let ele = TWDS.q1('#buffbars .buffbar_vip .bag_item_mini .TWDS_vipendtime')
+    if (!ele) {
       const bv = TWDS.q1('#buffbars .buffbar_vip .bag_item_mini')
       if (bv) {
-        TWDS.vipendtime.element = TWDS.createEle({
+        ele = TWDS.createEle({
           nodeName: 'div.TWDS_vipendtime',
           last: bv
         })
       }
     }
-    if (TWDS.vipendtime.element) {
-      TWDS.vipendtime.element.textContent = dt.formatDurationBuffWay()
+    if (ele) {
+      ele.textContent = dt.formatDurationBuffWay()
     }
   }
 }
