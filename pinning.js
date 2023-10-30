@@ -28,6 +28,7 @@ TWDS.pinning.cooldownhandler = function () {
       const ours = TWDS.q(".TWDS_pinning_container .item[data-twds_item_id='" + itemid + "'] .cooldown p")
       for (let j = 0; j < ours.length; j++) {
         ours[j].textContent = delta.formatDurationBuffWay()
+        ours[j].parentNode.style.display = 'block'
       }
     }
     const ours = TWDS.q(".TWDS_pinning_container .item[data-twds_item_id='" + itemid + "'] .count")
@@ -77,12 +78,14 @@ TWDS.pinning.getcontent = function () {
   content.textContent = ''
   for (let i = 0; i < list.length; i++) {
     const id = list[i]
-    const t = new tw2widget.InventoryItem(ItemManager.get(id)).setCharacter(Character).getMainDiv()[0]
+    const t = new tw2widget.Item(ItemManager.get(id)).setCharacter(Character).getMainDiv()[0]
     content.appendChild(t)
     t.style.display = 'inline-block'
     t.style.float = 'none'
+    t.dataset.twds_item_id = id
     t.onclick = TWDS.pinning.onclick
-    const img = TWDS.q1('.item_inventory_img', t)
+    TWDS.createEle('span.cooldown', { last: t, children: [{ nodeName: 'p' }] })
+    const img = TWDS.q1('.tw_item', t)
     img.classList.add('TWDS_pinned_thing')
     $(img).setDraggable()
   }
@@ -131,7 +134,7 @@ TWDS.pinning.openwindow = function (ev) {
       },
       first: ti
     })
-    $(img).asDropzone('.item_inventory_img.TWDS_pinned_thing', false, function (ele) {
+    $(img).asDropzone('.tw_item.TWDS_pinned_thing', false, function (ele) {
       TWDS.pinning.handledrop(ele, true)
     })
     TWDS.createEle({
