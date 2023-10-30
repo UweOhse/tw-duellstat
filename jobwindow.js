@@ -365,6 +365,7 @@ TWDS.jobwindow.updateMotivationMeter = function (o, overcount) {
         }
       }
     }
+    if (motwithq<0) motwithq=0; // mot may be 0, with jobs in the queue
     if (overcount && motwithq !== mot) {
       motwithq++
     }
