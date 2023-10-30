@@ -365,7 +365,7 @@ TWDS.jobwindow.updateMotivationMeter = function (o, overcount) {
         }
       }
     }
-    if (motwithq<0) motwithq=0; // mot may be 0, with jobs in the queue
+    if (motwithq < 0) motwithq = 0 // mot may be 0, with jobs in the queue
     if (overcount && motwithq !== mot) {
       motwithq++
     }
@@ -376,14 +376,17 @@ TWDS.jobwindow.updateMotivationMeter = function (o, overcount) {
       // we will leave the current mot. class with the things in the queue
       t = 0
     }
+    if (mot === 0) t = 9 // special case that.
     TWDS.jobwindow.ssb1.textContent = t + 'x'
     TWDS.jobwindow.ssb1.dataset.smartstart = t
 
     t = Math.min(maxpossible, Math.ceil(tonextborder / 5), Math.floor(Character.energy / 5))
+    if (mot === 0) t = 9 // special case that.
     TWDS.jobwindow.ssb2.textContent = t + 'x'
     TWDS.jobwindow.ssb2.dataset.smartstart = t
 
     t = Math.min(maxpossible, Math.ceil(tonextborder / 12), Math.floor(Character.energy / 12))
+    if (mot === 0) t = 9 // special case that.
     TWDS.jobwindow.ssb3.textContent = t + 'x'
     TWDS.jobwindow.ssb3.dataset.smartstart = t
   }
