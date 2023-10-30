@@ -13,11 +13,11 @@ TWDS.vipendtime.handler = function () {
   }
   if (dt) {
     dt = dt - now / 1000
-    const str = dt.formatDurationBuffWay()
     if (!TWDS.vipendtime.element) {
       const bv = TWDS.q1('#buffbars .buffbar_vip .bag_item_mini')
       if (bv) {
         TWDS.vipendtime.element = TWDS.createEle({
+          nodeName: 'div.TWDS_vipendtime',
           last: bv
         })
       }
