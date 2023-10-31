@@ -135,7 +135,7 @@ TWDS.friends.openwindow = function () {
     }
   })
 }
-TWDS.friends.fastclick=function() {
+TWDS.friends.fastclick = function () {
   for (const eventName in Game.sesData) {
     const ev = Game.sesData[eventName]
     if (!ev.friendsbar || (window.buildTimestamp(ev.meta.end, true) <= new window.ServerDate().getTime())) {
@@ -144,11 +144,11 @@ TWDS.friends.fastclick=function() {
     new west.storage.FriendsBar('friends', function () {}, function () {}, function () {})
       .activateEventAll(eventName)
   }
-};
+}
 // this is not translated, because it runs quite early
 TWDS.registerExtra('TWDS.friends.openwindow', 'Friends', 'Show friends')
-TWDS.registerStartFunc(function() {
+TWDS.registerStartFunc(function () {
   TWDS.delegate(document.body, 'click', '.custom_unit_counter .icon:not(.help)', function () {
-    TWDS.friends.fastclick();
-  });
-});
+    TWDS.friends.fastclick()
+  })
+})

@@ -84,8 +84,6 @@ show-version:
 release: all
 	@cp tw-duellstat.user.js ../release
 	@cp tw-duellstat.user.js ../release/$(RELEASEFNAME)
-	@cp tw-duellstat.min.user.js ../release
-	@cp tw-duellstat.min.user.js ../release/$(RELEASEMINFNAME)
 	@cp updateinfo.html ../
 
 releasecheck:
