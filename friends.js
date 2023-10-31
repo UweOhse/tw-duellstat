@@ -52,7 +52,7 @@ TWDS.friends.openwindow = function () {
         dataset: { event: eventName },
         onclick: function () {
           new west.storage.FriendsBar('friends', function () {}, function () {}, function () {})
-            .activateEventAll('DayOfDead')
+            .activateEventAll(this.dataset.eventName)
         },
         last: functions
       })
@@ -135,5 +135,20 @@ TWDS.friends.openwindow = function () {
     }
   })
 }
+TWDS.friends.fastclick=function() {
+  for (const eventName in Game.sesData) {
+    const ev = Game.sesData[eventName]
+    if (!ev.friendsbar || (window.buildTimestamp(ev.meta.end, true) <= new window.ServerDate().getTime())) {
+      continue
+    }
+    new west.storage.FriendsBar('friends', function () {}, function () {}, function () {})
+      .activateEventAll(eventName)
+  }
+};
 // this is not translated, because it runs quite early
 TWDS.registerExtra('TWDS.friends.openwindow', 'Friends', 'Show friends')
+TWDS.registerStartFunc(function() {
+  TWDS.delegate(document.body, 'click', '.custom_unit_counter .icon:not(.help)', function () {
+    TWDS.friends.fastclick();
+  });
+});
