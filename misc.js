@@ -289,25 +289,6 @@ TWDS.registerSetting('bool', 'misc_tailor_scrollbar_fix',
     }
   })
 
-TWDS.registerSetting('bool', 'misc_large_inventory',
-  TWDS._('MISC_SETTING_LARGE_INVENTORY',
-    'Provide a larger inventory (TW Inventory Reloaded is better).'),
-  false, function (v) {
-    if (v) {
-      document.body.classList.add('TWDS_large_inventory')
-      Inventory.size = 40
-      Inventory.sizeSearch = 40
-      Inventory.sizeCustom = 40
-      Inventory.latestSize = 48
-    } else {
-      document.body.classList.remove('TWDS_large_inventory')
-      Inventory.size = 20
-      Inventory.sizeSearch = 16
-      Inventory.sizeCustom = 16
-      Inventory.latestSize = 20
-    }
-  })
-
 TWDS.misc_sheriffwindow_open = function (townId, tabId, wanted) {
   window.SheriffWindow._TWDS_backup_open.call(this, townId, tabId, wanted)
   if (wanted) {
