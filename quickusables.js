@@ -24,7 +24,12 @@ TWDS.quickusables.catnames = {
   movement: TWDS._('QUICKUSABLES_MOVEMENT', 'Movement'),
   openunpack: TWDS._('QUICKUSABLES_OPENUNPACK', 'Open/unpack'),
   laborpoints: TWDS._('QUICKUSABLES_LP', 'Labor points'),
-  bonds: TWDS._('QUICKUSABLES_BONDS', 'Bonds')
+  bonds: TWDS._('QUICKUSABLES_BONDS', 'Bonds'),
+  cempasuchils: TWDS._('QUICKUSABLES_CEMPASUCHILS', 'Cempasúchils'),
+  eastereggs: TWDS._('QUICKUSABLES_EASTEREGGS', 'Easter eggs'),
+  fireworks: TWDS._('QUICKUSABLES_FIREWORKS', 'Fireworks'),
+  hearts: TWDS._('QUICKUSABLES_HEARTS', 'Hearts'),
+  pretzels: TWDS._('QUICKUSABLES_PRETZELS', 'Pretzels')
 }
 TWDS.quickusables.getcatdesc = function (cat) {
   if (cat in TWDS.quickusables.catnames) { return TWDS.quickusables.catnames[cat] }
