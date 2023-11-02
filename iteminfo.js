@@ -49,33 +49,31 @@ TWDS.iteminfo.getcontent = function (win) {
     return content
   }
 
-  const resulttable = TWDS.createEle({
-    nodeName: 'table',
-    className: 'TWDS_iteminfo_resultarea',
+  const ct = TWDS.createEle({
+    nodeName: 'div',
+    className: 'TWDS_iteminfo_resultcontainer',
     last: content
   })
-  TWDS.createEle({
-    nodeName: 'thead',
-    last: resulttable,
-    children: [
-      {
-        nodeName: 'tr',
-        children: [
-          { nodeName: 'th', textContent: TWDS._('ITEMINFO_FIELD_NAME', 'name') },
-          { nodeName: 'th', textContent: TWDS._('ITEMINFO_FIELD_CONTENT', 'content') },
-          { nodeName: 'th', textContent: TWDS._('ITEMINFO_FIELD_EXTRA', 'extra') }
-        ]
-      }
-    ]
+
+  const p = new ItemPopup(it, {
+    character: null
   })
-  const tbody = TWDS.createEle({
-    nodeName: 'tbody',
-    last: resulttable
+  TWDS.createEle({
+    nodeName: 'div',
+    className: 'TWDS_iteminfo_popuparea TWDS_item',
+    innerHTML: p.popup.text,
+    last: ct
+  })
+
+  const resultarea = TWDS.createEle({
+    nodeName: 'div',
+    className: 'TWDS_iteminfo_resultarea level0',
+    last: ct
   })
   const toplevelextra = function (tr, k, v) {
     if (k === 'image') {
       if (it.image > '') {
-        TWDS.createEle('td', {
+        TWDS.createEle('div.extra', {
           last: tr,
           children: [
             { nodeName: 'img', src: it.image, alt: it.name }
@@ -86,7 +84,7 @@ TWDS.iteminfo.getcontent = function (win) {
     }
     if (k === 'wear_image') {
       if (it.image > '') {
-        TWDS.createEle('td', {
+        TWDS.createEle('div.extra', {
           last: tr,
           children: [
             { nodeName: 'img', src: it.image, alt: it.name }
@@ -97,7 +95,7 @@ TWDS.iteminfo.getcontent = function (win) {
     }
     if (k === 'set') {
       if (v > '') {
-        TWDS.createEle('td', {
+        TWDS.createEle('div.extra', {
           last: tr,
           children: [
             {
@@ -113,48 +111,37 @@ TWDS.iteminfo.getcontent = function (win) {
           ]
         })
       }
-      return
     }
-    TWDS.createEle('td', {
-      last: tr
-    })
   }
-  const dump = function (elter, k, v, toplevel) {
-    const tr = TWDS.createEle('tr', { last: elter })
-    TWDS.createEle('th', {
+  const dump = function (elter, k, v, level) {
+    const row = TWDS.createEle('div', { last: elter, className: 'row level' + level })
+    TWDS.createEle('h6', {
       textContent: k,
-      last: tr
+      last: row
     })
     if (v === null) {
-      TWDS.createEle('td', {
+      TWDS.createEle('span', {
         textContent: 'null',
-        last: tr
-      })
-      TWDS.createEle('td', {
-        textContent: '',
-        last: tr
+        last: row
       })
       return
     }
     if (typeof v !== 'object') {
-      TWDS.createEle('td', {
+      TWDS.createEle('span', {
         textContent: v,
-        last: tr
+        last: row
       })
-      if (toplevel) {
-        toplevelextra(tr, k, v)
+      if (level === 0) {
+        toplevelextra(row, k, v)
       }
       return
     }
-    const td = TWDS.createEle('td', { last: tr, className: 'subobject' })
-    if (toplevel) td.colSpan = '2'
-    const tab2 = TWDS.createEle('table', { last: td })
     for (const [k2, v2] of Object.entries(v)) {
-      dump(tab2, k2, v2, false)
+      dump(elter, k2, v2, level + 1)
     };
   }
   for (const [k, v] of Object.entries(it)) {
-    dump(tbody, k, v, true)
+    dump(resultarea, k, v, 0)
   }
 
   return content
