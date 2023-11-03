@@ -592,6 +592,67 @@ TWDS.storage.removeselected = function (term) {
   }
 }
 
+TWDS.storage.importhandler=function() {
+  let doit=function(str) {
+    console.log("trying to import",str);
+    console.log("trying to import","#"+str+"#");
+    TWDS.storage.reload()
+    let t
+    try {
+      t = JSON.parse(str)
+    } catch (e) {
+      console.error('Unable to parse JSON', e, str)
+    }
+    let report = 'Please check:\n'
+    const overwrites = {}
+    for (const [k, v] of Object.entries(t)) {
+      if (!(k in TWDS.storage.data)) {
+        report += 'new: ' + k + '=' + JSON.stringify(v) + '\n'
+        overwrites[k] = v
+      } else {
+        const old = TWDS.storage.data[k]
+        report += 'old: ' + k + '=' + JSON.stringify(old) + '\n'
+        if (old[1].includes(v[1])) {
+          report += '  leaving it alone\n'
+        } else {
+          const x = []
+          x[0] = Number(old[0]) + Number(v[0])
+          x[1] = old[1] + '\n' + v[1]
+          report += 'new: ' + k + '=' + JSON.stringify(x)
+          overwrites[k] = x
+        }
+      }
+    }
+    if (window.confirm(report)) {
+      for (const [k, v] of Object.entries(overwrites)) {
+        TWDS.storage.data[k] = v
+      }
+      TWDS.storage.save()
+      TWDS.storage.activateTab()
+    }
+  };
+  // firefox: navigator.clipboard has no .readText().
+  // documentation talks about permission queries, but clipboard-read perm is unknown.
+  try {
+    navigator.clipboard.readText().then(function (str) {
+      doit(str)
+    }, function (e) {
+      // Promise rejected.
+      console.log(e);
+      throw(e);
+    })
+  } catch(e) {
+    console.log("e",e);
+    const textarea = $('<textarea />').css({
+      width: '400px',
+      minHeight: '100px'
+    });
+    (new west.gui.Dialog('Import', textarea)).addButton('ok', function() {
+      doit(textarea.val())
+    }).addButton('cancel').show()
+  }
+};
+
 TWDS.storageStartFunction = function () {
   TWDS.registerTab('storage',
     TWDS._('TABNAME_STORAGE', 'Storage'),
@@ -705,45 +766,7 @@ TWDS.storageStartFunction = function () {
     TWDS.storage.recalcsums()
   })
   $(document).on('click', '#TWDS_storage_import', function () {
-    navigator.clipboard.readText().then(function (str) {
-      TWDS.storage.reload()
-      let t
-      try {
-        t = JSON.parse(str)
-      } catch (e) {
-        console.error('Unable to parse JSON', e, str)
-      }
-      let report = 'Please check:\n'
-      const overwrites = {}
-      for (const [k, v] of Object.entries(t)) {
-        if (!(k in TWDS.storage.data)) {
-          report += 'new: ' + k + '=' + JSON.stringify(v) + '\n'
-          overwrites[k] = v
-        } else {
-          const old = TWDS.storage.data[k]
-          report += 'old: ' + k + '=' + JSON.stringify(old) + '\n'
-          if (old[1].includes(v[1])) {
-            report += '  leaving it alone\n'
-          } else {
-            const x = []
-            x[0] = Number(old[0]) + Number(v[0])
-            x[1] = old[1] + '\n' + v[1]
-            report += 'new: ' + k + '=' + JSON.stringify(x)
-            overwrites[k] = x
-          }
-        }
-      }
-      if (window.confirm(report)) {
-        for (const [k, v] of Object.entries(overwrites)) {
-          TWDS.storage.data[k] = v
-        }
-        TWDS.storage.save()
-        TWDS.storage.activateTab()
-      }
-    }, function () {
-      // Promise rejected.
-      console.error('Unable to read from clipboard. :-(')
-    })
+    TWDS.storage.importhandler();
   })
 
   Map.Component.JobGroup.TWDS_backup_getMarkers = Map.Component.JobGroup.getMarkers
