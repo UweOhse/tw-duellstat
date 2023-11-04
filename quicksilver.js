@@ -45,7 +45,7 @@ TWDS.registerStartFunc(function () {
       }
     }, 'Map', null)
   TWDS.registerSetting('bool', 'quicksilver_exclamation_mark',
-    TWDS._('QUICKSILVER_SETTING',
+    TWDS._('QUICKSILVER_SETTING_EXCLAMATION',
       'When marking silver and gold jobs use an exclamation mark.'),
     false, function (v) {
       if (v) {

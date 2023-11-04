@@ -422,6 +422,7 @@ TABNAME_UPDATES: "Updates",
 TABNAME_STORAGE: "Storage",
 TABNAME_SETTINGS: "Einstellungen",
 QUICKSILVER_SETTING: "Markiere bekannte Bonusarbeiten auf der Minimap.",
+QUICKSILVER_SETTING_EXCLAMATION: "Bonusarbeiten mit Ausrufezeichen markieren (statt der auffälligen Fläche)",
 
 UTIL_SETSELECT_FILTERTEXT: "Filtern -->",
 UTIL_SETSELECT_FILTERTITLE: "Die Riesenliste von Sets verkleinern. Javascript-Regex. Skel|Kolum funktioniert.",
