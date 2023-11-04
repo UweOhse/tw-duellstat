@@ -20,10 +20,12 @@ TWDS.pinning.cooldownhandler = function () {
 
   for (let i = 0; i < list.length; i++) {
     const itemid = list[i]
-    const it = Bag.getItemByItemId(itemid) // that's where we get the cooldown info
+    const it = Bag.getItemByItemId(itemid) // that's where we get the count, and the _overaged_ coooldown info
     if (!it) continue
+    const cd = Bag.itemCooldown[itemid] || 0 // current cooldown info
+    if (!cd) continue
     const st = new window.ServerDate().getTime()
-    const delta = (it.cooldown - st / 1000)
+    const delta = (cd - st / 1000)
     if (delta > 0) {
       const ours = TWDS.q(".TWDS_pinning_container .item[data-twds_item_id='" + itemid + "'] .cooldown p")
       for (let j = 0; j < ours.length; j++) {
