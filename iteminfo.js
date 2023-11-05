@@ -56,7 +56,8 @@ TWDS.iteminfo.getcontent = function (win) {
   })
 
   const p = new ItemPopup(it, {
-    character: null
+    character: null,
+    show_setboni: true
   })
   TWDS.createEle({
     nodeName: 'div',
@@ -64,6 +65,14 @@ TWDS.iteminfo.getcontent = function (win) {
     innerHTML: p.popup.text,
     last: ct
   })
+  if (TWDS.items.origpopup) {
+    TWDS.createEle({
+      nodeName: 'div',
+      className: 'TWDS_iteminfo_popuparea',
+      innerHTML: TWDS.items.origpopup,
+      last: ct
+    })
+  }
 
   const resultarea = TWDS.createEle({
     nodeName: 'div',
