@@ -1,5 +1,217 @@
 .TWDS_popup_enhance2 {
-        float:right;
-        width:40px;
-        height:auto;
+  float:right;
+  width:40px;
+  height:auto;
+}
+.TWDS_iteminfo_popuparea {
+  float:left;
+  border:2px solid black;
+}
+.TWDS_enhanced_itempopup {
+  display:grid;
+  grid-template-columns:1fr;
+  aside {
+    display:none;
+  }
+  &.TWDS_with_set {
+    grid-template-columns:1fr 1fr;
+    aside {
+      display:block;
+    }
+  }
+  padding:5px 10px;
+  > * {
+    width:225px;
+  }
+  .divider {
+    height:8px;
+    background:url('/images/fort/battle/divider.png') no-repeat;
+    background-position:center;
+    margin:1em auto;
+  }
+    ul {
+      list-style-type:none;
+    }
+
+
+  header h1,
+  aside h2 { 
+    color:#070;
+    font-size:1em;
+    text-align:center;
+    display:block;
+  }
+  header {
+    grid-row:1;
+    grid-column:1;
+    .twds_icon {
+      height: 93px;
+      width: 93px;
+      box-sizing:border-box;
+      padding-top:8px;
+      background-image: url('/images/inventory/foot_head_animal.png');
+      margin: 0 auto;
+      text-align:center;
+      position:relative;
+      > .item {
+        visibility:hidden; // someone inserts that.
+      }
+      .twds_count {
+        position:absolute;
+        left:3px;
+        bottom:5px;
+        border-radius: 0 2px 0 2px;
+        box-shadow: 1px -1px 2px #000000;
+        background-color: rgba(127, 111, 85, 0.7);
+        color:white;
+        min-width:23px;
+      }
+      .item_level {
+        position:absolute;
+        left:3px;
+        top:5px;
+        background: url(/images/items/item_level.png) 0 50% no-repeat;
+        color:white;
+        text-shadow: black -1px 0 1px, black 0 1px 1px, black 1px 0 1px, black 0 -1px 1px;
+        height: 14px;
+        line-height: 14px;
+        font-size: 11px;
+        padding: 0 3px 0 17px;
+        font-weight: normal;
+        border-radius: 0 0 2px 0;
+        box-shadow: 1px 1px 3px #000000;
+        background-color: rgba(127, 111, 85, 0.7);
+      }
+    }
+    .TWDS_id {
+      margin-top:2px;
+      margin-bottom:2px;
+      color:blue;
+      text-align:center;
+    }
+    .eventdata {
+      text-align:center;
+      color:#840;
+      span:first-child {
+        padding-right:0.5em;
+      }
+    }
+    .type {
+      text-align:center;
+      font-style:italic;
+      font-size:8pt;
+    }
+  }
+  main {
+    grid-row:2;
+    grid-column:1;
+    .avgdamage {
+      color:green;
+      &::before {
+        content:" ("
+      }
+      &::after {
+        content:")"
+      }
+    }
+    .itembonus {
+      margin-top:0.5em;
+      color:#070;
+      > span {
+        display:block;
+      }
+    }
+  }
+  footer {
+    grid-row:3;
+    grid-column:1;
+    font-size:11px;
+    text-align:center;
+    .prices {
+        text-align:center;
+    }
+    .impossible {
+      color:#9008;
+      text-decoration: line-through;
+    }
+    .possible {
+      color:green;
+    }
+    .auction_status {
+      margin-top:1em;
+    }
+    .requirements {
+      text-align:left;
+      display:block;
+      margin-top:0.5em;
+      span {
+        display:block;
+      }
+    }
+    .jobinfo {
+      .onejob {
+        display:block;
+        .yield {
+          padding-left:0.25em;
+         }
+        .yield::after {
+          content:"%";
+        }
+      }
+    }
+  }
+  aside {
+    grid-row:1/4;
+    grid-column:2;
+    ul {
+      list-style-type:none;
+    }
+    .set_bonus {
+      margin-top:1em;
+    }
+  }
+}
+
+.inventory_popup.TWDS_enhanced {
+  .invPopup_head {
+    display:grid;
+    max-height: none;
+    height: auto;
+    grid-template-columns: 1fr;
+    .inventory_popup_icon {
+      position:relative;
+      grid-row:1;
+      div.item {
+        span.count {
+          display: block;
+          top:74px
+        }
+      }
+      .item_level {
+        position:absolute;
+        display: block;
+        top:3px;
+        left:3px;
+        span {
+          box-shadow: 1px 1px 2px black;
+          border-radius: 0 2px 0 2px;
+        }
+      }
+    }
+    .TWDS_id {
+      margin-top:2px;
+      grid-row:2;
+      margin-bottom:2px;
+      color:blue;
+    }
+  }
+  .TWDS_avgdamage {
+    color:green;
+    &::before {
+      content:" ("
+    }
+    &::after {
+      content:")"
+    }
+  }
 }
