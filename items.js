@@ -17,17 +17,17 @@ TWDS.items.popupenhancementReal = function () {
   const old = TWDS.createEle('div')
   old.innerHTML = orig
 
-  let istwir=TWDS.q(".inventory_popup > table", old).length
+  const istwir = TWDS.q('.inventory_popup > table', old).length
   if (istwir) {
     // TWIR makes a mess out of the popup, removing structure.
     if (!ItemPopup.twir_getXHTML) {
-      return orig; // paranoia
+      return orig // paranoia
     }
     orig = window.ItemPopup.twir_getXHTML.call(this)
     old.innerHTML = orig
-    console.log('PE overrid TWIR');
-  } 
-  console.log('PE using', orig);
+    console.log('PE overrid TWIR')
+  }
+  console.log('PE using', orig)
 
   const enhanced = TWDS.createEle('section.TWDS_enhanced_itempopup')
   const head = TWDS.createEle('header', { last: enhanced })
@@ -35,28 +35,28 @@ TWDS.items.popupenhancementReal = function () {
   const foot = TWDS.createEle('footer', { last: enhanced })
   const side = TWDS.createEle('aside', { last: enhanced })
 
-  t=TWDS.q(".invPopup_head > *", old)
-  for (let i=0;i<t.length;i++) {
-    head.appendChild(t[i]);
+  t = TWDS.q('.invPopup_head > *', old)
+  for (let i = 0; i < t.length; i++) {
+    head.appendChild(t[i])
   }
 
-  t=TWDS.q1('div img[src*="divider"',head);
+  t = TWDS.q1('div img[src*="divider"', head)
   if (t) {
-    t.parentNode.remove();
+    t.parentNode.remove()
   }
 
-  t=TWDS.q(".invPopup_body > *", old)
-  for (let i=0;i<t.length;i++) {
-    main.appendChild(t[i]);
+  t = TWDS.q('.invPopup_body > *', old)
+  for (let i = 0; i < t.length; i++) {
+    main.appendChild(t[i])
   }
-  t=TWDS.q(".invPopup_foot > *", old)
-  for (let i=0;i<t.length;i++) {
-    foot.appendChild(t[i]);
+  t = TWDS.q('.invPopup_foot > *', old)
+  for (let i = 0; i < t.length; i++) {
+    foot.appendChild(t[i])
   }
   t = TWDS.q1('.inventory_popup_label', main)
   if (t) {
     TWDS.createEle('h1', { first: head, textContent: t.textContent })
-    t.remove();
+    t.remove()
   }
 
   t = TWDS.q1('.inventory_popup_icon', head)
@@ -82,14 +82,13 @@ TWDS.items.popupenhancementReal = function () {
     textContent: '[item=' + ii + ']'
   })
 
-  t=TWDS.q1(".item_level",main);
-  if (t) t.remove();
-
+  t = TWDS.q1('.item_level', main)
+  if (t) t.remove()
 
   t = TWDS.q1('.inventory_popup_type', main)
   if (t && 1) {
-    head.appendChild(t);
-    t.className="type";
+    head.appendChild(t)
+    t.className = 'type'
     if (item.type === 'right_arm') {
       const span = TWDS.q1('span', t)
       if (span) {
@@ -117,9 +116,8 @@ TWDS.items.popupenhancementReal = function () {
   }
 
   const setinfo = TWDS.itemsettab.classifyset(item.set)
-  let eventdiv=null
   if (setinfo) {
-    eventdiv=TWDS.createEle({
+    TWDS.createEle({
       nodeName: 'div.eventdata',
       last: head,
       children: [
@@ -129,12 +127,11 @@ TWDS.items.popupenhancementReal = function () {
     })
   }
 
-  const headdivider=TWDS.createEle('div.divider', { last: head })
+  TWDS.createEle('div.divider', { last: head })
 
   const isb = main.querySelector('.item_set_bonus')
   const isn = TWDS.q1('.item_set_names', main)
   if (isb || isn) { enhanced.classList.add('TWDS_with_set') }
-
 
   t = TWDS.q1('.inventory_popup_prices', main)
   if (t) {
@@ -145,39 +142,39 @@ TWDS.items.popupenhancementReal = function () {
   t = TWDS.q1('.inventory_popup_bonus_attr', main) // attr and skills.
   if (t) {
     t.className = 'itembonus'
-    console.log("itembonus found",t,t.parentNode,t.parentNode.parentNode);
+    console.log('itembonus found', t, t.parentNode, t.parentNode.parentNode)
   }
-  
+
   TWDS.createEle({
     nodeName: 'p.auction_status',
     textContent: 'auctionable',
     className: item.auctionable ? 'possible' : 'impossible',
     last: foot
   })
-  t=TWDS.q1(".inventory_popup_auctionable",foot);
-  if (t) t.remove();
+  t = TWDS.q1('.inventory_popup_auctionable', foot)
+  if (t) t.remove()
   TWDS.createEle({
     nodeName: 'p.sell_status',
     textContent: 'sellable',
     className: item.sellable ? 'possible' : 'impossible',
     last: foot
   })
-  t=TWDS.q1(".invPopup_notsellable",main);
-  if (t) t.remove();
+  t = TWDS.q1('.invPopup_notsellable', main)
+  if (t) t.remove()
   TWDS.createEle({
     nodeName: 'p.upgrade_status',
     textContent: 'upgradable',
     className: item.upgradeable ? 'possible' : 'impossible',
     last: foot
   })
-  t=TWDS.q1(".inventory_popup_notupgradeable",foot);
-  if (t) t.remove();
+  t = TWDS.q1('.inventory_popup_notupgradeable', foot)
+  if (t) t.remove()
 
-  t=TWDS.q1(".inventory_popup_action",main);
-  if (t) t.remove(); // einsetzbar, erlernbar. just noise.
+  t = TWDS.q1('.inventory_popup_action', main)
+  if (t) t.remove() // einsetzbar, erlernbar. just noise.
 
-  t=TWDS.q1(".inventory_popup_unique",main);
-  if (t) foot.appendChild(t);
+  t = TWDS.q1('.inventory_popup_unique', main)
+  if (t) foot.appendChild(t)
 
   // .item_set_names is empty, followed by a <span> containing the name of the set.
   // which is insane, of course.
@@ -189,8 +186,8 @@ TWDS.items.popupenhancementReal = function () {
         textContent: n.textContent,
         last: side
       })
-      n.remove();
-      isn.remove();
+      n.remove()
+      isn.remove()
     }
   }
   const ul = TWDS.q1('.inventory_popup_item_set_names', main)
@@ -198,7 +195,7 @@ TWDS.items.popupenhancementReal = function () {
 
   if (isb) {
     TWDS.createEle('div.divider', { last: side })
-    side.appendChild(isb);
+    side.appendChild(isb)
   }
   /*
   // where to find the set bonus?
@@ -214,17 +211,16 @@ TWDS.items.popupenhancementReal = function () {
   t = TWDS.q1('.inventory_popup_requirement_text', main)
   if (t) {
     t.className = 'requirements'
-    let sp=TWDS.q1(".inventory_popup_level",t);
+    const sp = TWDS.q1('.inventory_popup_level', t)
     if (sp) {
       if (sp.textContent.trim().match(/ 1$/)) {
-        sp.remove();
+        sp.remove()
       }
     }
-    let t2=TWDS.q1(".inventory_popup_recipe",main);
-    if (t2)
-      t.appendChild(t2);
-    let spans = TWDS.q('span', t)
-    t.remove();
+    const t2 = TWDS.q1('.inventory_popup_recipe', main)
+    if (t2) { t.appendChild(t2) }
+    const spans = TWDS.q('span', t)
+    t.remove()
     if (spans.length) { foot.appendChild(t) }
   }
 
@@ -298,20 +294,13 @@ TWDS.items.popupenhancementReal = function () {
   if (main.firstChild) {
     TWDS.createEle('div.divider', { first: foot })
   }
-  console.log('PE returning', enhanced);
+  console.log('PE returning', enhanced)
 
   return enhanced.outerHTML
-
-
-
-
-
-
 
   // *************************************************************************************
   // complicated by other scripts creating tables where none are needed, and removing classes.
   //
-
 }
 TWDS.items.popupenhancement = function () {
   return TWDS.items.popupenhancementReal.call(this)
