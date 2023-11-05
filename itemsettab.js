@@ -363,11 +363,152 @@ TWDS.itemsettab.fixinfo = {
   creativity_set: { year: 2020, event: 'ingame' },
   creative_set: { year: 1, event: 'outgame' },
   birthay_set_2021: { year: 2021, event: 'outgame' }, // birthay, really.
+  set_halloween_clown: { year: 2023, event: 'outgame' },
 
   '15_b_day_set_weapon': { year: 2023, event: 'outgame' },
   '15_b_day_set_animal': { year: 2023, event: 'outgame' },
   '15_b_day_set': { year: 2023, event: 'outgame' }
 
+}
+TWDS.itemsettab.classifyset = function (key) {
+  TWDS.itemsettab.classifyallsets()
+  const allsets = west.storage.ItemSetManager.getAll()
+  for (let i = 0; i < allsets.length; i++) {
+    if (allsets[i].key === key) { return allsets[i]._memo.TWDS_classification }
+  }
+  return null
+}
+TWDS.itemsettab.classifyallsets = function () {
+  const allsets = west.storage.ItemSetManager.getAll()
+  for (let i = 0; i < allsets.length; i++) {
+    const s = allsets[i]
+    const k = s.key
+    let year = ''
+    let eventcode = k
+    let t = k.match(/_(\d\d\d\d)_/)
+    allsets[i].year = 0
+    allsets[i].eventcode = ''
+    if (t && t.length) {
+      year = parseInt(t[1])
+    } else {
+      t = k.match(/(\d\d\d\d)/)
+      if (t && t.length) {
+        year = parseInt(t[1])
+      }
+    }
+
+    // there is a set with the number 6679 in it's key:
+    if (year > 2099 || year < 2012) year = 0
+
+    eventcode = eventcode.replace('set', '')
+    eventcode = eventcode.replace('__', '_')
+    eventcode = eventcode.replace(/_/g, ' ')
+    eventcode = 'unknown'
+    // dod, dotd, dodt ... */
+    if (k.match(/(^|_)dot?dt?_/)) {
+      eventcode = 'dod'
+    }
+    if (k.match(/_dayofthedead/)) {
+      eventcode = 'dod'
+    }
+    // a... really.
+    if (k.match(/(^|_)indep[ae]nd[ae]nce_/)) {
+      eventcode = 'independence'
+    }
+    if (k.match(/_4july_/)) {
+      eventcode = 'independence'
+    }
+    if (k.match(/(^|_)o[ck]toberfest[-_]/)) {
+      eventcode = 'oktoberfest'
+    }
+    if (k.match(/_october_/)) {
+      eventcode = 'oktoberfest'
+    }
+    if (k.match(/^okt_setwof_/)) {
+      eventcode = 'oktoberfest'
+    }
+    if (k.match(/(^|_)easter_/)) {
+      eventcode = 'easter'
+    }
+    if (k.match(/(^|_)valentine?s?(day)?_/)) {
+      eventcode = 'valentine'
+    }
+    if (k.match(/(^|_)(holiday|christmas|xmas\d+)_/)) {
+      eventcode = 'xmas'
+    }
+    if (k.match(/(^|_)sale(_|$)/)) {
+      eventcode = 'sale'
+    }
+    if (k.match(/(^|_)fair_/)) {
+      eventcode = 'fair'
+    }
+    if (k.match(/(^|_)(ifbc\d*|speedworld)_/)) {
+      eventcode = 'outgame'
+    }
+    if (k.match(/(^|_)friendship(_|$)/)) {
+      eventcode = 'friendship'
+    }
+    if (k.match(/(^|_)eire/)) {
+      eventcode = 'ingame'
+    }
+    if (k.match(/^community_event_.*_march/)) {
+      eventcode = 'ingame'
+    }
+    // allsets[i].eventcode = eventcode
+    if (k in TWDS.itemsettab.fixinfo) {
+      eventcode = TWDS.itemsettab.fixinfo[k].event
+      year = TWDS.itemsettab.fixinfo[k].year
+    }
+    allsets[i].eventname = 'Unknown'
+    const memo = {
+      year: year,
+      eventcode: eventcode,
+      eventname: ''
+    }
+    switch (eventcode) {
+      case 'oktoberfest': memo.eventname = 'Oktoberfest'; break
+      case 'dod': memo.eventname = 'Day of the dead'; break
+      case 'independence': memo.eventname = '4th of july'; break
+      case 'easter': memo.eventname = 'Easter'; break
+      case 'valentine': memo.eventname = 'Valentine day'; break
+      case 'sale': memo.eventname = 'Sale'; break
+      case 'shop': memo.eventname = 'Shop'; break
+      case 'xmas': memo.eventname = 'Christmas'; break
+      case 'ingame': memo.eventname = 'Ingame'; break
+      case 'otherevent': memo.eventname = 'Other events'; break
+      case 'adventures': memo.eventname = 'Adventures'; break
+      case 'fair': memo.eventname = 'Fair'; break
+      case 'outgame': memo.eventname = 'Outgame'; break
+      case 'friendship': memo.eventname = 'Friendship'; break
+      default:
+        console.log('no event match for', k, s.name, s.items, memo)
+    }
+    allsets[i]._memo.TWDS_classification = memo
+  }
+  let last = 0
+  for (let i = 0; i < allsets.length; i++) {
+    const memo = allsets[i]._memo.TWDS_classification
+    memo.lastyear = last
+    if (memo.year) {
+      last = memo.year
+    }
+  }
+  let next = 0
+  for (let i = allsets.length - 1; i >= 0; i--) {
+    const memo = allsets[i]._memo.TWDS_classification
+    memo.nextyear = next
+    if (memo.year) {
+      next = memo.year
+    }
+  }
+  for (let i = allsets.length - 1; i >= 0; i--) {
+    const memo = allsets[i]._memo.TWDS_classification
+    if (memo.year === 0) {
+      if (memo.lastyear > 0 && memo.lastyear === memo.nextyear) {
+        memo.year = memo.lastyear
+      }
+    }
+  }
 }
 TWDS.itemsettab.fixallsets = function (allsets) {
   for (let i = 0; i < allsets.length; i++) {
