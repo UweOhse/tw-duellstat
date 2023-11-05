@@ -1,0 +1,86 @@
+body.TWDS_large_inventory {
+  #windows .inventory {
+    width: 724px;
+    .tw2gui_inner_window_bg {
+      background:inherit;
+    }
+    div.tw2gui_window_inset {
+      background: url("/images/tw2gui/window/window2_bg_repeat.jpg") 0 0 repeat-y;
+    }
+    .bag_navigation {
+      display:contents;
+      position:absolute;
+      left: 30px;
+      display: block;
+      bottom: 2px;
+      .bag_pages {
+        span.current_page {
+          color:black;
+        }
+        a.page {
+          color:#333;
+          text-decoration:underline;
+        }
+      }
+    }
+    .filters {
+      width: calc(258px + 420px);
+      background: url("/images/interface/wood_texture_dark.jpg") 0 0 repeat-x;
+      display:flex;
+      .filter_inventory {
+        transform:scale(0.85);
+      }
+      .TWDS_filter {
+        width:36px;
+        height:36px;
+        &.TWDS_filter_recipe {
+          background-image: url("/images/items/recipe/recipe_cook.png"),
+            url("/images/items/recipe/recipe_smith.png"),
+            url("/images/items/recipe/recipe_quack.png"),
+            url("/images/items/recipe/recipe_sattle.png");
+          background-position: top left, top right, bottom left, bottom right;
+          background-size:63%;
+          background-repeat:no-repeat;
+        }
+        &.TWDS_filter_useable {
+          background-image: url("/images/items/yield/lifeelixir.png"),
+            url("/images/items/yield/14days_vip_bonus.png?5"),
+            url("/images/items/yield/fb_chest_steel.png"),
+            url("/images/items/yield/amoslide.png");
+          background-position: top left, top right, bottom left, bottom right;
+          background-size:63%;
+          background-repeat:no-repeat;
+        }
+        &.TWDS_filter_duplicates::before {
+          content:"123";
+          color:wheat;
+          writing-mode: vertical-rl;
+          text-orientation: upright;
+          text-align:center;
+          border:2px solid #8888;
+          padding-left:10px;
+          padding-right:10px;
+        }
+      }
+    }
+    #bag {
+      width: calc(244px + 430px);
+      height: calc(305px + 40px);
+      color: white;
+    }
+    .search_container {
+      bottom:20px;
+    }
+    .actions {
+      height:36px;
+      position:absolute;
+      bottom: -12px;
+      left:0;
+      right:0;
+      .upgrade_items {
+        left:150px;
+        right:10px;
+      }
+    }
+  }
+}
