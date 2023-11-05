@@ -29,7 +29,13 @@ TWDS.quickusables.catnames = {
   eastereggs: TWDS._('QUICKUSABLES_EASTEREGGS', 'Easter eggs'),
   fireworks: TWDS._('QUICKUSABLES_FIREWORKS', 'Fireworks'),
   hearts: TWDS._('QUICKUSABLES_HEARTS', 'Hearts'),
-  pretzels: TWDS._('QUICKUSABLES_PRETZELS', 'Pretzels')
+  pretzels: TWDS._('QUICKUSABLES_PRETZELS', 'Pretzels'),
+  regeneration: TWDS._('QUICKUSABLES_REGENERATION', 'Regeneriation'),
+  skillpoints: TWDS._('QUICKUSABLES_SKILLPOINTS', 'Skill points'),
+  premium: TWDS._('QUICKUSABLES_PREMIUM', 'Premium'),
+  debuff: TWDS._('QUICKUSABLES_DEBUFF', 'Debuff'),
+  quest: TWDS._('QUICKUSABLES_QUEST', 'Quest'),
+  other: TWDS._('QUICKUSABLES_OTHER', 'Other')
 }
 TWDS.quickusables.getcatdesc = function (cat) {
   if (cat in TWDS.quickusables.catnames) { return TWDS.quickusables.catnames[cat] }
@@ -76,7 +82,13 @@ TWDS.quickusables.initusables = function () {
     hearts: 2,
     fireworks: 2,
     cempasuchils: 2,
-    eastereggs: 2
+    eastereggs: 2,
+    regeneration: 1,
+    skillpoints: 1,
+    premium: 0,
+    debuff: 0,
+    quest: 0,
+    other: 0
   }
   TWDS.quickusables.usables = {}
   for (const i of Object.keys(TWDS.quickusables.flags)) {
@@ -84,10 +96,16 @@ TWDS.quickusables.initusables = function () {
   }
 
   const clean = function (str) {
-    str = str.replace(/([0-9]+)-([0-9]+)/, '')
-    str = str.replace(/([0-9]+)/, '')
+    if (str.search(/Avatar.*:/) !== -1) {
+      str = str.replace(/:.*/, '')
+    }
+    // TWIR touppercases \d :-(
     str = str.replace('+', '')
-    return str.replace(/%/, '')
+    str = str.replace(/([0-9]+)/g, '[0-9]+')
+    str = str.replace('$', '\\$')
+    str = str.replace('(', '\\(')
+    str = str.replace(')', '\\)')
+    return str // .replace(/%/, '')
   }
   const doit = function (id, key, idx) {
     const it = ItemManager.getByBaseId(id)
@@ -105,6 +123,8 @@ TWDS.quickusables.initusables = function () {
   doit(2466, 'drop')
   doit(2467, 'experience')
   doit(2468, 'money')
+  doit(2559, 'money', 0)
+  doit(2204, 'money', 0)
   doit(2741, 'multiplayer', 1)
   doit(2741, 'multiplayer', 2)
   doit(1926, 'movement')
@@ -128,19 +148,45 @@ TWDS.quickusables.initusables = function () {
   doit(2525, 'fortbattle', 2) // zaubertinte, verstecken
   doit(51775, 'openunpack', 0) // Motivationsbox, "Etwas zum Auspacken".
   doit(51595, 'openunpack', 0) // Metallschädel,  "Enthält eine der folgenden Sammelkarten"
+  doit(374, 'openunpack', 0) // Osterkiste,  "Enthält einen der folgenden Gegenstände
   doit(2136, 'bonds', 0) // bonds
-  doit(2196, 'experiencelevel', 0) // experience to your next level
   doit(2196, 'experiencelevel', 0) // experience to your next level
   doit(371, 'pretzels', 0)
   doit(2562, 'hearts', 0)
   doit(2675, 'cempasuchils', 0)
   doit(2619, 'fireworks', 0)
   doit(51981, 'eastereggs', 0)
-}
-TWDS.quickusables.match = function (item, cat) {
-  if (TWDS.quickusables.usables === null) {
-    TWDS.quickusables.initusables()
+  doit(51599, 'regeneration', 0)
+  doit(21340, 'premium', 0)
+  doit(21341, 'premium', 0)
+  doit(21342, 'premium', 0)
+  doit(21343, 'premium', 0)
+  doit(50991, 'premium', 0)
+  doit(2482, 'premium', 0) // nuggetbeutel
+  doit(2472, 'premium', 0) // versicherung
+  doit(1977, 'debuff', 0)
+  doit(1978, 'debuff', 0)
+  doit(1979, 'debuff', 0)
+  doit(51871, 'debuff', 0)
+  doit(53454, 'debuff', 0)
+  doit(2486, 'other', 0) // tent
+  doit(50086, 'other', 0) // avatar stuff
+
+  // skill and attribute points
+  // +2 Stärke / strength
+  // +15 Handeln / trading
+  // +15 Arbeitpunkte auf Handeln (look, a false positive...)
+  const a = []
+  for (const some of Object.values(CharacterSkills.keyNames)) {
+    a.push(clean(some))
   }
+  const collected = '(' + a.join('|') + ')'
+  let str = ItemManager.get(1879000).usebonus[0] // strength
+  str = clean(str)
+  str = str.replace(CharacterSkills.keyNames.strength, collected)
+  TWDS.quickusables.usables.skillpoints.push(str)
+}
+TWDS.quickusables.classifymatchstring = function (item, cat) {
   if (!('usetype' in item)) return false
   if (item.usetype === 'none') return false
   const ub = item.usebonus
@@ -172,10 +218,58 @@ TWDS.quickusables.match = function (item, cat) {
   }
   return true
 }
+TWDS.quickusables.classify = function (item) {
+  if (typeof item === 'number') { item = ItemManager.get(item) }
+  const cats = []
+  if ('TWDS.classification' in item._memo) { return item._memo.TWDS_classification }
+  for (const catname of Object.keys(TWDS.quickusables.catnames)) {
+    if (TWDS.quickusables.classifymatchstring(item, catname)) {
+      cats.push(catname)
+    }
+  }
+  if (item.quest) {
+    cats.push('quest')
+  }
+  item._memo.TWDS_classification = cats
+  return cats
+}
+TWDS.quickusables.check = function () {
+  const all = ItemManager.getAll()
+  let n = 0
+  for (const it of Object.values(all)) {
+    if (it.type !== 'yield') continue
+    if (it.spec_type === 'mapdrop') continue
+    if (it.spec_type === 'crafting') continue
+    if (it.usebonus === null && it.usetype === 'none') continue
+    if (it.set) continue
+
+    if (it.usebonus[0].search('Avatargegenstand:') === 0) continue // german
+    const cats = TWDS.quickusables.classify(it)
+    if (cats.length) continue
+    console.log(it.item_id, it.name, 'no classification', cats, it)
+    n++
+    if (n === 20) {
+      break
+    }
+  }
+}
+TWDS.quickusables.match = function (item, cat) {
+  if (typeof item === 'number') { item = ItemManager.get(item) }
+  if (TWDS.quickusables.usables === null) {
+    TWDS.quickusables.initusables()
+  }
+
+  const cats = TWDS.quickusables.classify(item)
+  if (cats.includes(cat)) return true
+  return false
+}
 TWDS.quickusables.matchnumber = function (item, cat) {
   if (TWDS.quickusables.usables === null) {
     TWDS.quickusables.initusables()
   }
+  const cats = TWDS.quickusables.classify(item)
+  if (!cats.includes(cat)) return false
+
   if (!('usetype' in item)) return 0
   if (item.usetype === 'none') return 0
   const ub = item.usebonus
@@ -203,7 +297,6 @@ TWDS.quickusables.matchnumber = function (item, cat) {
   return num
 }
 TWDS.quickusables.showusables = function (choice) {
-  console.log('C', choice)
   Inventory.open() // TWIR needs that if the inventory hasn't been opened
   if (TWDS.quickusables.usables === null) {
     TWDS.quickusables.initusables()
@@ -222,6 +315,11 @@ TWDS.quickusables.showusables = function (choice) {
   for (let j = 0; j < translatedchoices.length; j++) {
     const found = Bag.search(translatedchoices[j])
     for (let i = 0; i < found.length; i++) {
+      if ('usetype' in found[i].obj && found[i].obj.usetype !== 'none') {
+        const v = TWDS.quickusables.matchnumber(found[i].obj, choice)
+        filtered.push([found[i], v])
+      }
+      /*
       if ('usetype' in found[i].obj && found[i].obj.usetype !== 'none') {
         console.log('SEARCH', j, translatedchoices[j], 'FOUND', found[i])
         let exclude = false
@@ -242,7 +340,15 @@ TWDS.quickusables.showusables = function (choice) {
           filtered.push(found[i])
         }
       }
+      */
     }
+  }
+  console.log('QU', filtered[0], filtered[1])
+  filtered.sort(function (a, b) { return a[1] - b[1] })
+  console.log('QS', filtered[0], filtered[1])
+  for (let i = 0; i < filtered.length; i++) {
+    console.log('sort #', i, filtered[i][1], filtered[i][0].obj.name)
+    filtered[i] = filtered[i][0]
   }
   Inventory.open()
   Inventory.showSearchResult(filtered)
