@@ -77,6 +77,10 @@ TWDS.getSettingsContentReal = function () {
   const createMainThing = function () {
     const thing = document.createElement('div')
     thing.className = 'TWDS_settings_main'
+    const table = TWDS.createEle({
+      nodeName: 'table.settings',
+      last: thing
+    })
 
     let lastgroup = ''
     const a = []
@@ -108,69 +112,87 @@ TWDS.getSettingsContentReal = function () {
       if (a.ordervalue !== b.ordervalue) { return a.ordervalue - b.ordervalue }
       return a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
     })
+    let tbody = null
     for (const one of a) {
       const mode = one.mode
       const name = one.name
       const text = one.text
       const group = one.group
       const opts = one.opts
-      if (group !== lastgroup && group !== '') {
-        const h3 = document.createElement('h3')
-        thing.appendChild(h3)
-        h3.textContent = group
+      if ((group !== lastgroup && group !== '') || tbody === null) {
+        tbody = TWDS.createEle({
+          nodeName: 'tbody',
+          last: table
+        })
+        TWDS.createEle({
+          nodeName: 'tr.head',
+          last: tbody,
+          children: [
+            { nodeName: 'th', colSpan: 2, textContent: group }
+          ]
+        })
         lastgroup = group
       }
       if (mode === 'info') {
-        const p = TWDS.createEle({
-          nodeName: 'p',
-          className: 'TWDS_setting_info',
-          textContent: text
+        TWDS.createEle({
+          nodeName: 'tr.info',
+          last: tbody,
+          children: [
+            { nodeName: 'td', textContent: text }
+          ]
         })
-        thing.appendChild(p)
         continue
       }
-      const div = document.createElement('div')
-      div.className = 'TWDS_settingline'
-      thing.appendChild(div)
+
+      const tr = TWDS.createEle({
+        nodeName: 'tr.settings',
+        last: tbody
+      })
+      const td = TWDS.createEle({
+        nodeName: 'td',
+        last: tr
+      })
+
       if (mode === 'bool') {
-        const c = document.createElement('input')
-        c.setAttribute('type', 'checkbox')
-        c.setAttribute('value', '1')
-        c.classList.add('TWDS_setting_bool')
-        c.classList.add('TWDS_setting')
-        c.dataset.settingName = name
-        if (TWDS.settings[name]) { c.setAttribute('checked', 'checked') }
-        div.appendChild(c)
-        const span = document.createElement('span')
-        span.textContent = text
-        div.appendChild(span)
+        const ele = TWDS.createEle({
+          nodeName: 'input.TWDS_setting_bool.TWDS_setting',
+          type: 'checkbox',
+          value: 1,
+          dataset: { settingName: name },
+          last: td
+        })
+        if (TWDS.settings[name]) { ele.setAttribute('checked', 'checked') }
       }
       if (mode === 'int') {
-        const c = document.createElement('input')
-        c.setAttribute('type', 'number')
-        c.setAttribute('value', TWDS.settings[name])
-        c.classList.add('TWDS_setting_int')
-        c.classList.add('TWDS_setting')
-        c.dataset.settingName = name
-        if ('min' in opts) c.setAttribute('min', opts.min)
-        if ('max' in opts) c.setAttribute('max', opts.max)
-        div.appendChild(c)
-        const span = document.createElement('span')
-        span.textContent = text
-        div.appendChild(span)
+        const ele = TWDS.createEle({
+          nodeName: 'input.TWDS_setting_int.TWDS_setting',
+          type: 'number',
+          value: TWDS.settings[name],
+          dataset: { settingName: name },
+          last: td
+        })
+        if ('min' in opts) ele.setAttribute('min', opts.min)
+        if ('max' in opts) ele.setAttribute('max', opts.max)
       }
       if (mode === 'string') {
-        const c = document.createElement('input')
-        c.setAttribute('type', 'text')
-        c.setAttribute('value', TWDS.settings[name])
-        c.classList.add('TWDS_setting_string')
-        c.classList.add('TWDS_setting')
-        c.dataset.settingName = name
-        div.appendChild(c)
-        const span = document.createElement('span')
-        span.textContent = text
-        div.appendChild(span)
+        TWDS.createEle({
+          nodeName: 'input.TWDS_setting_string.TWDS_setting',
+          type: 'text',
+          value: TWDS.settings[name],
+          dataset: { settingName: name },
+          last: td
+        })
       }
+      TWDS.createEle({
+        nodeName: 'span',
+        textContent: text,
+        last: td
+      })
+      TWDS.createEle({
+        nodeName: 'td.settingname',
+        textContent: name,
+        last: tr
+      })
     }
 
     return thing
