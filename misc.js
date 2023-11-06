@@ -189,8 +189,12 @@ TWDS.registerStartFunc(function () {
     }
     return window.Map.Helper.imgPath._TWDS_backup_lookForModification(path, ongameload)
   }
+  // we may already be too late… the damage may be done.
   TWDS.registerSetting('bool', 'misc_normal_water_color',
     'Show normal water colors instead of the pink/red/green ones of the event. You need to reload the page after a change.', false, null, 'Map')
+  if (TWDS.settings.misc_normal_water_color) {
+    Map.Helper.imgPath.clearCache()
+  }
 
   window.Map.Radialmenu.prototype._TWDS_map_backup_close = window.Map.Radialmenu.prototype.close
   window.Map.Radialmenu.prototype._TWDS_map_backup_open = window.Map.Radialmenu.prototype.open
