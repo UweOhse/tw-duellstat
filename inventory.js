@@ -41,9 +41,7 @@ TWDS.inventory.handledupselect = function (choice) {
 TWDS.inventory.handleprofselect = function (prof) {
   const res = []
   const num = parseInt(prof)
-  console.log('choice', prof, num)
   if (isNaN(num)) {
-    console.log('recipesearch', prof)
     const all = Bag.search('')
     for (let i = 0; i < all.length; i++) {
       const o = all[i]
@@ -55,11 +53,9 @@ TWDS.inventory.handleprofselect = function (prof) {
       }
     }
   } else {
-    console.log('itemsearch', prof, num)
     const all = ItemManager.getAll()
     for (const it of Object.values(all)) {
       if (it.type === 'recipe') {
-        console.log('found recipe', it)
         if (it.craftitem && it.profession_id === num) {
           const found = Bag.getItemsByItemIds([it.craftitem])
           if (found.length) {
@@ -78,15 +74,11 @@ TWDS.inventory.handlecatselect = function (cat) {
 }
 TWDS.inventory.handlefilterclick = function (eventdata) {
   const filter = this.dataset.filter
-  console.log('shall show', filter)
-  // if (filter==="recipe") { Inventory.search(filter); return;}
-  // if (filter==="useable") { Inventory.search(filter); return;}
   if (filter === 'recipe') {
     const sb = (new west.gui.Selectbox(true))
       .setHeight('347px')
       .setWidth('260px')
       .addListener(function (choice) {
-        console.log('choice', choice)
         TWDS.inventory.handleprofselect(choice)
       })
     sb.addItem(null, '<i>--- ' + TWDS._('INVENTORY_RECIPES', 'Recipes') + ' ---</i>')
@@ -104,7 +96,6 @@ TWDS.inventory.handlefilterclick = function (eventdata) {
       .setHeight('347px')
       .setWidth('260px')
       .addListener(function (choice) {
-        console.log('choice', choice)
         TWDS.inventory.handlecatselect(choice)
       })
     sb.addClass('TWDS_inventory_xsel')
@@ -127,7 +118,6 @@ TWDS.inventory.handlefilterclick = function (eventdata) {
       .setHeight('347px')
       .setWidth('260px')
       .addListener(function (choice) {
-        console.log('choice', choice)
         TWDS.inventory.handledupselect(choice)
       })
     sb.addClass('TWDS_inventory_xsel')
@@ -139,7 +129,6 @@ TWDS.inventory.handlefilterclick = function (eventdata) {
   }
 }
 TWDS.inventory.open2 = function (dw, clickhandler, opts) {
-  console.log('TIO2', this, dw, clickhandler, opts)
   const ret = Inventory.TWDS_backup_open.call(this, dw, clickhandler, opts)
   const filters = TWDS.q1('div.filters', ret.DOM[0])
   let found = 0
@@ -150,6 +139,7 @@ TWDS.inventory.open2 = function (dw, clickhandler, opts) {
     TWDS.createEle({
       nodeName: 'div.TWDS_filter.TWDS_filter_recipe',
       dataset: { filter: 'recipe' },
+      title: TWDS._("INVENTORY_SHOW_RECIPES","Show recipes and crafted items"),
       textContent: '',
       last: filters,
       onclick: TWDS.inventory.handlefilterclick
@@ -157,6 +147,7 @@ TWDS.inventory.open2 = function (dw, clickhandler, opts) {
     TWDS.createEle({
       nodeName: 'div.TWDS_filter.TWDS_filter_useable',
       dataset: { filter: 'useable' },
+      title: TWDS._("INVENTORY_SHOW_USABLES","Show usables"),
       textContent: '',
       last: filters,
       onclick: TWDS.inventory.handlefilterclick
@@ -164,6 +155,7 @@ TWDS.inventory.open2 = function (dw, clickhandler, opts) {
     TWDS.createEle({
       nodeName: 'div.TWDS_filter.TWDS_filter_duplicates',
       dataset: { filter: 'duplicates' },
+      title: TWDS._("INVENTORY_SHOW_DUPLICATES","Show duplicates"),
       textContent: '',
       last: filters,
       onclick: TWDS.inventory.handlefilterclick
@@ -172,9 +164,7 @@ TWDS.inventory.open2 = function (dw, clickhandler, opts) {
   return ret
 }
 TWDS.inventory.open = function (dw, clickhandler, opts) {
-  console.log('TIO1', this, dw, clickhandler, opts)
   const ret = TWDS.inventory.open2.call(this, dw, clickhandler, opts)
-  console.log('ret', ret)
   return ret
 }
 // Biginventory touches the same variables, so be careful _NOT_ to change them "back" if we didn't set them.
@@ -189,8 +179,8 @@ TWDS.registerStartFunc(function () {
     latestSize: -1,
     availableCategories: []
   }
-  TWDS.registerSetting('bool', 'misc_large_inventory',
-    TWDS._('MISC_SETTING_LARGE_INVENTORY',
+  TWDS.registerSetting('bool', 'inventory',
+    TWDS._('SETTING_INVENTORY',
       'Provide a larger inventory (TW Inventory Reloaded is better).'),
     false, function (v) {
       if (v) {
