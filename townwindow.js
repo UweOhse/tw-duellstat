@@ -21,7 +21,7 @@ TWDS.townwindow.init = function (data, t) {
           const an = profdata.town.alliance_name
           const ai = profdata.town.alliance_id
           const to = TWDS.q1('.town-overview', TownWindow.DOM)
-          if (to) {
+          if (to && ai) {
             TWDS.createEle({
               nodeName: 'div.town-alliance.linklike',
               last: to,
@@ -184,6 +184,7 @@ TWDS.townwindow.residentsinit = function () {
 }
 
 TWDS.townwindow.startfunc = function () {
+  console.log("SF for townwindow running");
   TWDS.registerSetting('bool', 'townwindow_alliance',
     TWDS._('TOWNWINDOW_SETTING_ALLIANCE', 'Show the alliance name in the town window'),
     true, null, 'misc')
@@ -198,6 +199,7 @@ TWDS.townwindow.startfunc = function () {
   CityhallWindow.Residents.init = TWDS.townwindow.residentsinit
 }
 TWDS.registerStartFunc(function () {
+  console.log("RSF for townwindow");
   TWDS.townwindow.startfunc()
 })
 
