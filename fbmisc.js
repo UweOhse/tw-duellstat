@@ -3,13 +3,10 @@ TWDS.fbmisc = {}
 TWDS.fbmisc.shownumberinterval = 0
 TWDS.fbmisc.shownumber = function () {
   Ajax.remoteCall('fort_overview', '', {}, function (data) {
-    console.log('ajax gave', data, data.js)
     const mp = TWDS.q1('#ui_bottombar .multiplayer')
     if (!mp) return
-    console.log('mp found', mp)
 
     let ele = TWDS.q1('.TWDS_fbcount', mp)
-    console.log('ele?', ele)
 
     let n = 0
     if (data.js) {
@@ -17,7 +14,6 @@ TWDS.fbmisc.shownumber = function () {
         if (data.js[i][3]) n++
       }
     }
-    console.log('n?', n)
     if (ele && !n) {
       ele.remove()
       return
