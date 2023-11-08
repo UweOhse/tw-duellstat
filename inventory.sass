@@ -13,6 +13,7 @@ body.TWDS_large_inventory {
       left: 30px;
       display: block;
       bottom: 2px;
+      z-index:1;
       .bag_pages {
         span.current_page {
           color:black;
@@ -51,15 +52,10 @@ body.TWDS_large_inventory {
           background-size:63%;
           background-repeat:no-repeat;
         }
-        &.TWDS_filter_duplicates::before {
-          content:"123";
-          color:wheat;
-          writing-mode: vertical-rl;
-          text-orientation: upright;
-          text-align:center;
-          border:2px solid #8888;
-          padding-left:10px;
-          padding-right:10px;
+        &.TWDS_filter_duplicates {
+          background-image:url("/images/items/yield/item_53356.png");
+          background-size:99%;
+          background-repeat:no-repeat;
         }
       }
     }
