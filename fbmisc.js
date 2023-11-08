@@ -13,7 +13,9 @@ TWDS.fbmisc.shownumber = function () {
 
     let n = 0
     if (data.js) {
-      n = data.js.length
+      for (let i=0;i<data.js.length;i++) {
+        if (data.js[i][3]) n++
+      }
     }
     console.log('n?', n)
     if (ele && !n) {
