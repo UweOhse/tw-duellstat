@@ -139,7 +139,7 @@ TWDS.inventory.open2 = function (dw, clickhandler, opts) {
     TWDS.createEle({
       nodeName: 'div.TWDS_filter.TWDS_filter_recipe',
       dataset: { filter: 'recipe' },
-      title: TWDS._("INVENTORY_SHOW_RECIPES","Show recipes and crafted items"),
+      title: TWDS._('INVENTORY_SHOW_RECIPES', 'Show recipes and crafted items'),
       textContent: '',
       last: filters,
       onclick: TWDS.inventory.handlefilterclick
@@ -147,7 +147,7 @@ TWDS.inventory.open2 = function (dw, clickhandler, opts) {
     TWDS.createEle({
       nodeName: 'div.TWDS_filter.TWDS_filter_useable',
       dataset: { filter: 'useable' },
-      title: TWDS._("INVENTORY_SHOW_USABLES","Show usables"),
+      title: TWDS._('INVENTORY_SHOW_USABLES', 'Show usables'),
       textContent: '',
       last: filters,
       onclick: TWDS.inventory.handlefilterclick
@@ -155,7 +155,7 @@ TWDS.inventory.open2 = function (dw, clickhandler, opts) {
     TWDS.createEle({
       nodeName: 'div.TWDS_filter.TWDS_filter_duplicates',
       dataset: { filter: 'duplicates' },
-      title: TWDS._("INVENTORY_SHOW_DUPLICATES","Show duplicates"),
+      title: TWDS._('INVENTORY_SHOW_DUPLICATES', 'Show duplicates'),
       textContent: '',
       last: filters,
       onclick: TWDS.inventory.handlefilterclick
