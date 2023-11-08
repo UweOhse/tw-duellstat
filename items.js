@@ -8,9 +8,11 @@ TWDS.items.date = 0
 TWDS.items.popupenhancementReal = function () {
   let t
   let orig = window.ItemPopup._twds_backup_getXHTML.call(this)
+
+  if (!TWDS.settings.itempopup_enable) return orig
+
   const item = this.item_obj
   const ii = item.item_id
-  console.log('PE', item)
 
   TWDS.items.origpopup = orig
 
@@ -21,13 +23,12 @@ TWDS.items.popupenhancementReal = function () {
   if (istwir) {
     // TWIR makes a mess out of the popup, removing structure.
     if (!ItemPopup.twir_getXHTML) {
-      return orig // paranoia
+      // paranoia, this case should not happen
+      return orig
     }
     orig = window.ItemPopup.twir_getXHTML.call(this)
     old.innerHTML = orig
-    console.log('PE overrid TWIR')
   }
-  console.log('PE using', orig)
 
   const enhanced = TWDS.createEle('section.TWDS_enhanced_itempopup')
   const head = TWDS.createEle('header', { last: enhanced })
@@ -59,28 +60,33 @@ TWDS.items.popupenhancementReal = function () {
     t.remove()
   }
 
-  t = TWDS.q1('.inventory_popup_icon', head)
-  if (t) {
-    t.className = 'twds_icon'
-    const c = Bag.getItemCount(ii)
-    TWDS.createEle({
-      nodeName: 'div.twds_count',
-      last: t,
-      textContent: c
-    })
-    if (item.item_level) {
+  if (TWDS.settings.itempopup_count) {
+    t = TWDS.q1('.inventory_popup_icon', head)
+    if (t) {
+      t.className = 'twds_icon'
+      let c = Bag.getItemCount(ii)
+      if (Wear.wear[item.type] && Wear.wear[item.type].getId() === ii) { c += 1 }
       TWDS.createEle({
-        nodeName: 'div.item_level',
+        nodeName: 'div.twds_count',
         last: t,
-        textContent: item.item_level
+        textContent: c
       })
+      if (item.item_level) {
+        TWDS.createEle({
+          nodeName: 'div.item_level',
+          last: t,
+          textContent: item.item_level
+        })
+      }
     }
   }
-  TWDS.createEle({
-    nodeName: 'div.TWDS_id',
-    last: head,
-    textContent: '[item=' + ii + ']'
-  })
+  if (TWDS.settings.itempopup_itemid) {
+    TWDS.createEle({
+      nodeName: 'div.TWDS_id',
+      last: head,
+      textContent: '[item=' + ii + ']'
+    })
+  }
 
   t = TWDS.q1('.item_level', main)
   if (t) t.remove()
@@ -115,16 +121,18 @@ TWDS.items.popupenhancementReal = function () {
     }
   }
 
-  const setinfo = TWDS.itemsettab.classifyset(item.set)
-  if (setinfo) {
-    TWDS.createEle({
-      nodeName: 'div.eventdata',
-      last: head,
-      children: [
-        { nodeName: 'span.year', dataset: { year: setinfo.year }, textContent: setinfo.year },
-        { nodeName: 'span.event', dataset: { year: setinfo.eventname }, textContent: setinfo.eventname }
-      ]
-    })
+  if (TWDS.settings.itempopup_eventinfo) {
+    const setinfo = TWDS.itemsettab.classifyset(item.set)
+    if (setinfo) {
+      TWDS.createEle({
+        nodeName: 'div.eventdata',
+        last: head,
+        children: [
+          { nodeName: 'span.year', dataset: { year: setinfo.year }, textContent: setinfo.year },
+          { nodeName: 'span.event', dataset: { year: setinfo.eventname }, textContent: setinfo.eventname }
+        ]
+      })
+    }
   }
 
   TWDS.createEle('div.divider', { last: head })
@@ -142,7 +150,6 @@ TWDS.items.popupenhancementReal = function () {
   t = TWDS.q1('.inventory_popup_bonus_attr', main) // attr and skills.
   if (t) {
     t.className = 'itembonus'
-    console.log('itembonus found', t, t.parentNode, t.parentNode.parentNode)
   }
 
   TWDS.createEle({
@@ -224,65 +231,68 @@ TWDS.items.popupenhancementReal = function () {
     if (spans.length) { foot.appendChild(t) }
   }
 
-  if (ii in TWDS.collections.dropdata) {
-    const jid = TWDS.collections.dropdata[ii]
-    const jd = JobList.getJobById(jid)
-    if (jd) {
-      TWDS.createElement({
-        nodeName: 'img',
-        className: 'TWDS_popup_enhance2',
-        src: '/images/jobs/' + jd.shortname + '.png',
-        afterbegin: head
-      })
+  if (TWDS.settings.itempopup_showjobicon) {
+    if (ii in TWDS.collections.dropdata) {
+      const jid = TWDS.collections.dropdata[ii]
+      const jd = JobList.getJobById(jid)
+      if (jd) {
+        TWDS.createElement({
+          nodeName: 'img',
+          className: 'TWDS_popup_enhance2',
+          src: '/images/jobs/' + jd.shortname + '.png',
+          afterbegin: head
+        })
+      }
     }
   }
 
-  if (ii in TWDS.items.data) {
-    const d = TWDS.items.data[ii]
-    const ti = d.time * 3600
-    let str = ''
-    if (d.crafteditems > 0) {
-      if (d.founditems) {
-        str += TWDS._('ITEMPOPUP_CRAFTED', 'Crafted')
-        str += TWDS._('ITEMPOPUP_CRAFTED_FOUNDITEMS', ', $n$ items to find (<= $time$)', {
-          n: d.founditems,
+  if (TWDS.settings.itempopup_showtime) {
+    if (ii in TWDS.items.data) {
+      const d = TWDS.items.data[ii]
+      const ti = d.time * 3600
+      let str = ''
+      if (d.crafteditems > 0) {
+        if (d.founditems) {
+          str += TWDS._('ITEMPOPUP_CRAFTED', 'Crafted')
+          str += TWDS._('ITEMPOPUP_CRAFTED_FOUNDITEMS', ', $n$ items to find (<= $time$)', {
+            n: d.founditems,
+            time: ti.formatDuration()
+          })
+        }
+        if (d.shopitems > 0) { str += TWDS._('ITEMPOPUP_SHOPITEMS', ', $n$ items to buy', { n: d.shopitems }) }
+      } else {
+        str += TWDS._('ITEMPOPUP_FOUNDITEM_WORKTIME', 'Found, <= $time$ to collect', {
           time: ti.formatDuration()
         })
       }
-      if (d.shopitems > 0) { str += TWDS._('ITEMPOPUP_SHOPITEMS', ', $n$ items to buy', { n: d.shopitems }) }
-    } else {
-      str += TWDS._('ITEMPOPUP_FOUNDITEM_WORKTIME', 'Found, <= $time$ to collect', {
-        time: ti.formatDuration()
-      })
-    }
 
-    TWDS.createElement({
-      nodeName: 'div',
-      className: 'timeinfo',
-      last: foot,
-      textContent: str
-    })
-    console.log('TIMEINFO', str)
-    if (d.crafteditems === 0) {
-      if (d.jobs.length) {
-        const a = []
-        for (let i = 0; i < d.jobs.length; i++) {
-          a.push(TWDS.createEle({
-            nodeName: 'span',
-            className: 'onejob',
-            dataset: { id: d.jobs[i][0] },
-            children: [
-              { nodeName: 'span.name', textContent: JobList.getJobById(d.jobs[i][0]).name },
-              { nodeName: 'span.yield', textContent: (100 * d.jobs[i][1]).toFixed(0) }
-            ]
-          }))
+      TWDS.createElement({
+        nodeName: 'div',
+        className: 'timeinfo',
+        last: foot,
+        textContent: str
+      })
+      if (d.crafteditems === 0) {
+        if (d.jobs.length) {
+          const a = []
+          for (let i = 0; i < d.jobs.length; i++) {
+            a.push(TWDS.createEle({
+              nodeName: 'span',
+              className: 'onejob',
+              dataset: { id: d.jobs[i][0] },
+              children: [
+                { nodeName: 'span.name', textContent: JobList.getJobById(d.jobs[i][0]).name },
+                { nodeName: 'span.yield', textContent: (100 * d.jobs[i][1]).toFixed(0) }
+              ]
+            }))
+          }
+          TWDS.createElement({
+            nodeName: 'div',
+            className: 'jobinfo',
+            last: foot,
+            children: a
+          })
         }
-        TWDS.createElement({
-          nodeName: 'div',
-          className: 'jobinfo',
-          last: foot,
-          children: a
-        })
       }
     }
   }
@@ -294,7 +304,6 @@ TWDS.items.popupenhancementReal = function () {
   if (main.firstChild) {
     TWDS.createEle('div.divider', { first: foot })
   }
-  console.log('PE returning', enhanced)
 
   return enhanced.outerHTML
 
@@ -446,6 +455,29 @@ TWDS.items.start = function () {
 }
 
 TWDS.registerStartFunc(function () {
+  TWDS.registerSetting('bool', 'itempopup_enable',
+    TWDS._('SETTING_ITEMPOPUP_ENABLE',
+      'Provide an enhanced item popup. ###This conflicts with multiple other scripts.###'),
+    false, null, 'ItemPopup', null, 0)
+  TWDS.registerSetting('bool', 'itempopup_eventinfo',
+    TWDS._('SETTING_ITEMPOPUP_EVENTINFO',
+      'Show event information in the item popup.'),
+    true, null, 'ItemPopup')
+  TWDS.registerSetting('bool', 'itempopup_showjobicon',
+    TWDS._('SETTING_ITEMPOPUP_SHOWJOBICON',
+      'Show the icon of the job dropping the product'),
+    true, null, 'ItemPopup')
+  TWDS.registerSetting('bool', 'itempopup_showtime',
+    TWDS._('SETTING_ITEMPOPUP_SHOWTIME',
+      'Show the time needed to collect an item, or the ingredients of a crafted item, using the basic drop chances.'),
+    true, null, 'ItemPopup')
+  TWDS.registerSetting('bool', 'itempopup_count',
+    TWDS._('SETTING_ITEMPOPUP_COUNT', 'Show the item count.'),
+    true, null, 'ItemPopup')
+  TWDS.registerSetting('bool', 'itempopup_itemid',
+    TWDS._('SETTING_ITEMPOPUP_ID', 'Show the item ID.'),
+    true, null, 'ItemPopup')
+
   setTimeout(TWDS.items.start, 2500)
 })
 
