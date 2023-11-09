@@ -274,6 +274,31 @@ TWDS.jobOpenButton2 = function (id) {
   })
 }
 
+TWDS.item_wear_handler = function () {
+  const id = this.dataset.item_id
+  TWDS.wearItemsHandler([id])
+}
+TWDS.itemWearButton = function (id) {
+  const it = ItemManager.get(id)
+  if (!it) return null
+
+  const t = TWDS.createElement({
+    nodeName: 'span',
+    className: 'TWDS_item_wear_button linklike',
+    dataset: { item_id: id },
+    title: TWDS._('ITEMWEATBUTTON_TITLE', 'Wear this item'),
+    childNodes: [
+      {
+        nodeName: 'img',
+        src: Game.cdnURL + '/images/icons/scrollto.png',
+        alt: ''
+      }
+    ]
+  })
+  console.log('iWB', t, t.onclick)
+  return t
+}
+
 TWDS.itemSellButton = function (id, count, desc) {
   const it = ItemManager.get(id)
   if (!it) return null
@@ -505,6 +530,7 @@ TWDS.registerStartFunc(function () {
   TWDS.delegate(document.body, 'click', '.TWDS_quest_employer_link', TWDS.quest_employer_link_handler)
   TWDS.delegate(document.body, 'click', '.TWDS_marketsearchlink', TWDS.marketsearchlinkhandler)
   TWDS.delegate(document.body, 'click', '.TWDS_item_sell_button', TWDS.market_item_sell_handler)
+  TWDS.delegate(document.body, 'click', '.TWDS_item_wear_button', TWDS.item_wear_handler)
 })
 
 // 2023. <select> still is a mess. typeahead? styling? intelligent limiting?
