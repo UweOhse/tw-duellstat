@@ -36,8 +36,8 @@ TWDS.pinning.cooldownhandler = function () {
         }
         const old = TWDS.q1('#ui_notibar .TWDS_notibar_item_' + itemid)
         if (old) {
-          old.dataset.obsolete=1
-          $(old).trigger("click"); // crude signal, but i don't know any other way to signal the OngoingEntry
+          old.dataset.obsolete = 1
+          $(old).trigger('click') // crude signal, but i don't know any other way to signal the OngoingEntry
         }
       } else {
         TWDS.pinning.addnotification(itemid)
@@ -70,13 +70,13 @@ TWDS.pinning.addnotification = function (itemid) {
   notification.init(item.image, function () {
     const id = this.element[0].dataset.itemid
     const bi = Bag.getItemByItemId(id)
-    const obsolete = parseInt(this.element[0].dataset.obsolete || "0");
+    const obsolete = parseInt(this.element[0].dataset.obsolete || '0')
     if (bi && !obsolete) {
       Inventory.clickHandler(id, {})
     }
   }, 11)
 
-  notification.setTooltip('You can use this now');
+  notification.setTooltip('You can use this now')
   notification.highlightBorder()
   notification.element[0].dataset.itemid = itemid
   notification.element[0].classList.add('TWDS_notibar_item')
