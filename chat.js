@@ -1,10 +1,12 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 //
-TWDS.registerSetting('string', 'chat_highlight',
-  'A javascript regular expression. Matching parts of incoming chat messages will be highlighted.', ''
-)
+TWDS.chat = {}
+
 // mark some strings in the chat as soon as they come.
-TWDS.chatInit = function () {
+TWDS.chat.init = function () { // really old stuff
+  TWDS.registerSetting('string', 'chat_highlight',
+    'A javascript regular expression. Matching parts of incoming chat messages will be highlighted.', ''
+  )
   let rx, rx2
   const chatcfg = {
     attributes: false,
@@ -12,6 +14,7 @@ TWDS.chatInit = function () {
     characterData: false,
     subtree: true
   }
+
   const recurse = function (n) {
     if (n.nodeType === 3) {
       if (!n.textContent.match(rx)) return
@@ -98,8 +101,54 @@ TWDS.chatInit = function () {
   })
   windowsobserver.observe(windows, windowscfg)
 }
+TWDS.chat.init2 = function () {
+  TWDS.registerSetting('bool', 'chat_nostranger',
+    TWDS._('CHAT_SETTING_NOSTRANGER', 'Show online/idle status even for strangers.'),
+    false
+  )
+  Chat.Resource.Client.prototype.TWDS_backup_isStranger = Chat.Resource.Client.prototype.isStranger
+  Chat.Resource.Client.prototype.isStranger = function () {
+    if (TWDS.settings.chat_nostranger) { return false }
+    return Chat.Resource.Client.prototype.TWDS_backup_isStranger.apply(this, arguments)
+  }
+}
+TWDS.chat.init3 = function () {
+  Chat.Operations['^\\/active(.*)'] = {
+    cmd: 'active',
+    shorthelp: 'Lists active players (green).',
+    help: 'Lists non-idle players in this channel. This can list all players or those with names matching a search string',
+    usage: '/active searchstring | /active (for all)',
+    func: function (room, msg, param) {
+      const clients = room.clients
+      const out = []
+      console.log('param', param)
+      const search = param[1].trim().toLocaleLowerCase()
+      console.log('search', search)
+      for (let i = 0; i < clients.length; i++) {
+        const contact = TWDS.q1('.contact_' + clients[i])
+        if (!contact) continue
+        const x = TWDS.q1('.client_status img[src*=status_online]', contact)
+        const cn = TWDS.q1('.client_name', contact)
+        if (x && cn) {
+          const name = cn.textContent
+          if (search === '' || name.toLocaleLowerCase().includes(search)) {
+            out.push(name)
+          }
+        }
+      }
+      out.sort(function (a, b) {
+        return a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase())
+      })
+      const ti = window.Chat.Formatter.formatTime(new Date().getTime(), false)
+      const ret = '<div>[' + ti + ']</span> active ' + (out.length > 1 ? 'are ' : 'is ') + out.join(', ') + '</div>'
+      room.addMessage(ret)
+    }
+  }
+}
 TWDS.registerStartFunc(function () {
-  TWDS.chatInit()
+  TWDS.chat.init()
+  TWDS.chat.init2()
+  TWDS.chat.init3()
 })
 
 // vim: tabstop=2 shiftwidth=2 expandtab
