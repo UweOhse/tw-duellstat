@@ -55,7 +55,7 @@ TWDS.townwindow.showrankingcrafters = function () {
   Ajax.remoteCallMode('building_cityhall', 'list_residents', {
     town_id: this.dataset.townId
   }, function (residata) {
-    const profs = [null, [], [], [], []]
+    const profs = [[], [], [], [], []]
     let profsdone = 0
     const allresidents = {}
     for (let i = 0; i < residata.list.data.length; i++) {
@@ -184,7 +184,6 @@ TWDS.townwindow.residentsinit = function () {
 }
 
 TWDS.townwindow.startfunc = function () {
-  console.log("SF for townwindow running");
   TWDS.registerSetting('bool', 'townwindow_alliance',
     TWDS._('TOWNWINDOW_SETTING_ALLIANCE', 'Show the alliance name in the town window'),
     true, null, 'misc')
@@ -199,7 +198,6 @@ TWDS.townwindow.startfunc = function () {
   CityhallWindow.Residents.init = TWDS.townwindow.residentsinit
 }
 TWDS.registerStartFunc(function () {
-  console.log("RSF for townwindow");
   TWDS.townwindow.startfunc()
 })
 
