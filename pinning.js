@@ -5,14 +5,14 @@ TWDS.pinning = {}
 TWDS.pinning.cooldowninterval = 0
 TWDS.pinning.cooldownhandler = function () {
   const d = TWDS.q1('#TWDS_pinning_cooldowninfo')
-  if (!d) return
-
-  const now = new Date().getTime()
-  const dt = Character.cooldown - now / 1000
-  if (dt <= 0) {
-    d.textContent = ''
-  } else {
-    d.textContent = dt.formatDurationBuffWay()
+  if (d) {
+    const now = new Date().getTime()
+    const dt = Character.cooldown - now / 1000
+    if (dt <= 0) {
+      d.textContent = ''
+    } else {
+      d.textContent = dt.formatDurationBuffWay()
+    }
   }
 
   const x = window.localStorage.TWDS_pinned_items || '[]'
@@ -28,20 +28,59 @@ TWDS.pinning.cooldownhandler = function () {
     const delta = (cd - st / 1000)
     if (delta > 0) {
       const ours = TWDS.q(".TWDS_pinning_container .item[data-twds_item_id='" + itemid + "'] .cooldown p")
-      for (let j = 0; j < ours.length; j++) {
-        ours[j].textContent = delta.formatDurationBuffWay()
-        ours[j].parentNode.style.display = 'block'
+      if (ours) {
+        for (let j = 0; j < ours.length; j++) {
+          ours[j].textContent = delta.formatDurationBuffWay()
+          ours[j].parentNode.style.display = 'block'
+        }
       }
+      const old = TWDS.q1('#ui_notibar .TWDS_notibar_item_' + itemid)
+      if (old) {
+        old.dataset.obsolete = 1
+        $(old).trigger('click') // crude signal, but i don't know any other way to signal the OngoingEntry
+      }
+    } else {
+      TWDS.pinning.addnotification(itemid)
     }
     const ours = TWDS.q(".TWDS_pinning_container .item[data-twds_item_id='" + itemid + "'] .count")
-    for (let j = 0; j < ours.length; j++) {
-      const old = parseInt(ours[j].textContent)
-      if (old !== it.count) {
-        ours[j].textContent = it.count
-        ours[j].style.display = 'block'
+    if (ours) {
+      for (let j = 0; j < ours.length; j++) {
+        const old = parseInt(ours[j].textContent)
+        if (old !== it.count) {
+          ours[j].textContent = it.count
+          ours[j].style.display = 'block'
+        }
       }
     }
   }
+}
+TWDS.pinning.test = function () { TWDS.pinning.addnotification(2665000) }
+
+TWDS.pinning.addnotification = function (itemid) {
+  const old = TWDS.q1('#ui_notibar .TWDS_notibar_item_' + itemid)
+  if (old) return
+
+  const item = ItemManager.get(itemid)
+  if (!item) return
+  const bi = Bag.getItemByItemId(itemid)
+  if (!bi) return
+
+  const notification = new window.OnGoingEntry()
+  notification.init(item.image, function () {
+    const id = this.element[0].dataset.itemid
+    const bi = Bag.getItemByItemId(id)
+    const obsolete = parseInt(this.element[0].dataset.obsolete || '0')
+    if (bi && !obsolete) {
+      Inventory.clickHandler(id, {})
+    }
+  }, 11)
+
+  notification.setTooltip('You can use this now')
+  notification.highlightBorder()
+  notification.element[0].dataset.itemid = itemid
+  notification.element[0].classList.add('TWDS_notibar_item')
+  notification.element[0].classList.add('TWDS_notibar_item_' + itemid)
+  WestUi.NotiBar.add(notification)
 }
 TWDS.pinning.onclick = function () {
   const id = this.dataset.twds_item_id
