@@ -23,24 +23,25 @@ TWDS.pinning.cooldownhandler = function () {
     const it = Bag.getItemByItemId(itemid) // that's where we get the count, and the _overaged_ coooldown info
     if (!it) continue
     const cd = Bag.itemCooldown[itemid] || 0 // current cooldown info
-    if (!cd) continue
-    const st = new window.ServerDate().getTime()
-    const delta = (cd - st / 1000)
-    if (delta > 0) {
-      const ours = TWDS.q(".TWDS_pinning_container .item[data-twds_item_id='" + itemid + "'] .cooldown p")
-      if (ours) {
-        for (let j = 0; j < ours.length; j++) {
-          ours[j].textContent = delta.formatDurationBuffWay()
-          ours[j].parentNode.style.display = 'block'
+    if (cd) {
+      const st = new window.ServerDate().getTime()
+      const delta = (cd - st / 1000)
+      if (delta > 0) {
+        const ours = TWDS.q(".TWDS_pinning_container .item[data-twds_item_id='" + itemid + "'] .cooldown p")
+        if (ours) {
+          for (let j = 0; j < ours.length; j++) {
+            ours[j].textContent = delta.formatDurationBuffWay()
+            ours[j].parentNode.style.display = 'block'
+          }
         }
+        const old = TWDS.q1('#ui_notibar .TWDS_notibar_item_' + itemid)
+        if (old) {
+          old.dataset.obsolete=1
+          $(old).trigger("click"); // crude signal, but i don't know any other way to signal the OngoingEntry
+        }
+      } else {
+        TWDS.pinning.addnotification(itemid)
       }
-      const old = TWDS.q1('#ui_notibar .TWDS_notibar_item_' + itemid)
-      if (old) {
-        old.dataset.obsolete = 1
-        $(old).trigger('click') // crude signal, but i don't know any other way to signal the OngoingEntry
-      }
-    } else {
-      TWDS.pinning.addnotification(itemid)
     }
     const ours = TWDS.q(".TWDS_pinning_container .item[data-twds_item_id='" + itemid + "'] .count")
     if (ours) {
@@ -69,13 +70,13 @@ TWDS.pinning.addnotification = function (itemid) {
   notification.init(item.image, function () {
     const id = this.element[0].dataset.itemid
     const bi = Bag.getItemByItemId(id)
-    const obsolete = parseInt(this.element[0].dataset.obsolete || '0')
+    const obsolete = parseInt(this.element[0].dataset.obsolete || "0");
     if (bi && !obsolete) {
       Inventory.clickHandler(id, {})
     }
   }, 11)
 
-  notification.setTooltip('You can use this now')
+  notification.setTooltip('You can use this now');
   notification.highlightBorder()
   notification.element[0].dataset.itemid = itemid
   notification.element[0].classList.add('TWDS_notibar_item')
