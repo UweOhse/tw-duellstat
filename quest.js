@@ -35,6 +35,16 @@ TWDS.quest.renderRequirement = function (req, cls) {
           li.append(ele)
         }
       }
+    } else if (jsinfo.type === 'wear_changed') {
+      const bagitem = Bag.getItemByItemId(jsinfo.id)
+      if (bagitem) {
+        const x = TWDS.itemWearButton(jsinfo.id)
+        if (x) {
+          li.append(x)
+          li.addClass('with_wearbutton')
+        }
+      }
+
     /*
     } else if (jsinfo.type === 'task-finish-job') {
       const id = jsinfo.id
