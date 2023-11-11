@@ -112,6 +112,19 @@ TWDS.quest.cancelQuest = function (id) {
       }).addButton(TWDS._('NO', 'no'), function () {}).show()
   )
 }
+TWDS.quest.buildquestlog = function (emp) {
+  QuestEmployerView.TWDS_backup_buildQuestLog.apply(this, arguments)
+  for (let i = 0; i < emp.open.length; i++) {
+    const q = emp.open[i]
+    if (q.finishable) {
+      if (TWDS.settings.quest_color_finishable) {
+        const link = TWDS.q1('#open_quest_employerlink_' + q.id)
+        if (!link) continue
+        link.classList.add('finishable')
+      }
+    }
+  }
+}
 
 TWDS.registerSetting('bool', 'quest_cancel_question',
   TWDS._('QUESTS_SETTING_CANCEL', 'Add a safety question before canceling a quest.'),
@@ -128,17 +141,31 @@ TWDS.registerSetting('bool', 'questtracker_show_itemcount',
 TWDS.registerSetting('bool', 'questtracker_show_booklinks',
   TWDS._('QUESTS_SETTING_ADD_BOOK_LINK', 'Add quest book links to the quest tracker'),
   true, null, 'Quests', null, 5)
+TWDS.registerSetting('bool', 'quest_color_finishable',
+  TWDS._('QUESTS_SETTING_COLOR_FINISHABLE', 'Change the color of quests which can be completed.'),
+  true, null, 'Quests', null, 6)
 
-TWDS.registerStartFunc(function () {
-  Quest.prototype._TWDS_backup_getQuestTrackerEl = Quest.prototype.getQuestTrackerEl
+TWDS.quest.startfunc = function () {
+  Quest.prototype._TWDS_backup_getQuestTrackerEl = Quest.prototype._TWDS_backup_getQuestTrackerEl ||
+    Quest.prototype.getQuestTrackerEl
   Quest.prototype.getQuestTrackerEl = TWDS.quest.getQuestTrackerEl
-  Quest.prototype._TWDS_backup_renderRequirement = Quest.prototype.renderRequirement
+
+  Quest.prototype._TWDS_backup_renderRequirement = Quest.prototype._TWDS_backup_renderRequirement ||
+    Quest.prototype.renderRequirement
   Quest.prototype.renderRequirement = TWDS.quest.renderRequirement
-  window.QuestWindow._TWDS_backup_cancelQuest = window.QuestWindow.cancelQuest
-  window.QuestWindow.cancelQuest = TWDS.quest.cancelQuest
+
+  QuestWindow._TWDS_backup_cancelQuest = QuestWindow._TWDS_backup_cancelQuest ||
+    QuestWindow.cancelQuest
+  QuestWindow.cancelQuest = TWDS.quest.cancelQuest
+
+  QuestEmployerView.TWDS_backup_buildQuestLog = QuestEmployerView.TWDS_backup_buildQuestLog ||
+    QuestEmployerView.buildQuestLog
+  QuestEmployerView.buildQuestLog = TWDS.quest.buildquestlog
+
   TWDS.delegate(document.body, 'click', '.quest_requirement.shorten', function () {
     this.classList.remove('shorten')
   })
-})
+}
+TWDS.registerStartFunc(TWDS.quest.startfunc)
 
 // vim: tabstop=2 shiftwidth=2 expandtab
