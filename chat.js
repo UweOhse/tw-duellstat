@@ -113,10 +113,22 @@ TWDS.chat.init2 = function () {
   }
 }
 TWDS.chat.init3 = function () {
+  const localanswer = function (room, msg) {
+    const ti = window.Chat.Formatter.formatTime(new Date().getTime(), false)
+    const ret = TWDS.createEle({
+      nodeName: 'div',
+      children: [
+        { nodeName: 'span', textContent: ti },
+        { nodeName: 'span', textContent: ' ' },
+        { nodeName: 'span', textContent: msg }
+      ]
+    }).outerHTML
+    room.addMessage(ret)
+  }
   Chat.Operations['^\\/active(.*)'] = {
     cmd: 'active',
-    shorthelp: 'Lists active players (green).',
-    help: 'Lists non-idle players in this channel. This can list all players or those with names matching a search string',
+    shorthelp: TWDS._('CHAT_ACTIVE_SHORTHELP', 'Lists active players (green dots).'),
+    help: TWDS._('CHAT_ACTIVE_HELP', 'Lists non-idle players in this channel. This can list all players or those with names matching a search string'),
     usage: '/active searchstring | /active (for all)',
     func: function (room, msg, param) {
       const clients = room.clients
@@ -140,8 +152,69 @@ TWDS.chat.init3 = function () {
         return a.toLocaleLowerCase().localeCompare(b.toLocaleLowerCase())
       })
       const ti = window.Chat.Formatter.formatTime(new Date().getTime(), false)
-      const ret = '<div>[' + ti + ']</span> active ' + (out.length > 1 ? 'are ' : 'is ') + out.join(', ') + '</div>'
+      const text = TWDS._('CHAT_ACTIVE_TEXT', 'active: $list$', {
+        list: out.join(', ')
+      })
+      const ret = '<div>[' + ti + ']</span> ' + text + '</div>'
       room.addMessage(ret)
+    }
+  }
+  Chat.Operations['^\\/ping(.*)'] = {
+    cmd: 'ping',
+    shorthelp: TWDS._('CHAT_PING_SHORTHELP', 'ping a player.'),
+    help: TWDS._('CHAT_PING_HELP', 'Calls that player to this channel.'),
+    usage: '/ping player name',
+    func: function (room, msg, param) {
+      const clients = room.clients
+      let roomname = ''
+      let addon = ''
+      if (room.room === 'general') {
+        roomname = 'Saloon ' + room.generalId // room.title is empty
+      } else if (room.room === 'custom') {
+        roomname = room.title
+      } else if (room.room === 'alliance') {
+        roomname = room.title
+        addon = TWDS._('CHAT_ALLIANCE_ROOM', '(alliance chat)')
+      } else if (room.room === 'town') {
+        roomname = room.title
+        addon = TWDS._('CHAT_TOWN_ROOM', '(town chat)')
+      } else if (room.room === 'fortbattle') {
+        roomname = room.title
+        addon = TWDS._('CHAT_FB_ROOM', '(fortbattle chat)')
+      } else if (room.room === 'client') {
+        localanswer(room, "that doesn't work.")
+        return
+      } else {
+        console.log('room', room)
+        localanswer(room, 'unknown room type. uwe needs to debug this: ' + room.room)
+        return
+      }
+      const search = param[1].trim().toLocaleLowerCase()
+      if (search === '') {
+        localanswer(room, 'pong (usage: /ping some-player-name)')
+        return
+      }
+
+      for (let i = 0; i < clients.length; i++) {
+        const contact = TWDS.q1('.contact_' + clients[i])
+        if (!contact) continue
+        const cn = TWDS.q1('.client_name', contact)
+        if (cn) {
+          const name = cn.textContent.toLocaleLowerCase()
+          if (name === search) {
+            const text = TWDS._('CHAT_PING_TEXT', 'Please come to $roomname$ $info$', {
+              roomname: roomname,
+              info: addon
+            })
+            Chat.Request.Tell(search, text)
+            localanswer(room, TWDS._('CHAT_PINGED_MESSAGE', 'pinged $search$', { search: search }))
+            return
+          }
+        }
+      }
+      localanswer(room, TWDS._('CHAT_PING_NOTFOUND', 'did not find $search$', {
+        search: search
+      }))
     }
   }
 }
