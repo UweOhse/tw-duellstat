@@ -15,4 +15,100 @@
       }
     }
   }
+  .comboareacontainer {
+    display:grid;
+    justify-content:space-around;
+  }
+  .comboarea {
+    vertical-align:top;
+    display:inline-block;
+    width:325px;
+    .setselectarea select {
+      max-width:95%;
+    }
+  }
+  .comboarea0 {
+    grid-row:1;
+    grid-column:1;
+  }
+  .comboarea1 {
+    grid-row:1;
+    grid-column:2;
+    text-align:right;
+    position:relative;
+    &.disabled div {
+      opacity:0.0;
+    }
+    &.disabled::before,
+    &.disabled::after {
+      position:absolute;
+      content: "";
+      background:red;
+      display:block;
+      width:90%;
+      height:2px;
+      transform:rotate(-45deg);
+      left:0;
+      right:0;
+      top:0;
+      bottom:0;
+      margin:auto;
+    }
+    &.disabled::after {
+      transform:rotate(+45deg);
+    }
+  }
+  .red { 
+    color:#900;
+  }
+  .green { 
+    color:#070;
+  }
+  .delta {
+    color:#666;
+  }
+  .delta::before {
+    content:"(";
+  }
+  .delta::after {
+    content:")";
+  }
+  .results {
+    td, th {
+      min-width:4em;
+    }
+    th {
+       padding-left:2em;
+    }
+    td {
+      text-align:right;
+    }
+  }
+  h2 {
+    text-align:center;
+    line-height:30px;
+    margin: 5px 0 10px;
+    font-size:18px;
+    font-weight:bold;
+    position:relative;
+    input {
+      right:0;
+      position:absolute;
+    }
+  }
+  table.alljobs {
+    margin-top:1em;
+  }
+}
+
+div.tw2gui_win2.TWDS_simulator_window {
+  height:768px !important;
+  .tw2gui_window_inset {
+    background-size:722px 734px;
+    .tw2gui_inner_window_bg2 {
+      background-size:cover;
+      width:20px;
+      right:0;
+    }
+  }
 }
