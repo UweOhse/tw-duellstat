@@ -771,7 +771,7 @@ TWDS.registerStartFunc(function () {
   $(document).on('click', '.TWDS_specialequipment_button', function () {
     const key1 = this.dataset.key1
     const key2 = this.dataset.key2
-    let items
+    let items = null
     if (key1 === 'special') {
       if (key2 === 'speed') items = TWDS.speedcalc.openwindow()
       else if (key2 === 'xp') items = TWDS.genCalc({ experience: 1 }, {})
@@ -806,8 +806,9 @@ TWDS.registerStartFunc(function () {
       const p = JSON.parse(key2)
       items = TWDS.genCalc({ melee: 100 }, p)
     }
-
-    TWDS.wearItemsHandler(items)
+    if (items !== null) { // null: speed set calc
+      TWDS.wearItemsHandler(items)
+    }
   })
   $(document).on('click', '.TWDS_wear', function () {
     const tr = this.closest('tr')
