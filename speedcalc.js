@@ -13,11 +13,13 @@ TWDS.speedcalc.openwindow = function () {
   const container = TWDS.createEle('dl', { beforeend: content })
   const clicker = function () {
     const mode = parseInt(this.dataset.par)
+    const keephp = parseInt(this.dataset.heephp)
     let out
-    if (mode === 2) { out = TWDS.speedcalc.confirm() } else { out = TWDS.speedcalc.doit(mode) }
+    if (mode === 2) { out = TWDS.speedcalc.confirm() } else { out = TWDS.speedcalc.doit(mode, keephp) }
+    console.log('WIH calling')
     TWDS.wearItemsHandler(out)
   }
-  const block = function (mode, text, desc) {
+  const block = function (mode, hpmode, text, desc) {
     const dt = TWDS.createEle({
       nodeName: 'dt',
       beforeend: container
@@ -26,7 +28,8 @@ TWDS.speedcalc.openwindow = function () {
       nodeName: 'button',
       className: 'TWDS_button',
       dataset: {
-        par: mode
+        par: mode,
+        keephp: hpmode
       },
       textContent: text,
       beforeend: dt,
@@ -38,12 +41,27 @@ TWDS.speedcalc.openwindow = function () {
       textContent: desc
     })
   }
-  block(0, 'basic', 'Quite fast speedset calculation. Likely to give a good, but most often not perfect result')
-  block(1, 'extended', 'A compromise between the two extremes, not taking all speed bonus giving equipment into account')
-  block(2, 'full', "This calculation will take a long time, and will block the browser. 2 minutes have been observed, and it's easy to imagine even longer times with more sets or items giving speed bonus.")
+  TWDS.createEle({
+    nodeName: 'dt.head',
+    textContent: 'HP ignoring',
+    last: container
+  })
+  block(0, 0, 'basic', 'Quite fast speedset calculation. Likely to give a good, but most often not perfect result')
+  block(1, 0, 'extended', 'A compromise between the two extremes, not taking all speed bonus giving equipment into account')
+  block(2, 0, 'full', "This calculation will take a long time, and will block the browser. 2 minutes have been observed, and it's easy to imagine even longer times with more sets or items giving speed bonus.")
+  TWDS.createEle({
+    nodeName: 'dt.head',
+    textContent: 'HP keeping',
+    last: container
+  })
+  block(0, 1, 'basic', 'Quite fast speedset calculation. Likely to give a good, but most often not perfect result')
+  block(1, 1, 'extended', 'A compromise between the two extremes, not taking all speed bonus giving equipment into account')
+  block(2, 1, 'full', "This calculation will take a long time, and will block the browser. 2 minutes have been observed, and it's easy to imagine even longer times with more sets or items giving speed bonus.")
+
   sp.appendContent(content)
 
   win.appendToContentPane(sp.getMainDiv())
+  return null
 }
 
 TWDS.speedcalc.confirm = function () {
@@ -202,11 +220,25 @@ TWDS.speedcalc.doit3 = function () {
   console.timeEnd('SpeedCalc3')
   return out
 }
-TWDS.speedcalc.doit = function (mode) {
+TWDS.speedcalc.doit = function (mode, keephp) {
   if (mode === null) mode = 0
   const skills = { ride: 1 }
   const start = (new Date()).getTime()
   console.time('SpeedCalc')
+
+  const curhealth = Character.health
+  let healthmult = 10
+  if (Character.charClass === 'soldier') {
+    healthmult = 15
+    if (Premium.hasBonus('character')) { healthmult = 20 }
+  }
+
+  const basehealth = (Character.level + 9) * 10 + CharacterSkills.skills.health.points * healthmult
+  let needhp = 0
+  if (curhealth > basehealth && keephp) {
+    needhp = Math.ceil((curhealth - basehealth) / healthmult)
+    console.log('cur health', curhealth, 'basehealth', basehealth, 'need points in set', needhp)
+  }
 
   const availableSets = west.item.Calculator.filterUnavailableSets(west.storage.ItemSetManager.getAll())
   const bestItems = TWDS.speedcalc.getBestItems(skills)
@@ -260,14 +292,13 @@ TWDS.speedcalc.doit = function (mode) {
   TWDS.dolog('info', 'SpeedCalc: subsets:', sets.length)
   console.log('#sets', sets.length, sets)
 
-  sets = TWDS.speedcalc.filterUneffectiveSets(sets, mode)
+  sets = TWDS.speedcalc.filterUneffectiveSets(sets, mode, false)
   TWDS.dolog('info', 'SpeedCalc: filtered sets:', sets.length)
   console.log('#fsets', sets.length, sets)
 
   sets = west.item.Calculator.combineSets(sets)
   TWDS.dolog('info', 'SpeedCalc: subsets:', sets.length)
   console.log('#csets', sets.length, sets)
-  // return [];
 
   sets = west.item.Calculator.fillEmptySlots(sets, bestItems)
   sets.push(bestItemsContainer)
@@ -278,20 +309,37 @@ TWDS.speedcalc.doit = function (mode) {
   let best = null
   for (let i = 0; i < sets.length; i++) {
     if (sets.length > 100000) {
-      if ((i % 5000) === 0) {
+      if ((i % 100000) === 0) {
         console.log('state', i, '/', sets.length)
       }
     }
     const spd = TWDS.speedcalc.calcCombinedSet(sets[i])
     if (spd > bestPoints) {
-      bestPoints = spd
-      best = sets[i]
-      console.log('better:', TWDS.describeItemCombo(TWDS.speedcalc.getItems(sets[i])), sets[i],
-        TWDS.speedcalc.getItems(sets[i]), spd)
+      const sethp = TWDS.speedcalc.getcombohealthpoints(sets[i])
+      if (sethp >= needhp) {
+        bestPoints = spd
+        best = sets[i]
+        console.log('better:', TWDS.describeItemCombo(TWDS.speedcalc.getItems(sets[i])), sets[i],
+          TWDS.speedcalc.getItems(sets[i]), spd)
+      } else {
+        console.log('better/nothp:', TWDS.describeItemCombo(TWDS.speedcalc.getItems(sets[i])), sets[i],
+          TWDS.speedcalc.getItems(sets[i]), spd, 'hp', sethp, '<', needhp)
+      }
     }
   }
 
-  const bi = TWDS.speedcalc.getItems(best)
+  let bi = []
+  if (!best) {
+    for (let i = 0; i < Wear.slots.length; i++) {
+      const sl = Wear.slots[i]
+      const it = Wear.get(sl)
+      if (it) {
+        bi.push(it.obj.item_id)
+      }
+    }
+  } else {
+    bi = TWDS.speedcalc.getItems(best)
+  }
   console.timeEnd('SpeedCalc')
   const end = (new Date()).getTime()
   if (window.performance.memory) {
@@ -301,6 +349,11 @@ TWDS.speedcalc.doit = function (mode) {
   }
   TWDS.dolog('info', 'SpeedCalc: took ' + (end - start) + ' ms')
   return bi
+}
+TWDS.speedcalc.getcombohealthpoints = function (combo) {
+  const itemids = TWDS.speedcalc.getItems(combo)
+  const bo = TWDS.bonuscalc.getComboBonus(itemids)
+  return bo.health + bo.strength
 }
 TWDS.speedcalc.fillempty = function (sets, bestItems, bonusItems) {
   let usedSlots; let container; const pimpedSets = []
@@ -360,17 +413,30 @@ TWDS.speedcalc.filterUneffectiveSets = function (sets, mode) {
     if (!bestBySlots[slots]) {
       bestBySlots[slots] = []
     }
-    bestBySlots[slots].push([speed, sets[i]])
+    bestBySlots[slots].push([speed, sets[i], tmp.speedBonus])
   }
   for (const sl in bestBySlots) {
     bestBySlots[sl].sort(function (a, b) {
       return b[0] - a[0]
     })
   }
+  const limit = (mode === 0) ? 1 : ((mode === 1) ? 2 : 6)
+
   for (const sl in bestBySlots) {
-    const limit = (mode === 2) ? 5 : 1
-    for (let i = 0; i < bestBySlots[sl].length && i < limit; i++) {
-      if (i === 0 || bestBySlots[sl][i][0] > 0.5 * bestBySlots[sl][0][0]) { r.push(bestBySlots[sl][i][1]) }
+    const bestspeed = bestBySlots[sl][0]
+    let bestbonus = 0
+    for (let i = 0; i < bestBySlots[sl].length; i++) {
+      if (bestBySlots[sl][i][2] > bestbonus) { bestbonus = bestBySlots[sl][i][2] }
+    }
+    for (let i = 0; i < bestBySlots[sl].length; i++) {
+      if (bestBySlots[sl][i][2] > 0) { // must not throw away anything with a speed bonus that early.
+        if (bestBySlots[sl][i][2] > 0.1 * bestbonus) {
+          r.push(bestBySlots[sl][i][1])
+          continue
+        }
+      } else if (i < limit || bestBySlots[sl][i][0] > 0.5 * bestspeed) {
+        r.push(bestBySlots[sl][i][1])
+      }
     }
   }
   return r
@@ -425,7 +491,8 @@ TWDS.speedcalc.createSubsets = function (fullSets, bestItems, bonusItems) {
   const sets = []
   for (let i = 0; i < fullSets.length; i++) {
     set = fullSets[i]
-    sets.push(set)
+    if (set.key === 'set_dotd_2015_2_weapon') console.log('HARD', set)
+    // sets.push(set)
     for (let j = set.items.length; j > 0; j--) {
       let k, l
       if (!Object.prototype.hasOwnProperty.call(set.bonus, j)) { continue }
@@ -440,6 +507,7 @@ TWDS.speedcalc.createSubsets = function (fullSets, bestItems, bonusItems) {
         })
         if (!TWDS.speedcalc.beatsBestItems(tmpSet, bestItems)) { continue }
         sets.push(tmpSet)
+        if (set.key === 'set_dotd_2015_2_weapon') console.log('HARD pushed', tmpSet)
       }
     }
   }
