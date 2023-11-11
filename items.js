@@ -16,6 +16,12 @@ TWDS.items.popupenhancementReal = function () {
 
   TWDS.items.origpopup = orig
 
+  if (TWDS.settings.itempopup_bonuscharlevel) {
+    this.options.character = {
+      level: Character.level
+    }
+  }
+
   const old = TWDS.createEle('div')
   old.innerHTML = orig
 
@@ -129,7 +135,12 @@ TWDS.items.popupenhancementReal = function () {
         last: head,
         children: [
           { nodeName: 'span.year', dataset: { year: setinfo.year }, textContent: setinfo.year },
-          { nodeName: 'span.event', dataset: { year: setinfo.eventname }, textContent: setinfo.eventname }
+          {
+            nodeName: 'span.event',
+            dataset: { year: setinfo.eventname },
+            textContent:
+            TWDS._('ITEMPOPUP_EVENTNAME_' + setinfo.eventname, setinfo.eventname)
+          }
         ]
       })
     }
@@ -154,7 +165,7 @@ TWDS.items.popupenhancementReal = function () {
 
   TWDS.createEle({
     nodeName: 'p.auction_status',
-    textContent: 'auctionable',
+    textContent: TWDS._('ITEMPOPUP_AUCTIONABLE', 'auctionable'),
     className: item.auctionable ? 'possible' : 'impossible',
     last: foot
   })
@@ -162,7 +173,7 @@ TWDS.items.popupenhancementReal = function () {
   if (t) t.remove()
   TWDS.createEle({
     nodeName: 'p.sell_status',
-    textContent: 'sellable',
+    textContent: TWDS._('ITEMPOPUP_SELLABLE', 'sellable'),
     className: item.sellable ? 'possible' : 'impossible',
     last: foot
   })
@@ -170,7 +181,7 @@ TWDS.items.popupenhancementReal = function () {
   if (t) t.remove()
   TWDS.createEle({
     nodeName: 'p.upgrade_status',
-    textContent: 'upgradable',
+    textContent: TWDS._('ITEMPOPUP_UPGRADEABLE', 'upgradeable'),
     className: item.upgradeable ? 'possible' : 'impossible',
     last: foot
   })
@@ -476,6 +487,9 @@ TWDS.registerStartFunc(function () {
     true, null, 'ItemPopup')
   TWDS.registerSetting('bool', 'itempopup_itemid',
     TWDS._('SETTING_ITEMPOPUP_ID', 'Show the item ID.'),
+    true, null, 'ItemPopup')
+  TWDS.registerSetting('bool', 'itempopup_bonuscharlevel',
+    TWDS._('SETTING_ITEMPOPUP_BONUS_CHARLEVEL', 'Always show the item/set matching the character level.'),
     true, null, 'ItemPopup')
 
   setTimeout(TWDS.items.start, 2500)
