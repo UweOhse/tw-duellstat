@@ -18,7 +18,8 @@ TWDS.fbmisc.shownumber = function () {
       ele.remove()
       return
     }
-    if (n && !ele) {
+    if (!n) return
+    if (!ele) {
       ele = TWDS.createEle({
         nodeName: 'span.TWDS_fbcount',
         last: mp
@@ -28,13 +29,13 @@ TWDS.fbmisc.shownumber = function () {
   })
 }
 TWDS.fbmisc.shownumberstarter = function () {
-  if (TWDS.shownumberinterval) {
-    window.clearInterval(TWDS.shownumberinterval)
-    TWDS.shownumberinterval = 0
+  if (TWDS.fbmisc.shownumberinterval) {
+    window.clearInterval(TWDS.fbmisc.shownumberinterval)
+    TWDS.fbmisc.shownumberinterval = 0
   }
   if (TWDS.settings.fbmisc_fbcount) {
     TWDS.fbmisc.shownumber()
-    TWDS.shownumberinterval = window.setInterval(TWDS.shownumberinterval, 5 * 60 * 1000)
+    TWDS.fbmisc.shownumberinterval = window.setInterval(TWDS.fbmisc.shownumber, 5 * 60 * 1000)
   }
 }
 TWDS.fbmisc.renderPreBattle = function (a, b) {
@@ -132,9 +133,8 @@ TWDS.fbmisc.fortoverviewshowtab = function (id) {
       wt.remove()
     }
   }
-
-  //                  $('.wayTime' + e[0], FortOverviewWindow.DOM).after($('<a title="' + TWIR_lang.informative.travel_fort + '" style="position: absolute; bottom: 8px; right: 15px;cursor: pointer;" href="#" onclick="Guidepost.show(' + e[0] + ', ' + e[1] + ', ' + e[2] + ', &quot;fort&quot;);"><img src="/images/map/icons/instantwork.png" </a>'));
 }
+
 TWDS.fbmisc.startfunc = function () {
   TWDS.registerSetting('bool', 'fbmisc_fbcount',
     TWDS._('FBMISC_SETTING_FCOUNT', 'Show the number of declared fort battles.'),
@@ -148,12 +148,17 @@ TWDS.fbmisc.startfunc = function () {
   TWDS.registerSetting('bool', 'fbmisc_walk',
     TWDS._('FBMISC_SETTING_WALK', 'Click on the waytime to walk to the fort'),
     true, null, 'fortbattles')
+
   FortBattleWindow.TWDS_backup_renderPreBattle = FortBattleWindow.TWDS_backup_renderPreBattle ||
     FortBattleWindow.renderPreBattle
   FortBattleWindow.renderPreBattle = TWDS.fbmisc.renderPreBattle
-  FortBattleWindow.TWDS_backup_renderChars = FortBattleWindow.TWDS_backup_renderChars || FortBattleWindow.renderChars
+
+  FortBattleWindow.TWDS_backup_renderChars = FortBattleWindow.TWDS_backup_renderChars ||
+    FortBattleWindow.renderChars
   FortBattleWindow.renderChars = TWDS.fbmisc.renderchars
-  FortOverviewWindow.TWDS_backup_showTab = FortOverviewWindow.TWDS_backup_showTab || FortOverviewWindow.showTab
+
+  FortOverviewWindow.TWDS_backup_showTab = FortOverviewWindow.TWDS_backup_showTab ||
+    FortOverviewWindow.showTab
   FortOverviewWindow.showTab = TWDS.fbmisc.fortoverviewshowtab
 }
 TWDS.registerStartFunc(function () {
