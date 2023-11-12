@@ -112,19 +112,22 @@ TWDS.chat.init2 = function () {
     return Chat.Resource.Client.prototype.TWDS_backup_isStranger.apply(this, arguments)
   }
 }
+TWDS.chat.localanswer = function (room, msg) {
+  const ti = window.Chat.Formatter.formatTime(new Date().getTime(), false)
+  msg = Chat.Formatter.formatText(msg, true)
+  const ret = TWDS.createEle({
+    nodeName: 'div',
+    children: [
+      { nodeName: 'span', textContent: ti },
+      { nodeName: 'span', textContent: ' ' },
+      { nodeName: 'span', innerHTML: msg }
+    ]
+  }).outerHTML
+  room.addMessage(ret)
+}
 TWDS.chat.init3 = function () {
-  const localanswer = function (room, msg) {
-    const ti = window.Chat.Formatter.formatTime(new Date().getTime(), false)
-    const ret = TWDS.createEle({
-      nodeName: 'div',
-      children: [
-        { nodeName: 'span', textContent: ti },
-        { nodeName: 'span', textContent: ' ' },
-        { nodeName: 'span', textContent: msg }
-      ]
-    }).outerHTML
-    room.addMessage(ret)
-  }
+  const localanswer = TWDS.chat.localanswer
+
   Chat.Operations['^\\/active(.*)'] = {
     cmd: 'active',
     shorthelp: TWDS._('CHAT_ACTIVE_SHORTHELP', 'Lists active players (green dots).'),
@@ -218,10 +221,62 @@ TWDS.chat.init3 = function () {
     }
   }
 }
+TWDS.chat.tabsend = function () {
+  let val = this.input[0].value
+  const firstchar = val.substr(0, 1)
+  if (firstchar !== '/') {
+    const color = window.localStorage.TWDS_chat_color
+    if (color) { val = '/' + color + val }
+    this.input[0].value = val
+  }
+  Chat.Layout.Tab.TWDS_backup_send.apply(this, arguments)
+}
+TWDS.chat.digitstohex = function (digits) {
+  const rgb = digits.match(/^(\d)(\d)(\d)$/)
+  if (!rgb) return false
+  return Math.floor(rgb[1] * 15 / 9).toString(16) +
+        Math.floor(rgb[2] * 15 / 9).toString(16) +
+        Math.floor(rgb[3] * 15 / 9).toString(16)
+}
+TWDS.chat.init4 = function () {
+  Chat.Operations['^\\/defaultcolor(.*)'] = {
+    cmd: 'defaultcolor',
+    shorthelp: TWDS._('CHAT_COLOR_SHORTHELP', 'Set default color.'),
+    help: TWDS._('CHAT_COLOR_HELP', 'Sets a default color for all rooms and this and future sessions.'),
+    usage: '/defaultcolor (RGB | - | nothing). RGB = Red/Green/Blue , each 0..9. - to unset. nothing to show current value',
+    func: function (room, msg, param) {
+      const color = param[1].trim().toLocaleLowerCase()
+      if (!color) {
+        const color = window.localStorage.TWDS_chat_color
+        if (!color) {
+          TWDS.chat.localanswer(room, 'no default color set')
+        } else {
+          TWDS.chat.localanswer(room, '/' + color + 'the default color is ' + color)
+        }
+        return
+      } else if (color === '-') {
+        delete window.localStorage.TWDS_chat_color
+        TWDS.chat.localanswer(room, 'default color unset')
+        return
+      }
+      const hex = TWDS.chat.digitstohex(color)
+      if (!hex) {
+        TWDS.chat.localanswer(room, 'failed to parse ' + color + ' as color')
+        return
+      }
+      window.localStorage.TWDS_chat_color = color
+      TWDS.chat.localanswer(room, '/' + color + 'default color set')
+    }
+  }
+  Chat.Layout.Tab.TWDS_backup_send = Chat.Layout.Tab.TWDS_backup_send || Chat.Layout.Tab.prototype.send
+  Chat.Layout.Tab.prototype.send = TWDS.chat.tabsend
+}
+
 TWDS.registerStartFunc(function () {
   TWDS.chat.init()
   TWDS.chat.init2()
   TWDS.chat.init3()
+  TWDS.chat.init4()
 })
 
 // vim: tabstop=2 shiftwidth=2 expandtab
