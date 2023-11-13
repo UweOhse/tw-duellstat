@@ -65,8 +65,9 @@ TWDS.fbdata.roundhandler = function (roundinfo) { // start of a round
 }
 
 TWDS.fbdata.cleanup = function () {
-  for (const fortid of Object.keys(TWDS.fbdata.fbw)) {
-    if (TWDS.fbdata.fbw[fortid].isWindowOpen()) { continue }
+  for (let fortid of Object.keys(TWDS.fbdata.fbw)) {
+    fortid = parseInt(fortid)
+    if (TWDS.fbdata.fbw[fortid].isWindowOpen(fortid)) { continue }
     delete TWDS.fbdata.fbw[fortid]
   }
 }
