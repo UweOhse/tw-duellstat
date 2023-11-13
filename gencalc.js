@@ -714,6 +714,9 @@ TWDS.genCalc.getSetBonusGenValues = function (set, bonusNames, skills) {
       if ('fortbattle' in bonus && 'resistance' in bonus.fortbattle) { boni.theBonus += bonus.fortbattle.resistance * factor }
     } else if (k === 'joball') {
       if ('job' in bonus && 'all' in bonus.job) { boni.theBonus += bonus.job.all * factor }
+    } else if (k.startsWith('job_')) {
+      const jid = parseInt(k.substring(4))
+      if ('job' in bonus && jid in bonus.job) { boni.theBonus += bonus.job[jid] * factor }
     } else if (k === 'melee') { // do nothing
     } else if (k === 'range') { // do nothing
     } else {
