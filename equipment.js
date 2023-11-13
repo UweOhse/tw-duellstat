@@ -1,3 +1,4 @@
+TWDS.equipmenttab = {}
 TWDS.describeItemCombo = function (singleItems) {
   const setsInUse = {}
   const setNames = []
@@ -755,6 +756,48 @@ TWDS.getEquipmentContent.specialButtons = function (div) {
 TWDS.activateEquipmentTab = function () {
   TWDS.activateTab('equipment')
 }
+TWDS.equipmenttab.specialbuttonhandler = function () {
+  const key1 = this.dataset.key1
+  const key2 = this.dataset.key2
+  let items = null
+  if (key1 === 'special') {
+    if (key2 === 'speed') items = TWDS.speedcalc.openwindow()
+    else if (key2 === 'xp') items = TWDS.genCalc({ experience: 1 }, {})
+    else if (key2 === 'regen') items = TWDS.genCalc({ regen: 1 }, { })
+    else if (key2 === 'luck') items = TWDS.genCalc({ luck: 1 }, {})
+    else if (key2 === 'pray') items = TWDS.genCalc({ pray: 1 }, {})
+    else if (key2 === 'dollar') items = TWDS.genCalc({ dollar: 1 }, {})
+    else if (key2 === 'drop') items = TWDS.genCalc({ drop: 1 }, {})
+  } else if (key1 === 'skill') {
+    const p = JSON.parse(key2)
+    items = TWDS.genCalc({}, p)
+  } else if (key1 === 'fbtank') {
+    const p = JSON.parse(key2)
+    items = TWDS.genCalc({
+      fboffense: 10,
+      fbdefense: 200,
+      fbdamage: 10,
+      fbresistance: 30
+    }, p)
+  } else if (key1 === 'fbdamager') {
+    const p = JSON.parse(key2)
+    items = TWDS.genCalc({
+      fboffense: 200,
+      fbdefense: 10,
+      fbdamage: 30,
+      fbresistance: 10
+    }, p)
+  } else if (key1 === 'range') {
+    const p = JSON.parse(key2)
+    items = TWDS.genCalc({ range: 100 }, p)
+  } else if (key1 === 'melee') {
+    const p = JSON.parse(key2)
+    items = TWDS.genCalc({ melee: 100 }, p)
+  }
+  if (items !== null) { // null: speed set calc
+    TWDS.wearItemsHandler(items)
+  }
+}
 
 TWDS.registerStartFunc(function () {
   TWDS.registerTab('equipment',
@@ -769,46 +812,7 @@ TWDS.registerStartFunc(function () {
     this.parentNode.removeChild(this)
   })
   $(document).on('click', '.TWDS_specialequipment_button', function () {
-    const key1 = this.dataset.key1
-    const key2 = this.dataset.key2
-    let items = null
-    if (key1 === 'special') {
-      if (key2 === 'speed') items = TWDS.speedcalc.openwindow()
-      else if (key2 === 'xp') items = TWDS.genCalc({ experience: 1 }, {})
-      else if (key2 === 'regen') items = TWDS.genCalc({ regen: 1 }, { })
-      else if (key2 === 'luck') items = TWDS.genCalc({ luck: 1 }, {})
-      else if (key2 === 'pray') items = TWDS.genCalc({ pray: 1 }, {})
-      else if (key2 === 'dollar') items = TWDS.genCalc({ dollar: 1 }, {})
-      else if (key2 === 'drop') items = TWDS.genCalc({ drop: 1 }, {})
-    } else if (key1 === 'skill') {
-      const p = JSON.parse(key2)
-      items = TWDS.genCalc({}, p)
-    } else if (key1 === 'fbtank') {
-      const p = JSON.parse(key2)
-      items = TWDS.genCalc({
-        fboffense: 10,
-        fbdefense: 200,
-        fbdamage: 10,
-        fbresistance: 30
-      }, p)
-    } else if (key1 === 'fbdamager') {
-      const p = JSON.parse(key2)
-      items = TWDS.genCalc({
-        fboffense: 200,
-        fbdefense: 10,
-        fbdamage: 30,
-        fbresistance: 10
-      }, p)
-    } else if (key1 === 'range') {
-      const p = JSON.parse(key2)
-      items = TWDS.genCalc({ range: 100 }, p)
-    } else if (key1 === 'melee') {
-      const p = JSON.parse(key2)
-      items = TWDS.genCalc({ melee: 100 }, p)
-    }
-    if (items !== null) { // null: speed set calc
-      TWDS.wearItemsHandler(items)
-    }
+    TWDS.equipmenttab.specialbuttonhandler()
   })
   $(document).on('click', '.TWDS_wear', function () {
     const tr = this.closest('tr')
