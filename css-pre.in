@@ -610,59 +610,6 @@ TWDS.insertStyles = function () {
       display: inline-block;
       zoom: 1;
     }
-    .TWDS_showset .TWDS_itemcontainer {
-      border-top:1px dotted #888;
-      display:flex;
-      flex-flow:wrap;
-    }
-    .TWDS_showset .TWDS_itemcontainer .TWDS_item {
-      width:49%;
-      border:1px dotted #888;
-    }
-    .TWDS_showset .TWDS_itemcontainer .inventory_popup {
-    }
-    .TWDS_showset .TWDS_itemcontainer .inventory_popup .item_set_names,
-    .TWDS_showset .TWDS_itemcontainer .inventory_popup .inventory_popup_item_set_names,
-    .TWDS_showset .TWDS_itemcontainer .inventory_popup .item_set_names + span
-    {
-      display:none !important;
-    }
-    .TWDS_showset .TWDS_itemcontainer .inventory_popup .inventory_popup_item_set_names +br {
-      display:none !important;
-    }
-    .TWDS_showset .TWDS_itemcontainer .inventory_popup_requirement_text {
-      margin-top:-3em;
-      display:inline-block;
-    }
-    .TWDS_showset .TWDS_topcontainer {
-      display:flex;
-      flex-flow:wrap;
-    }
-    .TWDS_showset .TWDS_topcontainer > * {
-      width:49%;
-    }
-    .TWDS_showset .TWDS_setcontainer br {
-      display:none;
-    }
-    .TWDS_showset .TWDS_topcontainer li {
-      list-style-type:none;
-    }
-    .TWDS_showset_selectors  {
-      display:flex;
-      justify-content: space-between;
-      border-bottom:1px dotted #888;
-      padding-bottom:0.25em;
-      margin-bottom:0.25em;
-    }
-    .TWDS_showset .TWDS_item {
-      position:relative;
-    }
-    .TWDS_showset .TWDS_item input[type=checkbox] {
-      position:absolute;
-      top:2px;
-      right: 2px;
-      z-index:2;
-    }
     body.TWDS_daily_tasks_open .char_links.daily::after {
       content: "\\21da";
       display: block;

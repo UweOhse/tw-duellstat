@@ -1,0 +1,62 @@
+.TWDS_showset {
+  .TWDS_showset_selectors  {
+    display:flex;
+    justify-content: space-between;
+    border-bottom:1px dotted #888;
+    padding-bottom:0.25em;
+    margin-bottom:0.25em;
+  }
+  .TWDS_topcontainer {
+    display:flex;
+    flex-flow:wrap;
+    li {
+      list-style-type:none;
+    }
+  }
+  .TWDS_topcontainer > * {
+    width:49%;
+  }
+  .TWDS_setcontainer br {
+    display:none;
+  }
+  .TWDS_itemcontainer {
+    border-top:1px dotted #888;
+    display:flex;
+    flex-flow:wrap;
+    .TWDS_item {
+      width:49%;
+      border:1px dotted #888;
+    }
+    .inventory_popup {
+      .item_set_names,
+      .inventory_popup_item_set_names,
+      .item_set_names + span
+      {
+        display:none !important;
+      }
+      .inventory_popup_item_set_names +br {
+        display:none !important;
+      }
+    }
+    .inventory_popup_requirement_text {
+      margin-top:-3em;
+      display:inline-block;
+    }
+    .TWDS_item {
+      position:relative;
+      input[type=checkbox] {
+        position:absolute;
+        top:2px;
+        right: 2px;
+        z-index:2;
+      }
+      .TWDS_enhanced_itempopup.TWDS_with_set {
+        display:block;
+        aside {
+          display:none; // set info
+        }
+      }
+
+    }
+  }
+}
