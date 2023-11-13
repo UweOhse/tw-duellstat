@@ -1,6 +1,18 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 
 TWDS.showset = {}
+TWDS.showset.getExportValueWithJob = function (extractor, bon) {
+  const x = extractor.getExportValue(bon)
+  // getExportValue is stupid
+  if (x.key === 'job') {
+    if (bon.type === 'character') {
+      x.key = 'job_' + bon.bonus.job
+    } else {
+      x.key = 'job_' + bon.job
+    }
+  }
+  return x
+}
 TWDS.showset.getcontent = function (win) {
   const key = win._TWDS_key
   const level = parseInt(win._TWDS_level)
@@ -155,7 +167,8 @@ TWDS.showset.getcontent = function (win) {
         textContent: extractor.getDesc(setbonuses[i]),
         last: ul
       })
-      const x = extractor.getExportValue(setbonuses[i])
+      // getExportValue is stupid
+      const x = TWDS.showset.getExportValueWithJob(extractor, setbonuses[i])
       if (x.key in leveledresult) {
         leveledresult[x.key] += x.value
       } else {
@@ -257,7 +270,8 @@ TWDS.showset.getcontent = function (win) {
           const b = item.bonus.item[k]
           if (b.type === 'damage' || (b.type === 'character' && b.bonus.type === 'damage')) { continue }
           merge(b)
-          const x = ex.getExportValue(b)
+          // getExportValue is stupid
+          const x = TWDS.showset.getExportValueWithJob(ex, b)
           if (x.key in leveledresult) {
             leveledresult[x.key] += x.value
           } else {
@@ -308,7 +322,8 @@ TWDS.showset.getcontent = function (win) {
         last: theresult
       })
     for (let i = 0; i < result.length; i++) {
-      const x = extractor.getExportValue(result[i])
+      // getExportValue is stupid
+      const x = TWDS.showset.getExportValueWithJob(extractor, result[i])
       let output
       if (level === 0) {
         fixDescNumber(result[i])
