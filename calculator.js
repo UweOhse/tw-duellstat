@@ -247,12 +247,21 @@ TWDS.calculator.exec = function (filterarea, sels, resultarea) {
   const bonusweights = { }
   for (let i = 0; i < TWDS.calculator.data.length; i++) {
     const d = TWDS.calculator.data[i]
+    console.log('d', i, d)
     if (d.kind === 'group') continue
     if (d.kind === 'bonus') {
-      let inp = TWDS.q1('.onebonus.bonus.' + d.name + ' input.value', sels)
-      inp = parseFloat(inp.value) || 0
-      if (inp !== 0) {
-        bonusweights[d.name] = inp
+      const inp = TWDS.q1('.onebonus.bonus.' + d.name + ' input.value', sels)
+      const val = parseFloat(inp.value) || 0
+      if (val !== 0) {
+        bonusweights[d.name] = val
+      }
+      if (d.name === 'joball') {
+        if (inp.dataset.jobid) {
+          const j = parseInt(inp.dataset.jobid)
+          if (j) {
+            bonusweights['job_' + j] = val
+          }
+        }
       }
     }
     if (d.kind === 'skill') {
@@ -341,6 +350,17 @@ TWDS.calculator.exec = function (filterarea, sels, resultarea) {
     TWDS.createEle('hr', { last: resultarea, style: { clear: 'both' } })
   }
 }
+TWDS.calculator.buildjob = function () {
+  return new west.job.Build({
+    name: 'Construction',
+    id: 1000,
+    skills: {
+      build: 3,
+      leadership: 1,
+      repair: 1
+    }
+  })
+}
 TWDS.calculator.openwindow = function () {
   const myname = 'TWDS_calc_window'
   const win = wman.open(myname, TWDS._('CALCULATOR_TITLE', 'Calculator'), 'TWDS_calc_window')
@@ -366,13 +386,17 @@ TWDS.calculator.openwindow = function () {
 
   }
 
-  let s = TWDS.createEle('select', { last: presetarea })
+  let s = TWDS.createEle('select.jobselect', { last: presetarea })
   TWDS.createEle('option', {
     last: s,
     value: 0,
     textContent: '---'
   })
   const allJobs = JobList.getSortedJobs('name')
+  allJobs.push(TWDS.calculator.buildjob())
+  allJobs.sort(function (a, b) {
+    return a.name.toLocaleLowerCase().localeCompare(b.name.toLocaleLowerCase())
+  })
   for (let i = 0; i < allJobs.length; i++) {
     TWDS.createEle('option', {
       last: s,
@@ -381,7 +405,11 @@ TWDS.calculator.openwindow = function () {
     })
   }
   s.onchange = function () {
-    const job = JobList.getJobById(this.value)
+    let job = JobList.getJobById(this.value)
+    if (!job && parseInt(this.value) === 1000) { // "Build"
+      job = TWDS.calculator.buildjob()
+    }
+    console.log('S', this.value, job)
     const c = this.closest('.TWDS_calc_container')
     const inp = TWDS.q('.TWDS_calc_selectarea input', c)
     for (let i = 0; i < inp.length; i++) {
@@ -393,15 +421,17 @@ TWDS.calculator.openwindow = function () {
         if (job.skills[bo]) { inp[i].value = job.skills[bo] }
       }
     }
+    const jpi = TWDS.q1('.joball input', c)
+    if (jpi) jpi.dataset.jobid = 0
+    if (jpi && job && job.id) jpi.dataset.jobid = job.id
     if (job !== 'undefined') {
-      const jpi = TWDS.q1('.joball input', c)
       if (jpi) {
         jpi.value = 1
       }
     }
   }
 
-  s = TWDS.createEle('select', { last: presetarea })
+  s = TWDS.createEle('select.presetselect', { last: presetarea })
   TWDS.createEle('option', {
     last: s,
     value: 0,
@@ -426,12 +456,16 @@ TWDS.calculator.openwindow = function () {
         preset = TWDS.calculator.presets[i]
       }
     }
+
     const inp = TWDS.q('.TWDS_calc_selectarea input', c)
     for (let i = 0; i < inp.length; i++) {
       if (inp[i].type !== 'radio') {
         inp[i].value = 0
       }
     }
+    const jpi = TWDS.q1('.joball input', c)
+    if (jpi) jpi.dataset.jobid = 0
+
     if (preset !== null) {
       for (const k in preset) {
         if (k !== 'name') {
