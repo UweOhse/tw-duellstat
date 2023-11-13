@@ -332,7 +332,7 @@ TWDS.fbchat.startfunc2 = function () {
           if (icon && icon[0]) {
             if (color) {
               icon[0].style.outline = '2px solid #' + color
-              icon[0].dataset.currentcolor = "#"+color
+              icon[0].dataset.currentcolor = '#' + color
               room.addMessage(F('marked ' + ch.name))
             } else {
               icon[0].style.outline = 'none'
