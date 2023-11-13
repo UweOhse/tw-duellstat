@@ -14,9 +14,22 @@
     display:none;
   }
   &.TWDS_with_set {
+    aside {
+      display:block;
+      .topdivider {
+        display:block;
+      }
+    }
+  }
+  &.TWDS_with_set_bonus {
     grid-template-columns:1fr 1fr;
     aside {
       display:block;
+      grid-row:1/4;
+      grid-column:2;
+      .topdivider {
+        display:none;
+      }
     }
   }
   padding:5px 10px;
@@ -29,9 +42,17 @@
     background-position:center;
     margin:1em auto;
   }
+  ul {
+      list-style-type:none;
+  }
+  aside {
     ul {
       list-style-type:none;
     }
+    .set_bonus {
+      margin-top:1em;
+    }
+  }
 
 
   header h1,
@@ -158,16 +179,6 @@
           content:"%";
         }
       }
-    }
-  }
-  aside {
-    grid-row:1/4;
-    grid-column:2;
-    ul {
-      list-style-type:none;
-    }
-    .set_bonus {
-      margin-top:1em;
     }
   }
 }

@@ -150,7 +150,8 @@ TWDS.items.popupenhancementReal = function () {
 
   const isb = main.querySelector('.item_set_bonus')
   const isn = TWDS.q1('.item_set_names', main)
-  if (isb || isn) { enhanced.classList.add('TWDS_with_set') }
+  if (isb && isn) { enhanced.classList.add('TWDS_with_set_bonus') }
+  if (isn) { enhanced.classList.add('TWDS_with_set') }
 
   t = TWDS.q1('.inventory_popup_prices', main)
   if (t) {
@@ -196,6 +197,7 @@ TWDS.items.popupenhancementReal = function () {
 
   // .item_set_names is empty, followed by a <span> containing the name of the set.
   // which is insane, of course.
+  TWDS.createEle('div.divider.topdivider', { last: side })
   if (isn) {
     const n = isn.nextSibling
     if (n && n.nodeName === 'SPAN') {
@@ -215,16 +217,6 @@ TWDS.items.popupenhancementReal = function () {
     TWDS.createEle('div.divider', { last: side })
     side.appendChild(isb)
   }
-  /*
-  // where to find the set bonus?
-  // cleanly in .item_set_bonus, unless TWX (?) is in use.
-  // So we only take the bonus list, without the "set bonus" title, but that's unneeded, anyway.
-  const ipbs = TWDS.q1('.inventory_popup_bonus_skills', main)
-  if (ipbs) {
-    ipbs.className = 'set_bonus'
-    side.appendChild(ipbs)
-  }
-  */
 
   t = TWDS.q1('.inventory_popup_requirement_text', main)
   if (t) {
