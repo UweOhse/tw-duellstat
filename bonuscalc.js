@@ -36,13 +36,16 @@ TWDS.bonuscalc.getSpeed = function (itemids) {
   if (Premium.hasBonus('greenhorn')) { speed *= 2 }
   return speed
 }
-TWDS.bonuscalc.getComboBonus = function (itemids, fixnames) {
+TWDS.bonuscalc.getComboBonus = function (itemids, fixnames, level) {
+  const dummychar = {
+    level: level || Character.level
+  }
   const usedSets = {}
   const gethash = function (itemids) {
     itemids.sort(function (a, b) {
       return a - b
     })
-    const str = Character.level + '/' + itemids.join(',')
+    const str = dummychar.level + '/' + itemids.join(',')
     return TWDS.cyrb53(str)
   }
 
@@ -75,7 +78,7 @@ TWDS.bonuscalc.getComboBonus = function (itemids, fixnames) {
     if (!(b.key in totalbonus)) { totalbonus[b.key] = 0 }
     totalbonus[b.key] += b.value
   }
-  const extractor = new west.item.BonusExtractor(Character)
+  const extractor = new west.item.BonusExtractor(dummychar)
   for (const setkey of Object.keys(usedSets)) {
     const set = west.storage.ItemSetManager.get(setkey)
     const itemsinuse = usedSets[setkey].length
@@ -88,7 +91,7 @@ TWDS.bonuscalc.getComboBonus = function (itemids, fixnames) {
     const it = items[i]
     if (it === undefined) continue
     for (let j = 0; j < it.bonus.item.length; j++) {
-      extractor.init(Character, it.item_level)
+      extractor.init(dummychar, it.item_level)
       const v = extractor.getExportValue(it.bonus.item[j])
       addbonus(v)
     }
