@@ -175,6 +175,9 @@ TWDS.getComboBonus = function (combo) {
       realtype = entry.bonus.name
       if (typeof realtype === 'undefined') {
         realtype = entry.bonus.type
+        if (realtype === 'job') {
+          realtype = `job_${entry.bonus.job}`
+        }
       }
       value = entry.bonus.value
       if (entry.bonus.isSector) {
@@ -285,7 +288,7 @@ TWDS.getComboBonus = function (combo) {
           `${setlist[setcode].name} (#${one.things})`)
     }
   }
-  // console.log('total bonus', allBonus)
+  console.log('total bonus', allBonus)
   return allBonus
 }
 TWDS.getWearBonus = function () {
@@ -429,6 +432,9 @@ TWDS.initBonusDisplay = function (container) {
     if (m && m[1] === 'all') {
       name = TWDS._('LABOR_POINTS_FOR_ALL',
         'labor points for all jobs')
+    } else if (m && m[1] === '1000') {
+      name = TWDS._('LABOR_POINTS_FOR_CONSTRUCTION',
+        'labor points for construction')
     } else if (m) {
       const job = JobList.getJobById(m[1])
       name = TWDS._('LABOR_POINTS_FOR',
