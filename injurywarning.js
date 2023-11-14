@@ -2,7 +2,7 @@
 //
 
 TWDS.injuryWarningHandler = function () {
-  if (!JobsModel.initialized) {
+  if (!JobsModel.Jobs.length) { // JobsModel.initialized is not set in every case.
     setTimeout(TWDS.injuryWarningHandler, 1000)
     return
   }
