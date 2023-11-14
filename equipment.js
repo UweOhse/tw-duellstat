@@ -756,9 +756,9 @@ TWDS.getEquipmentContent.specialButtons = function (div) {
 TWDS.activateEquipmentTab = function () {
   TWDS.activateTab('equipment')
 }
-TWDS.equipmenttab.specialbuttonhandler = function () {
-  const key1 = this.dataset.key1
-  const key2 = this.dataset.key2
+TWDS.equipmenttab.specialbuttonhandler = function (ele) {
+  const key1 = ele.dataset.key1
+  const key2 = ele.dataset.key2
   let items = null
   if (key1 === 'special') {
     if (key2 === 'speed') items = TWDS.speedcalc.openwindow()
@@ -812,7 +812,7 @@ TWDS.registerStartFunc(function () {
     this.parentNode.removeChild(this)
   })
   $(document).on('click', '.TWDS_specialequipment_button', function () {
-    TWDS.equipmenttab.specialbuttonhandler()
+    TWDS.equipmenttab.specialbuttonhandler(this)
   })
   $(document).on('click', '.TWDS_wear', function () {
     const tr = this.closest('tr')
