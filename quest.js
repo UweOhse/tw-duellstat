@@ -116,7 +116,13 @@ TWDS.quest.buildquestlog = function (emp) {
   QuestEmployerView.TWDS_backup_buildQuestLog.apply(this, arguments)
   for (let i = 0; i < emp.open.length; i++) {
     const q = emp.open[i]
-    if (q.finishable) {
+    let req = q.requirements;
+    let allsolved = true
+    for (var j = 0; j < req.length; j++)
+      if (req[j].solved !== true)
+        allsolved=false
+
+    if (q.finishable || allsolved) {
       if (TWDS.settings.quest_color_finishable) {
         const link = TWDS.q1('#open_quest_employerlink_' + q.id)
         if (!link) continue
