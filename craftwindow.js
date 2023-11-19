@@ -245,6 +245,9 @@ TWDS.craftwindow.getcontent = function (win) {
   const table = TWDS.createEle({
     nodeName: 'table',
     className: 'TWDS_craftwindow_table TWDS_sortable',
+    dataset: {
+      TWDS_ordersavekey: 'TWDS_craftwindow_last_order'
+    },
     last: content
   })
   TWDS.createEle({
@@ -505,6 +508,15 @@ TWDS.craftwindow.getcontent = function (win) {
   TWDS.delegate(content, 'change', '.blocktimefilter', function (ev) {
     TWDS.craftwindow.recalcmax(win)
   })
+  if ('TWDS_craftwindow_last_order_mult' in localStorage) {
+    if ('TWDS_craftwindow_last_order_sel' in localStorage) {
+      const sel = localStorage.TWDS_craftwindow_last_order_sel
+      const mul = parseInt(localStorage.TWDS_craftwindow_last_order_mult)
+      const toclick = TWDS.q1("thead th[data-colsel='" + sel + "'", table)
+      console.log('toclick', toclick, sel, mul)
+      TWDS.sortable.doReal(toclick, mul)
+    }
+  }
 
   return content
 }
