@@ -1,8 +1,17 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 //
 
+TWDS.injuryWarningModelFlag = false
 TWDS.injuryWarningHandler = function () {
   if (!JobsModel.Jobs.length) { // JobsModel.initialized is not set in every case.
+    if (!TWDS.injuryWarningModelFlag) {
+      TWDS.injuryWarningModelFlag++
+      setTimeout(function () {
+        JobsModel.initJobs()
+        TWDS.injuryWarningHandler()
+      }, 500)
+      return
+    }
     setTimeout(TWDS.injuryWarningHandler, 1000)
     return
   }
@@ -97,42 +106,43 @@ TWDS.injuryWarningHandler = function () {
   }
 }
 
-TWDS.registerSetting('bool', 'taskqueue_warn_negative',
-  'mark a job in the taskqueue red if the job points are negative.', true,
-  function (v) {
-    TWDS.injuryWarningHandler()
-  }, 'Task Queue'
-)
-TWDS.registerSetting('bool', 'taskqueue_warn_low',
-  'mark a job in the taskqueue yellow if the number of job points is low.', true,
-  function (v) {
-    TWDS.injuryWarningHandler()
-  }, 'Task Queue'
-)
-TWDS.registerSetting('bool', 'taskqueue_warn_one_injury_knockout',
-  'mark a job in the taskqueue orange if the maximum injury can knock you out.', true,
-  function (v) {
-    TWDS.injuryWarningHandler()
-  }, 'Task Queue'
-)
-TWDS.registerSetting('bool', 'taskqueue_warn_suboptimal',
-  'mark a job in the taskqueue blue if it is done without the full job points.', true,
-  function (v) {
-    TWDS.injuryWarningHandler()
-  }, 'Task Queue'
-)
-TWDS.registerSetting('bool', 'taskqueue_orange_on_warning',
-  'Color the task queue orange if one of the above warnings is shown.', true,
-  function (v) {
-    TWDS.injuryWarningHandler()
-  }, 'Task Queue'
-)
-TWDS.registerSetting('int', 'taskqueue_warn_avg_injury_knockout',
-  'Color the task queue red if the expected injuries together reach the level of ... percent of the current health. Note that expectations can be wrong. This script expects the average number of injuries with 25% of the maximum damage each.', '50',
-  function (v) {
-    TWDS.injuryWarningHandler()
-  }, 'Task Queue'
-)
-
-EventHandler.listen(['taskqueue-updated', 'taskqueue-ready'], TWDS.injuryWarningHandler)
+TWDS.registerStartFunc(function () {
+  TWDS.registerSetting('bool', 'taskqueue_warn_negative',
+    'mark a job in the taskqueue red if the job points are negative.', true,
+    function (v) {
+      TWDS.injuryWarningHandler()
+    }, 'Task Queue'
+  )
+  TWDS.registerSetting('bool', 'taskqueue_warn_low',
+    'mark a job in the taskqueue yellow if the number of job points is low.', true,
+    function (v) {
+      TWDS.injuryWarningHandler()
+    }, 'Task Queue'
+  )
+  TWDS.registerSetting('bool', 'taskqueue_warn_one_injury_knockout',
+    'mark a job in the taskqueue orange if the maximum injury can knock you out.', true,
+    function (v) {
+      TWDS.injuryWarningHandler()
+    }, 'Task Queue'
+  )
+  TWDS.registerSetting('bool', 'taskqueue_warn_suboptimal',
+    'mark a job in the taskqueue blue if it is done without the full job points.', true,
+    function (v) {
+      TWDS.injuryWarningHandler()
+    }, 'Task Queue'
+  )
+  TWDS.registerSetting('bool', 'taskqueue_orange_on_warning',
+    'Color the task queue orange if one of the above warnings is shown.', true,
+    function (v) {
+      TWDS.injuryWarningHandler()
+    }, 'Task Queue'
+  )
+  TWDS.registerSetting('int', 'taskqueue_warn_avg_injury_knockout',
+    'Color the task queue red if the expected injuries together reach the level of ... percent of the current health. Note that expectations can be wrong. This script expects the average number of injuries with 25% of the maximum damage each.', '50',
+    function (v) {
+      TWDS.injuryWarningHandler()
+    }, 'Task Queue'
+  )
+  EventHandler.listen(['taskqueue-updated', 'taskqueue-ready'], TWDS.injuryWarningHandler)
+})
 // vim: tabstop=2 shiftwidth=2 expandtab
