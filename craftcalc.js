@@ -273,16 +273,29 @@ TWDS.craftcalc.getcontent = function (win) {
       last: tr
     })
 
-    const count = Bag.getItemCount(allitems[i][0])
-    TWDS.createEle({
+    // const count = Bag.getItemCount(allitems[i][0])
+    const sd = TWDS.storage.getitemdata(allitems[i][0])
+    const haveele = TWDS.createEle({
       nodeName: 'td',
       children: [{
         nodeName: 'span',
-        textContent: count,
-        className: count < allitems[i][1] ? 'available red' : 'available green'
+        textContent: sd.have,
+        className: sd.have < allitems[i][1] ? 'available red' : 'available green'
       }],
       last: tr
     })
+    if (sd.want) {
+      TWDS.createEle({
+        nodeName: 'span',
+        textContent: ' / ',
+        last: haveele
+      })
+      TWDS.createEle({
+        nodeName: 'span',
+        textContent: sd.want,
+        last: haveele
+      })
+    }
     // functions
     const td = TWDS.createEle({
       nodeName: 'td',
@@ -357,14 +370,34 @@ TWDS.craftcalc.getcontent = function (win) {
     className: 'forcopying',
     last: resultarea
   })
-  resultchat.textContent = win._TWDS_number
-  resultchat.textContent += ' [item=' + cid + '] = '
+  TWDS.createEle('span', { last: resultchat, textContent: win._TWDS_number })
+  TWDS.createEle('span', { last: resultchat, textContent: ' [item=' + cid + '] = ' })
   for (let i = 0; i < allitems.length; i++) {
-    if (i) { resultchat.textContent += ' + ' }
-    resultchat.textContent += allitems[i][1]
-    resultchat.textContent += ' [item=' + allitems[i][0]
-    resultchat.textContent += ']'
+    if (i) {
+      TWDS.createEle('span', { last: resultchat, textContent: ' + ' })
+    }
+    TWDS.createEle('span.have', { last: resultchat, style: { display: 'none' }, textContent: Bag.getItemCount(allitems[i][0]) + '/' })
+    TWDS.createEle('span', { last: resultchat, textContent: allitems[i][1] })
+    TWDS.createEle('span', { last: resultchat, textContent: ' [item=' + allitems[i][0] + ']' })
   }
+  TWDS.createEle('span', { last: resultchat, textContent: '  ' })
+  TWDS.createEle('button', {
+    last: resultchat,
+    textContent: 'Matori mode',
+    style: { display: 'block' },
+    onclick: function () {
+      resultchat.classList.toggle('matori')
+      const visible = resultchat.classList.contains('matori')
+      const spans = TWDS.q('span.have', resultchat)
+      for (let i = 0; i < spans.length; i++) {
+        if (visible) {
+          spans[i].style.display = 'inline'
+        } else {
+          spans[i].style.display = 'none'
+        }
+      }
+    }
+  })
   TWDS.createEle({ nodeName: 'hr', last: resultarea })
   TWDS.createEle({
     nodeName: 'h2',
