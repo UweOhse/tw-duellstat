@@ -41,26 +41,39 @@ TWDS.sortable.searchReal = function (ev) {
   }
 }
 
-TWDS.sortable.do = function (ev) { TWDS.sortable.doReal.apply(this, ev) }
-TWDS.sortable.doReal = function (ev) {
-  const tab = this.closest('table')
+TWDS.sortable.do = function (ev, forcemul) { TWDS.sortable.doReal(this, forcemul) }
+TWDS.sortable.doReal = function (clickedele, forcemul) {
+  const tab = clickedele.closest('table')
   const tbody = TWDS.q1('tbody', tab)
-  const sel = this.dataset.colsel
-  const secondsel = this.dataset.secondsel
-  const sortmode = this.dataset.sortmode || 'text'
+  const sel = clickedele.dataset.colsel
+  const secondsel = clickedele.dataset.secondsel
+  const sortmode = clickedele.dataset.sortmode || 'text'
   const rows = [...TWDS.q('tbody tr:not(.sortgrouped)', tab)]
   const cursort = tab.dataset.cursort || ''
-  let mult = 1
-  if (this.dataset.sortdefaultorder) {
-    mult = parseInt(this.dataset.sortdefaultorder)
-    if (mult !== -1) mult = 1
-  }
-  if (cursort === sel) {
-    mult *= -1
-    tab.dataset.cursort = ''
+  const curmult = parseInt(tab.dataset.curmult) || 1
+  let mult=1
+
+  forcemul = forcemul || 0
+  if (forcemul) {
+    mult=forcemul
   } else {
-    tab.dataset.cursort = sel
+    if (cursort === sel) { // click on the same head: reverse sort order
+      mult = curmult * -1
+    } else {
+      // click on another head: use default sort order
+      if (clickedele.dataset.sortdefaultorder) {
+        mult = parseInt(clickedele.dataset.sortdefaultorder)
+        if (mult !== -1) mult = 1
+      }
+    }
+    if (tab.dataset.TWDS_ordersavekey) {
+      let k=tab.dataset.TWDS_ordersavekey
+      localStorage[k+"_sel"]=sel
+      localStorage[k+"_mult"]=mult
+    }
   }
+  tab.dataset.cursort = sel
+  tab.dataset.curmult = mult
   const sortfunc = function (a, b, sel) {
     const tda = TWDS.q1(sel, a)
     const tdb = TWDS.q1(sel, b)
