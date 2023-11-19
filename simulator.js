@@ -160,12 +160,12 @@ TWDS.simulator.updateresult = function (win) {
     line(skill, CharacterSkills.keyNames[skill])
   }
   line('experience', 'experience (+%)', 100)
-  line('dollar', 'money (+%)')
-  line('luck', 'luck (+%)')
-  line('drop', 'drop (+%)')
-  line('speed', 'speed bonus (+%)')
+  line('dollar', 'money (+%)', 100)
+  line('luck', 'luck (+%)', 100)
+  line('drop', 'drop (+%)', 100)
+  line('speed', 'speed bonus (+%)', 100)
   line('speedresult', 'speed')
-  line('regen', 'regeneration (+%)')
+  line('regen', 'regeneration (+%)', 100)
   line('pray', 'pray (+)')
   line('fort_offense', 'fort battle offense')
   line('fort_defense', 'fort battle defense')
@@ -412,6 +412,27 @@ TWDS.simulator.openwindow = function (paraitems) {
     className: 'TWDS_simulator_container'
   })
 
+  const createarrowarea = function (pa, par) {
+    const area = TWDS.createEle('div.arrowarea', { last: pa })
+    const out = {}
+    out.right = TWDS.createEle({
+      nodeName: 'div.right.linklike',
+      last: area,
+      textContent: '\u2192'
+    })
+    out.left = TWDS.createEle({
+      nodeName: 'div.left.linklike',
+      last: area,
+      textContent: '\u2190'
+    })
+    out.both = TWDS.createEle({
+      nodeName: 'div.leftright.linklike',
+      last: area,
+      textContent: '\u21c4'
+    })
+    return out
+  }
+
   const createcomboarea = function (pa, par, itemstouse, comboindex) {
     const comboarea = TWDS.createEle('div.comboarea.comboarea' + comboindex, { last: pa, dataset: { comboindex: comboindex } })
     if (comboindex === 1) comboarea.classList.add('disabled')
@@ -441,6 +462,12 @@ TWDS.simulator.openwindow = function (paraitems) {
         }
       })
     }
+    TWDS.createEle({
+      nodeName: 'div.usecurrent.linklike',
+      last: comboarea,
+      textContent: '\u21ba',
+      title: TWDS._('SIMULATOR_TAKE_CURRENT', 'Take the currently used equipment')
+    })
     const setselectarea = TWDS.createEle('div', {
       className: 'setselectarea',
       last: comboarea
@@ -536,8 +563,9 @@ TWDS.simulator.openwindow = function (paraitems) {
     }
   }
   const caparent = TWDS.createEle('div.comboareacontainer', { last: content })
-  createcomboarea(caparent, par, itemstouse1, 0)
-  createcomboarea(caparent, par, itemstouse2, 1)
+  const ca0 = createcomboarea(caparent, par, itemstouse1, 0)
+  const functions = createarrowarea(caparent, par)
+  const ca1 = createcomboarea(caparent, par, itemstouse2, 1)
 
   TWDS.createEle('hr', {
     last: content
@@ -582,6 +610,58 @@ TWDS.simulator.openwindow = function (paraitems) {
     TWDS.simulator.switchslot(itemarea, it.type, it.item_id)
     TWDS.simulator.updateresult(win, comboindex)
   })
+  TWDS.delegate(content, 'click', '.usecurrent', function () {
+    const comboarea = this.closest('.comboarea')
+    const itemarea = TWDS.q1('.itemarea', comboarea)
+
+    const myslots = ['head', 'neck', 'body', 'belt', 'pants', 'foot', 'right_arm', 'left_arm', 'animal', 'yield']
+    for (let i = 0; i < myslots.length; i++) {
+      const sl = myslots[i]
+      const w = Wear.get(sl)
+      if (w) {
+        TWDS.simulator.switchslot(itemarea, sl, w.obj.item_id)
+      } else {
+        TWDS.simulator.switchslot(itemarea, sl, 0)
+      }
+    }
+  })
+
+  functions.left.onclick = function () {
+    const ia0 = TWDS.q1('.itemarea', ca0)
+    const ia1 = TWDS.q1('.itemarea', ca1)
+    const myslots = ['head', 'neck', 'body', 'belt', 'pants', 'foot', 'right_arm', 'left_arm', 'animal', 'yield']
+    for (let i = 0; i < myslots.length; i++) {
+      const sl = myslots[i]
+      const id = TWDS.q1('.target.' + sl + ' .item_inventory', ia1).dataset.twds_item_id
+      TWDS.simulator.switchslot(ia0, sl, id)
+    }
+    TWDS.simulator.updateresult(win, 0)
+  }
+  functions.right.onclick = function () {
+    const ia0 = TWDS.q1('.itemarea', ca0)
+    const ia1 = TWDS.q1('.itemarea', ca1)
+    const myslots = ['head', 'neck', 'body', 'belt', 'pants', 'foot', 'right_arm', 'left_arm', 'animal', 'yield']
+    for (let i = 0; i < myslots.length; i++) {
+      const sl = myslots[i]
+      const id = TWDS.q1('.target.' + sl + ' .item_inventory', ia0).dataset.twds_item_id
+      TWDS.simulator.switchslot(ia1, sl, id)
+    }
+    TWDS.simulator.updateresult(win, 1)
+  }
+  functions.both.onclick = function () {
+    const ia0 = TWDS.q1('.itemarea', ca0)
+    const ia1 = TWDS.q1('.itemarea', ca1)
+    const myslots = ['head', 'neck', 'body', 'belt', 'pants', 'foot', 'right_arm', 'left_arm', 'animal', 'yield']
+    for (let i = 0; i < myslots.length; i++) {
+      const sl = myslots[i]
+      const id0 = TWDS.q1('.target.' + sl + ' .item_inventory', ia0).dataset.twds_item_id
+      const id1 = TWDS.q1('.target.' + sl + ' .item_inventory', ia1).dataset.twds_item_id
+      TWDS.simulator.switchslot(ia0, sl, id1)
+      TWDS.simulator.switchslot(ia1, sl, id0)
+    }
+    TWDS.simulator.updateresult(win, 0)
+    TWDS.simulator.updateresult(win, 1)
+  }
 
   sp.appendContent(content)
   win.appendToContentPane(sp.getMainDiv())
