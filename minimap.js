@@ -280,6 +280,40 @@ TWDS.minimap.updateReal = function () {
       }
     }
   }
+  // we are running in an ajaxcomplete-handler, _before_ anything real is done...
+  setTimeout(function() {
+    TWDS.minimap.county15extras();
+  },25)
+}
+TWDS.minimap.county15extras = function () {
+  try {
+    let cb=TWDS.q1("#mmap_countybox_15");
+    if (cb) {
+      let old=TWDS.q1("div.TWDS_c15extras");
+      if (old) old.remove();
+      let d=TWDS.createEle("div.TWDS_c15extras",{
+        last:cb.parentNode,
+      });
+      if (Object.keys(Markers.markers).length > 0) {
+        TWDS.createEle("button.deleteallmarks.TWDS_button",{
+          textContent:"delete all markers",
+          last:d,
+          onclick:function() {
+            let timeout=0
+            window.Markers.each(function(m) {
+              timeout+=1000;
+              setTimeout(function() {
+                Markers.remove(m);
+              },timeout);
+            });
+            return false;
+          }
+        });
+      }
+    }
+  } catch(e) {
+    // ignored.
+  }
 }
 
 TWDS.minimap.showtaskjobgroups = function () {
