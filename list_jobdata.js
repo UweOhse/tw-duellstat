@@ -180,8 +180,8 @@ TWDS.jobData = {
   job_180: { job_wages: 61.3, job_exp: 63.3, job_luck: 98, job_danger: 65, job_maxdmg: 50 },
   job_181: { job_wages: 63.5, job_exp: 62.3, job_luck: 124.964, job_danger: 97, job_maxdmg: 17 },
   job_182: { job_wages: 68, job_exp: 60, job_luck: 78, job_danger: 37, job_maxdmg: 70 },
-  job_183: { job_wages: 67.7, job_exp: 55.5, job_luck: 58, job_danger: 70, job_maxdmg: 50 },
-  job_184: { job_wages: 69.6, job_exp: 59.6, job_luck: 74, job_danger: 71, job_maxdmg: 100 },
+  job_183: { job_wages: 67.6, job_exp: 55.5, job_luck: 58, job_danger: 70, job_maxdmg: 50 },
+  job_184: { job_wages: 69.5, job_exp: 59.6, job_luck: 74, job_danger: 71, job_maxdmg: 100 },
   job_185: { job_wages: 68, job_exp: 63.6, job_luck: 174.964, job_danger: 90, job_maxdmg: 97 },
   job_186: { job_wages: 60, job_exp: 58.6, job_luck: 98.963, job_danger: 47, job_maxdmg: 20 },
   job_187: { job_wages: 65.8, job_exp: 63.5, job_luck: 134.964, job_danger: 55, job_maxdmg: 10 },
@@ -195,12 +195,12 @@ TWDS.jobData = {
   job_195: { job_wages: 63.5, job_exp: 60, job_luck: 66.963, job_danger: 84, job_maxdmg: 50 },
   job_196: { job_wages: 66.9, job_exp: 63.2, job_luck: 116.963, job_danger: 64, job_maxdmg: 15 },
   job_197: { job_wages: 65.6, job_exp: 61.3, job_luck: 84, job_danger: 90, job_maxdmg: 85 },
-  job_198: { job_wages: 66, job_exp: 54.8, job_luck: 134.963, job_danger: 95, job_maxdmg: 17 },
+  job_198: { job_wages: 66.1, job_exp: 54.8, job_luck: 134.963, job_danger: 95, job_maxdmg: 17 },
   job_199: { job_wages: 74.4, job_exp: 63.6, job_luck: 174.963, job_danger: 85, job_maxdmg: 25 },
   job_200: { job_wages: 71.7, job_exp: 63.9, job_luck: 102, job_danger: 47, job_maxdmg: 60 },
-  job_201: { job_wages: 69, job_exp: 65.2, job_luck: 110.963, job_danger: 72, job_maxdmg: 50 },
+  job_201: { job_wages: 68.9, job_exp: 65.2, job_luck: 110.963, job_danger: 72, job_maxdmg: 50 },
   job_202: { job_wages: 72.6, job_exp: 66.7, job_luck: 180, job_danger: 98, job_maxdmg: 75 },
   job_203: { job_wages: 76.8, job_exp: 62.4, job_luck: 124.964, job_danger: 43, job_maxdmg: 9 },
-  job_204: { job_wages: 75.2, job_exp: 64.5, job_luck: 140, job_danger: 71, job_maxdmg: 70 },
-  job_205: { job_wages: 76.5, job_exp: 66.7, job_luck: 150, job_danger: 97, job_maxdmg: 50 }
+  job_204: { job_wages: 75.0, job_exp: 64.5, job_luck: 140, job_danger: 71, job_maxdmg: 70 },
+  job_205: { job_wages: 76.3, job_exp: 66.7, job_luck: 150, job_danger: 97, job_maxdmg: 50 }
 }
