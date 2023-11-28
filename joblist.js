@@ -78,6 +78,7 @@ TWDS.TWDBcalcProductRate = function (pts, mal, magic, mot, fac) {
 }
 TWDS.joblist.initDisplay = function (container, serverdata, isupdate) {
   const charPremium = Number(Premium.hasBonus('character'))
+  const moneyPremium = Number(Premium.hasBonus('money'))
   const duration = TWDS.joblist.curJobDuration
   let durationIdx = 0
   if (duration === 600) durationIdx = 1
@@ -213,12 +214,22 @@ TWDS.joblist.initDisplay = function (container, serverdata, isupdate) {
 
     td = document.createElement('td')
     tr.appendChild(td)
-    td.textContent = serverdata.jobs[jobId].durations[durationIdx].money
     td.dataset.field = 'money'
-    td.title = '$' + serverdata.jobs[jobId].durations[0].money + '/' +
-      serverdata.jobs[jobId].durations[1].money + '/' +
-      serverdata.jobs[jobId].durations[2].money +
-        ' ' + _('JOBLIST_15101', ' (15s/10m/1h)')
+    if (useBest) {
+      let wage3600 = TWDS.TWDBcalcWage(curBrutto, difficulty, TWDS.jobData['job_' + jobId].job_wages, mot, 1)
+      if (moneyPremium) wage3600 *= 1.5
+      const wage15 = Math.ceil(wage3600 / 10)
+      const wage600 = Math.ceil(wage3600 * 0.471) // Uh. magic constant.
+      td.textContent = Math.round(duration === 3600 ? wage3600 : (duration === 15 ? wage15 : wage600))
+      td.title = '$' + wage15 + '/' + wage600 + '/' + wage3600 +
+          ' ' + _('JOBLIST_15101', ' (15s/10m/1h)')
+    } else {
+      td.textContent = serverdata.jobs[jobId].durations[durationIdx].money
+      td.title = '$' + serverdata.jobs[jobId].durations[0].money + '/' +
+        serverdata.jobs[jobId].durations[1].money + '/' +
+        serverdata.jobs[jobId].durations[2].money +
+          ' ' + _('JOBLIST_15101', ' (15s/10m/1h)')
+    }
 
     td = document.createElement('td')
     tr.appendChild(td)
