@@ -432,11 +432,13 @@ TWDS.marketwindow.filter = function (mode, cat) {
     }
     // if the thing has a usebonus, then it has to match that bonus or "bonus".
     if (item.usebonus) {
-      if (mode === 'bonus') continue
-      if (!TWDS.quickusables.match(item, mode)) {
-        $(p[i]).hide()
+      if (mode !== 'missing') {
+        if (mode === 'bonus') continue
+        if (!TWDS.quickusables.match(item, mode)) {
+          $(p[i]).hide()
+        }
+        continue
       }
-      continue
     }
     if (mode === 'bonus') {
       if (!TWDS.marketwindow.hasBonus(item)) { $(p[i]).hide() }
