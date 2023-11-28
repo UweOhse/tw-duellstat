@@ -91,7 +91,6 @@ TWDS.fbchat.clickhelper = function (ev) {
   }
 }
 
-/*
 TWDS.fbchat.boosters = {}
 TWDS.fbchat.getonebooster = function (data, finalize) {
   Ajax.remoteCallMode('profile', 'init', {
@@ -120,52 +119,52 @@ TWDS.fbchat.getonebooster = function (data, finalize) {
 }
 TWDS.fbchat.markplayer = function (str) {
 
-};
+}
 TWDS.fbchat.markboosters = function () {
   const data = JSON.parse(window.sessionStorage.TWDS_fbboosters)
-  let fbw=TWDS.fbchat.fbw
-  console.log("data",data);
-  console.log("fbw",fbw);
-  for (let id of Object.keys(data)) {
-    for (let j=0;j<fbw.characters.length;j++) {
-      if (fbw.characters[j].westPlayerId===id) {
-        let cid=fbw.characters[j].characterid
-        let icon=fbw.charIcons[cid];
-        console.log("XX",id,j,cid,icon);
+  const fbw = TWDS.fbchat.fbw
+  console.log('data', data)
+  console.log('fbw', fbw)
+  for (const id of Object.keys(data)) {
+    for (let j = 0; j < fbw.characters.length; j++) {
+      if (fbw.characters[j].westPlayerId === id) {
+        const cid = fbw.characters[j].characterid
+        const icon = fbw.charIcons[cid]
+        console.log('XX', id, j, cid, icon)
         if (icon && icon[0]) {
-          let color1=null
-          let color2=null
-          let color3=null
-          if (data[id].dmg>=200) {
-            color2="f"
-          } else if (data[id].dmg>=150) {
-            color2="c"
-          } else if (data[id].dmg>=100) {
-            color2="a"
-          } else if (data[id].dmg>=50) {
-            color2="8"
+          let color1 = null
+          let color2 = null
+          let color3 = null
+          if (data[id].dmg >= 200) {
+            color2 = 'f'
+          } else if (data[id].dmg >= 150) {
+            color2 = 'c'
+          } else if (data[id].dmg >= 100) {
+            color2 = 'a'
+          } else if (data[id].dmg >= 50) {
+            color2 = '8'
           }
-          if (data[id].off>=15) {
-            color1="f"
-          } else if (data[id].off>=10) {
-            color1="c"
-          } else if (data[id].off>=5) {
-            color1="8"
+          if (data[id].off >= 15) {
+            color1 = 'f'
+          } else if (data[id].off >= 10) {
+            color1 = 'c'
+          } else if (data[id].off >= 5) {
+            color1 = '8'
           }
-          if (data[id].def>=15) {
-            color3="f"
-          } else if (data[id].def>=10) {
-            color3="c"
-          } else if (data[id].def>=5) {
-            color3="8"
+          if (data[id].def >= 15) {
+            color3 = 'f'
+          } else if (data[id].def >= 10) {
+            color3 = 'c'
+          } else if (data[id].def >= 5) {
+            color3 = '8'
           }
-          console.log("icon",icon,"colors",color1,color2,color3, "data", data[id]);
-          if (color1!==null || color2!==null || color3!==null) {
-            let color="";
-            if (color1) {color+=color1} else {color+="0"};
-            if (color2) {color+=color2} else {color+="0"};
-            if (color3) {color+=color3} else {color+="0"};
-            icon[0].style.outline="2px solid #"+color;
+          console.log('icon', icon, 'colors', color1, color2, color3, 'data', data[id])
+          if (color1 !== null || color2 !== null || color3 !== null) {
+            let color = ''
+            if (color1) { color += color1 } else { color += '0' };
+            if (color2) { color += color2 } else { color += '0' };
+            if (color3) { color += color3 } else { color += '0' };
+            icon[0].style.outline = '2px solid #' + color
           }
         }
       }
@@ -177,8 +176,8 @@ TWDS.fbchat.getboosters = function () {
   const data = JSON.parse(window.sessionStorage.TWDS_fbplayers)
   const finalize = function () {
     console.log('all boosters', TWDS.fbchat.boosters)
-    window.sessionStorage.TWDS_fbboosters=JSON.stringify(TWDS.fbchat.boosters);
-    TWDS.fbchat.markboosters();
+    window.sessionStorage.TWDS_fbboosters = JSON.stringify(TWDS.fbchat.boosters)
+    TWDS.fbchat.markboosters()
   }
   for (let i = 0; i < data.length; i++) {
     setTimeout(function () {
@@ -186,7 +185,7 @@ TWDS.fbchat.getboosters = function () {
     }, 125 * i + Math.floor(i / 10) * 1000)
   }
 }
-*/
+
 TWDS.fbchat.startfunc = function () {
   TWDS.registerSetting('bool', 'misc_fortbattle_chatext',
     TWDS._('FBCHAT_SETTING', 'Add health point information to the fort battle chat.'),
