@@ -1,6 +1,14 @@
 body.TWDS_large_inventory {
   #windows .inventory {
     width: 724px;
+    &.TWDS_filters_active {
+      .TWDS_filter_configure {
+        outline:2px solid red;
+      }
+      .TWDS_maybefiltered {
+        box-shadow: 0 2px red
+      }
+    }
     .tw2gui_inner_window_bg {
       background:inherit;
     }
@@ -24,6 +32,54 @@ body.TWDS_large_inventory {
         }
       }
     }
+    .TWDS_filter_configure {
+      font-size:200%;
+      font-weight:bold;
+      text-align:center;
+      color:white;
+    }
+    table.TWDS_inv_filterselect {
+      position: absolute;
+      z-index: 3;
+      right: 0;
+      top: 0;
+      width: auto;
+      height: auto;
+      border: 3px solid #745434;
+      background: url("/images/interface/wood_texture_dark.jpg") 0 0 repeat;
+      border-collapse: collapse;
+      td:first-child, 
+      th:first-child {
+        padding-left:4px;
+      }
+      td:last-child, 
+      th:last-child {
+        padding-right:4px;
+      }
+      tr.filterhead th {
+        position:relative;
+        button {
+          position:absolute;
+          right:0;
+        }
+      }
+      td {
+        border-bottom:1px solid #8d6c51;
+        color:white;
+        padding-top:2px;
+        padding-right:3px;
+      }
+      td:nth-child(3) {
+        padding-right:1em;
+      }
+      th {
+        color:white;
+        padding-top:8px;
+      }
+      tr:nth-child(1) th {
+        padding-top:2px;
+      }
+    }
     .filters {
       width: calc(258px + 420px);
       background: url("/images/interface/wood_texture_dark.jpg") 0 0 repeat-x;
@@ -33,7 +89,15 @@ body.TWDS_large_inventory {
       }
       .TWDS_filter {
         width:36px;
-        height:36px;
+        height:38px;
+        margin-top:2px;
+        border-image-source: linear-gradient(to bottom right, #aa8e69, #745434, #8d6c51, #51361e);
+        border-image-slice: 1;
+        border-width: 2px;
+        margin-top: 2px;
+        border-style: solid;
+        transform:scale(0.85);
+
         &.TWDS_filter_recipe {
           background-image: url("/images/items/recipe/recipe_cook.png"),
             url("/images/items/recipe/recipe_smith.png"),
@@ -52,7 +116,7 @@ body.TWDS_large_inventory {
           background-size:63%;
           background-repeat:no-repeat;
         }
-        &.TWDS_filter_duplicates {
+        &.TWDS_filter_all {
           background-image:url("/images/items/yield/item_53356.png");
           background-size:99%;
           background-repeat:no-repeat;
