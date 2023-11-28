@@ -291,7 +291,6 @@ TWDS.getComboBonus = function (combo) {
           `${setlist[setcode].name} (#${one.things})`)
     }
   }
-  console.log('total bonus', allBonus)
   return allBonus
 }
 TWDS.getWearBonus = function () {
