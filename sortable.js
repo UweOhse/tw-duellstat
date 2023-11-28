@@ -51,11 +51,11 @@ TWDS.sortable.doReal = function (clickedele, forcemul) {
   const rows = [...TWDS.q('tbody tr:not(.sortgrouped)', tab)]
   const cursort = tab.dataset.cursort || ''
   const curmult = parseInt(tab.dataset.curmult) || 1
-  let mult=1
+  let mult = 1
 
   forcemul = forcemul || 0
   if (forcemul) {
-    mult=forcemul
+    mult = forcemul
   } else {
     if (cursort === sel) { // click on the same head: reverse sort order
       mult = curmult * -1
@@ -67,9 +67,9 @@ TWDS.sortable.doReal = function (clickedele, forcemul) {
       }
     }
     if (tab.dataset.TWDS_ordersavekey) {
-      let k=tab.dataset.TWDS_ordersavekey
-      localStorage[k+"_sel"]=sel
-      localStorage[k+"_mult"]=mult
+      const k = tab.dataset.TWDS_ordersavekey
+      localStorage[k + '_sel'] = sel
+      localStorage[k + '_mult'] = mult
     }
   }
   tab.dataset.cursort = sel
