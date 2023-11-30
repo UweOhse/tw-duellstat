@@ -1,82 +1,51 @@
-.TWDS_popup_enhance2 {
-  float:right;
-  width:40px;
-  height:auto;
-}
 .TWDS_iteminfo_popuparea {
   float:left;
   border:2px solid black;
 }
-.TWDS_enhanced_itempopup {
-  display:grid;
-  grid-template-columns:1fr;
-  aside {
-    display:none;
-  }
-  &.TWDS_with_set {
-    aside {
-      display:block;
-      .topdivider {
-        display:block;
-      }
-    }
+
+.inventory_popup.TWDS_enhanced {
+  h2 {
+   font-size:110%;
   }
   &.TWDS_with_set_bonus {
-    grid-template-columns:1fr 1fr;
-    aside {
-      display:block;
-      grid-row:1/4;
+    display:grid;
+    max-width:500px;
+    grid-template-columns: 1fr;
+    column-gap:1em;
+    .invPopup_head { grid-column:1; grid-row:1 }
+    .invPopup_body { grid-column:1; grid-row:2 }
+    .invPopup_foot { grid-column:1; grid-row:3 }
+    .itemsetinfo {
       grid-column:2;
-      .topdivider {
-        display:none;
-      }
+      grid-row-start:1;
+      grid-row-end:3;
     }
-  }
-  padding:5px 10px;
-  > * {
-    width:225px;
-  }
-  .divider {
-    height:8px;
-    background:url('/images/fort/battle/divider.png') no-repeat;
-    background-position:center;
-    margin:1em auto;
+    .item_set_bonus {
+      margin-top:0.5em;
+    }
   }
   ul {
-      list-style-type:none;
+    list-style-type: none;
   }
-  aside {
-    ul {
-      list-style-type:none;
+  .inventory_popup_prices {
+    margin-top:0.5em;
+  }
+  .invPopup_head {
+    display:grid;
+    max-height:none;
+    height: auto;
+    grid-template-columns: 1fr;
+    .TWDS_popup_enhance2 {
+      width:40px;
+      height:auto;
+      position:absolute;
+      top:0px;
+      right:1px;
+      z-index:3;
     }
-    .set_bonus {
-      margin-top:1em;
-    }
-  }
-
-
-  header h1,
-  aside h2 { 
-    color:#070;
-    font-size:1em;
-    text-align:center;
-    display:block;
-  }
-  header {
-    grid-row:1;
-    grid-column:1;
-    .twds_icon {
-      height: 93px;
-      width: 93px;
-      box-sizing:border-box;
-      padding-top:8px;
-      background-image: url('/images/inventory/foot_head_animal.png');
-      margin: 0 auto;
-      text-align:center;
+    .inventory_popup_icon {
       position:relative;
-      > .item {
-        visibility:hidden; // someone inserts that.
-      }
+      grid-row:1;
       .twds_count {
         position:absolute;
         left:3px;
@@ -87,10 +56,16 @@
         color:white;
         min-width:23px;
       }
+
       .item_level {
         position:absolute;
+        display: block;
+        top:3px;
         left:3px;
-        top:5px;
+        span {
+          box-shadow: 1px 1px 2px black;
+          border-radius: 0 2px 0 2px;
+        }
         background: url(/images/items/item_level.png) 0 50% no-repeat;
         color:white;
         text-shadow: black -1px 0 1px, black 0 1px 1px, black 1px 0 1px, black 0 -1px 1px;
@@ -106,128 +81,17 @@
     }
     .TWDS_id {
       margin-top:2px;
-      margin-bottom:2px;
-      color:blue;
-      text-align:center;
-    }
-    .eventdata {
-      text-align:center;
-      color:#840;
-      span:first-child {
-        padding-right:0.5em;
-      }
-    }
-    .type {
-      text-align:center;
-      font-style:italic;
-      font-size:8pt;
-    }
-  }
-  main {
-    grid-row:2;
-    grid-column:1;
-    .avgdamage {
-      color:green;
-      &::before {
-        content:" ("
-      }
-      &::after {
-        content:")"
-      }
-    }
-    .itembonus {
-      margin-top:0.5em;
-      color:#070;
-      > span {
-        display:block;
-      }
-    }
-    .inventory_popup_bonus_attr {
-      > span {
-        display:block;
-      }
-    }
-    .itembonus + .inventory_popup_fortbonus {
-      margin-top:0.5em;
-    }
-    .inventory_popup_fortbonus {
-      display:block;
-    }
-    .inventory_popup_fortbonus_skill {
-      display:block;
-    }
-  }
-  footer {
-    grid-row:3;
-    grid-column:1;
-    font-size:11px;
-    text-align:center;
-    .prices {
-        text-align:center;
-    }
-    .impossible {
-      color:#9008;
-      text-decoration: line-through;
-    }
-    .possible {
-      color:green;
-    }
-    .auction_status {
-      margin-top:1em;
-    }
-    .requirements {
-      text-align:left;
-      display:block;
-      margin-top:0.5em;
-      span {
-        display:block;
-      }
-    }
-    .jobinfo {
-      .onejob {
-        display:block;
-        .yield {
-          padding-left:0.25em;
-         }
-        .yield::after {
-          content:"%";
-        }
-      }
-    }
-  }
-}
-
-.inventory_popup.TWDS_enhanced {
-  .invPopup_head {
-    display:grid;
-    max-height: none;
-    height: auto;
-    grid-template-columns: 1fr;
-    .inventory_popup_icon {
-      position:relative;
-      grid-row:1;
-      div.item {
-        span.count {
-          display: block;
-          top:74px
-        }
-      }
-      .item_level {
-        position:absolute;
-        display: block;
-        top:3px;
-        left:3px;
-        span {
-          box-shadow: 1px 1px 2px black;
-          border-radius: 0 2px 0 2px;
-        }
-      }
-    }
-    .TWDS_id {
-      margin-top:2px;
       grid-row:2;
       margin-bottom:2px;
       color:blue;
+    }
+    .TWDS_eventdata {
+      grid-row:3;
+      font-style:italic;
+      font-size:smaller;
+      .event {
+        padding-left:0.25em;
+      }
     }
   }
   .TWDS_avgdamage {
@@ -237,6 +101,67 @@
     }
     &::after {
       content:")"
+    }
+  }
+  br + br {
+    display:none;
+  }
+  .invPopup_foot {
+    margin-top:0.33em;
+  }
+  .jobinfo {
+    text-align:center;
+    margin-top:0.33em;
+    .onejob {
+      display:block;
+      span.name {
+        padding-right:0.25em;
+      }
+    }
+  }
+  .recipeinfo {
+    display:grid;
+    .profinfo {
+      grid-row:1;
+      grid-column:1;
+      width:60px;
+      height:60px;
+      position:relative;
+      background-size:contain;
+      background-position:center center;
+      &.profession_1 {
+        background-image:url(/images/items/recipe/recipe_cook.png);
+      }
+      &.profession_2 {
+        background-image:url(/images/items/recipe/recipe_quack.png);
+      }
+      &.profession_3 {
+        background-image:url(/images/items/recipe/recipe_smith.png);
+      }
+      &.profession_4 {
+        background-image:url(/images/items/recipe/recipe_sattle.png);
+      }
+      &:after {
+        display:block;
+        content:attr(data-level);
+        position:absolute;
+        left:0;
+        top:0;
+        border:1px solid #888;
+        left: 3px;
+        top: 5px;
+        border-radius: 0 2px 0 2px;
+        box-shadow: 1px 1px 2px #000000;
+        background-color: rgba(127, 111, 85, 0.7);
+        color: white;
+      }
+    }
+    .rsinfo {
+      grid-row:1;
+      grid-column:2;
+      display:flex;
+      flex-direction:row;
+      flex-wrap:wrap;
     }
   }
 }
