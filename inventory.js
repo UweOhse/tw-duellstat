@@ -277,7 +277,7 @@ TWDS.inventory.handleconfigureclick = function (eventdata) {
       last: td,
       children: [
         { nodeName: 'input', type: 'radio', name: key, value: 1, onchange: changer, checked: val === 1 },
-        { nodeName: 'span', textContent: 'is' }
+        { nodeName: 'span', textContent: TWDS._('INVENTORY_IS', 'is') }
       ]
     })
     td = TWDS.createEle('td', { last: tr })
@@ -285,7 +285,7 @@ TWDS.inventory.handleconfigureclick = function (eventdata) {
       last: td,
       children: [
         { nodeName: 'input', type: 'radio', name: key, value: 0, onchange: changer, checked: val === 0 },
-        { nodeName: 'span', textContent: 'ignore' }
+        { nodeName: 'span', textContent: TWDS._('INVENTORY_IGNORE', 'ignore') }
       ]
     })
     td = TWDS.createEle('td', { last: tr })
@@ -293,7 +293,7 @@ TWDS.inventory.handleconfigureclick = function (eventdata) {
       last: td,
       children: [
         { nodeName: 'input', type: 'radio', name: key, value: -1, onchange: changer, checked: val === -1 },
-        { nodeName: 'span', textContent: 'is not' }
+        { nodeName: 'span', textContent: TWDS._('INVENTORY_ISNOT', 'is not') }
       ]
     })
     TWDS.createEle('td', { last: tr, textContent: TWDS._(d.trans, d.text) })
@@ -316,7 +316,7 @@ TWDS.inventory.handleconfigureclick = function (eventdata) {
       last: td,
       children: [
         { nodeName: 'input', type: 'radio', name: 'sortorder', value: '+' + key, onchange: sortchanger, checked: TWDS.inventory.sortorder === '+' + key },
-        { nodeName: 'span', textContent: '+ / up' }
+        { nodeName: 'span', textContent: TWDS._('INVENTORY_UP', '+ / up') }
       ]
     })
     td = TWDS.createEle('td', { last: tr })
@@ -325,7 +325,7 @@ TWDS.inventory.handleconfigureclick = function (eventdata) {
       last: td,
       children: [
         { nodeName: 'input', type: 'radio', name: 'sortorder', value: '-' + key, onchange: sortchanger, checked: TWDS.inventory.sortorder === '-' + key },
-        { nodeName: 'span', textContent: '- / down' }
+        { nodeName: 'span', textContent: TWDS._('INVENTORY_DOWN', '- / down') }
       ]
     })
     TWDS.createEle('td', { last: tr, textContent: TWDS._(d.trans, d.text) })
@@ -396,7 +396,7 @@ TWDS.inventory.open2 = function (dw, clickhandler, opts) {
       ele.classList.add('TWDS_maybefiltered')
     }
   }
-  if (filters && !found) {
+  if (filters && !found && TWDS.settings.inventory) {
     TWDS.createEle({
       nodeName: 'div.TWDS_filter.TWDS_filter_all.TWDS_maybefiltered',
       dataset: { filter: 'all' },
