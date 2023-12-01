@@ -319,11 +319,15 @@ TWDS.speedcalc.doit = function (mode, keephp) {
       if (sethp >= needhp) {
         bestPoints = spd
         best = sets[i]
+        /*
         console.log('better:', TWDS.describeItemCombo(TWDS.speedcalc.getItems(sets[i])), sets[i],
           TWDS.speedcalc.getItems(sets[i]), spd)
+        */
+      /*
       } else {
         console.log('better/nothp:', TWDS.describeItemCombo(TWDS.speedcalc.getItems(sets[i])), sets[i],
           TWDS.speedcalc.getItems(sets[i]), spd, 'hp', sethp, '<', needhp)
+      */
       }
     }
   }
@@ -348,12 +352,13 @@ TWDS.speedcalc.doit = function (mode, keephp) {
     TWDS.dolog('info', 'SpeedCalc: usedHeapSize @end', m1.usedJSHeapSize, 'delta', m1.usedJSHeapSize - m0.usedJSHeapSize)
   }
   TWDS.dolog('info', 'SpeedCalc: took ' + (end - start) + ' ms')
+  // console.log("returning bi",bi);
   return bi
 }
 TWDS.speedcalc.getcombohealthpoints = function (combo) {
   const itemids = TWDS.speedcalc.getItems(combo)
   const bo = TWDS.bonuscalc.getComboBonus(itemids)
-  return bo.health + bo.strength
+  return ( bo.health || 0) + ( bo.strength || 0 )
 }
 TWDS.speedcalc.fillempty = function (sets, bestItems, bonusItems) {
   let usedSlots; let container; const pimpedSets = []
