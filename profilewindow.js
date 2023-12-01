@@ -165,12 +165,14 @@ TWDS.profilewindow.init = function (data, t) {
         const e = rdata.ranking[i]
         if (e.player_id === pid) {
           const pp = TWDS.q1('.pp-prof', that.window[0])
-          TWDS.createEle({
-            nodeName: 'div.TWDS_craftpoints',
-            textContent: e.profession_skill,
-            last: pp
-          })
-          pp.title = pp.title + ' ' + e.profession_skill
+          if (pp) {
+            TWDS.createEle({
+              nodeName: 'div.TWDS_craftpoints',
+              textContent: e.profession_skill,
+              last: pp
+            })
+            pp.title = pp.title + ' ' + e.profession_skill
+          }
         }
       }
     })
