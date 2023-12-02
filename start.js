@@ -1,7 +1,7 @@
 const TWDS = { }
 
-TWDS.scriptname = 'clothcache (ex-duellstat)'
-TWDS.scriptnameTitle = 'Clothcache (formerly Duellstat)'
+TWDS.scriptname = 'clothcache'
+TWDS.scriptnameTitle = 'Clothcache'
 TWDS.scriptnameMiniTitle = 'Clothcache'
 TWDS.window = null
 TWDS.settings = null
