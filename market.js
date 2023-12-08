@@ -376,10 +376,12 @@ TWDS.marketwindow.enhanceit = function (thing) {
 
 TWDS.marketwindow.showwrapper = function () {
   const thing = this._TWDS_marketwindow_backup_show()
-  if (this.divMain.attr('id') === 'market_createoffer_window') {
-    window.setTimeout(function () { // why does clothcalc does that?
-      TWDS.marketwindow.enhanceit(thing)
-    }, 25)
+  if (TWDS.settings.marketwindow_enhancements) {
+    if (this.divMain.attr('id') === 'market_createoffer_window') {
+      window.setTimeout(function () { // why does clothcalc does that?
+        TWDS.marketwindow.enhanceit(thing)
+      }, 25)
+    }
   }
   return thing
 }
