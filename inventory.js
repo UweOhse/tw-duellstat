@@ -206,7 +206,6 @@ TWDS.inventory.filteritemlist = function (all) {
 TWDS.inventory.getItemsIdsByType = function (type) {
   const all = Bag.items_by_type[type] || []
   const tmp = TWDS.inventory.filteritemlist(all)
-  console.trace('GIIBT', all, tmp, this)
   return tmp
 }
 TWDS.inventory.showfilterwarning = function () {
