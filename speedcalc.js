@@ -358,7 +358,7 @@ TWDS.speedcalc.doit = function (mode, keephp) {
 TWDS.speedcalc.getcombohealthpoints = function (combo) {
   const itemids = TWDS.speedcalc.getItems(combo)
   const bo = TWDS.bonuscalc.getComboBonus(itemids)
-  return ( bo.health || 0) + ( bo.strength || 0 )
+  return (bo.health || 0) + (bo.strength || 0)
 }
 TWDS.speedcalc.fillempty = function (sets, bestItems, bonusItems) {
   let usedSlots; let container; const pimpedSets = []
