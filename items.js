@@ -19,6 +19,8 @@ TWDS.items.popupenhancementReal = function () {
   const orig = window.ItemPopup._twds_backup_getXHTML.call(this)
   if (!TWDS.settings.itempopup_enable) return orig
 
+  if (document.activeElement && document.activeElement.nodeName === 'IFRAME') return orig // band-aid for the forum.php iframe
+
   const wrapper = TWDS.createEle('div')
   wrapper.innerHTML = orig
 
@@ -195,7 +197,7 @@ TWDS.items.popupenhancementReal = function () {
         textContent: str
       })
       if (d.crafteditems === 0) {
-        if (d.jobs.length) {
+        if (d.jobs && d.jobs.length) {
           const a = []
           for (let i = 0; i < d.jobs.length; i++) {
             a.push(TWDS.createEle({
