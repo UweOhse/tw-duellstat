@@ -204,13 +204,25 @@ TWDS.joblist.initDisplay = function (container, serverdata, isupdate) {
 
     td = document.createElement('td')
     tr.appendChild(td)
-    td.textContent = serverdata.jobs[jobId].durations[durationIdx].xp
     td.dataset.field = 'xp'
-    td.title = serverdata.jobs[jobId].durations[0].xp + '/' +
-      serverdata.jobs[jobId].durations[1].xp + '/' +
-      serverdata.jobs[jobId].durations[2].xp +
-        ' ' + _('JOBLIST_XP', 'experience points') +
-        ' ' + _('JOBLIST_15101', ' (15s/10m/1h)')
+    if (useBest) {
+      let xp3600 = TWDS.TWDBcalcExp(curBrutto, difficulty, TWDS.jobData['job_' + jobId].job_exp, mot, 1)
+      const xp600 = Math.ceil(xp3600 * 0.47)
+      const xp15 = Math.ceil(xp3600 / 10)
+      if (Character.charClass === 'worker') {
+        if (charPremium) { xp3600 *= 1.1 } else { xp3600 *= 1.05 }
+      }
+      td.textContent = Math.round(duration === 3600 ? xp3600 : (duration === 15 ? xp15 : xp600))
+      td.title = '$' + xp15 + '/' + xp600 + '/' + xp3600 +
+          ' ' + _('JOBLIST_15101', ' (15s/10m/1h)')
+    } else {
+      td.textContent = serverdata.jobs[jobId].durations[durationIdx].xp
+      td.title = serverdata.jobs[jobId].durations[0].xp + '/' +
+        serverdata.jobs[jobId].durations[1].xp + '/' +
+        serverdata.jobs[jobId].durations[2].xp +
+          ' ' + _('JOBLIST_XP', 'experience points') +
+          ' ' + _('JOBLIST_15101', ' (15s/10m/1h)')
+    }
 
     td = document.createElement('td')
     tr.appendChild(td)
