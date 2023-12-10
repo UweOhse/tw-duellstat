@@ -35,8 +35,17 @@ TWDS.shopsearch.gettowns = async function () {
   })
 }
 
-// works almost like the name implies... but prefers hometown
+// works almost like the name implies... but starts at hometown/old hamburg for better caching
 TWDS.shopsearch.townsbydistance = function (towndata) {
+  const pos = {
+    x: 44056,
+    y: 17479
+  }
+  if (Character.homeTown.town_id) {
+    pos.x = Character.homeTown.x
+    pos.y = Character.homeTown.y
+  }
+
   const a = []
   for (const town of Object.values(towndata)) {
     if (town.id === Character.town_id) {
@@ -44,12 +53,10 @@ TWDS.shopsearch.townsbydistance = function (towndata) {
     }
     a.push({
       id: town.id,
-      wt: Map.calcWayTime(Character.position, town)
+      wt: Map.calcWayTime(pos, town)
     })
   }
   a.sort(function (a, b) {
-    if (a.id === Character.homeTown.town_id) return -1
-    if (b.id === Character.homeTown.town_id) return +1
     return a.wt - b.wt
   })
   return a
@@ -271,9 +278,11 @@ TWDS.shopsearch.updateresult = function (infoarea, table, map, item) {
   if (wnd) wnd.showLoader();
 
   (async function (itemid, wnd, infoarea) {
+    // the search starts around the hometown or old hamburg, to improve caching.
     const item = ItemManager.get(itemid)
     if (!item) {
       infoarea.textContent = 'item #' + itemid + ' not found in the ItemManager. This should not happen.'
+      if (wnd) wnd.hideLoader()
       return
     }
     let mode = 1
@@ -282,7 +291,8 @@ TWDS.shopsearch.updateresult = function (infoarea, table, map, item) {
 
     const townids = await TWDS.shopsearch.searchforitem(itemid, mode)
     if (townids.length === 0) {
-      infoarea.textContent = TWDS._('STORESEARCH_ITEM_NOT_IN_SHOPS', '$itemname$ not found in any town', { $itemname: item.name })
+      infoarea.textContent = TWDS._('STORESEARCH_ITEM_NOT_IN_SHOPS', '$itemname$ not found in any town', { itemname: item.name })
+      if (wnd) wnd.hideLoader()
       return
     }
     const towndata = JSON.parse(localStorage.TWDS_shopsearch_tc || {})
@@ -428,7 +438,7 @@ TWDS.shopsearch.dosearch = function (inputarea, infoarea, table, search, map) {
   }
   if (!found.length) {
     infoarea.textContent = TWDS._('STORESEARCH_NAME_NOT_FOUND', 'Item with name $search$ not found', {
-      name: search
+      search: search
     })
     return
   }
@@ -517,8 +527,9 @@ TWDS.shopsearch.getcontent = function (win) {
   TWDS.createEle({
     nodeName: 'button.clearmap',
     textContent: TWDS._('STORESEARCH_CLEARMAP', 'clear'),
-    title: TWDS._('STORESEARCH_CLEARMAP_TITLE', 'Clear the map'),
+    title: TWDS._('STORESEARCH_CLEARMAP_TITLE', 'Clear the map and result list'),
     onclick: function () {
+      table.textContent = ''
       console.log('clicked clear')
       const images = TWDS.q('img.foreigntown', map)
       for (let i = 0; i < images.length; i++) { images[i].remove() }
