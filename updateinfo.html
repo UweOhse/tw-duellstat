@@ -1,4 +1,46 @@
 <dl>
+<dt>0.60 - 2023-12-10
+<dd>this release comes way to late. I screwed up when implementing various item popup enhancements, and implemented three different versions until i was was content with it.<br>
+   There are still some things i should have done before this release (include a shop search to quest needing shop items, find a useful name for that matori mode, offer the speed set calculations where you'd use them (before jobs, for example), change the strategy for the town crafters search at least for small towns, and so on), but i want to get this release out of my way _now_.
+<dd>New: town shop search (extras): allows to search for an item in shops of the nearby towns(like tw-calc does, but with caching).
+<dd>New: add a function to delete all markers to the minimap (county 15 only).
+<dd>Improvement: chat: set a default color for the chat with /defaultcolor NNN (/defaultcolor 990 sets yellow).
+<dd>Improvement: chat: show all active players with /active command (active means non-idle).
+<dd>Improvement: chat: "/ping foobar" calls foobar to the current chat ("Please come to someroomname (fortbattle chat)"
+<dd>Improvement: the simulator now has a comparison mode and got a major rework.
+<dd>Improvement: the larger inventory got a bit better, replaces TWIR now for me.
+<dd>Improvement: wage calculation in the job list used the current clothes even in best clothes mode.
+<dd>Improvement: craftwindow saves sort order.
+<dd>Improvement: add matoris mode to the result display (instead of "need item" will display "have/need item" (1/1000 wood or so).
+<dd>Improvement: calculator support construction (which is technically not a job, but a job-like hack).
+<dd>Improvement: cloth calc button in the build window (well, it's not a 'button', but it works a such).
+<dd>Improvement: bonus calc / bonus display supports job specific labor points.
+<dd>Improvement: speedcalc has a new HP keeping mode (tries to find a speed set with more than your current HP).
+<dd>Improvement: option to highlight finishable quests.
+<dd>Improvement: option to show all non-idle players as such in the chat, not only the friends.
+<dd>Improvement: pinning window: shows count for all items.
+<dd>Improvement: show usable pinned items having a cooldown on the NotiBar
+<dd>Improvement: if a quest has a wear_change requirement, show a button to wear the thing
+<dd>Improvement: fort battles: show char class icons in the prebattle screen,
+<dd>Improvement: fort battles: show chat topic in prebattle screen
+<dd>Improvement: fort battles: walk to fort option in fortbattleoverview
+<dd>Improvement: fort battles: color marks for players
+<dd>Improvement: show crafting level in the profile window
+<dd>Improvement: show alliance name in the town window
+<dd>Improvement: option to show a towns highest ranking crafters (i'll have to switch to another strategy, because that one is slow in most towns).
+<dd>Improvement: show number of active battles
+<dd>Improvement: settings: show the setting name in the table, for a (still to be implemented) search function
+<dd>Improvement: craftcalc: make the result-area user-selectable (but why is there a difference between chromium and ff?).
+<dd>Improvement: firefox clipboard screwup workaround (navigator.clipboard has no .readText(), docu. talks about clipboard-read permission request query, but the clipboard-read perm. is unknown) in the storage import. Browsers suck.
+<dd>Improvement: iteminfo: show human friendly info too (the popup content).
+<dd>Bugfix: speedcalc based it's bonus calc on all weapons of a set, and sometimes, but not always, found a less than perfect speed set.
+<dd>Bugfix: the "missing item" filter in the market didn't work for usables.
+<dd>Bugfix: fixed some job wages (high level jobs, small changes). It's still not perfect, i suspect the difference between my calc and the game calculation is in the rounding.
+<dd>Bugfix: a border case in the injurywarning (task queue) code could cause it to fail after a page reload.
+<dd>Bugfix: clear imgPath cache after start, in case it is already filled (normal water colors).
+<dd>Bugfix: inventory statistic doubled the "experience in % of a level" value.
+<dd>Bugfix: fixed the incompatibility with TW Big Inventory (though i recommend to use the clothcache inventory).
+<dd>Bugfix: marketwindow enhancements didn't honor the setting, was done always (since about 10 versions).
 <dt>0.59 - 2023-10-31
 <dd>Improvement: you can send to all friends by clicking on the big flower/icon left of the event currency in the top bar.
 <dt>0.58.1 - 2023-10-30
@@ -28,7 +70,7 @@
 <dd>Bugfix: the final message shown after a bulk update of the clothcache (the functions in the settings) contained the word "undefined".
 <dd>Bugfix: the simulator failed if an item combo didn't have a needed attribute.
 
-<dt>0.56 - 2023-10-14 
+<dt class='obsolete-marker'>0.56 - 2023-10-14 
 <dd>Improvement: the market offer window (MOW) now shows the name of the thing in the title, like the travelling merchant sale does.
 <dd>Improvement: the MOW now has a bulk mode. Use this if you trigger the "streak of bad luck" when selling on the market. The bulk mode causes the updates to the inventory and the list of items you sell to be updated only if you paused 8 seconds while selling.
 <dd>Improvement: added a function to the MOW to add some percent of the current price. This is also a workaround for certain worlds where you can't sell named stuff at the minimum price, but have to use the immediate purchase price.
