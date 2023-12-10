@@ -173,7 +173,7 @@ TWDS.items.popupenhancementReal = function () {
     if (ii in TWDS.items.data) {
       const d = TWDS.items.data[ii]
       const ti = d.time * 3600
-      console.log('IPST', d, ti)
+      // console.log('IPST', d, ti)
       let str = ''
       if (d.crafteditems > 0) {
         if (d.founditems) {
