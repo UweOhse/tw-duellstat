@@ -295,7 +295,6 @@ TWDS.itemWearButton = function (id) {
       }
     ]
   })
-  console.log('iWB', t, t.onclick)
   return t
 }
 
