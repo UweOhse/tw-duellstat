@@ -46,11 +46,9 @@ TWDS.buildwindow.startfunc = function () {
   window.BuildWindow.TWDS_backup_init = window.BuildWindow.TWDS_backup_init ||
     window.BuildWindow.init
   window.BuildWindow.init = TWDS.buildwindow.init
-  if (!('misc_buildwindow' in TWDS.settings)) {
-    TWDS.registerSetting('bool', 'misc_buildwindow',
-      TWDS._('BUILDWINDOW_SETTING', 'Add cloth button to the build window.'),
-      false, null, 'misc')
-  }
+  TWDS.registerSetting('bool', 'misc_buildwindow',
+    TWDS._('BUILDWINDOW_SETTING', 'Add cloth button to the build window.'),
+    false, null, 'misc')
 }
 
 TWDS.registerStartFunc(function () {
