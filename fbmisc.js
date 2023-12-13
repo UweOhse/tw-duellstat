@@ -70,7 +70,7 @@ TWDS.fbmisc.renderPreBattle = function (a, b) {
         }
         TWDS.createEle({
           nodeName: 'div.TWDS_topicfromchat',
-          textContent: topic,
+          innerHTML: topic,
           first: pane
         })
       }
