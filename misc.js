@@ -312,8 +312,8 @@ TWDS.misc_sheriff_bounty_namechange2 = function (name) {
             const rewinput = TWDS.q1('#tbsh_iReward')
             if (rewinput) {
               const reward = parseInt(rewinput.value)
-              if (reward < e.duelLevel * 10 || isNaN(reward)) {
-                rewinput.value = e.duelLevel * 10
+              if (reward < e.level * 10 || isNaN(reward)) {
+                rewinput.value = e.level * 10
               }
             }
           }
