@@ -164,9 +164,8 @@ TWDS.pinning.openwindow = function (ev) {
   const ti = TWDS.q1('.textart_title', win.divMain)
   if (ti) {
     const obj = ItemManager.get(1760000)
-    const path = window.to_cdn(obj.image)
     const img = TWDS.createEle('img', {
-      src: path,
+      src: obj.image,
       className: 'TWDS_pinning_bucket',
       style: {
         height: '32px',
@@ -201,9 +200,8 @@ TWDS.pinning.start = function () {
   }
   const tb = TWDS.q1('#ui_topbar')
   const obj = ItemManager.get(1761000)
-  const path = window.to_cdn(obj.image)
   TWDS.createEle('img', {
-    src: path,
+    src: obj.image,
     className: 'TWDS_pinning_starter',
     style: {
       height: '32px',
