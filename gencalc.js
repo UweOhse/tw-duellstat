@@ -46,8 +46,7 @@ TWDS.genCalc.exec = function (bonusNames, skills, include) {
     if (spd > bestPoints) {
       bestPoints = spd
       // best = sets[i]
-      console.log(TWDS.describeItemCombo(TWDS.genCalc.getItems(sets[i])), sets[i],
-        TWDS.genCalc.getItems(sets[i]), spd)
+      // console.log(TWDS.describeItemCombo(TWDS.genCalc.getItems(sets[i])), sets[i], TWDS.genCalc.getItems(sets[i]), spd)
     }
   }
   setsandpoints.sort(function (a, b) {
@@ -423,7 +422,7 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
       const sl = slots[i]
       const it = Wear.get(sl)
       if (it) {
-        // console.log('ADD8', it.obj.name)
+        // console.log('ADD8', it.obj.name,it)
         add(it.obj.item_base_id, it.obj.item_id)
       }
     }
@@ -431,34 +430,39 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
 
   delete itemsByBase[41999] // allmighty ...
   delete itemsByBase[1337] // sword of a thousand truths
+  //console.log("TMP",itemsByBase);
 
   west.common.forEach(itemsByBase, function (items, baseId) {
-    const item = ItemManager.get(items[0])
-    const type = item.getType()
-    if (type === 'right_arm') {
-      if ('range' in bonusNames && item.sub_type !== 'shot') {
-        return
+    for (let i=0;i<items.length;i++) {
+      const item = ItemManager.get(items[i])
+      const type = item.getType()
+      if (type === 'right_arm') {
+        if ('range' in bonusNames && item.sub_type !== 'shot') {
+          return
+        }
+        if ('melee' in bonusNames && item.sub_type !== 'hand') {
+          return
+        }
       }
-      if ('melee' in bonusNames && item.sub_type !== 'hand') {
-        return
+      bestItems[type] = bestItems[type] || []
+      // const value = item.getValue(skills)
+      const value = TWDS.genCalc.getGenValues(item, bonusNames, skills)
+      if (item.getId() === 229000 || item.getId() === 229001) {
+        // console.log('I', item, item.getId, value)
       }
-    }
-    bestItems[type] = bestItems[type] || []
-    // const value = item.getValue(skills)
-    const value = TWDS.genCalc.getGenValues(item, bonusNames, skills)
-    if (item.getId() === 53065000 || item.getId() === 52278000) {
-      // console.log('I', item, item.getId, value)
-    }
 
-    if ((value.theBonus || value.theSecondary) && (item.wearable() || (include & 16))) {
-      bestItems[type].push({
-        item: item,
-        id: item.getId(),
-        base_id: baseId,
-        value: value
-      })
+      if ((value.theBonus || value.theSecondary) && (item.wearable() || (include & 16))) {
+        bestItems[type].push({
+          item: item,
+          id: item.getId(),
+          base_id: baseId,
+          value: value
+        })
+      }
     }
   })
+  // console.log("BI",bestItems);
+
   const other = {}
   const slots = Wear.slots
   for (let i = 0; i < slots.length; i++) {
