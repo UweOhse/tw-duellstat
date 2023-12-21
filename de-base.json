@@ -390,7 +390,7 @@ MARKETWINDOW_BULKMODE_HELP: "Mengen-Modus: Inventar und Verkaufen-Liste im Markt
 MARKETWINDOW_BULKMODE_READ: "Gelesen und verstanden.",
 MARKETWINDOW_OFFERED_MSG: "Die Ware wird zum Kauf angeboten, die Gebühr beträgt $ $fee$.",
 MARKETWINDOW_SURCHARGE: "Aufschlag",
-
+MARKETWINDOW_SELLSTAT: "$entries$ Posten. $num_sold$ verkauft, $num_bid$ mit Gebot, $num_unbid$ ohne. $$dollar_sold$ verkauft, $$dollar_bid$ mit Gebot, $$dollar_unbid$ Rest.",
 
 QUESTLIST_TITLE: "Quests nach Arbeitgebern",
 QUESTLIST_PLEASE_WAIT: "Bitte warten, das dauert etwas",

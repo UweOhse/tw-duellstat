@@ -554,10 +554,10 @@ TWDS.marketwindow.updateCategoryReal = function (category, data) {
   }
   return ret
 }
-TWDS.marketwindow.updateTable = function (data) {
-  return TWDS.marketwindow.updateTableReal(data)
+TWDS.marketwindow.buyupdateTable = function (data) {
+  return TWDS.marketwindow.buyupdateTableReal(data)
 }
-TWDS.marketwindow.updateTableReal = function (data) {
+TWDS.marketwindow.buyupdateTableReal = function (data) {
   console.log('data is', data)
   const ret = MarketWindow.Buy._TWDS_backup_updateTable(data)
   console.log('orig returned', ret)
@@ -605,12 +605,88 @@ if (!r.isFinished) {
   */
   return ret
 }
+TWDS.marketwindow.sellupdateTableReal = function (data) {
+  console.log('SELL', 'data', data)
+  const ret = MarketWindow.Sell._TWDS_backup_updateTable(data)
+  console.log('SELL', 'ret', ret)
+  const stat = {
+    num_sold: 0,
+    num_bid: 0,
+    num_unbid: 0,
+    dollar_sold: 0,
+    dollar_bid: 0,
+    dollar_unbid: 0
+  }
+  for (let i = 0; i < data.length; i++) {
+    const d = data[i]
+    const id = d.item_id
+    const it = ItemManager.get(id)
+    const bidder = d.bidder_player_id
+    if (bidder) {
+      if (d.auction_ends_in) {
+        stat.num_bid++
+        stat.dollar_bid += d.current_bid
+      } else {
+        stat.num_sold++
+        stat.dollar_sold += d.current_bid
+      }
+    } else {
+      stat.num_unbid++
+      if (it.sellable) {
+        stat.dollar_unbid += it.sell_price * d.item_count
+      }
+    }
+  }
+  console.log('posten: ', data.length)
+  console.log('mit gebot: ', stat.w_bid)
+  console.log('ohne gebot: ', stat.wo_bid)
+  console.log('summe gebote: ', stat.dollar_bid)
+  console.log('summe rest: ', stat.dollar_unsold)
+  console.log('this', this, MarketWindow)
+  // paranoia?
+  if (TWDS.settings.market_sellstat && data.length) {
+    if (MarketWindow && MarketWindow.sellTable && MarketWindow.sellTable.divMain && MarketWindow.sellTable.divMain[0]) {
+      const rf = TWDS.q1('.row_foot', MarketWindow.sellTable.divMain[0])
+      if (rf) {
+        let ss = TWDS.q1('.TWDS_sellstat', rf)
+        if (!ss) {
+          for (let i = 0; i < 8; i++) {
+            const t = TWDS.q1('.cell_' + i, rf)
+            if (t) t.remove()
+          }
+          ss = TWDS.createEle({
+            nodeName: 'div.cell_0.TWDS_sellstat',
+            colSpan: 8,
+            first: rf
+          })
+        }
+        ss.textContent = TWDS._('MARKETWINDOW_SELLSTAT',
+          '$entries$ entries. $num_sold$ sold, $num_bid$ w/ bid, $num_unbid$ w/o bid. $$dollar_sold$ sold, $$dollar_bid$ bids, $$dollar_unbid$ rest.', {
+            entries: data.length,
+            num_sold: stat.num_sold,
+            num_bid: stat.num_bid,
+            num_unbid: stat.num_unbid,
+            dollar_sold: stat.dollar_sold,
+            dollar_bid: stat.dollar_bid,
+            dollar_unbid: stat.dollar_unbid
+          }
+        )
+      }
+    }
+  }
+  return ret
+}
+TWDS.marketwindow.sellupdateTable = function (data) {
+  return TWDS.marketwindow.sellupdateTableReal(data)
+}
 
 TWDS.registerStartFunc(function () {
   MarketWindow.Buy._TWDS_backup_updateCategory = MarketWindow.Buy.updateCategory
   MarketWindow.Buy.updateCategory = TWDS.marketwindow.updateCategory
   MarketWindow.Buy._TWDS_backup_updateTable = MarketWindow.Buy.updateTable
-  MarketWindow.Buy.updateTable = TWDS.marketwindow.updateTable
+  MarketWindow.Buy.updateTable = TWDS.marketwindow.buyupdateTable
+  MarketWindow.Sell._TWDS_backup_updateTable = MarketWindow.Sell.updateTable
+  MarketWindow.Sell.updateTable = TWDS.marketwindow.sellupdateTable
   TWDS.registerSetting('int', 'market_buy_perhour_green',
     'Mark offers green if an item costs less then ... dollars per hour of base item collection time',
     0, null, 'Market')
@@ -620,6 +696,9 @@ TWDS.registerStartFunc(function () {
   TWDS.registerSetting('int', 'market_buy_perhour_red',
     'Mark offers red if an item costs more then ... dollars per hour of base item collection time',
     0, null, 'Market')
+  TWDS.registerSetting('bool', 'market_sellstat',
+    'Add a statistic to the market sell window',
+    true, null, 'Market')
 })
 
 TWDS.trader = {}
