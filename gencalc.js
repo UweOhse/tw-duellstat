@@ -430,10 +430,10 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
 
   delete itemsByBase[41999] // allmighty ...
   delete itemsByBase[1337] // sword of a thousand truths
-  //console.log("TMP",itemsByBase);
+  // console.log("TMP",itemsByBase);
 
   west.common.forEach(itemsByBase, function (items, baseId) {
-    for (let i=0;i<items.length;i++) {
+    for (let i = 0; i < items.length; i++) {
       const item = ItemManager.get(items[i])
       const type = item.getType()
       if (type === 'right_arm') {
