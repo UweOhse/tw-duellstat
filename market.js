@@ -7,8 +7,9 @@ TWDS.marketwindow.bulkmodetimeout = -1
 TWDS.marketwindow.createMarketOffer = function (source) {
   // MarketWindow._TWDS_backup_createMarketOffer.apply(this, arguments)
   MarketWindow._TWDS_backup_createMarketOffer(source)
-  console.log('createMarketWindow this', this, 'source', source)
-  TWDS.marketwindow.item = ItemManager.get(source)
+  const itemid = (typeof source === 'number' ? source : $(source).data('itemId'))
+  console.log('createMarketWindow this', this, 'source', source, '#', itemid)
+  TWDS.marketwindow.item = ItemManager.get(itemid)
 }
 TWDS.marketwindow.enhanceit = function (thing) {
   thing.divMain[0].classList.add('TWDS_enhanced') // for utils.js
