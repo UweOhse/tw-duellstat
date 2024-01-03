@@ -15,9 +15,9 @@ TWDS.ranking.config = [
 /* just to document it: this cannot show the diff of the first player on page 2 to the last on page 1.... */
 TWDS.ranking.manipulate = function (bedata, keys, mainfield) {
   if (!bedata.error && bedata.ranking) { // dodge, shoot comes without error or ranking, but with msg
-    let lastv
-    for (let i = 0; i < bedata.ranking.length; i++) {
-      for (let j = 0; j < keys.length; j++) {
+    for (let j = 0; j < keys.length; j++) {
+      let lastv
+      for (let i = 0; i < bedata.ranking.length; i++) {
         const k = keys[j]
         const v = bedata.ranking[i][k]
         bedata.ranking[i][k] = window.format_number(v)
