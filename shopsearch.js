@@ -274,7 +274,6 @@ TWDS.shopsearch.walkhelper = function () {
 
 TWDS.shopsearch.updateresult = function (infoarea, table, map, item) {
   const wnd = wman.getById('TWDS_shopsearch_window')
-  console.log('WND', wnd)
   if (wnd) wnd.showLoader();
 
   (async function (itemid, wnd, infoarea) {
@@ -320,14 +319,14 @@ TWDS.shopsearch.updateresult = function (infoarea, table, map, item) {
         ic.classList.add('linklike')
         ic.title = ic.title + ': ' + item.name
         ic.onclick = TWDS.shopsearch.walkhelper
-        console.log('drew new icon', townid, item.name)
+        // console.log('drew new icon', townid, item.name)
       } else {
         if (ic._mpopup) {
           ic._mpopup.text += ', ' + item.name
-          console.log('added to mpopup', townid, item.name, ic)
+          // console.log('added to mpopup', townid, item.name, ic)
         } else {
           ic.title = ic.title + ', ' + item.name
-          console.log('added to title', townid, item.name, ic)
+          // console.log('added to title', townid, item.name, ic)
         }
       }
       let tr = TWDS.q1('tr.town' + townid, table)
@@ -401,7 +400,6 @@ TWDS.shopsearch.cacheclearbuttontitle = function (ele) {
   ele.title = TWDS._('STORESEARCH_CLEARCACHE_TITLE', 'Clear the cache ($b$ bytes)', { b: bytes })
 }
 TWDS.shopsearch.dosearch = function (inputarea, infoarea, table, search, map) {
-  console.log('dosearch', search)
   infoarea.textContent = ''
   const sel = TWDS.q1('select.specific', inputarea)
   sel.value = 0
@@ -484,7 +482,6 @@ TWDS.shopsearch.getcontent = function (win) {
     nodeName: 'input.search',
     type: 'text',
     onchange: function () {
-      console.log('onchange', this)
       TWDS.shopsearch.dosearch(inputarea, infoarea, table, this.value, map)
     },
     style: {
@@ -530,7 +527,6 @@ TWDS.shopsearch.getcontent = function (win) {
     title: TWDS._('STORESEARCH_CLEARMAP_TITLE', 'Clear the map and result list'),
     onclick: function () {
       table.textContent = ''
-      console.log('clicked clear')
       const images = TWDS.q('img.foreigntown', map)
       for (let i = 0; i < images.length; i++) { images[i].remove() }
     },
@@ -588,7 +584,6 @@ TWDS.shopsearch.getcontent = function (win) {
 
 TWDS.shopsearch.openwindow = function (search) {
   const wid = 'TWDS_shopsearch_window'
-  console.log('SSO', wid)
   let win
   if (wman.isWindowCreated(wid)) {
     win = wman.getById(wid)
@@ -613,9 +608,25 @@ TWDS.shopsearch.openwindow = function (search) {
     }
   }
 }
+TWDS.shopsearch.button = function (id) {
+  const it = ItemManager.get(id)
+  if (!it) return null
+
+  if (!it.tradeable) return null
+
+  return TWDS.createElement({
+    nodeName: 'span',
+    className: 'TWDS_shopsearch_button',
+    dataset: { item_id: id },
+    title: TWDS._('SHOPSEARCHBUTTON_TITLE', 'Search in town shops'),
+    childNodes: [
+      new west.gui.Icon('home').divMain[0]
+    ]
+  })
+}
 TWDS.shopsearch.reload = function (win) {
   if (!win) {
-    return TWDS.shopsearch.open()
+    return TWDS.shopsearch.openwindow()
   }
   const content = TWDS.shopsearch.getcontent(win)
   const old = TWDS.q1('.TWDS_shopsearch_content', win.getMainDiv())
@@ -628,6 +639,10 @@ TWDS.registerStartFunc(function () {
     TWDS._('SHOPSEARCH_EXTRA', 'Shopsearch'),
     TWDS._('SHOPSEARCH_EXTRA_DESC', 'Search for items in the shops')
   )
+  TWDS.delegate(document.body, 'click', '.TWDS_shopsearch_button', function () {
+    const id = this.dataset.item_id
+    TWDS.shopsearch.openwindow(id)
+  })
 })
 
 // vim: tabstop=2 shiftwidth=2 expandtab
