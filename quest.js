@@ -19,6 +19,11 @@ TWDS.quest.renderRequirement = function (req, cls) {
         li.append(x)
         li.addClass('with_bidbutton')
       }
+      x = TWDS.shopsearch.button(jsinfo.id)
+      if (x) {
+        li.append(x)
+        li.addClass('with_shopsearchbutton')
+      }
       const bagitem = Bag.getItemByItemId(jsinfo.id)
       if (bagitem) {
         if (TWDS.settings.quest_show_itemcount) {
