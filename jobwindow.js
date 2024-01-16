@@ -184,6 +184,19 @@ TWDS.jobwindow.initView2 = function () {
     TWDS.jobwindow.ssb3.title = TWDS._('JOBWINDOW_SSB12_TITLE',
       'Start as many jobs as possible in the same motivation class')
   }
+  if (TWDS.settings.jobwindow_quickequipment) {
+    const gen = d.querySelector('.job_bestwearbutton')
+    if (gen) {
+      TWDS.createEle({
+        nodeName: 'div.TWDS_quickequipment_shirt.linklike',
+        onclick: function (e) { TWDS.quickequipment.handlemainclick(e); console.log('false'); e.stopPropagation(); return false },
+        children: [
+          new west.gui.Icon('shirt').divMain[0]
+        ],
+        last: gen
+      })
+    }
+  }
   if (TWDS.settings.jobwindow_show_jobpoints) {
     const progressthing = d.querySelector('.job_progress_jobstars')
     const m = TWDS.createElement({
@@ -452,6 +465,8 @@ TWDS.registerStartFunc(function () {
     })
   EventHandler.listen('taskqueue-task-adding taskqueue-updated taskqueue-updated',
     function () { EventHandler.signal('jobmotivation_change') })
+  TWDS.registerSetting('bool', 'jobwindow_quickequipment',
+    TWDS._('JOBWINDOW_SETTING_QUICKEQUIPMENT', 'Add a quick equipment switch to the jobwindow.'), false, null, 'Jobwindow')
 })
 if (JobWindow.prototype._TWDS_backup_initView) {
   // helper for the reload
