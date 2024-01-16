@@ -43,6 +43,7 @@ TWDS.overlay.show = function () {
       { nodeName: 'div', className: 'dueldata' },
       { nodeName: 'div', className: 'bonusdata' },
       { nodeName: 'div', className: 'battledata' },
+      { nodeName: 'div', className: 'event' },
       { nodeName: 'div', className: 'note', contentEditable: true }
     ],
     beforeend: windows
@@ -365,12 +366,107 @@ TWDS.overlay.getnote = function () {
   if (!text) { text = 'click to edit' }
   return text
 }
+TWDS.overlay.eventdata = null
+TWDS.overlay.event_item_changed = function (payload) {
+  if (!TWDS.overlay.eventdata) return
+  for (let i = 0; i < TWDS.overlay.eventdata.length; i++) {
+    const d = TWDS.overlay.eventdata[i]
+    if (d.item_id === payload.item_id) {
+      d.limited_count = payload.limited_count
+      d.limited_time = payload.limited_time
+      TWDS.info('overlay: updated item', payload.item_id)
+      TWDS.overlay.update()
+      return
+    }
+  }
+  TWDS.overlay.eventdata.push({
+    item_id: payload.item_id,
+    limited_count: payload.limited_count,
+    limited_time: payload.limited_time
+  })
+  TWDS.info('overlay: new item', payload.item_id)
+  TWDS.overlay.update()
+}
+TWDS.overlay.event_item_changed_wrapper = function (x) { TWDS.overlay.event_item_changed(x) }
+TWDS.overlay.event_item_removed = function (itemid) {
+  if (!TWDS.overlay.eventdata) return
+  for (let i = 0; i < TWDS.overlay.eventdata.length; i++) {
+    const d = TWDS.overlay.eventdata[i]
+    if (d.item_id === itemid) {
+      TWDS.overlay.eventdata.splice(i, 1)
+      TWDS.overlay.update()
+      TWDS.info('overlay: removed item', itemid)
+      return
+    }
+  }
+  TWDS.info('overlay: received item_removed for ', itemid, ', which was not in our list')
+  console.log('overlay: received item_removed for ', itemid, ', which was not found in', TWDS.overlay.eventdata)
+  TWDS.overlay.update()
+}
+TWDS.overlay.event_item_removed_wrapper = function (x) { TWDS.overlay.event_item_removed(x) }
+TWDS.overlay.loadeventdatarunning = false
+TWDS.overlay.loadeventdata = function () {
+  if (TWDS.overlay.loadeventdatarunning) return
+  TWDS.overlay.loadeventdatarunning = true
+  Ajax.remoteCallMode('shop_trader', 'index', {
+    source: 'bottom_bar'
+  }, function (json) {
+    TWDS.overlay.loadeventdatarunning = false
+    if (json.error) {
+      return
+    }
+    if (!json.inventory) return
+    if (!json.inventory.hot) return
+    const a = []
+    for (let i = 0; i < json.inventory.hot.length; i++) {
+      const d = json.inventory.hot[i]
+      if (d.limited_time && d.limited_count) {
+        a.push({
+          item_id: d.item_id,
+          limited_time: d.limited_time,
+          limited_count: d.limited_count
+        })
+      }
+    }
+    TWDS.overlay.eventdata = a
+    TWDS.overlay.update()
+    TWDS.info('overlay: loaded event data')
+  })
+}
+TWDS.overlay.getevent = function () {
+  if (!TWDS.overlay.eventdata) {
+    TWDS.overlay.loadeventdata()
+    return
+  }
+  const out = TWDS.createEle('div', {})
+  for (let i = 0; i < TWDS.overlay.eventdata.length; i++) {
+    const d = TWDS.overlay.eventdata[i]
+    const it = ItemManager.get(d.item_id)
+    if (!it) continue
+    const ts = new Date(d.limited_time * 1000).toDateTimeString()
+    if (out.children.length === 0) {
+      TWDS.createEle({
+        nodeName: 'span',
+        textContent: 'Shop:',
+        last: out
+      })
+    }
+    TWDS.createEle({
+      nodeName: 'span.iteminfo',
+      textContent: it.name,
+      title: d.limited_count + ' left, until ' + ts,
+      last: out
+    })
+  }
+  return out.innerHTML
+}
 TWDS.overlay.update = function () {
   const cfg = [
     ['overlay_basics', '.TWDS_overlay .basedata', TWDS.overlay.getbasedata],
     ['overlay_duel', '.TWDS_overlay .dueldata', TWDS.overlay.getdueldata],
     ['overlay_bonus', '.TWDS_overlay .bonusdata', TWDS.overlay.getbonusdata],
     ['overlay_fortbattle', '.TWDS_overlay .battledata', TWDS.overlay.getbattledata],
+    ['overlay_event', '.TWDS_overlay .event', TWDS.overlay.getevent],
     ['overlay_note', '.TWDS_overlay .note', TWDS.overlay.getnote]
   ]
   for (let i = 0; i < cfg.length; i++) {
@@ -464,11 +560,19 @@ TWDS.registerStartFunc(function () {
     true, TWDS.overlay.settingchanged, 'Overlay', null, 5)
   TWDS.registerSetting('bool', 'overlay_fortbattle', 'show fortbattle values in the overlay (the fortbattle values in the current equipment)',
     false, TWDS.overlay.settingchanged, 'Overlay', null, 6)
+  TWDS.registerSetting('bool', 'overlay_event', 'show event specific information (work in progress)',
+    false, TWDS.overlay.settingchanged, 'Overlay', null, 7)
   TWDS.registerSetting('bool', 'overlay_note', 'show an editable notebook on the overlay',
-    true, TWDS.overlay.settingchanged, 'Overlay', null, 6)
+    true, TWDS.overlay.settingchanged, 'Overlay', null, 8)
   // inventory_changed is called after crafting, when the craft skill may have changed.
   window.EventHandler.listen(['wear_changed', 'character_level_up', 'inventory_changed'], function () {
     TWDS.overlay.update()
+  })
+  window.EventHandler.listen(['pshop_item_changed'], function (payload) {
+    TWDS.overlay.event_item_changed_wrapper(payload)
+  })
+  window.EventHandler.listen(['pshop_item_removed'], function (payload) {
+    TWDS.overlay.event_item_removed_wrapper(payload)
   })
 
   TWDS.delegate(document, 'click', '.TWDS_overlay', function (ev) {
