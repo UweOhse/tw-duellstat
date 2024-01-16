@@ -271,7 +271,7 @@ TWDS.genCalc.getItems = function (set) {
     for (let j = 0; j < it.length; j++) {
       const one = ItemManager.get(it[j])
       if (one.type === sl) {
-        o[i] = it[j]
+        o.push(it[j])
       }
     }
   }
