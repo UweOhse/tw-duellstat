@@ -54,12 +54,12 @@ TWDS.trackbar.backgroundjob = function () {
   const updateOneTracker = function (ele) {
     const have = ele.dataset.have
     const want = ele.dataset.want
-    if (typeof want === "string" && isNaN(parseInt(want))) {
+    if (typeof want === 'string' && isNaN(parseInt(want))) {
       // infinity image for XP… Character.getMaxExperience4Level() does that.
-      ele.dataset.text=""
-      ele.title= want
+      ele.dataset.text = ''
+      ele.title = want
       ele.style = '--twds-progress: ' + 100 + '%'
-      return;
+      return
     }
     const percent = (100 * have / want).toFixed(1)
     let todo
