@@ -10,12 +10,14 @@ CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js $(LANGSJSON) t
    altinventory.js friends.js calculator.js townlog.js craftwindow.js simulator.js bufflist.js achievements.js \
    iteminfo.js fbchat.js invstat.js pinning.js duelinfo.js calendar.js vipendtime.js inventory.js \
    fbmisc.js townwindow.js profilewindow.js buildwindow.js shopsearch.js ranking.js \
+   quickequipment.js allimap.js stathist.js nightmode.js \
    sortable.js extras.js main.js 
 
 SASS_SOURCES=utils.sass minimap.sass joblist.sass market.sass craftwindow.sass quest.sass jobwindow.sass simulator.sass \
   craftcalc.sass itemsettab.sass extras.sass bufflist.sass achievements.sass items.sass iteminfo.sass storage.sass \
   duelinfo.sass misc.sass pinning.sass calendar.sass vipendtime.sass inventory.sass settingstab.sass fbmisc.sass \
-  townwindow.sass profilewindow.sass speedcalc.sass showset.sass buildwindow.sass shopsearch.sass
+  townwindow.sass profilewindow.sass speedcalc.sass showset.sass buildwindow.sass shopsearch.sass fortbuild.sass \
+  quickequipment.sass overlay.sass
 
 CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
