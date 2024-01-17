@@ -39,7 +39,7 @@ TWDS.wuw.initWUWDisplay = function (container) {
 
   const data = JSON.parse(ls)
   for (const [id, one] of Object.entries(data)) {
-    const count = one.ds.length + one.eq.length + one.job.length
+    const count = one.ds.length + one.eq.length + one.job.length + one.dyn.length
     if (count === 0) { continue }
     const item = ItemManager.get(id)
     if (!item) { continue }
@@ -68,6 +68,11 @@ TWDS.wuw.initWUWDisplay = function (container) {
       if (one.ds.length) {
         if (flag) { h += ', ' }
         h += one.ds.length + ' ' + TWDS.scriptname + ' sets'
+        flag = 1
+      }
+      if (one.dyn.length) {
+        if (flag) { h += ', ' }
+        h += one.dyn.length + ' ' + TWDS.scriptname + ' dynamic sets'
         flag = 1
       }
       td.innerHTML = h
@@ -126,6 +131,21 @@ TWDS.wuw.initWUWDisplay = function (container) {
         const span = document.createElement('span')
         span.textContent = ds
         span.title = TWDS.scriptname + ' equipment set'
+        td.appendChild(span)
+        counteq++
+      }
+    }
+    if (one.dyn.length) {
+      for (const dyn of one.dyn) {
+        // some name
+        if (counteq > 0) {
+          const comma = document.createElement('span')
+          comma.textContent = ', '
+          td.appendChild(comma)
+        }
+        const span = document.createElement('span')
+        span.textContent = dyn
+        span.title = TWDS.scriptname + ' dynamic equipment set'
         td.appendChild(span)
         counteq++
       }
