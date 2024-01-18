@@ -127,7 +127,7 @@ TWDS.fbchat.markboosters = function () {
     const fbw = TWDS.fbdata.fbw[fortid]
     console.log('fbw', fbw)
     for (let id of Object.keys(data)) {
-      id=parseInt(id);
+      id = parseInt(id)
       for (let j = 0; j < fbw.characters.length; j++) {
         if (parseInt(fbw.characters[j].westPlayerId) === id) {
           const cid = fbw.characters[j].characterid
