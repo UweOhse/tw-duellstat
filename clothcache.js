@@ -118,7 +118,8 @@ TWDS.clothcache.recalcItemUsage = function () {
       items[item] = {
         job: [],
         eq: [],
-        ds: []
+        ds: [],
+        dyn: []
       }
     }
     items[item][key].push(num)
@@ -141,6 +142,11 @@ TWDS.clothcache.recalcItemUsage = function () {
     const o = JSON.parse(s)
     for (const ii of o.item_ids) {
       add2item(ii, 'ds', o.name)
+    }
+  }
+  for (const [id, users] of Object.entries(TWDS.quickequipment.getused())) {
+    for (let i = 0; i < users.length; i++) {
+      add2item(id, 'dyn', users[i])
     }
   }
 
@@ -185,6 +191,11 @@ TWDS.clothcache.invItemInitDisplay = function () {
         if (title > '') title += ', '
         title = title + TWDS._('CLOTHCACHE_DS_EQ_SETS', '$n$ $s$ equipment sets', { n: iu.ds.length, s: TWDS.scriptname })
         count += iu.ds.length
+      }
+      if (iu.dyn.length) {
+        if (title > '') title += ', '
+        title = title + TWDS._('CLOTHCACHE_DYN_EQ_SETS', '$n$ $s$ dynamic equipment sets', { n: iu.dyn.length, s: TWDS.scriptname })
+        count += iu.dyn.length
       }
     }
     let twcalc = window.localStorage.getItem('TWCalc_Wardrobe')
