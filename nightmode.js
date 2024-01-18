@@ -20,6 +20,10 @@ TWDS.nightmode.stylehandler = function () {
       last: document.body
     })
   }
+  // min and max on input ele doesn't work quite as one might expect!
+  // the input.value is invalid, the form fails validation - but we have no form.
+  if (val < 25) val = 25 // otherwise to dark to see something
+  if (val > 200) val = 200 // otherwise the screen is overly white
   val = (val / 100.0).toFixed(2)
   sh.textContent = 'body.TWDS_nightmode { filter:brightness(' + val + ') }'
 }
