@@ -143,7 +143,7 @@ TWDS.minimap.updateReal = function () {
   TWDS.minimap.uiinit()
 
   const handleonebonusposition = function (x, y, withgold, markflag, a, withtracked, withsearched,
-    withmissing, withalways, withcollection) {
+    withmissing, withalways, withcollection, alwayscolor) {
     const o = 0.00513
     const x1 = parseInt(x * o, 10) - 3
     const y1 = parseInt(y * o, 10) + 2
@@ -159,7 +159,10 @@ TWDS.minimap.updateReal = function () {
     if (withalways) { cl += ' hl_always' }
     if (withcollection) { cl += ' collection' }
     if (markflag) { cl += ' marked' }
-    const style = 'left:' + x1 + 'px;top:' + y1 + 'px;' + mayrotate
+    let style = 'left:' + x1 + 'px;top:' + y1 + 'px;' + mayrotate
+    if (alwayscolor !== '') {
+      style += ';border-color:' + alwayscolor
+    }
     const str = "<div class='TWDS_bonusjob " + cl + "' style='" + style + "' />"
     const ele = $(str)
     ele.addMousePopup('<div style="min-width:60px;text-align:center">' +
@@ -233,6 +236,7 @@ TWDS.minimap.updateReal = function () {
       let withalways = false
       let withcollection = false
       let marked = false
+      let alwayscolor = ''
       for (const onejobkey in oneposdata) {
         const onejob = oneposdata[onejobkey]
         x = onejob.x
@@ -248,6 +252,7 @@ TWDS.minimap.updateReal = function () {
         if (jid in missingStorage) withmissing = true
         if (jid in missingCollections) withcollection = true
         if ('BJHL_' + jid in TWDS.settings && TWDS.settings['BJHL_' + jid]) withalways = true
+        if ('BJHLC_' + jid in TWDS.settings && TWDS.settings['BJHLC_' + jid]) { alwayscolor = TWDS.settings['BJHLC_' + jid] }
 
         let str = "<div style='min-width:60px;text-align:center' >"
         str += "<span style='font-weight:bold;display:block;'>" + job.name + '</span>' +
@@ -260,7 +265,7 @@ TWDS.minimap.updateReal = function () {
       }
       if (a.length > 0) {
         handleonebonusposition(x, y, withgold, marked, a, withtracked, withsearched, withmissing,
-          withalways, withcollection)
+          withalways, withcollection, alwayscolor)
       }
     }
   }

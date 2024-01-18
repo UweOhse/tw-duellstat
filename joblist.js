@@ -314,13 +314,22 @@ TWDS.joblist.initDisplay = function (container, serverdata, isupdate) {
       but.title = _('JOBLIST_START_NEAREST', 'Start the job at the nearest possible position')
       td.appendChild(but)
     }
+    const xx = 'BJHLC_' + jobId
+    let oldcolor = '#ff3197'
+    if (xx in TWDS.settings) {
+      oldcolor = TWDS.settings[xx]
+    }
+
     td = document.createElement('td')
     TWDS.createEle({
-      nodeName: 'input',
+      nodeName: 'input.check',
       type: 'checkbox',
       value: jobId,
       checked: !!TWDS.settings['BJHL_' + jobId],
       last: td,
+      style: {
+        accentColor: oldcolor
+      },
       onchange: function () {
         console.log('change', this, this.checked)
         const v = this.value
@@ -330,6 +339,31 @@ TWDS.joblist.initDisplay = function (container, serverdata, isupdate) {
           delete TWDS.settings['BJHL_' + v]
         }
         TWDS.saveSettings()
+      }
+    })
+    TWDS.createEle({
+      nodeName: 'input.color',
+      type: 'color',
+      last: td,
+      value: oldcolor,
+      oninput: function (ev) {
+        if (td) {
+          const e = TWDS.q1('input.check', td)
+          if (e) {
+            e.style.accentColor = this.value
+          }
+        }
+      },
+      onchange: function (ev) {
+        const td = this.closest('td')
+        if (td) {
+          const e = TWDS.q1('input.check', td)
+          if (e) {
+            e.style.accentColor = this.value
+            TWDS.settings['BJHLC_' + jobId] = this.value
+            TWDS.saveSettings()
+          }
+        }
       }
     })
     tr.appendChild(td)
