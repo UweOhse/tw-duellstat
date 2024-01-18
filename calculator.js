@@ -3,44 +3,40 @@
 TWDS.calculator = {}
 TWDS.calculator.presets = [
   { name: 'duel', disabled: true },
-  { name: 'at dodge / melee res.', tough: 2.97, dodge: 3.25, aim: 2.39, appearance: 1.25 },
-  { name: 'att shot res. with melee dmg', punch: 2, reflex: 5, aim: 3, appearance: 5 },
-  { name: 'clover:  aim / damage / dodge', punch: 25, tough: 18, dodge: 26, reflex: 14, aim: 30, shot: 35, tactic: 24, appearance: 25 },
+  // { name: 'tmpl',                    punch: 0, tough: 1, health: 1, reflex: 1, dodge: 1, aim: 1, shot: 0, appearance: 1, tactic: 1},
 
-  { name: 'bounty hunter: at / dodge / melee resistance', tough: 449, dodge: 489, aim: 360, appearance: 219 },
-  { name: 'brooks: at / damage / shot resistance', punch: 232, reflex: 523, aim: 286, appearance: 538 },
+  { name: 'attack damaging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 12, shot: 12, appearance: 12, tactic: 1, type: 'duel', alias: 'Vaquero / Jaguar / Pearl' },
+  { name: 'attack damaging/melee', punch: 12, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 12, shot: 0, appearance: 12, tactic: 1, type: 'duel', alias: 'Cowgirl / Legba' },
+  { name: 'defend damaging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 12, shot: 12, appearance: 0, tactic: 12, type: 'duel' },
+  { name: 'defend damaging/melee', punch: 12, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 12, shot: 0, appearance: 0, tactic: 12, type: 'duel' },
+  { name: 'defend+ damaging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 10, shot: 10, appearance: 0, tactic: 15, type: 'duel' },
+  { name: 'defend+ damaging/melee', punch: 10, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 10, shot: 0, appearance: 0, tactic: 15, type: 'duel' },
 
-  { name: 'clover:  aim / damage / dodge', punch: 254, tough: 184, dodge: 259, reflex: 143, aim: 299, shot: 344, tactic: 241, appearance: 251 },
-  { name: 'cowgirl: at / aim / meelee damage', punch: 418, dodge: 130, aim: 458, tactic: 127, appearance: 352 },
-  { name: 'hamilton: at / aim / melee damage / dodge', punch: 393, dodge: 255, aim: 321, appearance: 213 },
-  { name: 'highlander: def / dodge / resistance', tough: 354, health: 144, dodge: 419, reflex: 299, tactic: 352, appearance: 127 },
-  { name: 'jaguar: att / aim / shot damage', dodge: 263, aim: 505, shot: 536, appearance: 280 },
-  { name: 'josephine: att / aim / dodge / melee damage', punch: 477, dodge: 566, aim: 565, appearance: 195 },
-  { name: 'mclaughlin: def / dodge / resistance / melee damage', punch: 308, tough: 308, dodge: 302, reflex: 326, tactic: 386 },
-  { name: 'nat: aim / health / melee damange / shot resistance', punch: 350, tough: 139, health: 517, reflex: 725, aim: 653 },
-  { name: 'owens: att / aim / dodge / melee damage', punch: 489, dodge: 412, aim: 381, appearance: 389 },
-  { name: 'pearl: att / aim / dodge / shot damange ', dodge: 582, aim: 583, shot: 553, appearance: 243 },
-  { name: 'sarah astor: def / aim / dodge / health / melee damange', punch: 450, health: 232, dodge: 238, aim: 247, tactic: 489 },
-  { name: 'thomas: def / aim / dodge / health', health: 107, dodge: 536, aim: 453, tactic: 297 },
-  { name: 'vaquero: att / aim / show', dodge: 138, aim: 493, shot: 478, appearance: 312 },
+  { name: 'attack dodging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 12, aim: 6, shot: 3, appearance: 12, tactic: 1, type: 'duel' },
+  { name: 'attack dodging/melee', punch: 3, tough: 1, health: 1, reflex: 1, dodge: 12, aim: 6, shot: 0, appearance: 12, tactic: 1, type: 'duel', alias: 'Josephine' },
+  { name: 'defend dodging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 12, aim: 9, shot: 3, appearance: 0, tactic: 12, type: 'duel' },
+  { name: 'defend dodging/melee', punch: 3, tough: 1, health: 1, reflex: 1, dodge: 12, aim: 9, shot: 0, appearance: 0, tactic: 12, type: 'duel' },
+
+  { name: 'attack shooting w/ shot res.', punch: 0, tough: 3, health: 1, reflex: 12, dodge: 2, aim: 4, shot: 6, appearance: 12, tactic: 1, type: 'duel' },
+  { name: 'attack shooting w/ melee res.', punch: 0, tough: 12, health: 1, reflex: 3, dodge: 2, aim: 4, shot: 6, appearance: 12, tactic: 1, type: 'duel' },
+  { name: 'attack melee w/ shot res.', punch: 6, tough: 1, health: 1, reflex: 12, dodge: 2, aim: 4, shot: 0, appearance: 12, tactic: 1, type: 'duel' },
+  { name: 'attack melee w/ melee res.', punch: 6, tough: 12, health: 1, reflex: 3, dodge: 2, aim: 4, shot: 0, appearance: 12, tactic: 1, type: 'duel' },
+  { name: 'defend shooting w/ shot res.', punch: 0, tough: 3, health: 1, reflex: 12, dodge: 2, aim: 4, shot: 3, appearance: 0, tactic: 12, type: 'duel' },
+  { name: 'defend shooting w/ melee res.', punch: 0, tough: 12, health: 1, reflex: 3, dodge: 2, aim: 4, shot: 3, appearance: 0, tactic: 12, type: 'duel' },
+  { name: 'defend shooting w/ mixed res.', punch: 0, tough: 12, health: 1, reflex: 12, dodge: 10, aim: 4, shot: 3, appearance: 0, tactic: 12, type: 'duel' },
+  { name: 'defend melee w/ shot res.', punch: 2, tough: 1, health: 1, reflex: 12, dodge: 2, aim: 3, shot: 0, appearance: 0, tactic: 12, type: 'duel' },
+  { name: 'defend melee w/ melee res.', punch: 2, tough: 12, health: 1, reflex: 3, dodge: 2, aim: 3, shot: 0, appearance: 0, tactic: 12, type: 'duel' },
+  { name: 'defend melee w/ mixed res.', punch: 2, tough: 12, health: 1, reflex: 12, dodge: 10, aim: 3, shot: 0, appearance: 0, tactic: 12, type: 'duel' },
+  { name: 'clover melee', punch: 54, tough: 34, health: 10, reflex: 38, dodge: 65, aim: 79, shot: 0, appearance: 57, tactic: 61, type: 'duel' },
+  { name: 'clover shot', punch: 0, tough: 34, health: 10, reflex: 30, dodge: 64, aim: 72, shot: 88, appearance: 64, tactic: 62, type: 'duel' },
   //
   { name: 'fort battle', disabled: true },
   { name: 'tank/att', health: 5, aim: 1, dodge: 5, hide: 6, leadership: 5, fboffense: 1, fboffense_sector: 2, fbdefense: 50, fbdefense_sector: 50, fbresistance: 5, fbdamage: 1 },
   { name: 'tank/def', health: 5, aim: 1, dodge: 10, pitfall: 12, leadership: 10, fboffense: 2, fboffense_sector: 4, fbdefense: 20, fbdefense_sector: 40, fbresistance: 10, fbdamage: 1 },
   { name: 'dmg/att', health: -1, aim: 5, dodge: 0, hide: 6, leadership: 6, fboffense: 10, fboffense_sector: 10, fbdefense: 1, fbdefense_sector: 2, fbresistance: 1, fbdamage: 5 },
   { name: 'dmg/def', health: -1, aim: 5, dodge: 0, pitfall: 6, leadership: 6, fboffense: 10, fboffense_sector: 10, fbdefense: 1, fbdefense_sector: 2, fbresistance: 1, fbdamage: 5 },
-  { name: 'booster/damage', health: 0, dodge: 0, hide: 294, aim: 264, pitfall: 304, leadership: 269, fboffense: 0, fbdamage: 60 },
-  { name: 'booster/generic', health: 0, dodge: 0, hide: 0, aim: 0, pitfall: 0, leadership: 1, fboffense_sector: 500, fbdefense_sector: 500, fbdamage: 5 }
-  // { name: 'john bull', health: 0, dodge: 0, hide: 0, aim: 0, pitfall: 0, leadership: 0, fbdefense: 0, fbresistance: 0},
-  // { name: 'john bull', health: 0, dodge: 0, hide: 0, aim: 0, pitfall: 0, leadership: 0, fbdefense: 0, fbresistance: 0},
-  // { name: 'john bull', health: 0, dodge: 0, hide: 0, aim: 0, pitfall: 0, leadership: 0, fbdefense: 0, fbresistance: 0},
-  // { name: 'john bull', health: 0, dodge: 0, hide: 0, aim: 0, pitfall: 0, leadership: 0, fbdefense: 0, fbresistance: 0}
-  /*
-  {name: "xxx", punch: 0, tough: 0, health: 0, dodge: 0, reflex: 0, aim: 0, shot: 0, tactic: 0, appearance: 0},
-  {name: "xxx", punch: 0, tough: 0, health: 0, dodge: 0, reflex: 0, aim: 0, shot: 0, tactic: 0, appearance: 0},
-  {name: "xxx", punch: 0, tough: 0, health: 0, dodge: 0, reflex: 0, aim: 0, shot: 0, tactic: 0, appearance: 0},
-  {name: "xxx", punch: 0, tough: 0, health: 0, dodge: 0, reflex: 0, aim: 0, shot: 0, tactic: 0, appearance: 0},
-  */
+  { name: 'booster/damage', health: 0, dodge: 0, hide: 3, aim: 3, pitfall: 3, leadership: 3, fboffense: 0, fboffense_sector: 20, fbdefense_sector: 20, fbdamage: 150 },
+  { name: 'booster/generic', health: 0, dodge: 0, hide: 3, aim: 3, pitfall: 3, leadership: 4, fboffense_sector: 500, fbdefense_sector: 500, fbdamage: 5 }
 ]
 TWDS.calculator.data = [
   { kind: 'group', name: 'weapontype', cls: 'boostgroup' },
@@ -361,6 +357,16 @@ TWDS.calculator.buildjob = function () {
     }
   })
 }
+TWDS.calculator.findpreset = function (name) {
+  let preset = null
+  for (let i = 0; i < TWDS.calculator.presets.length; i++) {
+    const n = TWDS.calculator.presets[i].name
+    if (n === name) {
+      preset = TWDS.calculator.presets[i]
+    }
+  }
+  return preset
+}
 TWDS.calculator.openwindow = function () {
   const myname = 'TWDS_calc_window'
   const win = wman.open(myname, TWDS._('CALCULATOR_TITLE', 'Calculator'), 'TWDS_calc_window')
@@ -449,13 +455,7 @@ TWDS.calculator.openwindow = function () {
   }
   s.onchange = function () {
     const c = this.closest('.TWDS_calc_container')
-    let preset = null
-    for (let i = 0; i < TWDS.calculator.presets.length; i++) {
-      const n = TWDS.calculator.presets[i].name
-      if (n === this.value) {
-        preset = TWDS.calculator.presets[i]
-      }
-    }
+    const preset = TWDS.calculator.findpreset(this.value)
 
     const inp = TWDS.q('.TWDS_calc_selectarea input', c)
     for (let i = 0; i < inp.length; i++) {
