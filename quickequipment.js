@@ -8,25 +8,27 @@ TWDS.quickequipment.control = [
   { level: 0, key: 'TW', text: 'TW Equipment Sets', handler: 'handletwselect' },
   { level: 0, key: 'CC', text: 'Clothcache Equipment Sets', handler: 'handleccselect' },
   { level: 0, key: 'TC', text: 'TW Calc Equipment Sets', handler: 'handletcselect' },
-  { level: 0, key: 'speed', text: 'speed set' , keepcached: true},
-  { level: 0, key: 'speed/health', text: 'speed set w/o health loss' },
-  { level: 0, key: 'skill/health', text: 'max health' , keepcached: true},
-  { level: 0, key: 'bonus/regen', text: 'best regeneration' , keepcached: true},
+  { level: 0, key: 'speed', text: 'speed set', keepcached: true },
+  { level: 0, key: 'speed/health', text: 'speed set w/o health loss', nocache: true },
+  { level: 0, key: 'skill/health', text: 'max health', keepcached: true },
+  { level: 0, key: 'bonus/regen', text: 'best regeneration', keepcached: true },
   { level: 0, key: 'bonus', text: 'bonus equipment' },
-  { level: 1, key: 'bonus/experience', text: 'experience', submenu: 'bonus' , keepcached: true},
-  { level: 1, key: 'bonus/regen', text: 'regeneration', submenu: 'bonus' , keepcached: true},
-  { level: 1, key: 'bonus/luck+dollar', text: 'luck+money', submenu: 'bonus' , keepcached: true},
-  { level: 1, key: 'bonus/luck+drop', text: 'luck+drop', submenu: 'bonus' , keepcached: true},
-  { level: 1, key: 'bonus/luck', text: 'luck', submenu: 'bonus' , keepcached: true},
-  { level: 1, key: 'bonus/pray', text: 'pray', submenu: 'bonus' , keepcached: true},
-  { level: 1, key: 'bonus/dollar', text: 'money', submenu: 'bonus' , keepcached: true},
-  { level: 1, key: 'bonus/drop+dollar', text: 'drop+money', submenu: 'bonus' , keepcached: true},
-  { level: 1, key: 'bonus/experience+experience+dollar', text: 'experience*2+money', submenu: 'bonus' , keepcached: true},
+  { level: 1, key: 'bonus/regen', text: 'regeneration', submenu: 'bonus', keepcached: true },
+  { level: 1, key: 'bonus/luck+dollar', text: 'luck+money', submenu: 'bonus', keepcached: true },
+  { level: 1, key: 'bonus/luck+drop', text: 'luck+drop', submenu: 'bonus', keepcached: true },
+  { level: 1, key: 'bonus/luck', text: 'luck', submenu: 'bonus', keepcached: true },
+  { level: 1, key: 'bonus/pray', text: 'pray', submenu: 'bonus', keepcached: true },
+  { level: 1, key: 'bonus/dollar', text: 'money', submenu: 'bonus', keepcached: true },
+  { level: 1, key: 'bonus/drop+dollar', text: 'drop+money', submenu: 'bonus', keepcached: true },
+  { level: 1, key: 'bonus/drop', text: 'drop', submenu: 'bonus', keepcached: true },
+  { level: 1, key: 'bonus/experience', text: 'experience', submenu: 'bonus', keepcached: true },
+  { level: 1, key: 'bonus/experience+experience+dollar', text: 'experience*2+money', submenu: 'bonus', keepcached: true },
 
   { level: 0, key: 'skill', text: 'skills' },
   { level: 0, key: 'duel', text: 'duels' },
   { level: 0, key: 'battle', text: 'fort battles' },
-  { level: 0, key: 'construction', text: 'construction' , keepcached: true}
+  { level: 0, key: 'construction', text: 'construction', keepcached: true },
+  { level: 0, key: 'cacherebuild', text: 'rebuild cache' }
 ]
 TWDS.quickequipment.fillcontrollist = function () {
   for (let i = 0; i < TWDS.quickequipment.control.length; i++) {
@@ -43,6 +45,32 @@ TWDS.quickequipment.fillcontrollist = function () {
       }
     }
   }
+  const presetlist = TWDS.calculator.presets
+  for (let i = 0; i < presetlist.length; i++) {
+    const pre = presetlist[i]
+    if (pre.type === 'duel') {
+      TWDS.quickequipment.control.push({
+        level: 1,
+        key: 'calculator/' + pre.name,
+        text: pre.name,
+        submenu: 'duel',
+        keepcached: true
+      })
+    }
+  }
+  for (let i = 0; i < presetlist.length; i++) {
+    const pre = presetlist[i]
+    if (pre.type === 'battle') {
+      TWDS.quickequipment.control.push({
+        level: 1,
+        key: 'calculator/' + pre.name,
+        text: pre.name,
+        submenu: 'battle',
+        keepcached: true
+      })
+    }
+  }
+  console.log('CTRL', TWDS.quickequipment.control)
   // other variable stuff? like saved user searches?
 }
 TWDS.quickequipment.fillcontrollist()
@@ -111,7 +139,7 @@ TWDS.quickequipment.getfromcache = function (key) {
   if (e.invid === Bag.getLastInvId()) return e.value
   const ts = (new Date()).getTime()
   const delta = (ts - e.ts) / 1000
-  if (delta > 3600) return null
+  if (delta > TWDS.settings.quickequipment_cachetime_minutes * 60) return null
   return e.value
 }
 TWDS.quickequipment.getused = function () {
@@ -128,16 +156,81 @@ TWDS.quickequipment.getused = function () {
 }
 TWDS.quickequipment.buildcache = function () {
   TWDS.quickequipment.cache = {}
-  for (let i = 0; i < TWDS.quickequipment.control.length; i++) {
+  const myname = 'TWDS_qe_tmp'
+  const win = wman.open(myname, TWDS._('QE_PROGRESS_TITLE', 'Progress'))
+  win.setMiniTitle('Progress')
+  const sp = new west.gui.Scrollpane()
+
+  const div = TWDS.createEle('div')
+  const p1 = TWDS.createEle('p', {
+    last: div,
+    textContent: 'Status: '
+  })
+  TWDS.createEle('p', {
+    last: div,
+    innerHTML: 'You usually do not need to rebuild the cache. The only reasons to do so are:' +
+     '<ul><li>1. you got some seriously good equipment, and need to use it at once.' +
+     "<li>2. you want to sell/auction some stuff and need to know what's really not useful.</ul>"
+  })
+  const sta = TWDS.createEle('span', { last: p1 })
+
+  const tab = TWDS.createEle('table', {
+    last: div,
+    children: [
+      {
+        nodeName: 'tr',
+        children: [
+          { nodeName: 'th', textContent: 'ms' },
+          { nodeName: 'th', textContent: 'set' }
+        ]
+      }
+    ]
+  })
+  sp.appendContent(div)
+
+  win.appendToContentPane(sp.getMainDiv())
+
+  const ostart = (new Date()).getTime()
+  const handler = function (i) {
     const e = TWDS.quickequipment.control[i]
-    const key = e.key
-    const res = TWDS.quickequipment.calc(key)
-    if (res !== null) {
-      TWDS.quickequipment.cacheone(key, res)
+    sta.textContent = i + ' / ' + TWDS.quickequipment.control.length
+    const start = (new Date()).getTime()
+    if (!e.nocache && e.keepcached) {
+      const key = e.key
+      const res = TWDS.quickequipment.calc(key)
+      if (res !== null) {
+        TWDS.quickequipment.cacheone(key, res)
+      }
+      const end = (new Date()).getTime()
+      const tr = TWDS.createEle('tr', { last: tab })
+      TWDS.createEle('td', {
+        last: tr,
+        textContent: end - start
+      })
+      TWDS.createEle('td', {
+        last: tr,
+        textContent: e.key
+      })
     }
+    const cur = (new Date()).getTime()
+    if (i + 1 < TWDS.quickequipment.control.length && cur < ostart + 5 * 60 * 1000) {
+      setTimeout(handler, 100, i + 1)
+      return
+    }
+    TWDS.quickequipment.save()
+    TWDS.clothcache.recalcItemUsage()
+    const tr = TWDS.createEle('tr', { last: tab })
+    TWDS.createEle('td', {
+      last: tr,
+      textContent: cur - ostart
+    })
+    TWDS.createEle('td', {
+      last: tr,
+      textContent: 'ms total runtime'
+    })
+    sta.textContent = 'finished.'
   }
-  TWDS.quickequipment.save()
-  TWDS.clothcache.recalcItemUsage()
+  handler(0)
 }
 TWDS.quickequipment.save = function () {
   window.localStorage.TWDS_cache_quickequipment = JSON.stringify(TWDS.quickequipment.cache)
@@ -184,21 +277,15 @@ TWDS.quickequipment.mayclearcache = function () {
   return cleared
 }
 
-TWDS.quickequipment.handleccselect = function (cat) {
-  console.log('TW', cat)
-  const tmp = window.localStorage.getItem(cat)
-  if (!tmp) return
-  const o = JSON.parse(tmp)
-  TWDS.wearItemsHandler(o.item_ids)
+TWDS.quickequipment.handleitemlistselect = function (cat) {
+  const o = JSON.parse(cat)
+  TWDS.wearItemsHandler(o)
 }
 TWDS.quickequipment.handletwselect = function (cat) {
-  console.log('CC', cat)
   window.EquipManager.switchEquip(cat)
 }
 
 TWDS.quickequipment.handlecatselect = function (cat) {
-  console.log('cat', cat)
-
   const submenu = function (names, handlername) {
     names.sort(function (a, b) {
       return a[0].localeCompare(b[0])
@@ -214,6 +301,11 @@ TWDS.quickequipment.handlecatselect = function (cat) {
       sb.addItem(names[i][1], names[i][0])
     }
     sb.show(TWDS.quickequipment.eventdata)
+  }
+
+  if (cat === 'cacherebuild') {
+    TWDS.quickequipment.buildcache()
+    return
   }
 
   // show menu for TW equipment sets.
@@ -238,9 +330,25 @@ TWDS.quickequipment.handlecatselect = function (cat) {
       }
       const s = window.localStorage.getItem(k)
       const o = JSON.parse(s)
-      names.push([o.name, k])
+      names.push([o.name, JSON.stringify(o.item_ids)])
     }
-    submenu(names, 'handleccselect')
+    submenu(names, 'handleitemlistselect')
+    return
+  }
+  // show menu for TWCalc equipment sets.
+  if (cat === 'TC') {
+    const str = localStorage.TWCalc_Wardrobe
+    if (str) {
+      const js = JSON.parse(str)
+      if (js) {
+        const names = []
+        for (let i = 0; i < js.length; i++) {
+          const o = js[i]
+          names.push([o.name, JSON.stringify(o.items)])
+        }
+        submenu(names, 'handleitemlistselect')
+      }
+    }
     return
   }
 
@@ -253,71 +361,34 @@ TWDS.quickequipment.handlecatselect = function (cat) {
   // recalc if needed
   res = TWDS.quickequipment.calc(cat)
   if (res !== null) {
-    TWDS.quickequipment.cacheone(cat, res)
-    TWDS.quickequipment.save()
-    TWDS.clothcache.recalcItemUsage()
+    let nocache = 0
+    const cs = TWDS.quickequipment.control
+    for (let i = 0; i < cs.length; i++) {
+      const c = cs[i]
+      if (c.key === cat) {
+        if (c.nocache) {
+          nocache = 1
+          break
+        }
+      }
+    }
+    if (!nocache) {
+      TWDS.quickequipment.cacheone(cat, res)
+      TWDS.quickequipment.save()
+      TWDS.clothcache.recalcItemUsage()
+    }
     TWDS.wearItemsHandler(res)
     return
   }
 
-  if (cat === 'duel') {
+  if (cat === 'duel' || cat === 'battle' || cat === 'bonus' || cat === 'skill') {
     const names = []
-    const presetlist = TWDS.calculator.presets
-    for (let i = 0; i < presetlist.length; i++) {
-      const pre = presetlist[i]
-      if (pre.type === 'duel') {
-        names.push([pre.name, 'calculator/' + pre.name])
+    const cs = TWDS.quickequipment.control
+    for (let i = 0; i < cs.length; i++) {
+      const c = cs[i]
+      if (c.submenu === cat) {
+        names.push([c.text, c.key])
       }
-    }
-    submenu(names, 'handlecatselect')
-    return
-  }
-  if (cat === 'battle') {
-    const names = []
-    const presetlist = TWDS.calculator.presets
-    for (let i = 0; i < presetlist.length; i++) {
-      const pre = presetlist[i]
-      if (pre.type === 'battle') {
-        names.push([pre.name, 'calculator/' + pre.name])
-      }
-    }
-    submenu(names, 'handlecatselect')
-    return
-  }
-  /*
-  if (cat === 'battle') {
-    const names = []
-
-    names.push(['tank/att', 'calculator/tank/att'])
-    names.push(['tank/def', 'calculator/tank/def'])
-    names.push(['dmg/att', 'calculator/dmg/att'])
-    names.push(['dmg/def', 'calculator/dmg/def'])
-    names.push(['booster/damage', 'calculator/booster/damage'])
-    names.push(['booster/generic', 'calculator/booster/generic'])
-    submenu(names, 'handlecatselect')
-    return
-  }
-  */
-  if (cat === 'bonus') {
-    const names = []
-    names.push(['experience', 'bonus/experience'])
-    names.push(['regeneration', 'bonus/regen'])
-    names.push(['luck+money', 'bonus/luck+dollar'])
-    names.push(['luck+drop', 'bonus/luck+drop'])
-    names.push(['luck', 'bonus/luck'])
-    names.push(['pray', 'bonus/pray'])
-    names.push(['money', 'bonus/dollar'])
-    names.push(['drop', 'bonus/drop'])
-    names.push(['drop+money', 'bonus/drop+dollar'])
-    names.push(['experience*2+money', 'bonus/experience+experience+dollar'])
-    submenu(names, 'handlecatselect')
-    return
-  }
-  if (cat === 'skill') {
-    const names = []
-    for (let i = 0; i < CharacterSkills.allSkillKeys.length; i++) {
-      const sk = CharacterSkills.allSkillKeys[i]
-      names.push([CharacterSkills.keyNames[sk], 'skill/' + sk])
     }
     submenu(names, 'handlecatselect')
   }
@@ -363,5 +434,9 @@ TWDS.registerStartFunc(function () {
     TWDS._('QUICKEQUIPMENT_CHARCONTAINER',
       'Add a quick equipment switch menu to the character information container, next to the daily tasks link.'),
     true, function () { TWDS.quickequipment.setcharmenulink() }, 'misc', 'quickequipment')
+  TWDS.registerSetting('int', 'quickequipment_cachetime_minutes',
+    TWDS._('QUICKEQUIPMENT_CACHETIME_MINUTES',
+      "Cache 'quick equipment' for that many minutes."),
+    60, null, 'misc', 'quickequipment')
   TWDS.quickequipment.load()
 })
