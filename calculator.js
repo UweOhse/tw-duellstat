@@ -31,12 +31,12 @@ TWDS.calculator.presets = [
   { name: 'clover shot', punch: 0, tough: 34, health: 10, reflex: 30, dodge: 64, aim: 72, shot: 88, appearance: 64, tactic: 62, type: 'duel' },
   //
   { name: 'fort battle', disabled: true },
-  { name: 'tank/att', health: 5, aim: 1, dodge: 5, hide: 6, leadership: 5, fboffense: 1, fboffense_sector: 2, fbdefense: 50, fbdefense_sector: 50, fbresistance: 5, fbdamage: 1 },
-  { name: 'tank/def', health: 5, aim: 1, dodge: 10, pitfall: 12, leadership: 10, fboffense: 2, fboffense_sector: 4, fbdefense: 20, fbdefense_sector: 40, fbresistance: 10, fbdamage: 1 },
-  { name: 'dmg/att', health: -1, aim: 5, dodge: 0, hide: 6, leadership: 6, fboffense: 10, fboffense_sector: 10, fbdefense: 1, fbdefense_sector: 2, fbresistance: 1, fbdamage: 5 },
-  { name: 'dmg/def', health: -1, aim: 5, dodge: 0, pitfall: 6, leadership: 6, fboffense: 10, fboffense_sector: 10, fbdefense: 1, fbdefense_sector: 2, fbresistance: 1, fbdamage: 5 },
-  { name: 'booster/damage', health: 0, dodge: 0, hide: 3, aim: 3, pitfall: 3, leadership: 3, fboffense: 0, fboffense_sector: 20, fbdefense_sector: 20, fbdamage: 150 },
-  { name: 'booster/generic', health: 0, dodge: 0, hide: 3, aim: 3, pitfall: 3, leadership: 4, fboffense_sector: 500, fbdefense_sector: 500, fbdamage: 5 }
+  { name: 'tank/att', health: 5, aim: 1, dodge: 5, hide: 6, leadership: 5, fboffense: 1, fboffense_sector: 2, fbdefense: 50, fbdefense_sector: 50, fbresistance: 5, fbdamage: 1, type: 'battle' },
+  { name: 'tank/def', health: 5, aim: 1, dodge: 10, pitfall: 12, leadership: 10, fboffense: 2, fboffense_sector: 4, fbdefense: 20, fbdefense_sector: 40, fbresistance: 10, fbdamage: 1, type: 'battle' },
+  { name: 'dmg/att', health: -1, aim: 5, dodge: 0, hide: 6, leadership: 6, fboffense: 10, fboffense_sector: 10, fbdefense: 1, fbdefense_sector: 2, fbresistance: 1, fbdamage: 5, type: 'battle' },
+  { name: 'dmg/def', health: -1, aim: 5, dodge: 0, pitfall: 6, leadership: 6, fboffense: 10, fboffense_sector: 10, fbdefense: 1, fbdefense_sector: 2, fbresistance: 1, fbdamage: 5, type: 'battle' },
+  { name: 'booster/damage', health: 0, dodge: 0, hide: 3, aim: 3, pitfall: 3, leadership: 3, fboffense: 0, fboffense_sector: 20, fbdefense_sector: 20, fbdamage: 150, type: 'battle' },
+  { name: 'booster/generic', health: 0, dodge: 0, hide: 3, aim: 3, pitfall: 3, leadership: 4, fboffense_sector: 500, fbdefense_sector: 500, fbdamage: 5, type: 'battle' }
 ]
 TWDS.calculator.data = [
   { kind: 'group', name: 'weapontype', cls: 'boostgroup' },
