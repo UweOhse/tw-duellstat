@@ -70,6 +70,16 @@ TWDS.inventory.filters = {
 TWDS.inventory.filteritemlist = function (all) {
   const tmp = []
   const filters = {}
+  let findinbagandworn=function(base_id) {
+    let res=Bag.getItemsIdsByBaseItemId(base_id);
+    let x=Wear.getByBaseId(base_id)
+    if (x) {
+      x=x.obj.item_id.toString()
+      if (!res.includes(x))
+        res.push(x);
+    }
+    return res;
+  }
 
   // no shortcuts, we return a copy of the list, as it may be Bag.items_by_type[x]
 
@@ -141,11 +151,11 @@ TWDS.inventory.filteritemlist = function (all) {
     if ('upgraded' in filters) {
       // non-upgraded items are treated as upgraded if there are upgraded items of the thing in the bag
       if (filters.upgraded === 1 && !it.item_level) {
-        let inbag=Bag.getItemsIdsByBaseItemId(it.item_base_id);
+        let inbag=findinbagandworn(it.item_base_id);
         if (inbag.length<2) continue;
       }
       if (filters.upgraded === -1 && !it.item_level) {
-        let inbag=Bag.getItemsIdsByBaseItemId(it.item_base_id);
+        let inbag=findinbagandworn(it.item_base_id);
         if (inbag.length>1) continue;
       }
       if (filters.upgraded === -1 && it.item_level) continue
