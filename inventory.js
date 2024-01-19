@@ -139,7 +139,15 @@ TWDS.inventory.filteritemlist = function (all) {
       if (filters.upgradeable === -1 && it.upgradeable) continue
     }
     if ('upgraded' in filters) {
-      if (filters.upgraded === 1 && !it.item_level) continue
+      // non-upgraded items are treated as upgraded if there are upgraded items of the thing in the bag
+      if (filters.upgraded === 1 && !it.item_level) {
+        let inbag=Bag.getItemsIdsByBaseItemId(it.item_base_id);
+        if (inbag.length<2) continue;
+      }
+      if (filters.upgraded === -1 && !it.item_level) {
+        let inbag=Bag.getItemsIdsByBaseItemId(it.item_base_id);
+        if (inbag.length>1) continue;
+      }
       if (filters.upgraded === -1 && it.item_level) continue
     }
     if ('used' in filters) {
