@@ -1,8 +1,19 @@
 div.tw2gui_window.TWDS_wide_window {
-  width:Max(50vw,748px);
-  height:Max(66vh,471px);
+  // more than 1440 and the layout breaks
+  --w: Min( Max(50vw,748px), 1400px);
+  // 845px max height because otherwise the top of tw2gui_bg_bg/bl is visible (black)
+  --h: Min( Max(66vh,471px) , 845px);
+  width: var(--w) !important;
+  height: var(--h) !important;
   .tw2gui_window_inset {
-    background-size:cover;
+    left:0;
+    clip-path: polygon(12px 0, 100% 0, 100% 100%, 12px 100%);  
+    background-size: calc( var(--w) - 14px) calc( var(--h) - 46px);
+    .tw2gui_inner_window_bg2 {
+      background-size: calc( var(--w) - 14px) calc( var(--h) - 46px);
+      width:20px;
+      right:0;
+    }
   }
 }
 #TWDS_tab_itemsets,
