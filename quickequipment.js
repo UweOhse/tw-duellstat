@@ -5,14 +5,14 @@
 TWDS.quickequipment = {}
 TWDS.quickequipment.eventdata = {}
 TWDS.quickequipment.control = [
-  { level: 0, key: 'TW', text: 'TW Equipment Sets', handler: 'handletwselect' },
-  { level: 0, key: 'CC', text: 'Clothcache Equipment Sets', handler: 'handleccselect' },
-  { level: 0, key: 'TC', text: 'TW Calc Equipment Sets', handler: 'handletcselect' },
+  { level: 0, key: 'TW', text: 'TW Equipment Sets', handler: 'handletwselect', hassubmenu: true },
+  { level: 0, key: 'CC', text: 'Clothcache Equipment Sets', handler: 'handleccselect', hassubmenu: true },
+  { level: 0, key: 'TC', text: 'TW Calc Equipment Sets', handler: 'handletcselect', hassubmenu: true },
   { level: 0, key: 'speed', text: 'speed set', keepcached: true },
   { level: 0, key: 'speed/health', text: 'speed set w/o health loss', nocache: true },
   { level: 0, key: 'skill/health', text: 'max health', keepcached: true },
   { level: 0, key: 'bonus/regen', text: 'best regeneration', keepcached: true },
-  { level: 0, key: 'bonus', text: 'bonus equipment' },
+  { level: 0, key: 'bonus', text: 'bonus equipment', hassubmenu: true },
   { level: 1, key: 'bonus/regen', text: 'regeneration', submenu: 'bonus', keepcached: true },
   { level: 1, key: 'bonus/luck+dollar', text: 'luck+money', submenu: 'bonus', keepcached: true },
   { level: 1, key: 'bonus/luck+drop', text: 'luck+drop', submenu: 'bonus', keepcached: true },
@@ -24,9 +24,9 @@ TWDS.quickequipment.control = [
   { level: 1, key: 'bonus/experience', text: 'experience', submenu: 'bonus', keepcached: true },
   { level: 1, key: 'bonus/experience+experience+dollar', text: 'experience*2+money', submenu: 'bonus', keepcached: true },
 
-  { level: 0, key: 'skill', text: 'skills' },
-  { level: 0, key: 'duel', text: 'duels' },
-  { level: 0, key: 'battle', text: 'fort battles' },
+  { level: 0, key: 'skill', text: 'skills', hassubmenu: true },
+  { level: 0, key: 'duel', text: 'duels', hassubmenu: true },
+  { level: 0, key: 'battle', text: 'fort battles', hassubmenu: true },
   { level: 0, key: 'construction', text: 'construction', keepcached: true },
   { level: 0, key: 'cacherebuild', text: 'rebuild cache' }
 ]
@@ -404,7 +404,9 @@ TWDS.quickequipment.handlemainclick = function (eventdata) {
   for (let i = 0; i < TWDS.quickequipment.control.length; i++) {
     const c = TWDS.quickequipment.control[i]
     if (c.level) continue
-    sb.addItem(c.key, c.text)
+    let t = c.text
+    if (c.hassubmenu) { t += ' \u2192' }
+    sb.addItem(c.key, t)
   }
   sb.show(eventdata)
   TWDS.quickequipment.eventdata = eventdata
