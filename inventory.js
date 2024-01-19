@@ -65,7 +65,8 @@ TWDS.inventory.filters = {
   used: { value: 0, text: 'Used', trans: 'INVENTORY_D_USED' },
   set: { value: 0, text: 'Part of a set', trans: 'INVENTORY_D_SETPART' },
   quest: { value: 0, text: 'Questitem', trans: 'INVENTORY_D_QUEST' },
-  classgender: { value: 0, text: 'Class/gender limited', trans: 'INVENTORY_D_CLASSGENDER' }
+  classgender: { value: 0, text: 'Class/gender limited', trans: 'INVENTORY_D_CLASSGENDER' },
+  named: { value: 0, text: 'Named', trans: 'INVENTORY_D_NAMED' }
 }
 TWDS.inventory.filteritemlist = function (all) {
   const tmp = []
@@ -79,6 +80,26 @@ TWDS.inventory.filteritemlist = function (all) {
         res.push(x);
     }
     return res;
+  }
+  // .named is not well maintained.
+  let findifitisnamed=function(it) {
+    let isnamed=it.named
+    if (!isnamed) {
+      let it2=it
+      if (it.item_level) {
+        it2=ItemManager.getByBaseId(it.item_base_id);
+      }
+      if (!it2.set && null===it2.usebonus && "none" === it2.usetype) {
+        if (it2.auctionable) {
+          if (it2.dropable) {
+            if (!it2.tradeable || it2.traderlevel>98) {
+              isnamed=true
+            }
+          }
+        }
+      }
+    }
+    return isnamed;
   }
 
   // no shortcuts, we return a copy of the list, as it may be Bag.items_by_type[x]
@@ -164,6 +185,11 @@ TWDS.inventory.filteritemlist = function (all) {
       const d = TWDS.storage.getitemdata(id)
       if (filters.used === 1 && !(id in usedata) && d.want < d.have) continue
       if (filters.used === -1 && ((id in usedata) || d.want >= d.have)) continue
+    }
+    if ('named' in filters) {
+      let isnamed=findifitisnamed(it)
+      if (filters.named === 1 && !isnamed) continue
+      if (filters.named === -1 && isnamed) continue
     }
     tmp.push(all[i])
   }
