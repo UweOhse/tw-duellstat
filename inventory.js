@@ -52,7 +52,8 @@ TWDS.inventory.sortorders = {
   name: { text: 'Name', trans: 'INVENTORY_S_NAME' },
   count: { text: 'Count', trans: 'INVENTORY_S_COUNT' },
   price: { text: 'Price', trans: 'INVENTORY_S_PREIS' },
-  stackprice: { text: 'Total price', trans: 'INVENTORY_S_STACKPRICE' }
+  stackprice: { text: 'Total price', trans: 'INVENTORY_S_STACKPRICE' },
+  maxdmg: { text: 'Damage', trans: 'INVENTORY_S_DAMAGE' }
 }
 TWDS.inventory.filters = {
   auctionable: { value: 0, text: 'Auctionable', trans: 'INVENTORY_D_AUCTIONABLE' },
@@ -100,6 +101,22 @@ TWDS.inventory.filteritemlist = function (all) {
       }
     }
     return isnamed;
+  }
+  let getdmg=function(it) {
+    extractor.init(Character, it.item_level)
+    let dmg=0
+    if (it.type==='right_arm' || it.type==='left_arm') {
+      dmg=it.damage.damage_max
+    }
+    for (let i=0;i<it.bonus.item.length;i++) {
+      let bon=it.bonus.item[i];
+
+      const v = extractor.getExportValue(bon);
+      if (v.key==="damage") {
+        dmg+=v.value
+      }
+    }
+    return dmg;
   }
 
   // no shortcuts, we return a copy of the list, as it may be Bag.items_by_type[x]
@@ -199,6 +216,8 @@ TWDS.inventory.filteritemlist = function (all) {
   if (TWDS.inventory.sortorder.substring(0, 1) === '-') dir = -1
   const key = TWDS.inventory.sortorder.substring(1)
 
+  const extractor = new west.item.BonusExtractor(Character)
+
   tmp.sort(function (a, b) {
     if (typeof a === 'object') {
       if (a.obj) { a = a.obj }
@@ -239,6 +258,13 @@ TWDS.inventory.filteritemlist = function (all) {
       const acount = Bag.getItemByItemId(a.item_id).count
       const bcount = Bag.getItemByItemId(b.item_id).count
       const t = dir * (acount * aprice - bcount * bprice)
+      if (t) return t
+    }
+
+    if (key === 'maxdmg') {
+      let admg=getdmg(a);
+      let bdmg=getdmg(b);
+      const t = dir * (admg - bdmg)
       if (t) return t
     }
     return dir * (a.item_id - b.item_id)
