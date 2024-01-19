@@ -126,23 +126,25 @@ TWDS.allimap.drawit = function (map, table) {
     if (json.error) {
       return new UserMessage(json.msg).show()
     }
+
     const ainfo = { }
     const forts = []
     for (const xi of Object.keys(json.forts)) {
       for (const yi of Object.keys(json.forts[xi])) {
         const f = json.forts[xi][yi]
-        const a = f.fort.alliance_id
-        if (a) {
-          if (!ainfo[a]) ainfo[a] = { weight: 0, forts: [0, 0, 0], towns: 0, members: 0 }
-          ainfo[a].weight += (f.fort.type + 1) * 200 // 200,400,600
-          ainfo[a].forts[f.fort.type]++
-          forts.push(f)
-        }
+        let a = f.fort.alliance_id
+        if (!a) a = 1e8 + f.fort.town_id // invent an alliance for a town.
+        if (!ainfo[a]) ainfo[a] = { weight: 0, forts: [0, 0, 0], towns: 0, members: 0 }
+        ainfo[a].weight += (f.fort.type + 1) * 200 // 200,400,600
+        ainfo[a].forts[f.fort.type]++
+        ainfo[a].workallianceid = a
+        forts.push(f)
       }
     }
     for (const t of Object.values(json.towns)) {
-      if (t.member_count && t.alliance_id && !t.npctown) {
-        const a = t.alliance_id
+      if (t.member_count && !t.npctown) {
+        let a = t.alliance_id
+        if (!a) a = 1e8 + t.town_id // invent an alliance for a town.
         if (!ainfo[a]) ainfo[a] = { weight: 0, forts: [0, 0, 0], towns: 0, members: 0 }
         ainfo[a].weight += Math.pow(t.town_points, 0.33) // 0..60?
         ainfo[a].weight += t.member_count * 2 // 2..100
@@ -190,7 +192,7 @@ TWDS.allimap.drawit = function (map, table) {
           last: table
         })
         TWDS.createEle('td', {
-          textContent: a,
+          textContent: a > 1e8 ? -1 * (a - 1e8) : a,
           last: tr
         })
         const th = TWDS.createEle('th', {
@@ -198,9 +200,18 @@ TWDS.allimap.drawit = function (map, table) {
           className: 'linklike',
           last: tr,
           onclick: function () {
-            AllianceWindow.open(a)
+            if (this.classList.contains('istown')) {
+              const t = json.towns[a - 1e8]
+              TownWindow.open(t.x, t.y)
+            } else {
+              AllianceWindow.open(a)
+            }
           }
         })
+        if (a > 1e8) {
+          th.textContent = json.towns[a - 1e8].name
+          th.classList.add('istown')
+        }
         TWDS.createEle('td', {
           textContent: Math.round(ainfo[a].weight),
           style: {
@@ -240,14 +251,18 @@ TWDS.allimap.drawit = function (map, table) {
           })
         }
         setTimeout(function () {
-          const id = th.textContent
-          Ajax.remoteCallMode('alliance', 'get_data', {
-            alliance_id: id
-          }, function (r) {
-            if (r.error === false && r.data && r.data.allianceName) {
-              th.textContent = r.data.allianceName
-            }
-          })
+          const id = parseInt(th.textContent)
+          if (id > 1e8) {
+            th.textContent = json.towns[id - 1e8].name
+          } else {
+            Ajax.remoteCallMode('alliance', 'get_data', {
+              alliance_id: id
+            }, function (r) {
+              if (r.error === false && r.data && r.data.allianceName) {
+                th.textContent = r.data.allianceName
+              }
+            })
+          }
         }, delay)
         delay += 350
         if ((i + 1) % 20 === 0) {
@@ -274,7 +289,8 @@ TWDS.allimap.drawit = function (map, table) {
       if (typeof loc !== 'object') {
         continue
       }
-      const a = loc.fort.alliance_id
+      let a = loc.fort.alliance_id
+      if (!a) a = 1e8 + loc.fort.town_id // invent an alliance for a town.
       if (!a) continue
       let n = loc.fort.name + ', '
       if (loc.fort.type === 0) n += TWDS._('ALLIMAP_FS_0', 'small fort')
@@ -287,8 +303,11 @@ TWDS.allimap.drawit = function (map, table) {
       }
     }
     for (const t of Object.values(json.towns)) {
-      if (t.member_count && t.alliance_id && !t.npctown) {
-        const a = t.alliance_id
+      if (t.member_count && !t.npctown) {
+        let a = t.alliance_id
+        if (a === null) {
+          a = 1e8 + t.town_id // invent an alliance for a town.
+        }
         if (acolors[a]) {
           const x = TWDS.allimap.drawbox(map, 0, t.name, acolors[a], t.x, t.y, 45)
           x.classList.add('linklike')
@@ -300,7 +319,6 @@ TWDS.allimap.drawit = function (map, table) {
       }
     }
     const x = TWDS.allimap.drawcheckbox(map, TWDS._('ALLIMAP_HIDE_TOWNS', 'hide towns'), 21000, 9000)
-    console.log('XX', x)
     x.onchange = function () {
       const all = TWDS.q('.TWDS_allimap_town')
       for (let i = 0; i < all.length; i++) {
@@ -336,7 +354,6 @@ TWDS.allimap.getcontent = function (win) {
 
 TWDS.allimap.openwindow = function (search) {
   const wid = 'TWDS_allimap_window'
-  console.log('SSO', wid)
   let win
   if (wman.isWindowCreated(wid)) {
     win = wman.getById(wid)
