@@ -376,10 +376,13 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
     const x = ItemManager.getByBaseId(base)
     if (!x) return
     if (!x.wearable() && !(include & 16)) return
+    lng=parseInt(lng); // some come as strings.
     if (base in itemsByBase) {
-      itemsByBase[base].push(lng)
+      // keep the _highest_ leveled item only
+      if (itemsByBase[base] < lng) 
+        itemsByBase[base]=lng
     } else {
-      itemsByBase[base] = [lng]
+      itemsByBase[base] = lng
     }
   }
 
@@ -432,9 +435,8 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
   delete itemsByBase[1337] // sword of a thousand truths
   // console.log("TMP",itemsByBase);
 
-  west.common.forEach(itemsByBase, function (items, baseId) {
-    for (let i = 0; i < items.length; i++) {
-      const item = ItemManager.get(items[i])
+  west.common.forEach(itemsByBase, function (itemid, baseId) {
+      const item = ItemManager.get(itemid)
       const type = item.getType()
       if (type === 'right_arm') {
         if ('range' in bonusNames && item.sub_type !== 'shot') {
@@ -459,7 +461,6 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
           value: value
         })
       }
-    }
   })
   // console.log("BI",bestItems);
 
