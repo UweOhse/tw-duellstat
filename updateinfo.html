@@ -1,4 +1,21 @@
 <dl>
+<dt>0.67 - 2024-01-19
+<dd>New: A new extra, the alliance map (like TWDB).
+<dd>New: A new extra, displaying a history of money, bonds and ranking data ("Statistics"). This is still work in progress, as i need to see how good the compression works over a longer time, and implement an expiration scheme then.
+<dd>New: a night mode, where you can change the brightness of the game from, for example, 21:00 to 6:00, or from 9 to 18. I mainly implemented that just to prove that it's not useful at all, and now i like it. Oh well. You might want to give it a try.
+<dd>New: add a quick access to all kind of useful equipment combinations.
+<dd>Change: i cleaned up the duel equipment preset list in the calculator. Naming changed, parameters changed. If you depended on that know that i'm sorry, but that cleanup was really needed.
+<dd>Improvement: you can now configure your own color code (for bonus jobs on the minimap) in the job list.
+<dd>Improvement: Inventory supports sorting by damage.
+<dd>Improvement: Inventory filter 'upgraded' catches non-upgraded items if there is an upgraded item of the kind in the bag.
+<dd>Improvement: New inventory filter 'named' for named items. NOTE: This should have been easy, but the data in the game is a mess, and the 'named'-flag is unmaintained and seems to get set randomly. So i use an heuristics here. Which _will_ fail at some point.
+<dd>Improvement: the "current" chrismas sale items can be shown in the overlay. I got that idea in the last 2 days of the event.
+<dd>Improvement: added a button the quest window, to search for items in the shops.
+<dd>Bugfix: the calculator did show items multiple times if multiple source (shop, auctionable) had been activated. This didn't affect the main result, only the display of useful items.
+<dd>Bugfix: the trackbar had shown a NaN when you reached level 250.
+<dt>0.66 - 2023-12-23
+<dd>Improvement: added a cloth change button to the travelling fair construction window. On by default.
+<dd>Bugfix: drag and drop to the market sell window/tab failed, causing the plain old 'create offer' window to be shown.
 <dt>0.65 - 2023-12-21
 <dd>Improvement: market sell window shows a summary of the state.
 <dd>Bugfix: the calculator mistreated upgraded worn items if a non-upgraded or lower upgraded item is in the bag.
