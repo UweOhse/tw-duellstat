@@ -17,7 +17,7 @@ SASS_SOURCES=utils.sass minimap.sass joblist.sass market.sass craftwindow.sass q
   craftcalc.sass itemsettab.sass extras.sass bufflist.sass achievements.sass items.sass iteminfo.sass storage.sass \
   duelinfo.sass misc.sass pinning.sass calendar.sass vipendtime.sass inventory.sass settingstab.sass fbmisc.sass \
   townwindow.sass profilewindow.sass speedcalc.sass showset.sass buildwindow.sass shopsearch.sass fortbuild.sass \
-  quickequipment.sass overlay.sass
+  quickequipment.sass overlay.sass stathist.sass
 
 CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
