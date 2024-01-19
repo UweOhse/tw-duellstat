@@ -72,51 +72,50 @@ TWDS.inventory.filters = {
 TWDS.inventory.filteritemlist = function (all) {
   const tmp = []
   const filters = {}
-  let findinbagandworn=function(base_id) {
-    let res=Bag.getItemsIdsByBaseItemId(base_id);
-    let x=Wear.getByBaseId(base_id)
+  const findinbagandworn = function (baseid) {
+    const res = Bag.getItemsIdsByBaseItemId(baseid)
+    let x = Wear.getByBaseId(baseid)
     if (x) {
-      x=x.obj.item_id.toString()
-      if (!res.includes(x))
-        res.push(x);
+      x = x.obj.item_id.toString()
+      if (!res.includes(x)) { res.push(x) }
     }
-    return res;
+    return res
   }
   // .named is not well maintained.
-  let findifitisnamed=function(it) {
-    let isnamed=it.named
+  const findifitisnamed = function (it) {
+    let isnamed = it.named
     if (!isnamed) {
-      let it2=it
+      let it2 = it
       if (it.item_level) {
-        it2=ItemManager.getByBaseId(it.item_base_id);
+        it2 = ItemManager.getByBaseId(it.item_base_id)
       }
-      if (!it2.set && null===it2.usebonus && "none" === it2.usetype) {
+      if (!it2.set && it2.usebonus === null && it2.usetype === 'none') {
         if (it2.auctionable) {
           if (it2.dropable) {
-            if (!it2.tradeable || it2.traderlevel>98) {
-              isnamed=true
+            if (!it2.tradeable || it2.traderlevel > 98) {
+              isnamed = true
             }
           }
         }
       }
     }
-    return isnamed;
+    return isnamed
   }
-  let getdmg=function(it) {
+  const getdmg = function (it) {
     extractor.init(Character, it.item_level)
-    let dmg=0
-    if (it.type==='right_arm' || it.type==='left_arm') {
-      dmg=it.damage.damage_max
+    let dmg = 0
+    if (it.type === 'right_arm' || it.type === 'left_arm') {
+      dmg = it.damage.damage_max
     }
-    for (let i=0;i<it.bonus.item.length;i++) {
-      let bon=it.bonus.item[i];
+    for (let i = 0; i < it.bonus.item.length; i++) {
+      const bon = it.bonus.item[i]
 
-      const v = extractor.getExportValue(bon);
-      if (v.key==="damage") {
-        dmg+=v.value
+      const v = extractor.getExportValue(bon)
+      if (v.key === 'damage') {
+        dmg += v.value
       }
     }
-    return dmg;
+    return dmg
   }
 
   // no shortcuts, we return a copy of the list, as it may be Bag.items_by_type[x]
@@ -189,12 +188,12 @@ TWDS.inventory.filteritemlist = function (all) {
     if ('upgraded' in filters) {
       // non-upgraded items are treated as upgraded if there are upgraded items of the thing in the bag
       if (filters.upgraded === 1 && !it.item_level) {
-        let inbag=findinbagandworn(it.item_base_id);
-        if (inbag.length<2) continue;
+        const inbag = findinbagandworn(it.item_base_id)
+        if (inbag.length < 2) continue
       }
       if (filters.upgraded === -1 && !it.item_level) {
-        let inbag=findinbagandworn(it.item_base_id);
-        if (inbag.length>1) continue;
+        const inbag = findinbagandworn(it.item_base_id)
+        if (inbag.length > 1) continue
       }
       if (filters.upgraded === -1 && it.item_level) continue
     }
@@ -204,7 +203,7 @@ TWDS.inventory.filteritemlist = function (all) {
       if (filters.used === -1 && ((id in usedata) || d.want >= d.have)) continue
     }
     if ('named' in filters) {
-      let isnamed=findifitisnamed(it)
+      const isnamed = findifitisnamed(it)
       if (filters.named === 1 && !isnamed) continue
       if (filters.named === -1 && isnamed) continue
     }
@@ -262,8 +261,8 @@ TWDS.inventory.filteritemlist = function (all) {
     }
 
     if (key === 'maxdmg') {
-      let admg=getdmg(a);
-      let bdmg=getdmg(b);
+      const admg = getdmg(a)
+      const bdmg = getdmg(b)
       const t = dir * (admg - bdmg)
       if (t) return t
     }
