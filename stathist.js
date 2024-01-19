@@ -257,7 +257,7 @@ TWDS.stathist.getcontent = function (data) {
     shown = JSON.parse(shown)
   } else {
     shown = [
-      ['ts', 'level', 'xp_rank', 'xp_number', 'duel_rank', 'craft_rank', 'duel_xp', 'fort_rank', 'fort_score', 'craft_skill', 'achieve_rank', 'build_rank', 'build_total', 'mpi_rank', 'achieve_total']
+      'ts', 'level', 'xp_rank', 'xp_number', 'duel_rank', 'craft_rank', 'duel_xp', 'fort_rank', 'fort_score', 'craft_skill', 'achieve_rank', 'build_rank', 'build_total', 'mpi_rank', 'achieve_total'
     ]
     localStorage.TWDS_stathist_fields = JSON.stringify(shown)
   }
