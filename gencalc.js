@@ -376,11 +376,10 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
     const x = ItemManager.getByBaseId(base)
     if (!x) return
     if (!x.wearable() && !(include & 16)) return
-    lng=parseInt(lng); // some come as strings.
+    lng = parseInt(lng) // some come as strings.
     if (base in itemsByBase) {
       // keep the _highest_ leveled item only
-      if (itemsByBase[base] < lng) 
-        itemsByBase[base]=lng
+      if (itemsByBase[base] < lng) { itemsByBase[base] = lng }
     } else {
       itemsByBase[base] = lng
     }
@@ -436,31 +435,31 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
   // console.log("TMP",itemsByBase);
 
   west.common.forEach(itemsByBase, function (itemid, baseId) {
-      const item = ItemManager.get(itemid)
-      const type = item.getType()
-      if (type === 'right_arm') {
-        if ('range' in bonusNames && item.sub_type !== 'shot') {
-          return
-        }
-        if ('melee' in bonusNames && item.sub_type !== 'hand') {
-          return
-        }
+    const item = ItemManager.get(itemid)
+    const type = item.getType()
+    if (type === 'right_arm') {
+      if ('range' in bonusNames && item.sub_type !== 'shot') {
+        return
       }
-      bestItems[type] = bestItems[type] || []
-      // const value = item.getValue(skills)
-      const value = TWDS.genCalc.getGenValues(item, bonusNames, skills)
-      if (item.getId() === 229000 || item.getId() === 229001) {
-        // console.log('I', item, item.getId, value)
+      if ('melee' in bonusNames && item.sub_type !== 'hand') {
+        return
       }
+    }
+    bestItems[type] = bestItems[type] || []
+    // const value = item.getValue(skills)
+    const value = TWDS.genCalc.getGenValues(item, bonusNames, skills)
+    if (item.getId() === 229000 || item.getId() === 229001) {
+      // console.log('I', item, item.getId, value)
+    }
 
-      if ((value.theBonus || value.theSecondary) && (item.wearable() || (include & 16))) {
-        bestItems[type].push({
-          item: item,
-          id: item.getId(),
-          base_id: baseId,
-          value: value
-        })
-      }
+    if ((value.theBonus || value.theSecondary) && (item.wearable() || (include & 16))) {
+      bestItems[type].push({
+        item: item,
+        id: item.getId(),
+        base_id: baseId,
+        value: value
+      })
+    }
   })
   // console.log("BI",bestItems);
 
