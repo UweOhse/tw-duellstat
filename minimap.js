@@ -1,7 +1,8 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
+TWDS.backup_minimap_cache=TWDS.minimap.cache
 
 TWDS.minimap = {}
-TWDS.minimap.cache = {}
+TWDS.minimap.cache = TWDS.backup_minimap_cache || {}
 TWDS.minimap.isDefined = function (variable) {
   if (typeof variable === 'undefined' || variable == null) { return false } else { return true }
 }
@@ -488,7 +489,8 @@ TWDS.minimap.export = function () {
   let out = ''
   for (let i = 0; i < bonusjobs.length; i++) {
     const o = bonusjobs[i]
-    out += o.name + '; ' + o.bonus + '; '
+    out += "[marker "+o.x+" "+o.y+" "
+    out += o.name + ']; ' + o.bonus + '; '
     out += "<span class='TWDS_minimap_export_pos'>" + o.x + '-' + o.y + '</span>; '
     out += o.id + '\n'
   }
@@ -513,7 +515,8 @@ TWDS.minimap.export = function () {
       }
       out += ' --' + '\n'
     }
-    out += o.name + '; ' + o.bonus + '; '
+    out += "[marker "+o.x+" "+o.y+" "
+    out += o.name + ']; ' + o.bonus + '; '
     out += "<span class='TWDS_minimap_export_pos'>" + o.x + '-' + o.y + '</span>; '
     out += o.id + '\n'
   }
