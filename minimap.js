@@ -1,5 +1,5 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
-TWDS.backup_minimap_cache=TWDS.minimap.cache
+TWDS.backup_minimap_cache = TWDS.minimap ? TWDS.minimap.cache : {}
 
 TWDS.minimap = {}
 TWDS.minimap.cache = TWDS.backup_minimap_cache || {}
@@ -489,7 +489,7 @@ TWDS.minimap.export = function () {
   let out = ''
   for (let i = 0; i < bonusjobs.length; i++) {
     const o = bonusjobs[i]
-    out += "[marker "+o.x+" "+o.y+" "
+    out += '[marker ' + o.x + ' ' + o.y + ' '
     out += o.name + ']; ' + o.bonus + '; '
     out += "<span class='TWDS_minimap_export_pos'>" + o.x + '-' + o.y + '</span>; '
     out += o.id + '\n'
@@ -515,7 +515,7 @@ TWDS.minimap.export = function () {
       }
       out += ' --' + '\n'
     }
-    out += "[marker "+o.x+" "+o.y+" "
+    out += '[marker ' + o.x + ' ' + o.y + ' '
     out += o.name + ']; ' + o.bonus + '; '
     out += "<span class='TWDS_minimap_export_pos'>" + o.x + '-' + o.y + '</span>; '
     out += o.id + '\n'
