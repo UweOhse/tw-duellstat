@@ -802,6 +802,7 @@ TWDS.marketwindow.bulkmodetimeoutfn = function () {
 }
 TWDS.marketwindow.fillmap3 = function (map, table, all) {
   window.sessionStorage.TWDS_MWTMP = JSON.stringify(all)
+  window.MarketWindow.window.hideLoader()
   const additem = function (pa, it, count, fini, withpopup) {
     if (typeof it === 'number' || typeof it === 'string') {
       it = ItemManager.get(it)
@@ -930,7 +931,7 @@ TWDS.marketwindow.fillmap3 = function (map, table, all) {
       if (openwith) {
         if (saleinfo !== '') { saleinfo += ' ' }
         saleinfo += TWDS._('MARKETMAP_SALEINFO_OPENWITH',
-          '$open$ offers with $items$ items had bids.',
+          '$open$ offers with $items$ items have bids.',
           { open: openwith, items: openwithitems })
       }
       if (openwithout) {
@@ -1113,7 +1114,9 @@ TWDS.marketwindow.open = function () {
 
     TWDS.maphelper.drawme(map)
     window.MarketWindow.window.setTitle(mmt)
+    window.MarketWindow.window.activateTab('TWDS_marketmap')
     if (window.sessionStorage.TWDS_MWTMP) {
+      window.MarketWindow.window.showLoader()
       const all = JSON.parse(window.sessionStorage.TWDS_MWTMP)
       TWDS.marketwindow.fillmap3(map, table, all)
     } else { TWDS.marketwindow.fillmap1(map, table, {}) }
