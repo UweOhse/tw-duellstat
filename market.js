@@ -800,12 +800,335 @@ TWDS.marketwindow.bulkmodetimeoutfn = function () {
   EventHandler.signal('inventory_changed')
   MarketWindow.Sell.initData()
 }
+TWDS.marketwindow.fillmap3 = function (map, table, all) {
+  window.sessionStorage.TWDS_MWTMP = JSON.stringify(all)
+  const additem = function (pa, it, count, fini, withpopup) {
+    if (typeof it === 'number' || typeof it === 'string') {
+      it = ItemManager.get(it)
+    }
+    let popup = it.name
+    if (withpopup) { popup = new ItemPopup(it, {}).popup.getXHTML() }
+    TWDS.createEle({
+      nodeName: 'div.item.item_inventory',
+      last: pa,
+      style: {
+        opacity: fini ? 1.0 : 0.65
+      },
+      childNodes: [
+        {
+          nodeName: 'img',
+          className: 'tw_item item_inventory_img dnd_draggable dnd_dragElem',
+          src: it.image,
+          alt: it.name,
+          title: popup
+        },
+        {
+          nodeName: 'span.count',
+          textContent: count,
+          style: {
+            display: 'block'
+          }
+        }
+      ]
+    })
+  }
+
+  const towns = []
+  for (const town of Object.values(all)) {
+    const wt = window.Map.calcWayTime(window.Character.position, { x: town.x, y: town.y })
+    town.wt = wt
+    town.wtf = wt.formatDuration()
+    towns.push(town)
+  }
+  towns.sort(function (a, b) {
+    return a.wt - b.wt
+  })
+  for (let idx = 0; idx < towns.length; idx++) {
+    const town = towns[idx]
+
+    let allfinished = 0
+    for (let i = 0; i < town.sales.length; i++) {
+      allfinished |= town.sales[i].finished
+    }
+    for (let i = 0; i < town.bids.length; i++) {
+      allfinished |= town.bids[i].finished
+    }
+
+    let r = 0
+    let g = 0
+    if (town.bids.length) r = 10
+    if (town.sales.length) g = 10
+    if (allfinished) {
+      r *= 1.5
+      g *= 1.5
+    }
+    let color = '#'
+    color += r.toString(16)
+    color += g.toString(16)
+    color += '0'
+
+    const ti = TWDS.createEle('div.TWDS_marketmap_town')
+    TWDS.createEle('b', {
+      textContent: town.name,
+      last: ti
+    })
+    if (town.bids.length) {
+      const be = TWDS.createEle('div.bids', { last: ti })
+      for (let j = 0; j < 2; j++) {
+        for (let i = 0; i < town.bids.length; i++) {
+          const b = town.bids[i]
+          if ((b.finished && j === 0) || (!b.finished && j > 0)) {
+            additem(be, b.item_id, b.item_count, j === 0, false)
+          }
+        }
+      }
+    }
+    let sold = 0
+    let solditems = 0
+    let unsold = 0
+    let unsolditems = 0
+    let openwith = 0
+    let openwithitems = 0
+    let openwithout = 0
+    let openwithoutitems = 0
+    let money = 0
+    let saleinfo = ''
+
+    if (town.sales.length) {
+      for (let i = 0; i < town.sales.length; i++) {
+        const b = town.sales[i]
+        if (b.finished) {
+          if (b.current_bid === b.max_price) {
+            sold++
+            solditems += b.item_count
+            money += b.current_bid
+          } else {
+            unsold++
+            unsolditems += b.item_count
+          }
+        } else {
+          if (b.current_bid) {
+            openwith++
+            openwithitems += b.item_count
+          } else {
+            openwithout++
+            openwithoutitems += b.item_count
+          }
+        }
+      }
+      if (money) {
+        saleinfo += TWDS._('MARKETMAP_SALEINFO_SOLD',
+          '$$money$ for $offers$ sales of $items$ items.',
+          { money: money, offers: sold, items: solditems })
+      }
+      if (unsold) {
+        if (saleinfo !== '') { saleinfo += ' ' }
+        saleinfo += TWDS._('MARKETMAP_SALEINFO_UNSOLD',
+          '$offers$ offers with $items$ items.',
+          { offers: unsold, items: unsolditems })
+      }
+      if (openwith) {
+        if (saleinfo !== '') { saleinfo += ' ' }
+        saleinfo += TWDS._('MARKETMAP_SALEINFO_OPENWITH',
+          '$open$ offers with $items$ items had bids.',
+          { open: openwith, items: openwithitems })
+      }
+      if (openwithout) {
+        if (saleinfo !== '') { saleinfo += ' ' }
+        saleinfo += TWDS._('MARKETMAP_SALEINFO_OPENWITHOUT',
+          '$open$ offers with $items$ items have no bids.',
+          { open: openwithout, items: openwithoutitems })
+      }
+      TWDS.createEle('div', {
+        last: ti,
+        innerHTML: saleinfo
+      })
+    }
+
+    const box = TWDS.maphelper.drawbox(map, town.x, town.y, 7, ti.outerHTML, color, 0, 'town linklike')
+    box.onclick = function () {
+      TownWindow.open(town.x, town.y)
+    }
+
+    let tr = TWDS.createEle('tr.townline', { last: table })
+    const td = TWDS.createEle('td', {
+      last: tr
+    })
+    TWDS.createEle('a.townline_name', {
+      last: td,
+      textContent: town.name,
+      title: TWDS._('MARKET_OPEN_TOWNWINDOW', 'Open town window'),
+      style: { fontWeight: 'bold' },
+      onclick: function () {
+        TownWindow.open(town.x, town.y)
+      }
+    })
+    TWDS.createEle('a.townline_center', {
+      last: td,
+      title: TWDS._('MARKETMAP_SHOW_TOWN', 'Show town on map'),
+      onclick: function () {
+        console.log('OC', this)
+        Map.center(town.x, town.y)
+      },
+      children: [{
+        nodeName: 'img',
+        src: Game.cdnURL + '/images/icons/center.png'
+      }]
+    })
+    TWDS.createEle('span.townline_dist', {
+      last: td,
+      title: TWDS._('MARKETMAP_MOVE_TO_TOWN', 'Move to town'),
+      onclick: function () {
+        console.log('OC', this)
+        Map.center(town.x, town.y)
+      },
+      children: [
+        {
+          nodeName: 'span',
+          textContent: TWDS._('MARKETMAP_DISTANCE', 'Distance:')
+        },
+        {
+          nodeName: 'span.linklike',
+          innerHTML: town.wtf,
+          onclick: function () {
+            TaskQueue.add(new window.TaskWalk(town.id, 'town'))
+          }
+        }
+      ]
+    })
+    if (money) {
+      TWDS.createEle('span.money', {
+        last: td,
+        textContent: '$' + money
+      })
+    }
+
+    if (town.bids.length) {
+      tr = TWDS.createEle('tr', { last: table })
+      const td = TWDS.createEle('td', {
+        last: tr
+      })
+      for (let j = 0; j < 2; j++) {
+        for (let i = 0; i < town.bids.length; i++) {
+          const b = town.bids[i]
+          if ((b.finished && j === 0) || (!b.finished && j > 0)) {
+            additem(td, b.item_id, b.item_count, j === 0, true)
+          }
+        }
+      }
+    }
+    if (saleinfo !== '') {
+      tr = TWDS.createEle('tr', { last: table })
+      TWDS.createEle('td', {
+        last: tr,
+        textContent: saleinfo
+      })
+    }
+  }
+}
+TWDS.marketwindow.fillmap2 = function (map, table, all) {
+  console.log('filling map with offers')
+  Ajax.remoteCall('building_market', 'fetch_offers', {}, function (json) {
+    const results = json.msg.search_result
+    console.log('results', results)
+    for (let i = 0; i < results.length; i++) {
+      const r = results[i]
+      r.issale = true
+      if (r.auction_ends_in < 0 || r.current_bid === r.max_price) {
+        // got it.
+        r.finished = true
+      }
+      const t = r.market_town_id
+      if (!(t in all)) {
+        all[t] = {
+          id: t,
+          x: r.market_town_x,
+          y: r.market_town_y,
+          name: r.market_town_name,
+          bids: [],
+          sales: []
+        }
+      }
+      all[t].sales.push(r)
+    }
+    TWDS.marketwindow.fillmap3(map, table, all)
+  })
+}
+
+TWDS.marketwindow.fillmap1 = function (map, table, all) {
+  console.log('filling map with bids')
+  Ajax.remoteCall('building_market', 'fetch_bids', {}, function (json) {
+    if (json.error) { return (new UserMessage(json.msg, UserMessage.TYPE_ERROR)).show() }
+
+    const results = json.msg.search_result
+    console.log('results', results)
+    for (let i = 0; i < results.length; i++) {
+      const r = results[i]
+      r.issale = false
+      if (r.auction_ends_in < 0 || r.current_bid === r.max_price) {
+        // got it.
+        r.finished = true
+      }
+      const t = r.market_town_id
+      if (!(t in all)) {
+        all[t] = {
+          id: t,
+          x: r.market_town_x,
+          y: r.market_town_y,
+          name: r.market_town_name,
+          bids: [],
+          sales: []
+        }
+      }
+      all[t].bids.push(r)
+    }
+    TWDS.marketwindow.fillmap2(map, table, all)
+  })
+}
+
+TWDS.marketwindow.open = function () {
+  MarketWindow._TWDS_backup_open.apply(this, arguments)
+  const mmt = TWDS._('MARKETMAP_TITLE', 'Marketmap')
+  MarketWindow.window.addTab(mmt, 'TWDS_marketmap', function () {
+    if (!MarketWindow.window) return
+
+    const p = TWDS.q('div.tw2gui_window_content_pane > *', MarketWindow.window.divMain)
+    p.forEach(function (ele) { $(ele).hide() })
+    const tab = TWDS.q1('div.tw2gui_window_content_pane > .TWDS_market_map', MarketWindow.window.divMain)
+
+    tab.innerHTML = ''
+    const sp = new west.gui.Scrollpane()
+    sp.getMainDiv().style.height = '368px'
+    sp.getMainDiv().style.marginLeft = '2px'
+    tab.appendChild(sp.getMainDiv())
+
+    const wrapper = TWDS.createEle('div')
+    sp.appendContent(wrapper)
+
+    const map = TWDS.maphelper.getmap(1.36)
+    wrapper.appendChild(map)
+
+    const table = TWDS.createEle('table')
+    wrapper.appendChild(table)
+
+    TWDS.maphelper.drawme(map)
+    window.MarketWindow.window.setTitle(mmt)
+    if (window.sessionStorage.TWDS_MWTMP) {
+      const all = JSON.parse(window.sessionStorage.TWDS_MWTMP)
+      TWDS.marketwindow.fillmap3(map, table, all)
+    } else { TWDS.marketwindow.fillmap1(map, table, {}) }
+
+    $(tab).show()
+  }).appendToContentPane($('<div class="TWDS_market_map"/>'))
+}
 
 TWDS.registerStartFunc(function () {
   MarketWindow._TWDS_backup_createMarketOffer = MarketWindow.createMarketOffer
   MarketWindow.createMarketOffer = TWDS.marketwindow.createMarketOffer
   MarketWindow.Offer._TWDS_backup_send = MarketWindow.Offer.send
   MarketWindow.Offer.send = TWDS.marketwindow.offersend
+  MarketWindow._TWDS_backup_open = MarketWindow._TWDS_backup_open || MarketWindow.open
+  MarketWindow.open = TWDS.marketwindow.open
 
   west.gui.Dialog.prototype._TWDS_marketwindow_backup_show = west.gui.Dialog.prototype.show
   west.gui.Dialog.prototype.show = TWDS.marketwindow.showwrapper
