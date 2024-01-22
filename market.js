@@ -801,7 +801,6 @@ TWDS.marketwindow.bulkmodetimeoutfn = function () {
   MarketWindow.Sell.initData()
 }
 TWDS.marketwindow.fillmap3 = function (map, table, all) {
-  window.sessionStorage.TWDS_MWTMP = JSON.stringify(all)
   window.MarketWindow.window.hideLoader()
   const additem = function (pa, it, count, fini, withpopup) {
     if (typeof it === 'number' || typeof it === 'string') {
@@ -1115,11 +1114,9 @@ TWDS.marketwindow.open = function () {
     TWDS.maphelper.drawme(map)
     window.MarketWindow.window.setTitle(mmt)
     window.MarketWindow.window.activateTab('TWDS_marketmap')
-    if (window.sessionStorage.TWDS_MWTMP) {
-      window.MarketWindow.window.showLoader()
-      const all = JSON.parse(window.sessionStorage.TWDS_MWTMP)
-      TWDS.marketwindow.fillmap3(map, table, all)
-    } else { TWDS.marketwindow.fillmap1(map, table, {}) }
+    window.MarketWindow.window.showLoader()
+    const all = JSON.parse(window.sessionStorage.TWDS_MWTMP)
+    TWDS.marketwindow.fillmap3(map, table, all)
 
     $(tab).show()
   }).appendToContentPane($('<div class="TWDS_market_map"/>'))
