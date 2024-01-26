@@ -85,10 +85,7 @@ TWDS.joblist.initDisplay = function (container, serverdata, isupdate) {
   if (duration === 3600) durationIdx = 2
   const _ = TWDS._
 
-  let useBest = 0
-  if (TWDS.settings.joblist_modecheckbox) {
-    useBest = 1
-  }
+  const eqmode = TWDS.settings.joblist_modeselect
 
   TWDS.minimap.loadcache()
   const silvers = {}
@@ -136,7 +133,7 @@ TWDS.joblist.initDisplay = function (container, serverdata, isupdate) {
     if (best !== null) {
       bestNetto = TWDS.joblist.calcNettoJobPoints(jobId, best.items)
       bestBrutto = bestNetto + jobdata.malus + 1
-      if (useBest) {
+      if (eqmode === 'best') {
         curNetto = bestNetto
         curBrutto = bestBrutto
       }
@@ -205,7 +202,7 @@ TWDS.joblist.initDisplay = function (container, serverdata, isupdate) {
     td = document.createElement('td')
     tr.appendChild(td)
     td.dataset.field = 'xp'
-    if (useBest) {
+    if (eqmode === 'best') {
       let xp3600 = TWDS.TWDBcalcExp(curBrutto, difficulty, TWDS.jobData['job_' + jobId].job_exp, mot, 1)
       const xp600 = Math.ceil(xp3600 * 0.47)
       const xp15 = Math.ceil(xp3600 / 10)
@@ -215,19 +212,21 @@ TWDS.joblist.initDisplay = function (container, serverdata, isupdate) {
       td.textContent = Math.round(duration === 3600 ? xp3600 : (duration === 15 ? xp15 : xp600))
       td.title = '$' + xp15 + '/' + xp600 + '/' + xp3600 +
           ' ' + _('JOBLIST_15101', ' (15s/10m/1h)')
-    } else {
+    } else if (eqmode === 'current') {
       td.textContent = serverdata.jobs[jobId].durations[durationIdx].xp
       td.title = serverdata.jobs[jobId].durations[0].xp + '/' +
         serverdata.jobs[jobId].durations[1].xp + '/' +
         serverdata.jobs[jobId].durations[2].xp +
           ' ' + _('JOBLIST_XP', 'experience points') +
           ' ' + _('JOBLIST_15101', ' (15s/10m/1h)')
+    } else {
+      td.textContent = TWDS.jobData['job_' + jobId].job_exp.toFixed(1)
     }
 
     td = document.createElement('td')
     tr.appendChild(td)
     td.dataset.field = 'money'
-    if (useBest) {
+    if (eqmode === 'best') {
       let wage3600 = TWDS.TWDBcalcWage(curBrutto, difficulty, TWDS.jobData['job_' + jobId].job_wages, mot, 1)
       if (moneyPremium) wage3600 *= 1.5
       const wage15 = Math.ceil(wage3600 / 10)
@@ -235,31 +234,50 @@ TWDS.joblist.initDisplay = function (container, serverdata, isupdate) {
       td.textContent = Math.round(duration === 3600 ? wage3600 : (duration === 15 ? wage15 : wage600))
       td.title = '$' + wage15 + '/' + wage600 + '/' + wage3600 +
           ' ' + _('JOBLIST_15101', ' (15s/10m/1h)')
-    } else {
+    } else if (eqmode === 'current') {
       td.textContent = serverdata.jobs[jobId].durations[durationIdx].money
       td.title = '$' + serverdata.jobs[jobId].durations[0].money + '/' +
         serverdata.jobs[jobId].durations[1].money + '/' +
         serverdata.jobs[jobId].durations[2].money +
           ' ' + _('JOBLIST_15101', ' (15s/10m/1h)')
+    } else {
+      td.textContent = TWDS.jobData['job_' + jobId].job_wages.toFixed(1)
     }
 
     td = document.createElement('td')
     tr.appendChild(td)
     td.dataset.field = 'luck'
-    let luck = TWDS.TWDBcalcLuck(curBrutto, difficulty, TWDS.jobData['job_' + jobId].job_luck, mot, 1)
-    if (charPremium) luck *= 1.5
-    td.textContent = Math.round(luck * 3)
-    td.title = Math.round(luck) + ' - ' + Math.round(luck * 3)
-    if (best !== null && curBrutto !== bestBrutto) {
-      let luck2 = TWDS.TWDBcalcLuck(bestBrutto, difficulty, TWDS.jobData['job_' + jobId].job_luck, mot, 1)
-      if (charPremium) luck2 *= 1.5
-      td.title += '<br>' + Math.round(luck2) + ' -' + Math.round(luck2 * 3) +
-        +' ' + _('JOBLIST_IN_BEST_CLOTHES', '(in best clothes)')
+    let lucktoshow
+    let lucktitle
+    if (eqmode === 'best') {
+      let luck1 = TWDS.TWDBcalcLuck(curBrutto, difficulty, TWDS.jobData['job_' + jobId].job_luck, mot, 1)
+      if (charPremium) luck1 *= 1.5
+      const luck2 = Math.round(luck1 * 3)
+      lucktoshow = luck2
+      lucktitle = Math.round(luck1) + ' - ' + luck2
+    } else if (eqmode === 'current') {
+      const luck1 = serverdata.jobs[jobId].minMaxItemVal[0]
+      const luck2 = serverdata.jobs[jobId].minMaxItemVal[1]
+      lucktoshow = luck2
+      lucktitle = luck1 + ' - ' + luck2
+    } else { // raw mode
+      lucktitle = TWDS.jobData['job_' + jobId].job_luck
+      lucktoshow = lucktitle.toFixed(1)
     }
-    td.title += '<br>' + serverdata.jobs[jobId].durations[0].luck + '/' +
-      serverdata.jobs[jobId].durations[1].luck + '/' +
-      serverdata.jobs[jobId].durations[2].luck +
-        '' + _('JOBLIST_LUCK_MOD', ' luck modification in 15s/10m/1h')
+    td.textContent = lucktoshow
+    td.title = lucktitle
+    if (eqmode !== 'raw') {
+      if (best !== null && curBrutto !== bestBrutto && eqmode !== 'raw') {
+        let luck3 = TWDS.TWDBcalcLuck(bestBrutto, difficulty, TWDS.jobData['job_' + jobId].job_luck, mot, 1)
+        if (charPremium) luck3 *= 1.5
+        td.title += '<br>' + Math.round(luck3) + ' -' + Math.round(luck3 * 3) +
+          +' ' + _('JOBLIST_IN_BEST_CLOTHES', '(in best clothes)')
+      }
+      td.title += '<br>' + serverdata.jobs[jobId].durations[0].luck + '/' +
+        serverdata.jobs[jobId].durations[1].luck + '/' +
+        serverdata.jobs[jobId].durations[2].luck +
+          '' + _('JOBLIST_LUCK_MOD', ' luck modification in 15s/10m/1h')
+    }
 
     td = document.createElement('td')
     tr.appendChild(td)
@@ -269,34 +287,62 @@ TWDS.joblist.initDisplay = function (container, serverdata, isupdate) {
     td = document.createElement('td')
     tr.appendChild(td)
     td.dataset.field = 'danger'
-    let dang = TWDS.TWDBcalcDanger(curBrutto, difficulty, TWDS.jobData['job_' + jobId].job_danger, mot, 1)
-    if (Character.charClass === 'adventurer') {
-      if (charPremium) dang *= 0.8
-      else dang *= 0.9
-    }
-    td.textContent = Math.round(dang * 10) / 10
-    td.title = dang + '% ' + _('JOBLIST_INJURY_CHANCE', 'chance of injury')
-    if (best !== null) {
-      let dang2 = TWDS.TWDBcalcDanger(bestBrutto, difficulty, TWDS.jobData['job_' + jobId].job_danger, mot, 1)
+    let dang
+    if (eqmode === 'raw') {
+      td.textContent = TWDS.jobData['job_' + jobId].job_danger.toFixed(0)
+      const maxInj = TWDS.jobData['job_' + jobId].job_maxdmg
+      td.title = TWDS.jobData['job_' + jobId].job_danger.toFixed(0) + '% chance of an injury ' +
+        'costing up to ' + maxInj + '% of the then current max health'
+    } else {
+      dang = TWDS.TWDBcalcDanger(curBrutto, difficulty, TWDS.jobData['job_' + jobId].job_danger, mot, 1)
       if (Character.charClass === 'adventurer') {
-        if (charPremium) dang2 *= 0.8
-        else dang2 *= 0.9
+        if (charPremium) dang *= 0.8
+        else dang *= 0.9
       }
-      dang2 = Math.round(dang2 * 10) / 10
-      td.title += '<br>' + dang2 + '% ' + _('JOBLIST_INJURY_CHANCE_IBC', 'chance of injury in best clothes')
-    }
-    const mh = Character.getMaxHealth()
-    const maxInj = Math.round((TWDS.jobData['job_' + jobId].job_maxdmg) / 100 * mh)
-    const h = Character.health
-    td.title += '<br>'
-    td.title += _('JOBLIST_INJURY_COST',
-      'An injury costs up to $maxhp$ health points ($percent$% of max. health).',
-      { maxhp: maxInj, percent: TWDS.jobData['job_' + jobId].job_maxdmg })
-    // td.title += _("JOBLIST_INJURY_COST",'An injury costs up to ' + maxInj + ' health points (' + TWDS.jobData['job_' + jobId].job_maxdmg + '% of max. health).'
+      td.textContent = Math.round(dang * 10) / 10
+      td.title = dang + '% ' + _('JOBLIST_INJURY_CHANCE', 'chance of injury')
+      if (best !== null) {
+        let dang2 = TWDS.TWDBcalcDanger(bestBrutto, difficulty, TWDS.jobData['job_' + jobId].job_danger, mot, 1)
+        if (Character.charClass === 'adventurer') {
+          if (charPremium) dang2 *= 0.8
+          else dang2 *= 0.9
+        }
+        dang2 = Math.round(dang2 * 10) / 10
+        td.title += '<br>' + dang2 + '% ' + _('JOBLIST_INJURY_CHANCE_IBC', 'chance of injury in best clothes')
+      }
+      const mh = Character.getMaxHealth()
+      const maxInj = Math.round((TWDS.jobData['job_' + jobId].job_maxdmg) / 100 * mh)
+      const h = Character.health
+      td.title += '<br>'
+      td.title += _('JOBLIST_INJURY_COST',
+        'An injury costs up to $maxhp$ health points ($percent$% of max. health).',
+        { maxhp: maxInj, percent: TWDS.jobData['job_' + jobId].job_maxdmg })
+      // td.title += _("JOBLIST_INJURY_COST",'An injury costs up to ' + maxInj + ' health points (' + TWDS.jobData['job_' + jobId].job_maxdmg + '% of max. health).'
 
-    const worstJobs = parseInt((h + 1) / maxInj)
-    td.title += '<br>' + _('JOBLIST_MIGHT_LAST', 'You might last $worst$ jobs in the worst case.',
-      { worst: worstJobs })
+      const worstJobs = parseInt((h + 1) / maxInj)
+      td.title += '<br>' + _('JOBLIST_MIGHT_LAST', 'You might last $worst$ jobs in the worst case.',
+        { worst: worstJobs })
+    }
+
+    td = document.createElement('td')
+    tr.appendChild(td)
+    td.dataset.field = 'dangercombined'
+    if (eqmode === 'raw') {
+      td.textContent = TWDS.jobData['job_' + jobId].job_maxdmg
+    } else {
+      let dang = TWDS.TWDBcalcDanger(eqmode === 'current' ? curBrutto : bestBrutto, difficulty, TWDS.jobData['job_' + jobId].job_danger, mot, 1)
+      if (Character.charClass === 'adventurer') {
+        if (charPremium) dang *= 0.8
+        else dang *= 0.9
+      }
+      const maxdmg = TWDS.jobData['job_' + jobId].job_maxdmg
+      td.textContent = (dang * maxdmg / 100.0).toFixed(0)
+      td.title = _('JOBLIST_DANGER_MULT', '$value$%: injury chance ($ic$%) multiplied by maximum damage ($md$% of then current maximum health)', {
+        value: (dang * maxdmg / 100.0).toFixed(1),
+        ic: dang.toFixed(1),
+        md: TWDS.jobData['job_' + jobId].job_maxdmg.toFixed(1)
+      })
+    }
 
     td = document.createElement('td')
     tr.appendChild(td)
@@ -435,6 +481,12 @@ TWDS.joblist.initDisplay = function (container, serverdata, isupdate) {
 
     th = document.createElement('th')
     tr.appendChild(th)
+    th.dataset.field = 'dangercombined'
+    th.innerHTML = '&#9829;&#9829;'
+    th.title = TWDS._('JOBLIST_DANGERCOMBINED_TITLE', 'The chance to have an accident multiplied with the maximum damage in percent of the current max health.')
+
+    th = document.createElement('th')
+    tr.appendChild(th)
     th = document.createElement('th')
     th.textContent = 'Mark'
     th.title = TWDS._('JOBLIST_HIGHLIGHT_TITLE', 'Mark known bonus jobs on the minimap')
@@ -548,18 +600,56 @@ TWDS.joblist.getcontent = function () {
   p.appendChild(modearea)
   modearea.id = 'TWDS_job_modearea'
 
-  const modecheckbox = document.createElement('input')
-  modearea.appendChild(modecheckbox)
-  modecheckbox.id = 'TWDS_job_modecheckbox'
-  modecheckbox.type = 'checkbox'
+  const modeselect = document.createElement('select')
+  modearea.appendChild(modeselect)
+  modeselect.id = 'TWDS_job_modeselect'
+  modeselect.type = 'checkbox'
+  modeselect.title = TWDS._('JOBLIST_MODE_TITLE',
+    'Select between 3 display modes: "current" uses the currently worn equipment and shows all values including equipment bonus on luck, XP, money. "best" uses the equipment combination with the most labor points, if that is known, but does not currently include equipment bonus on luck, XP and money. "raw" shows the basic data for luck, XP, money and danger, without accounting for equipment or labor points.')
+  let active = 'current'
   if (TWDS.settings.joblist_modecheckbox) {
-    modecheckbox.checked = true
+    active = 'best'
+  }
+  if (TWDS.settings.joblist_modeselect) {
+    active = TWDS.settings.joblist_modeselect // overwrites the old checkbox
+  }
+  TWDS.createEle('option',
+    {
+      last: modeselect,
+      value: 'current',
+      selected: active === 'current',
+      textContent: TWDS._('JOBLIST_MODE_CURRENT', 'current equipment')
+    })
+  TWDS.createEle('option',
+    {
+      last: modeselect,
+      value: 'best',
+      selected: active === 'best',
+      textContent: TWDS._('JOBLIST_MODE_BEST', 'best LP equipment')
+    })
+  TWDS.createEle('option',
+    {
+      last: modeselect,
+      value: 'raw',
+      selected: active === 'raw',
+      textContent: TWDS._('JOBLIST_MODE_RAW', 'show raw data')
+    })
+  modeselect.onchange = function () {
+    const valkey = 'joblist_modeselect'
+    TWDS.settings[valkey] = this.value
+    TWDS.saveSettings()
+    const pa = document.querySelector('#TWDS_joblist_container').parentNode
+    pa.innerHTML = ''
+    pa.appendChild(TWDS.joblist.getcontent())
+    // TWDS.joblist.refilter()
   }
 
+  /*
   const modetext = document.createElement('span')
   modearea.appendChild(modetext)
   modetext.textContent = _('JOBLIST_ASSUME_BEST', 'assume best clothes')
   modetext.title = _('JOBLIST_ASSUME_BEST_TITLE', 'otherwise the current equipment is used')
+*/
   const sig = document.createElement('span')
   p.appendChild(sig)
   sig.id = 'TWDS_job_searchgroup'
@@ -829,9 +919,10 @@ TWDS.joblist.startFunction = function () {
     document.querySelector('#TWDS_job_search').value = ''
     $('#TWDS_job_search').trigger('change')
   })
-  $(document).on('change', '#TWDS_job_modecheckbox', function (ev) {
-    const valkey = 'joblist_modecheckbox'
-    TWDS.settings[valkey] = this.checked
+  $(document).on('change', '#TWDS_job_modeselect', function (ev) {
+    const valkey = 'joblist_modeselect'
+    console.log('MS change', ev, this.value)
+    TWDS.settings[valkey] = this.value
     TWDS.saveSettings()
     const pa = document.querySelector('#TWDS_joblist_container').parentNode
     pa.innerHTML = ''
