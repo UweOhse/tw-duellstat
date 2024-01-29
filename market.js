@@ -1115,8 +1115,7 @@ TWDS.marketwindow.open = function () {
     window.MarketWindow.window.setTitle(mmt)
     window.MarketWindow.window.activateTab('TWDS_marketmap')
     window.MarketWindow.window.showLoader()
-    const all = JSON.parse(window.sessionStorage.TWDS_MWTMP)
-    TWDS.marketwindow.fillmap3(map, table, all)
+    TWDS.marketwindow.fillmap1(map, table, {})
 
     $(tab).show()
   }).appendToContentPane($('<div class="TWDS_market_map"/>'))
