@@ -159,7 +159,7 @@ TWDS.genCalc.blacklistwindow = function () {
     const tr = TWDS.createEle('tr', { last: dl })
     const w = new tw2widget.InventoryItem(it).setCharacter(Character).getMainDiv()
     TWDS.createEle('th', {
-      children: w,
+      children: [w[0]]
       last: tr
     })
     TWDS.createEle('th', {
