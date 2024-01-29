@@ -1,0 +1,16 @@
+FORTBUILD_ONESTAGEINFO: '$mats$ für Level $stage$ von $bname$',
+FORTBUILD_TOTALSTAGEINFO: '$nstages$ Level von $bname$',
+FORTBUILD_ALLSTAGEINFO: 'Mindestens $mats$ für $nstages$ Level von $bname$',
+FORTBUILD_WINDOW_TITLE: 'Nötige Rohstoffe',
+FORTBUILD_MINITITLE: 'Benötigt',
+FORTBUILD_ALLSTAGEINFOTOTAL: 'Mindestens $$mats$ für $nstages$ Level:',
+FORTBUILD_ALLDONE: 'In diesem Fort werden keine weiteren Resourcen benötigt.',
+FORTBUILD_NEEDED: 'Nötig',
+FORTBUILD_BRUTTO: "Brutto",
+FORTBUILD_NETTO: "Netto",
+FORTBUILD_INSTOCK: "Im Lager",
+FORTBUILD_ITEM: "Item",
+FORTBUILD_INFO: "Info",
+
+
+
