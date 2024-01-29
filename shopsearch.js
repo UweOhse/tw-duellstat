@@ -679,8 +679,8 @@ TWDS.shopsearch.reload = function (win) {
 }
 TWDS.registerStartFunc(function () {
   TWDS.registerExtra('TWDS.shopsearch.openwindow',
-    TWDS._('SHOPSEARCH_EXTRA', TWDS._("STORESEARCH_EXTRA",'Shopsearch')),
-    TWDS._('SHOPSEARCH_EXTRA_DESC', TWDS._("STORESEARCH_EXTRA_DESC",'Search for items in the shops'))
+    TWDS._('SHOPSEARCH_EXTRA', TWDS._('STORESEARCH_EXTRA', 'Shopsearch')),
+    TWDS._('SHOPSEARCH_EXTRA_DESC', TWDS._('STORESEARCH_EXTRA_DESC', 'Search for items in the shops'))
   )
   TWDS.delegate(document.body, 'click', '.TWDS_shopsearch_button', function () {
     const id = this.dataset.item_id
