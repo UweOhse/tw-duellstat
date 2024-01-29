@@ -137,7 +137,7 @@ TWDS.shopsearch.searchtownforitem = async function (townid, shoptype, baseitemid
   return false
 }
 
-TWDS.shopsearch.searchforitem = async function (itemid, mode) {
+TWDS.shopsearch.searchforitem = async function (itemid, mode, allianceonly, townssearched) {
   mode = mode || 1
   const itemtypes2shops = {
     animal: 'general',
@@ -188,6 +188,7 @@ TWDS.shopsearch.searchforitem = async function (itemid, mode) {
         break
       }
     }
+    if (townssearched.length && !townssearched.includes(townid)) { continue }
     const found = await TWDS.shopsearch.searchtownforitem(townid, shoptype, baseitemid, maxlevels)
     // console.log('CHECKED', i, wts[i].wt, townid, 'found?', found)
     if (found) {
@@ -274,9 +275,33 @@ TWDS.shopsearch.walkhelper = function () {
 
 TWDS.shopsearch.updateresult = function (infoarea, table, map, item) {
   const wnd = wman.getById('TWDS_shopsearch_window')
+  const iao = TWDS.q1('input.allianceonly', wnd.divMain)
+  let allianceonly = 0
+  if (iao && iao.checked) { allianceonly = 1 }
+
+  if (allianceonly && Character.homeTown && Character.homeTown.alliance_id > 0) {
+    Ajax.remoteCallMode('alliance', 'get_data', {
+      alliance_id: Character.homeTown.alliance_id
+    }, function (resp) {
+      if (resp.error) {
+        return new UserMessage(resp.msg).show()
+      }
+      const l = []
+      for (let i = 0; i < resp.data.towns.length; i++) {
+        const t = resp.data.towns[i]
+        l.push(t.town_id)
+      }
+      return TWDS.shopsearch.updateresult2(infoarea, table, map, item, l)
+    })
+  } else {
+    return TWDS.shopsearch.updateresult2(infoarea, table, map, item, [])
+  }
+}
+TWDS.shopsearch.updateresult2 = function (infoarea, table, map, item, towns) {
+  const wnd = wman.getById('TWDS_shopsearch_window')
   if (wnd) wnd.showLoader();
 
-  (async function (itemid, wnd, infoarea) {
+  (async function (itemid, wnd, infoarea, towns) {
     // the search starts around the hometown or old hamburg, to improve caching.
     const item = ItemManager.get(itemid)
     if (!item) {
@@ -285,10 +310,11 @@ TWDS.shopsearch.updateresult = function (infoarea, table, map, item) {
       return
     }
     let mode = 1
+    const allianceonly = 0
     const mele = TWDS.q1('input.multipleresults', wnd.divMain)
     if (mele && mele.checked) { mode = 2 }
 
-    const townids = await TWDS.shopsearch.searchforitem(itemid, mode)
+    const townids = await TWDS.shopsearch.searchforitem(itemid, mode, allianceonly, towns)
     if (townids.length === 0) {
       infoarea.textContent = TWDS._('STORESEARCH_ITEM_NOT_IN_SHOPS', '$itemname$ not found in any town', { itemname: item.name })
       if (wnd) wnd.hideLoader()
@@ -318,7 +344,9 @@ TWDS.shopsearch.updateresult = function (infoarea, table, map, item) {
         ic.dataset.townid = townid
         ic.classList.add('linklike')
         ic.title = ic.title + ': ' + item.name
-        ic.onclick = TWDS.shopsearch.walkhelper
+        ic.onclick = function () {
+          TownWindow.open(town.x, town.y)
+        }
         // console.log('drew new icon', townid, item.name)
       } else {
         if (ic._mpopup) {
@@ -352,7 +380,9 @@ TWDS.shopsearch.updateresult = function (infoarea, table, map, item) {
               nodeName: 'th.name.linklike',
               dataset: { townid: townid },
               textContent: town.name,
-              onclick: TWDS.shopsearch.walkhelper
+              onclick: function () {
+                TownWindow.open(town.x, town.y)
+              }
             },
             { nodeName: 'td.wt.linklike', dataset: { townid: townid, wt: wt }, innerHTML: wt.formatDuration(), onclick: TWDS.shopsearch.walkhelper },
             { nodeName: 'td.items', textContent: '' }
@@ -391,7 +421,7 @@ TWDS.shopsearch.updateresult = function (infoarea, table, map, item) {
       TWDS.shopsearch.cacheclearbuttontitle(cc)
     }
     if (wnd) wnd.hideLoader()
-  })(item.item_id, wnd, infoarea)
+  })(item.item_id, wnd, infoarea, towns)
 }
 TWDS.shopsearch.cacheclearbuttontitle = function (ele) {
   let bytes = 0
@@ -520,6 +550,19 @@ TWDS.shopsearch.getcontent = function (win) {
       textContent: TWDS._('STORESEARCH_MULTI_MODE', 'Multiple')
     }]
   })
+  TWDS.createEle('label', {
+    title: TWDS._('STORESEARCH_ALLIANCE_MODE_TITLE', 'Search in your alliance only'),
+    last: inputarea,
+    children: [{
+      nodeName: 'input.allianceonly',
+      type: 'checkbox',
+      checked: false,
+      value: 0
+    }, {
+      nodeName: 'span',
+      textContent: TWDS._('STORESEARCH_ALLIANCE_MODE', 'Alliance')
+    }]
+  })
 
   TWDS.createEle({
     nodeName: 'button.clearmap',
@@ -636,8 +679,8 @@ TWDS.shopsearch.reload = function (win) {
 }
 TWDS.registerStartFunc(function () {
   TWDS.registerExtra('TWDS.shopsearch.openwindow',
-    TWDS._('SHOPSEARCH_EXTRA', 'Shopsearch'),
-    TWDS._('SHOPSEARCH_EXTRA_DESC', 'Search for items in the shops')
+    TWDS._('SHOPSEARCH_EXTRA', TWDS._("STORESEARCH_EXTRA",'Shopsearch')),
+    TWDS._('SHOPSEARCH_EXTRA_DESC', TWDS._("STORESEARCH_EXTRA_DESC",'Search for items in the shops'))
   )
   TWDS.delegate(document.body, 'click', '.TWDS_shopsearch_button', function () {
     const id = this.dataset.item_id
