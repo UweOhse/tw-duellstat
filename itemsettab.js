@@ -378,7 +378,9 @@ TWDS.itemsettab.classifyset = function (key) {
   }
   return null
 }
+TWDS.itemsettab.classifyallsets_done = false
 TWDS.itemsettab.classifyallsets = function () {
+  if (TWDS.itemsettab.classifyallsets_done) return
   const allsets = west.storage.ItemSetManager.getAll()
   for (let i = 0; i < allsets.length; i++) {
     const s = allsets[i]
@@ -509,6 +511,7 @@ TWDS.itemsettab.classifyallsets = function () {
       }
     }
   }
+  TWDS.itemsettab.classifyallsets_done = true
 }
 TWDS.itemsettab.fixallsets = function (allsets) {
   for (let i = 0; i < allsets.length; i++) {
