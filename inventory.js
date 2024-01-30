@@ -508,11 +508,47 @@ TWDS.inventory.showcategory = function (category, data) {
   const ret = Inventory.TWDS_backup_showCategory.call(this, category, data)
   return ret
 }
+TWDS.inventory.showLastItems = function () { // reimplementation, not calling the original.
+  $('#overlay_inv').show()
+  const list = []
+  const lastIds = Bag.getInventoryIds()
+  const pinned = TWDS.pinning.getinvitems()
+  let leftout=0
+  for (let i = 0; i < lastIds.length; i++) {
+    const item = Bag.getItemByInvId(lastIds[i])
+    if (item) {
+      if (i===0) console.log("item",item);
+      if (! pinned.includes(item.obj.item_id)) {
+        list.push(item)
+      } else {
+        leftout++
+      }
+    }
+  }
+  let j = 0
+  for (let i = 0; i < pinned.length; i++) {
+    const item = Bag.getItemByItemId(pinned[i])
+    if (item) {
+      if (j<leftout) {
+        list.unshift(item);
+        j++;
+      } else {
+        list[j++] = item
+      }
+    }
+  }
+  for (let i = 0; i < list.length; i++) {
+    Inventory.addItemDivToInv(list[i])
+  }
+  Inventory.setNavigation('new', 1, 0)
+}
 
 // Biginventory touches the same variables, so be careful _NOT_ to change them "back" if we didn't set them.
 TWDS.registerStartFunc(function () {
   Inventory.TWDS_backup_open = Inventory.open
   Inventory.open = TWDS.inventory.open
+  Inventory.TWDS_backup_showLastItems = Inventory.showLastItems
+  Inventory.showLastItems = TWDS.inventory.showLastItems
   Inventory.TWDS_backup_showCategory = Inventory.showCategory
   Inventory.showCategory = function (a, b) { return TWDS.inventory.showcategory(a, b) }
   Bag.TWDS_backup_i_getItemsIdsByType = Bag.getItemsIdsByType
