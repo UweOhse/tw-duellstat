@@ -271,12 +271,81 @@ TWDS.chat.init4 = function () {
   Chat.Layout.Tab.TWDS_backup_send = Chat.Layout.Tab.TWDS_backup_send || Chat.Layout.Tab.prototype.send
   Chat.Layout.Tab.prototype.send = TWDS.chat.tabsend
 }
+TWDS.chat.playernocolor = {}
+TWDS.chat.formatResponse = function (room, from, message, time) {
+  if (from && from.pname) {
+    const t = from.pname.toLocaleLowerCase()
+    if (TWDS.chat.playernocolor[t]) {
+      message = message.split(/[\s\u2060](?=\/\d\d\d)/).map(function (v) {
+        const rgb = v.match(/^\/(\d\d\d)(\s*)(.*?)(\s*)$/)
+        if (rgb) { return rgb[3] + rgb[4] } else { return v }
+      }).join('')
+    }
+  }
+  return Chat.Formatter.TWDS_backup_formatResponse.call(this, room, from, message, time)
+}
+TWDS.chat.init5 = function () {
+  TWDS.chat.playernocolor = {}
+  try {
+    TWDS.chat.playernocolor = JSON.parse(window.localStorage.TWDS_chat_playernocolor || '{}')
+  } catch (e) {
+    console.log('exception', e)
+    TWDS.chat.playernocolor = {}
+  }
+  Chat.Operations['^\\/removecolors(.*)'] = {
+    cmd: 'removecolors',
+    shorthelp: TWDS._('CHAT_REMOVECOLORS_SHORTHELP', 'Remove color from chat messages.'),
+    help: TWDS._('CHAT_REMOVECOLORS_HELP', 'Remove (-) or allows (+) colors from messages of a player.'),
+    usage: TWDS._('CHAT_REMOVECOLORS_USAGE', '/removeplayercolors ( - | +) playername. + to allow, - to remove. Anything not matching that will list the current state'),
+    func: function (room, msg, param) {
+      const parsed = param[1].match(/\s+([-+])\s+(.+)$/)
+      if (!parsed) {
+        const a = Object.keys(TWDS.chat.playernocolor)
+        if (a.length) {
+          TWDS.chat.localanswer(room, '/990 ' +
+            TWDS._('CHAT_REMOVECOLORS_LIST', 'You remove colors from these players:'))
+          a.sort(function (c, d) { return c.localeCompare(d) })
+          for (let i = 0; i < a.length; i++) {
+            TWDS.chat.localanswer(room, ' - ' + a[i])
+          }
+        } else {
+          TWDS.chat.localanswer(room, '/990 ' +
+            TWDS._('CHAT_REMOVECOLORS_NONE', 'You remove colors from no players.'))
+        }
+        console.log('XX')
+        TWDS.chat.localanswer(room, '/990 ' +
+            TWDS._('CHAT_REMOVECOLORS_EXAMPLE1', 'To remove colors from all messages coming from a player: /removecolors + PLAYER NAME.'))
+        TWDS.chat.localanswer(room, '/990 ' +
+            TWDS._('CHAT_REMOVECOLORS_EXAMPLE2', 'To allow colors in all messages coming from a player: /removecolors - PLAYER NAME.'))
+        return
+      }
+      const plus = parsed[1] === '+'
+      const player = parsed[2].trim().toLocaleLowerCase()
+      if (plus) {
+        TWDS.chat.playernocolor[player] = 1
+        TWDS.chat.localanswer(room, '/990' +
+          TWDS._('CHAT_REMOVECOLORS_ADDED', 'removing colors from messages coming from $player$.',
+            { player: player }))
+      } else {
+        delete TWDS.chat.playernocolor[player]
+        TWDS.chat.localanswer(room, '/990' +
+          TWDS._('CHAT_REMOVECOLORS_REMOVECOLORS', 'Not removing colors from messages coming from $player$.',
+            { player: player }))
+      }
+      window.localStorage.TWDS_chat_playernocolor = JSON.stringify(TWDS.chat.playernocolor)
+    }
+  }
+  Chat.Formatter.TWDS_backup_formatResponse = Chat.Formatter.TWDS_backup_formatResponse ||
+    Chat.Formatter.formatResponse
+  Chat.Formatter.formatResponse = TWDS.chat.formatResponse
+}
 
 TWDS.registerStartFunc(function () {
   TWDS.chat.init()
   TWDS.chat.init2()
   TWDS.chat.init3()
   TWDS.chat.init4()
+  TWDS.chat.init5()
 })
 
 // vim: tabstop=2 shiftwidth=2 expandtab
