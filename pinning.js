@@ -112,9 +112,58 @@ TWDS.pinning.handledrop = function (ele, inbucket) {
   window.localStorage.TWDS_pinned_items = JSON.stringify(list)
   TWDS.pinning.getcontent()
 }
-TWDS.pinning.getcontent = function () {
+TWDS.pinning.getitems = function () {
   const x = window.localStorage.TWDS_pinned_items || '[]'
   const list = JSON.parse(x)
+  return list
+}
+TWDS.pinning.getinvitems = function (asobject) {
+  const p = TWDS.pinning.getitems()
+  let q = window.localStorage.TWDS_invpinned_items || '{}'
+  q = JSON.parse(q)
+  const res = []
+  for (let i = 0; i < p.length; i++) {
+    const id = p[i]
+    if (q[id]) res.push(id)
+  }
+  return res
+}
+TWDS.pinning.threedots = function (ev) {
+  console.log('...', this)
+  ev.stopPropagation()
+  const sb = (new west.gui.Selectbox(true))
+    .setHeight('347px')
+    .setWidth('260px')
+    .addListener(function (choice) {
+      console.log('CHOICE', choice, this)
+      sb.hide()
+    })
+  for (let i = 0; i < 4; i++) {
+    const c = TWDS.createEle('input.test' + i, {
+      type: 'checkbox',
+      onchange: function () {
+        console.log('cb change')
+        ev.stopPropagation()
+        return false
+      }
+    })
+    const u = TWDS.createEle('u', {
+      children: [
+        c,
+        { nodeName: 'span', textContent: ' ' + i }
+      ]
+    })
+    sb.addItem(i, u)
+  }
+  sb.show(ev)
+
+  return true
+}
+TWDS.pinning.getcontent = function () {
+  const x = window.localStorage.TWDS_pinned_items || '[]'
+  const y = window.localStorage.TWDS_invpinned_items || '{}'
+  const list = JSON.parse(x)
+  const ilist = JSON.parse(y)
 
   const content = TWDS.q1('.TWDS_pinning_container')
   content.textContent = ''
@@ -127,6 +176,23 @@ TWDS.pinning.getcontent = function () {
     t.dataset.twds_item_id = id
     t.onclick = TWDS.pinning.onclick
     TWDS.createEle('span.cooldown', { last: t, children: [{ nodeName: 'p' }] })
+    TWDS.createEle('input.invpin', {
+      type: 'checkbox',
+      last: t,
+      checked: !!ilist[id],
+      title: TWDS._('MISC_INVPINNING_TITLE', 'Pin this item to the inventory'),
+      onclick: function (ev) {
+        ev.stopPropagation()
+        return true
+      },
+      onchange: function (ev) {
+        ilist[id] = !ilist[id]
+        window.localStorage.TWDS_invpinned_items = JSON.stringify(ilist)
+        ev.stopPropagation()
+        return false
+      },
+      children: [{ nodeName: 'b', textContent: '...' }]
+    })
     const img = TWDS.q1('.tw_item', t)
     img.classList.add('TWDS_pinned_thing')
     $(img).setDraggable()
