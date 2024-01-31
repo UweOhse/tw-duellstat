@@ -51,7 +51,7 @@ TWDS.calculator.data = [
   {
     kind: 'bonus',
     name: 'fboffense_sector',
-    img: 'https://en21.the-west.net/images/fort/battle/help01.png',
+    img: '/images/fort/battle/help01.png',
     title: TWDS._('CALCULATOR_SECTOR_ATTACK', 'multiplayer attack (sector bonus)')
   },
   {
@@ -63,7 +63,7 @@ TWDS.calculator.data = [
   {
     kind: 'bonus',
     name: 'fbdefense_sector',
-    img: 'https://en21.the-west.net/images/fort/battle/help01.png',
+    img: '/images/fort/battle/help01.png',
     title: TWDS._('CALCULATOR_SECTOR_DEFENSE', 'multiplayer defense (sector bonus)')
   },
   {
