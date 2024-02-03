@@ -28,6 +28,7 @@ TWDS.quickequipment.control = [
   { level: 0, key: 'duel', text: 'duels', hassubmenu: true },
   { level: 0, key: 'battle', text: 'fort battles', hassubmenu: true },
   { level: 0, key: 'construction', text: 'construction', keepcached: true },
+  { level: 0, key: 'saved', text: 'saved searches', hassubmenu: true },
   { level: 0, key: 'cacherebuild', text: 'rebuild cache' }
 ]
 TWDS.quickequipment.fillcontrollist = function () {
@@ -42,6 +43,20 @@ TWDS.quickequipment.fillcontrollist = function () {
           text: n,
           submenu: 'skill'
         })
+      }
+    }
+    if (TWDS.quickequipment.control[i].key === 'saved') {
+      const sav = TWDS.calculator.getsavedlist()
+      if (sav.length) {
+        for (let j = 0; j < sav.length; j++) {
+          const n = sav[j]
+          TWDS.quickequipment.control.push({
+            level: 1,
+            key: 'saved/' + n,
+            text: n,
+            submenu: 'saved'
+          })
+        }
       }
     }
   }
@@ -78,6 +93,22 @@ TWDS.quickequipment.cache = { }
 TWDS.quickequipment.used = { }
 
 TWDS.quickequipment.calc = function (key) {
+  const calcsub = function (preset) {
+    const o = {}
+    const p = {}
+    for (const [k, v] of Object.entries(preset)) {
+      if (k === 'name') continue
+      if (k === 'type') continue
+      if (k === 'alias') continue
+      if (k in CharacterSkills.attributes ||
+        k in CharacterSkills.skills) {
+        o[k] = v
+      } else {
+        p[k] = v
+      }
+    }
+    return TWDS.genCalc(p, o)
+  }
   if (key === 'speed') {
     return TWDS.speedcalc.doit(1, 0)
   }
@@ -104,25 +135,17 @@ TWDS.quickequipment.calc = function (key) {
   if (key === 'construction') {
     return TWDS.genCalc({ job_1000: 1, joball: 1 }, { build: 3, repair: 1, leadership: 1, joball: 1, job_1000: 1 })
   }
+  if (key.startsWith('saved/')) {
+    const str = key.substring(6)
+    const preset = TWDS.calculator.findsaved(str)
+    if (!preset) return
+    return calcsub(preset)
+  }
   if (key.startsWith('calculator/')) {
     const str = key.substring(11)
     const preset = TWDS.calculator.findpreset(str)
-    if (!str) return
-
-    const o = {}
-    const p = {}
-    for (const [k, v] of Object.entries(preset)) {
-      if (k === 'name') continue
-      if (k === 'type') continue
-      if (k === 'alias') continue
-      if (k in CharacterSkills.attributes ||
-        k in CharacterSkills.skills) {
-        o[k] = v
-      } else {
-        p[k] = v
-      }
-    }
-    return TWDS.genCalc(p, o)
+    if (!preset) return
+    return calcsub(preset)
   }
   return null
 }
@@ -381,7 +404,7 @@ TWDS.quickequipment.handlecatselect = function (cat) {
     return
   }
 
-  if (cat === 'duel' || cat === 'battle' || cat === 'bonus' || cat === 'skill') {
+  if (cat === 'duel' || cat === 'battle' || cat === 'bonus' || cat === 'skill' || cat === 'saved') {
     const names = []
     const cs = TWDS.quickequipment.control
     for (let i = 0; i < cs.length; i++) {
