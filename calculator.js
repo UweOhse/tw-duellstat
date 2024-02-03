@@ -5,30 +5,30 @@ TWDS.calculator.presets = [
   { name: 'duel', disabled: true },
   // { name: 'tmpl',                    punch: 0, tough: 1, health: 1, reflex: 1, dodge: 1, aim: 1, shot: 0, appearance: 1, tactic: 1},
 
-  { name: 'attack damaging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 12, shot: 12, appearance: 12, tactic: 1, type: 'duel', alias: 'Vaquero / Jaguar / Pearl' },
-  { name: 'attack damaging/melee', punch: 12, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 12, shot: 0, appearance: 12, tactic: 1, type: 'duel', alias: 'Cowgirl / Legba' },
-  { name: 'defend damaging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 12, shot: 12, appearance: 0, tactic: 12, type: 'duel' },
-  { name: 'defend damaging/melee', punch: 12, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 12, shot: 0, appearance: 0, tactic: 12, type: 'duel' },
-  { name: 'defend+ damaging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 10, shot: 10, appearance: 0, tactic: 15, type: 'duel' },
-  { name: 'defend+ damaging/melee', punch: 10, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 10, shot: 0, appearance: 0, tactic: 15, type: 'duel' },
+  { name: 'attack damaging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 12, shot: 12, appearance: 12, tactic: 1, type: 'duel', alias: 'Vaquero / Jaguar / Pearl', range:1 },
+  { name: 'attack damaging/melee', punch: 12, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 12, shot: 0, appearance: 12, tactic: 1, type: 'duel', alias: 'Cowgirl / Legba', melee: 1 },
+  { name: 'defend damaging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 12, shot: 12, appearance: 0, tactic: 12, type: 'duel', range:1 },
+  { name: 'defend damaging/melee', punch: 12, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 12, shot: 0, appearance: 0, tactic: 12, type: 'duel',melee:1 },
+  { name: 'defend+ damaging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 10, shot: 10, appearance: 0, tactic: 15, type: 'duel', range:1 },
+  { name: 'defend+ damaging/melee', punch: 10, tough: 1, health: 1, reflex: 1, dodge: 6, aim: 10, shot: 0, appearance: 0, tactic: 15, type: 'duel', melee:1 },
 
-  { name: 'attack dodging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 12, aim: 6, shot: 3, appearance: 12, tactic: 1, type: 'duel' },
-  { name: 'attack dodging/melee', punch: 3, tough: 1, health: 1, reflex: 1, dodge: 12, aim: 6, shot: 0, appearance: 12, tactic: 1, type: 'duel', alias: 'Josephine' },
-  { name: 'defend dodging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 12, aim: 9, shot: 3, appearance: 0, tactic: 12, type: 'duel' },
-  { name: 'defend dodging/melee', punch: 3, tough: 1, health: 1, reflex: 1, dodge: 12, aim: 9, shot: 0, appearance: 0, tactic: 12, type: 'duel' },
+  { name: 'attack dodging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 12, aim: 6, shot: 3, appearance: 12, tactic: 1, type: 'duel',range:1 },
+  { name: 'attack dodging/melee', punch: 3, tough: 1, health: 1, reflex: 1, dodge: 12, aim: 6, shot: 0, appearance: 12, tactic: 1, type: 'duel', alias: 'Josephine', melee:1 },
+  { name: 'defend dodging/shooting', punch: 0, tough: 1, health: 1, reflex: 1, dodge: 12, aim: 9, shot: 3, appearance: 0, tactic: 12, type: 'duel', range:1 },
+  { name: 'defend dodging/melee', punch: 3, tough: 1, health: 1, reflex: 1, dodge: 12, aim: 9, shot: 0, appearance: 0, tactic: 12, type: 'duel',melee:1 },
 
-  { name: 'attack shooting w/ shot res.', punch: 0, tough: 3, health: 1, reflex: 12, dodge: 2, aim: 4, shot: 6, appearance: 12, tactic: 1, type: 'duel' },
-  { name: 'attack shooting w/ melee res.', punch: 0, tough: 12, health: 1, reflex: 3, dodge: 2, aim: 4, shot: 6, appearance: 12, tactic: 1, type: 'duel' },
-  { name: 'attack melee w/ shot res.', punch: 6, tough: 1, health: 1, reflex: 12, dodge: 2, aim: 4, shot: 0, appearance: 12, tactic: 1, type: 'duel' },
-  { name: 'attack melee w/ melee res.', punch: 6, tough: 12, health: 1, reflex: 3, dodge: 2, aim: 4, shot: 0, appearance: 12, tactic: 1, type: 'duel' },
-  { name: 'defend shooting w/ shot res.', punch: 0, tough: 3, health: 1, reflex: 12, dodge: 2, aim: 4, shot: 3, appearance: 0, tactic: 12, type: 'duel' },
-  { name: 'defend shooting w/ melee res.', punch: 0, tough: 12, health: 1, reflex: 3, dodge: 2, aim: 4, shot: 3, appearance: 0, tactic: 12, type: 'duel' },
-  { name: 'defend shooting w/ mixed res.', punch: 0, tough: 12, health: 1, reflex: 12, dodge: 10, aim: 4, shot: 3, appearance: 0, tactic: 12, type: 'duel' },
-  { name: 'defend melee w/ shot res.', punch: 2, tough: 1, health: 1, reflex: 12, dodge: 2, aim: 3, shot: 0, appearance: 0, tactic: 12, type: 'duel' },
-  { name: 'defend melee w/ melee res.', punch: 2, tough: 12, health: 1, reflex: 3, dodge: 2, aim: 3, shot: 0, appearance: 0, tactic: 12, type: 'duel' },
-  { name: 'defend melee w/ mixed res.', punch: 2, tough: 12, health: 1, reflex: 12, dodge: 10, aim: 3, shot: 0, appearance: 0, tactic: 12, type: 'duel' },
-  { name: 'clover melee', punch: 54, tough: 34, health: 10, reflex: 38, dodge: 65, aim: 79, shot: 0, appearance: 57, tactic: 61, type: 'duel' },
-  { name: 'clover shot', punch: 0, tough: 34, health: 10, reflex: 30, dodge: 64, aim: 72, shot: 88, appearance: 64, tactic: 62, type: 'duel' },
+  { name: 'attack shooting w/ shot res.', punch: 0, tough: 3, health: 1, reflex: 12, dodge: 2, aim: 4, shot: 6, appearance: 12, tactic: 1, type: 'duel', range:1 },
+  { name: 'attack shooting w/ melee res.', punch: 0, tough: 12, health: 1, reflex: 3, dodge: 2, aim: 4, shot: 6, appearance: 12, tactic: 1, type: 'duel', range:1 },
+  { name: 'attack melee w/ shot res.', punch: 6, tough: 1, health: 1, reflex: 12, dodge: 2, aim: 4, shot: 0, appearance: 12, tactic: 1, type: 'duel',melee:1 },
+  { name: 'attack melee w/ melee res.', punch: 6, tough: 12, health: 1, reflex: 3, dodge: 2, aim: 4, shot: 0, appearance: 12, tactic: 1, type: 'duel',melee:1 },
+  { name: 'defend shooting w/ shot res.', punch: 0, tough: 3, health: 1, reflex: 12, dodge: 2, aim: 4, shot: 3, appearance: 0, tactic: 12, type: 'duel',range:1 },
+  { name: 'defend shooting w/ melee res.', punch: 0, tough: 12, health: 1, reflex: 3, dodge: 2, aim: 4, shot: 3, appearance: 0, tactic: 12, type: 'duel',range:1 },
+  { name: 'defend shooting w/ mixed res.', punch: 0, tough: 12, health: 1, reflex: 12, dodge: 10, aim: 4, shot: 3, appearance: 0, tactic: 12, type: 'duel',range:1 },
+  { name: 'defend melee w/ shot res.', punch: 2, tough: 1, health: 1, reflex: 12, dodge: 2, aim: 3, shot: 0, appearance: 0, tactic: 12, type: 'duel',melee:1 },
+  { name: 'defend melee w/ melee res.', punch: 2, tough: 12, health: 1, reflex: 3, dodge: 2, aim: 3, shot: 0, appearance: 0, tactic: 12, type: 'duel',melee:1 },
+  { name: 'defend melee w/ mixed res.', punch: 2, tough: 12, health: 1, reflex: 12, dodge: 10, aim: 3, shot: 0, appearance: 0, tactic: 12, type: 'duel',melee:1 },
+  { name: 'clover melee', punch: 54, tough: 34, health: 10, reflex: 38, dodge: 65, aim: 79, shot: 0, appearance: 57, tactic: 61, type: 'duel',melee:1 },
+  { name: 'clover shot', punch: 0, tough: 34, health: 10, reflex: 30, dodge: 64, aim: 72, shot: 88, appearance: 64, tactic: 62, type: 'duel',range:1 },
   //
   { name: 'fort battle', disabled: true },
   { name: 'tank/att', health: 5, aim: 1, dodge: 5, hide: 6, leadership: 5, fboffense: 1, fboffense_sector: 2, fbdefense: 50, fbdefense_sector: 50, fbresistance: 5, fbdamage: 1, type: 'battle' },
@@ -238,15 +238,15 @@ TWDS.calculator.showbonus = function (all, area) {
   if (all.fort_defense_sector) { one(all, 'fort_offense_sector', 'SectorDef', tr); flag = 1 }
   if (all.fort_damage_sector) { one(all, 'fort_damage_sector', 'SectorDmg', tr); flag = 1 }
 }
-TWDS.calculator.exec = function (filterarea, sels, resultarea) {
+TWDS.calculator.getselections = function (selectarea) {
   const skillweights = { }
   const bonusweights = { }
   for (let i = 0; i < TWDS.calculator.data.length; i++) {
     const d = TWDS.calculator.data[i]
-    console.log('d', i, d)
+    // console.log('d', i, d)
     if (d.kind === 'group') continue
     if (d.kind === 'bonus') {
-      const inp = TWDS.q1('.onebonus.bonus.' + d.name + ' input.value', sels)
+      const inp = TWDS.q1('.onebonus.bonus.' + d.name + ' input.value', selectarea)
       const val = parseFloat(inp.value) || 0
       if (val !== 0) {
         bonusweights[d.name] = val
@@ -261,23 +261,31 @@ TWDS.calculator.exec = function (filterarea, sels, resultarea) {
       }
     }
     if (d.kind === 'skill') {
-      let inp = TWDS.q1('.onebonus.skill.' + d.name + ' input.value', sels)
+      let inp = TWDS.q1('.onebonus.skill.' + d.name + ' input.value', selectarea)
       inp = parseFloat(inp.value) || 0
       if (inp !== 0) {
         skillweights[d.name] = inp
       }
     }
   }
+  const w = TWDS.q1('.TWDS_calc_wgroup input:checked')
+  if (w.value === 'shot') bonusweights.range = 1
+  if (w.value === 'melee') bonusweights.melee = 1
+  return {
+    skills: skillweights,
+    bonus: bonusweights
+  }
+}
+TWDS.calculator.exec = function (filterarea, selectarea, resultarea) {
+  const sels = TWDS.calculator.getselections()
+
   let include = 0
   const x = TWDS.q('.TWDS_calc_filterarea input:checked')
   for (let i = 0; i < x.length; i++) {
     include |= parseInt(x[i].value)
   }
-  const w = TWDS.q1('.TWDS_calc_wgroup input:checked')
-  if (w.value === 'shot') bonusweights.range = 1
-  if (w.value === 'melee') bonusweights.melee = 1
 
-  console.log('PARA', bonusweights, skillweights, include)
+  console.log('PARA', sels.bonus, sels.skills, include)
   resultarea.textContent = ''
   TWDS.createEle({
     nodeName: 'h2',
@@ -285,7 +293,7 @@ TWDS.calculator.exec = function (filterarea, sels, resultarea) {
     last: resultarea
   })
 
-  const gc = TWDS.genCalc.exec(bonusweights, skillweights, include)
+  const gc = TWDS.genCalc.exec(sels.bonus, sels.skills, include)
   for (let i = 0; i < gc.combos.length; i++) {
     TWDS.createEle({
       nodeName: 'p',
@@ -367,7 +375,84 @@ TWDS.calculator.findpreset = function (name) {
   }
   return preset
 }
-TWDS.calculator.openwindow = function () {
+TWDS.calculator.findsaved = function (name) {
+  const saved = JSON.parse(window.localStorage.TWDS_calculator_saved || '{}')
+  if (name in saved) return saved[name]
+  return null
+}
+TWDS.calculator.getsavedlist = function () {
+  const saved = JSON.parse(window.localStorage.TWDS_calculator_saved || '{}')
+  const savedkeys = Object.keys(saved)
+  savedkeys.sort(function (a, b) {
+    return a.localeCompare(b)
+  })
+  return savedkeys
+}
+TWDS.calculator.openmaintainwindow = function () {
+  const myname = 'TWDS_calcmaintain_window'
+  const win = wman.open(myname, TWDS._('CALCULATOR_MAINTAINTITLE', 'Maintain saved searches'))
+  win.setMiniTitle('Maintain')
+  const sp = new west.gui.Scrollpane()
+  const content = TWDS.createEle('div', {
+    className: 'TWDS_calc_container'
+  })
+  sp.appendContent(content)
+  win.appendToContentPane(sp.getMainDiv())
+
+  const saved = JSON.parse(window.localStorage.TWDS_calculator_saved || '{}')
+  const savedkeys = Object.keys(saved)
+  if (!savedkeys.length) {
+    TWDS.createEle('p', {
+      last: content,
+      textContent: TWDS._('CALCULATOR_NOSAVEDSEARCHES', 'You have no saved searches.')
+    })
+    return
+  }
+  savedkeys.sort(function (a, b) {
+    return a.localeCompare(b)
+  })
+  TWDS.createEle('p', {
+    last: content,
+    textContent: TWDS._('CALCULATOR_SAVEDSEARCHES', 'You have the following saved searches:')
+  })
+  const ol = TWDS.createEle('ol', {
+    last: content
+  })
+  for (let i = 0; i < savedkeys.length; i++) {
+    const k = savedkeys[i]
+    const li = TWDS.createEle('li', {
+      last: ol
+    })
+    TWDS.createEle('span.linklike', {
+      last: li,
+      dataset: {
+        key: k
+      },
+      title: TWDS._('CALCULATOR_CLICKTOUSE', 'Click to use it in the calculator'),
+      textContent: k,
+      onclick: function () {
+        TWDS.calculator.openwindow('saved/' + this.dataset.key)
+      }
+    })
+    TWDS.createEle('button', {
+      last: li,
+      textContent: TWDS._('CALCULATOR_DELETESAVE', 'Delete this saved search'),
+      onclick: function () {
+        if (window.confirm(
+          TWDS._('CALCULATOR_DELETECONFIRM', 'Really delete saved search $name$?', { name: k }))) {
+          delete saved[k]
+          window.localStorage.TWDS_calculator_saved = JSON.stringify(saved)
+          TWDS.calculator.openmaintainwindow()
+        }
+      }
+    })
+  }
+  TWDS.createEle('p', {
+    last: content,
+    textContent: TWDS._('CALCULATOR_MAINTAIN_INFO', 'Click on a name to see the search in the calculator.')
+  })
+}
+TWDS.calculator.openwindow = function (calledpreset) {
   const myname = 'TWDS_calc_window'
   const win = wman.open(myname, TWDS._('CALCULATOR_TITLE', 'Calculator'), 'TWDS_calc_window')
   win.setMiniTitle('Calculator')
@@ -384,17 +469,19 @@ TWDS.calculator.openwindow = function () {
     className: 'TWDS_calc_filterarea',
     last: content
   })
+  TWDS.createEle('hr', { last: content })
   const selectarea = TWDS.createEle('div', {
     className: 'TWDS_calc_selectarea',
     last: content
   })
   const mainchangecb = function () {
-
+    TWDS.q1(".jobselect option[value='0']", presetarea).selected = true
+    TWDS.q1(".presetselect option[value='0']", presetarea).selected = true
   }
 
-  let s = TWDS.createEle('select.jobselect', { last: presetarea })
+  const jobselect = TWDS.createEle('select.jobselect', { last: presetarea })
   TWDS.createEle('option', {
-    last: s,
+    last: jobselect,
     value: 0,
     textContent: '---'
   })
@@ -405,12 +492,12 @@ TWDS.calculator.openwindow = function () {
   })
   for (let i = 0; i < allJobs.length; i++) {
     TWDS.createEle('option', {
-      last: s,
+      last: jobselect,
       value: allJobs[i].id,
       textContent: allJobs[i].name
     })
   }
-  s.onchange = function () {
+  jobselect.onchange = function () {
     let job = JobList.getJobById(this.value)
     if (!job && parseInt(this.value) === 1000) { // "Build"
       job = TWDS.calculator.buildjob()
@@ -437,9 +524,9 @@ TWDS.calculator.openwindow = function () {
     }
   }
 
-  s = TWDS.createEle('select.presetselect', { last: presetarea })
+  const presetselect = TWDS.createEle('select.presetselect', { last: presetarea })
   TWDS.createEle('option', {
-    last: s,
+    last: presetselect,
     value: 0,
     textContent: '---'
   })
@@ -447,26 +534,60 @@ TWDS.calculator.openwindow = function () {
     const n = TWDS.calculator.presets[i].name
     const dis = TWDS.calculator.presets[i].disabled || false
     TWDS.createEle('option', {
-      last: s,
+      last: presetselect,
       value: n,
       textContent: n,
       disabled: dis
     })
   }
-  s.onchange = function () {
+  const saved = JSON.parse(window.localStorage.TWDS_calculator_saved || '{}')
+  const savedkeys = Object.keys(saved)
+  if (savedkeys.length) {
+    savedkeys.sort(function (a, b) {
+      return a.localeCompare(b)
+    })
+    TWDS.createEle('option', {
+      last: presetselect,
+      value: 0,
+      textContent: 'Save searches',
+      disabled: true
+    })
+    for (let i = 0; i < savedkeys.length; i++) {
+      const k = savedkeys[i]
+      TWDS.createEle('option', {
+        last: presetselect,
+        value: 'saved/' + k,
+        textContent: k,
+        disabled: false
+      })
+    }
+  }
+  presetselect.onchange = function () {
     const c = this.closest('.TWDS_calc_container')
-    const preset = TWDS.calculator.findpreset(this.value)
 
     const inp = TWDS.q('.TWDS_calc_selectarea input', c)
     for (let i = 0; i < inp.length; i++) {
-      if (inp[i].type !== 'radio') {
+      if (inp[i].type === 'number') {
         inp[i].value = 0
       }
     }
     const jpi = TWDS.q1('.joball input', c)
     if (jpi) jpi.dataset.jobid = 0
 
+    let preset = TWDS.calculator.findpreset(this.value)
+    if (preset === null && this.value.startsWith('saved/')) {
+      preset = TWDS.calculator.findsaved(this.value.substr(6))
+    }
+
     if (preset !== null) {
+      console.log('PRES', preset)
+      if (preset.shot) {
+        TWDS.q1(".TWDS_calc_wgroup input[value='shot'", selectarea).checked = true
+      } else if (preset.melee) {
+        TWDS.q1(".TWDS_calc_wgroup input[value='melee'", selectarea).checked = true
+      } else {
+        TWDS.q1(".TWDS_calc_wgroup input[value='egal'", selectarea).checked = true
+      }
       for (const k in preset) {
         if (k !== 'name') {
           for (let i = 0; i < inp.length; i++) {
@@ -608,16 +729,63 @@ TWDS.calculator.openwindow = function () {
       boncb(x, g)
     }
   }
-  const b = TWDS.createEle('button', {
+  const calcbutton = TWDS.createEle('button.doit', {
     textContent: TWDS._('CALCULATOR_DOIT', 'calculate'),
     last: selectarea
   })
+  TWDS.createEle('span.savesearch', {
+    last: selectarea,
+    children: [
+      {
+        nodeName: 'input.name4save',
+        type: 'text',
+        placeholder: TWDS._('CALCULATOR_SAVENAME_PLACEHOLDER', 'name for the save'),
+        value: ''
+      },
+      {
+        nodeName: 'button.save',
+        textContent: TWDS._('CALCULATOR_SAVE', 'save search'),
+        onclick: function () {
+          const sels = TWDS.calculator.getselections()
+          let n = TWDS.q1('input.name4save', this.parentNode)
+          n = n.value.trim()
+          if (n === '') {
+            new UserMessage(
+              TWDS._('CALCULATOR_NEEDNAME', 'You need to specify a name for the saved search!'),
+              UserMessage.TYPE_ERROR).show()
+            return
+          }
+          const saved = JSON.parse(window.localStorage.TWDS_calculator_saved || '{}')
+          saved[n] = { ...sels.bonus, ...sels.skills }
+          window.localStorage.TWDS_calculator_saved = JSON.stringify(saved)
+          new UserMessage(
+            TWDS._('CALCULATOR_SAVEDAS', 'Saved as $name$', { name: n }), UserMessage.TYPE_SUCCESS).show()
+        }
+      }, {
+        nodeName: 'button.maintainsaves',
+        textContent: TWDS._('CALCULATOR_MAINTAINSAVES', 'maintain saved searches'),
+        onclick: function () {
+          TWDS.calculator.openmaintainwindow()
+        }
+      }
+    ]
+  })
+  TWDS.createEle('hr', { last: content })
   const resultarea = TWDS.createEle('div', {
     last: content
   })
-  b.onclick = function () {
+  calcbutton.onclick = function () {
     TWDS.calculator.exec(filterarea, selectarea, resultarea)
   }
+
+  if (calledpreset !== null) {
+    const found = TWDS.q1(".presetselect option[value='" + calledpreset + "']", presetarea)
+    if (found) {
+      found.selected = true
+      presetselect.onchange()
+    }
+  }
+
   const e = []
   for (let i = 0; i < Wear.slots.length; i++) {
     const sl = Wear.slots[i]
