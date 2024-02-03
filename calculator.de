@@ -28,3 +28,15 @@ CALCULATOR_SPEED: "Geschwindigkeit (die Funktion im Ausrüstungstab ist vermutli
 CALCULATOR_REGEN: "Regeneration",
 CALCULATOR_PRAY: "Beten",
 CALCULATOR_WEAR: "Ausrüsten",
+
+CALCULATOR_SAVE: "Suche speichern",
+CALCULATOR_MAINTAINSAVES: "Gespeicherte Suchen verwalten",
+CALCULATOR_SAVENAME_PLACEHOLDER: "Name für Suche",
+CALCULATOR_NEEDNAME: 'Sie müssen einen Namen für die zu speichernde Suche angeben.',
+CALCULATOR_SAVEDAS: "Gespeichert als $name$.",
+
+CALCULATOR_MAINTAINTITLE: "Gespeicherte Suchen verwalten",
+CALCULATOR_SAVEDSEARCHES: "Sie haben folgenden Suchen gespeichert:",
+CALCULATOR_CLICKTOUSE: "Anklicken um diese Suche im Rechner zu sehen",
+CALCULATOR_DELETESAVE: "Diese Suche löschen",
+CALCULATOR_MAINTAIN_INFO: "Klicken Sie auf den Namen einer Suche, um sie im Rechner anzusehen.",
