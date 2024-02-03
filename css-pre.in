@@ -922,19 +922,3 @@ TWDS.insertStyles = function () {
     .TWDS_collections_shoplink {
       cursor:pointer;
     }
-    .TWDS_calc_group.attrgroup, 
-    .TWDS_calc_group.boostgroup {
-      width:50%;
-      display:inline-block;
-    }
-    .TWDS_calc_selectarea .onebonus {
-      display:inline-block;
-      width:49px;
-      padding:2px;
-    }
-    .TWDS_calc_selectarea .onebonus input {
-      width:4em;
-    }
-    .TWDS_calc_selectarea .onebonus img {
-      width:45px;
-    }
