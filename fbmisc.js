@@ -89,6 +89,20 @@ TWDS.fbmisc.formatcharicon = function (p) {
 TWDS.fbmisc.renderchars = function (data) {
   FortBattleWindow.TWDS_backup_renderChars.apply(this, arguments)
   if (TWDS.settings.fbmisc_charicons) {
+    const cells = TWDS.q('.cell', this.battlegroundEl)
+    if (cells) {
+      for (let i=0;i<cells.length;i++) {
+        cells[i].classList.remove("TWDS_multiplechars");
+        let o=TWDS.q(".otherchar",cells[i]);
+        for (let j=0;j<o.length;j++)
+          o[j].remove();
+
+        cells[i].dataset.charcount=0
+        o=TWDS.q1(".ownchar",cells[i]);
+        if (o)
+          cells[i].dataset.charcount=1
+      }
+    }
     if (data) { if (!this.preBattle.setPlayerlist(data.playerlist, true)) return }
     const playerlist = this.preBattle.battleData.playerlist
     for (let i = 0; i < playerlist.length; i++) {
@@ -97,10 +111,24 @@ TWDS.fbmisc.renderchars = function (data) {
       if (pl.idx < 0) continue
       const el = TWDS.q1('.cell-' + pl.idx, this.battlegroundEl)
       if (!el) continue
-      el.textContent = ''
+      el.dataset.charcount=parseInt(el.dataset.charcount)+1
+/*
+      let own=TWDS.q1(".ownchar",el);
+      if (own) continue; // more important: me.
+      let target=TWDS.q1(".target",el);
+      if (target) continue; // more important: me.
+*/
       el.appendChild(TWDS.fbmisc.formatcharicon(pl))
     }
+    if (cells) {
+      for (let i=0;i<cells.length;i++) {
+        let n=parseInt(cells[i].dataset.charcount)
+        if (n>1)
+          cells[i].classList.add("TWDS_multiplechars");
+      }
+    }
   }
+
 }
 TWDS.fbmisc.fortoverviewshowtab = function (id) {
   FortOverviewWindow.TWDS_backup_showTab.apply(this, arguments)
