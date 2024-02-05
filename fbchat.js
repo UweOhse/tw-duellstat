@@ -232,6 +232,8 @@ TWDS.fbchat.showcharinfo = function (...args) {
   if (old) old.remove()
   old = TWDS.q1('#fort_battle_' + args[0] + '_infoarea .TWDS_charinfocolorclear')
   if (old) old.remove()
+  old = TWDS.q1('#fort_battle_' + args[0] + '_infoarea .TWDS_copycharname')
+  if (old) old.remove()
   const pa = TWDS.q1('#fort_battle_' + args[0] + '_infoarea')
   if (!pa) return
   const icon = TWDS.fbchat.findiconbyfortandplayer(args[0], args[1])
@@ -268,6 +270,51 @@ TWDS.fbchat.showcharinfo = function (...args) {
       colorele.value = 'transparent'
     }
   })
+  if (args[8]) {
+    TWDS.createEle({
+      nodeName: 'button.TWDS_copycharname',
+      textContent: '...',
+      last: pa,
+      dataset: {
+        charname: args[8].name,
+        playerid: args[1]
+      },
+      onclick: function (ev) {
+        charname=this.dataset.charname
+        playerid=this.dataset.playerid
+        const sb = (new west.gui.Selectbox(true))
+          .setHeight('66px').
+          setWidth('60px').
+          addListener(function (choice) {
+            console.log("choice",choice);
+            if (choice==="whisper") {
+              let client = Chat.Resource.Manager.getClient('client_' + playerid);
+              let room = Chat.Resource.Manager.acquireRoom(client);
+              if (room) {
+                room.openClick();
+              }
+            } else {
+              let inputs=TWDS.q(".chat_room input.message");
+              for (let i=0;i<inputs.length;i++) {
+                let inp=inputs[i]
+                let cr=inp.closest(".chat_room");
+                if (cr && cr.style.display==="block") {
+                  if (inp.value>"")
+                    inp.value=inp.value+" "
+                  inp.value+=charname
+                  if (choice==="name+")
+                    input.value+=" <-> ";
+                }
+              }
+            }
+          })
+        sb.addItem("name","copy name");
+        sb.addItem("name+","copy name <-> ");
+        sb.addItem("whisper","whisper");
+        sb.show(ev)
+      }
+    })
+  }
 }
 TWDS.fbchat.startfunc3 = function () {
   TWDS.delegate(document.body, 'click', '#windows .chat .chat_from .client_name', function (ev) {
