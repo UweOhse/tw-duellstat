@@ -91,16 +91,14 @@ TWDS.fbmisc.renderchars = function (data) {
   if (TWDS.settings.fbmisc_charicons) {
     const cells = TWDS.q('.cell', this.battlegroundEl)
     if (cells) {
-      for (let i=0;i<cells.length;i++) {
-        cells[i].classList.remove("TWDS_multiplechars");
-        let o=TWDS.q(".otherchar",cells[i]);
-        for (let j=0;j<o.length;j++)
-          o[j].remove();
+      for (let i = 0; i < cells.length; i++) {
+        cells[i].classList.remove('TWDS_multiplechars')
+        let o = TWDS.q('.otherchar', cells[i])
+        for (let j = 0; j < o.length; j++) { o[j].remove() }
 
-        cells[i].dataset.charcount=0
-        o=TWDS.q1(".ownchar",cells[i]);
-        if (o)
-          cells[i].dataset.charcount=1
+        cells[i].dataset.charcount = 0
+        o = TWDS.q1('.ownchar', cells[i])
+        if (o) { cells[i].dataset.charcount = 1 }
       }
     }
     if (data) { if (!this.preBattle.setPlayerlist(data.playerlist, true)) return }
@@ -111,8 +109,8 @@ TWDS.fbmisc.renderchars = function (data) {
       if (pl.idx < 0) continue
       const el = TWDS.q1('.cell-' + pl.idx, this.battlegroundEl)
       if (!el) continue
-      el.dataset.charcount=parseInt(el.dataset.charcount)+1
-/*
+      el.dataset.charcount = parseInt(el.dataset.charcount) + 1
+      /*
       let own=TWDS.q1(".ownchar",el);
       if (own) continue; // more important: me.
       let target=TWDS.q1(".target",el);
@@ -121,14 +119,12 @@ TWDS.fbmisc.renderchars = function (data) {
       el.appendChild(TWDS.fbmisc.formatcharicon(pl))
     }
     if (cells) {
-      for (let i=0;i<cells.length;i++) {
-        let n=parseInt(cells[i].dataset.charcount)
-        if (n>1)
-          cells[i].classList.add("TWDS_multiplechars");
+      for (let i = 0; i < cells.length; i++) {
+        const n = parseInt(cells[i].dataset.charcount)
+        if (n > 1) { cells[i].classList.add('TWDS_multiplechars') }
       }
     }
   }
-
 }
 TWDS.fbmisc.fortoverviewshowtab = function (id) {
   FortOverviewWindow.TWDS_backup_showTab.apply(this, arguments)
