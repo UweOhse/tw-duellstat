@@ -687,7 +687,7 @@ TWDS.genCalc.getSetBonusGenValues = function (set, bonusNames, skills) {
 
   if (!('_memo' in set)) set._memo = {} // this happens for merged sets.
   //  if (set.key === "set_oktoberfest_2016_1") { console.log("CC",set.key,set,bonusNames,bonus); }
-  if (set.key === 'dod_2018_set_6') { console.log('CC', set.key, set, bonusNames, bonus) }
+  // if (set.key === 'dod_2018_set_6') { console.log('CC', set.key, set, bonusNames, bonus) }
 
   // if (!(memo in set._memo)) console.log("merge",set,bonus)
 
