@@ -517,7 +517,6 @@ TWDS.inventory.showLastItems = function () { // reimplementation, not calling th
   for (let i = 0; i < lastIds.length; i++) {
     const item = Bag.getItemByInvId(lastIds[i])
     if (item) {
-      if (i === 0) console.log('item', item)
       if (!pinned.includes(item.obj.item_id)) {
         list.push(item)
       } else {
