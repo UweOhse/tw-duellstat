@@ -105,7 +105,6 @@ TWDS.overlay.getbattledata = function (badchange) {
   let sectorDefense = 0
   let sectorDamage = 0
   let fortResistance = 0
-  console.log('bo', bo)
   if (Character.charClass === 'worker' && badchange) {
     console.log('BADCHANGE', hide, trap, build)
     if (build > hide) hide = build
@@ -245,7 +244,7 @@ TWDS.overlay.getbattledata = function (badchange) {
   }
   dmg.min += sectorDamage
   dmg.max += sectorDamage
-  console.log('DMG', dmg.min, lead, health, dmg.min * lead / health)
+  // console.log('DMG', dmg.min, lead, health, dmg.min * lead / health)
   dmg.min += dmg.min * lead / health
   dmg.max += dmg.max * lead / health
 
@@ -564,9 +563,15 @@ TWDS.registerStartFunc(function () {
     false, TWDS.overlay.settingchanged, 'Overlay', null, 7)
   TWDS.registerSetting('bool', 'overlay_note', 'show an editable notebook on the overlay',
     true, TWDS.overlay.settingchanged, 'Overlay', null, 8)
+
+  let utimeout = 0
   // inventory_changed is called after crafting, when the craft skill may have changed.
-  window.EventHandler.listen(['wear_changed', 'character_level_up', 'inventory_changed'], function () {
-    TWDS.overlay.update()
+  window.EventHandler.listen(['wear_changed', 'inventory_changed', 'character_level_up'], function () {
+    // avoid calculating 10 times during a wear change
+    if (utimeout) clearTimeout(utimeout)
+    utimeout = setTimeout(function () {
+      TWDS.overlay.update()
+    }, 500)
   })
   window.EventHandler.listen(['pshop_item_changed'], function (payload) {
     TWDS.overlay.event_item_changed_wrapper(payload)
