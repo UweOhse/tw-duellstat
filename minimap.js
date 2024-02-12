@@ -43,6 +43,22 @@ TWDS.minimap.loadcache = function () {
     }
   }
 }
+TWDS.minimap.findsilverjob = function (id) {
+  TWDS.minimap.loadcache()
+  id = parseInt(id)
+  const out = []
+  for (const poskey in TWDS.minimap.cache) {
+    for (let j in TWDS.minimap.cache[poskey]) {
+      j = parseInt(j)
+      if (j === id) {
+        if (TWDS.minimap.cache[poskey][j].silver) {
+          out.push(TWDS.minimap.cache[poskey][j])
+        }
+      }
+    }
+  }
+  return out
+}
 
 TWDS.minimap.deletefromcache = function (silver, gold) {
   for (const oneposkey in TWDS.minimap.cache) {
