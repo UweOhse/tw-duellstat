@@ -8,49 +8,69 @@ TWDS.quest.renderRequirement = function (req, cls) {
 
   if (TWDS.settings.quest_add_util_buttons && jsinfo) {
     li.addClass('TWDS_questentry_functions')
-    if (jsinfo.type === 'inventory_changed') {
-      let x = TWDS.itemAnyCraftButton(jsinfo.id)
-      if (x) {
-        li.append(x)
-        li.addClass('with_craftlink')
-      }
-      x = TWDS.itemBidButton(jsinfo.id)
-      if (x) {
-        li.append(x)
-        li.addClass('with_bidbutton')
-      }
-      x = TWDS.shopsearch.button(jsinfo.id)
-      if (x) {
-        li.append(x)
-        li.addClass('with_shopsearchbutton')
-      }
-      const bagitem = Bag.getItemByItemId(jsinfo.id)
-      if (bagitem) {
-        if (TWDS.settings.quest_show_itemcount) {
-          let str = bagitem.count
-          const si = TWDS.storage.iteminfo(jsinfo.id)
-          if (si[0]) { // want <> 0
-            str += '/' + si[0]
+    const cfg = {
+      craft: ['inventory_changed', 'wear_changed'],
+      bid: ['inventory_changed', 'wear_changed'],
+      shop: ['inventory_changed', 'wear_changed'],
+      wear: ['wear_changed'],
+      count: ['inventory_changed', 'wear_changed']
+    }
+    for (const [what, types] of Object.entries(cfg)) {
+      if (types.includes(jsinfo.type)) {
+        if (what === 'craft') {
+          const x = TWDS.itemAnyCraftButton(jsinfo.id)
+          if (x) {
+            li.append(x)
+            li.addClass('with_craftlink')
           }
-          const ele = TWDS.createEle({
-            nodeName: 'span',
-            className: 'TWDS_quest_itemcount',
-            textContent: '[' + str + ']'
-          })
-          li.append(ele)
+        }
+        if (what === 'bid') {
+          const x = TWDS.itemBidButton(jsinfo.id)
+          if (x) {
+            li.append(x)
+            li.addClass('with_bidbutton')
+          }
+        }
+        if (what === 'shop') {
+          const x = TWDS.shopsearch.button(jsinfo.id)
+          if (x) {
+            li.append(x)
+            li.addClass('with_shopsearchbutton')
+          }
+        }
+        if (what === 'wear') {
+          const bagitem = Bag.getItemByItemId(jsinfo.id)
+          if (bagitem) {
+            const x = TWDS.itemWearButton(jsinfo.id)
+            if (x) {
+              li.append(x)
+              li.addClass('with_wearbutton')
+            }
+          }
+        }
+        if (what === 'count') {
+          const bagitem = Bag.getItemByItemId(jsinfo.id)
+          if (bagitem && TWDS.settings.quest_show_itemcount) {
+            let str = bagitem.count
+            const si = TWDS.storage.iteminfo(jsinfo.id)
+            if (si[0]) { // want <> 0
+              str += '/' + si[0]
+            }
+            const ele = TWDS.createEle({
+              nodeName: 'span',
+              className: 'TWDS_quest_itemcount',
+              textContent: '[' + str + ']'
+            })
+            li.append(ele)
+          }
         }
       }
-    } else if (jsinfo.type === 'wear_changed') {
-      const bagitem = Bag.getItemByItemId(jsinfo.id)
-      if (bagitem) {
-        const x = TWDS.itemWearButton(jsinfo.id)
-        if (x) {
-          li.append(x)
-          li.addClass('with_wearbutton')
-        }
-      }
+    }
 
     /*
+    if (jsinfo.type === 'inventory_changed') {
+    } else if (jsinfo.type === 'wear_changed') {
+
     } else if (jsinfo.type === 'task-finish-job') {
       const id = jsinfo.id
       const x = TWDS.jobOpenButton2(id)
@@ -69,8 +89,8 @@ TWDS.quest.renderRequirement = function (req, cls) {
       if (x) { li.append(x) }
     } else {
       console.log('unhandled', jsinfo, jsinfo.type);
-    */
     }
+  */
   }
   return li
 }
