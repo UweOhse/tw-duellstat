@@ -281,6 +281,37 @@ TWDS.registerStartFunc(function () {
     TWDS._('MISC_SETTING_NOTIBAR_MAIN_MAX',
       'Set the number of elements shown in the main notification bar (saloon and so on).'),
     { default: 4, min: 2, max: 8 }, donotibar)
+
+  WestUi.NotiBar.TWDS_backup_add = WestUi.NotiBar.TWDS_backup_add || WestUi.NotiBar.add
+  WestUi.NotiBar.add = function (entry) {
+    console.log('NotiBar.add', entry)
+    if (TWDS.settings.misc_notibar_remove_sale) {
+      const found = TWDS.q1('.image.shop_sale', entry.element[0])
+      if (found) {
+        return
+      }
+    }
+    WestUi.NotiBar.TWDS_backup_add.call(this, entry)
+  }
+  const doremovesale = function (v) {
+    if (WestUi && WestUi.NotiBar && WestUi.NotiBar.main) {
+      if (v) {
+        WestUi.NotiBar.getBar().list.forEach(function (a) {
+          const found = TWDS.q1('.image.shop_sale', a.element[0])
+          if (found) WestUi.NotiBar.remove(a)
+        })
+      }
+
+      WestUi.NotiBar.main.setMaxView(TWDS.settings.misc_notibar_main_max)
+      return
+    }
+    window.setTimeout(doremovesale, 500)
+  }
+
+  TWDS.registerSetting('bool', 'misc_notibar_remove_sale',
+    TWDS._('MISC_SETTING_NOTIBAR_REMOVE_SALE',
+      'Remove the sale button from the main notification bar (saloon and so on).'),
+    { default: false }, doremovesale)
 })
 TWDS.registerSetting('bool', 'misc_tailor_scrollbar_fix',
   TWDS._('MISC_SETTING_TAILOR_SCROLLBAR_FIX',
