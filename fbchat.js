@@ -6,6 +6,7 @@
 TWDS.fbchat.oldhp = null
 TWDS.fbchat.characters = null
 TWDS.fbchat.charIcons = null
+TWDS.fbchat.lastmentioned = ''
 
 TWDS.fbchat.sendmsg = function (fortid, msg) {
   const rooms = window.Chat.Resource.Manager.getRooms()
@@ -56,6 +57,27 @@ TWDS.fbchat.roundhandler = function (fortid, roundno, hp0, hp1, hpd0, hpd1) {
   }
 }
 
+TWDS.fbchat.findchar = function (searchname) {
+  searchname = searchname.toLocaleLowerCase()
+  const cand = []
+  for (const fortid of Object.keys(TWDS.fbdata.fbw)) {
+    const fbw = TWDS.fbdata.fbw[fortid]
+    if (!fbw.characters) { continue }
+    const chars = Object.values(fbw.characters)
+    for (let i = 0; i < chars.length; i++) {
+      const n = chars[i].name.toLocaleLowerCase()
+      if (n === searchname) {
+        return [
+          { char: chars[i], battle: fbw }
+        ]
+      }
+      if (n.includes(searchname)) {
+        cand.push({ char: chars[i], battle: fbw })
+      }
+    }
+  }
+  return cand
+}
 TWDS.fbchat.clickhelper = function (ev) {
   const t = ev.target
   const name = t.textContent
@@ -216,6 +238,69 @@ TWDS.fbchat.findiconbyfortandplayer = function (fortid, pid) {
     }
   }
 }
+TWDS.fbchat.swaphelper = function (name1, name2) {
+  const chlist1 = TWDS.fbchat.findchar(name1)
+  if (chlist1.length === 0) {
+    return [false, TWDS._('C_SOMESTRING_NOT_FOUND', '$string$ not found', { string: name1 })]
+  }
+  if (chlist1.length > 1) {
+    return [false, TWDS._('FBCHAT_NOT_UNIQUE_MATCHES', '$string$ is not unique, matches $cand$',
+      {
+        string: name1,
+        cand: chlist1.map(function (a, b) { return a.char.name }).join(', ')
+      })]
+  }
+  const data1 = chlist1[0]
+  const chlist2 = TWDS.fbchat.findchar(name2)
+  if (chlist2.length === 0) {
+    return [false, TWDS._('C_SOMESTRING_NOT_FOUND', '$string$ not found', { string: name2 })]
+  }
+  if (chlist2.length > 1) {
+    return [false, TWDS._('FBCHAT_NOT_UNIQUE_MATCHES', '$string$ is not unique, matches $cand$',
+      {
+        string: name2,
+        cand: chlist2.map(function (a, b) { return a.char.name }).join(', ')
+      })]
+  }
+  const data2 = chlist2[0]
+  if (data1.battle !== data2.battle) {
+    return [false, TWDS._('FBCHAT_NOT_SAME_BATTLE', '$name$ and $name2$ are not in the same battle', {
+      name1: data1.char.name,
+      name2: data2.char.name
+    })]
+  }
+  const ch1 = data1.char
+  const battle1 = data1.battle
+  const ch2 = data2.char
+
+  const w = battle1.mapInfo.width
+  const x1 = ch1.position % w
+  const x2 = ch2.position % w
+  const y1 = parseInt(ch1.position / w)
+  const y2 = parseInt(ch2.position / w)
+
+  let dir = ''
+  if (x1 > x2) {
+    dir += (x1 - x2) + ' ' + TWDS._('FBCHAT_LEFT', 'left')
+  } else if (x1 < x2) {
+    dir += (x2 - x1) + ' ' + TWDS._('FBCHAT_RIGHT', 'right')
+  }
+  if (y1 !== y2 && dir !== '') {
+    dir += ' '
+  }
+  if (y1 > y2) {
+    dir += (y1 - y2) + ' ' + TWDS._('FBCHAT_UP', 'up')
+  } else if (y1 < y2) {
+    dir += (y2 - y1) + ' ' + TWDS._('FBCHAT_DOWN', 'down')
+  }
+  const str = TWDS._('FBCHAT_SWAPSTRING', '$name1 swap $dir with $name2', {
+    name1: ch1.name,
+    name2: ch2.name,
+    dir: dir
+  })
+
+  return [true, str]
+}
 TWDS.fbchat.clickcharinfocolor = function (mode) {
   const fortid = parseInt(this.dataset.fortid)
   const playerid = parseInt(this.dataset.playerid)
@@ -280,37 +365,46 @@ TWDS.fbchat.showcharinfo = function (...args) {
         playerid: args[1]
       },
       onclick: function (ev) {
-        charname=this.dataset.charname
-        playerid=this.dataset.playerid
+        const charname = this.dataset.charname
+        const playerid = this.dataset.playerid
         const sb = (new west.gui.Selectbox(true))
-          .setHeight('66px').
-          setWidth('60px').
-          addListener(function (choice) {
-            console.log("choice",choice);
-            if (choice==="whisper") {
-              let client = Chat.Resource.Manager.getClient('client_' + playerid);
-              let room = Chat.Resource.Manager.acquireRoom(client);
-              if (room) {
-                room.openClick();
+          .setHeight('66px')
+          .setWidth('60px')
+          .addListener(function (choice) {
+            console.log('choice', choice)
+            if (choice === 'whisper') {
+              const client = Chat.Resource.Manager.getClient('client_' + playerid)
+              if (client) {
+                const room = Chat.Resource.Manager.acquireRoom(client)
+                if (room) {
+                  room.openClick()
+                }
+              } else {
+                new UserMessage("first 'copy name'!").show()
               }
-            } else {
-              let inputs=TWDS.q(".chat_room input.message");
-              for (let i=0;i<inputs.length;i++) {
-                let inp=inputs[i]
-                let cr=inp.closest(".chat_room");
-                if (cr && cr.style.display==="block") {
-                  if (inp.value>"")
-                    inp.value=inp.value+" "
-                  inp.value+=charname
-                  if (choice==="name+")
-                    input.value+=" <-> ";
+            } else if (choice === 'name') {
+              TWDS.fbchat.lastmentioned = charname
+            } else if (choice === '+name' && !TWDS.fbchat.lastmentioned) {
+              new UserMessage("first 'copy name'!").show()
+            } else if (choice === '+name') {
+              const out = TWDS.fbchat.swaphelper(TWDS.fbchat.lastmentioned, charname)
+              if (!out[0]) {
+                new UserMessage(out[1]).show()
+              } else {
+                const inputs = TWDS.q('.chat_room input.message')
+                for (let i = 0; i < inputs.length; i++) {
+                  const inp = inputs[i]
+                  const cr = inp.closest('.chat_room')
+                  if (cr && cr.style.display === 'block') {
+                    inp.value += out[1]
+                  }
                 }
               }
             }
           })
-        sb.addItem("name","copy name");
-        sb.addItem("name+","copy name <-> ");
-        sb.addItem("whisper","whisper");
+        sb.addItem('name', TWDS._('FBCHAT_SWAP1', 'mark player1 for swap'))
+        sb.addItem('+name', TWDS._('FBCHAT_SWAP2', 'swap player2'))
+        sb.addItem('whisper', TWDS._('FBCHAT_WHISPER', 'whisper'))
         sb.show(ev)
       }
     })
@@ -332,6 +426,23 @@ TWDS.fbchat.startfunc2 = function () {
   const F = function (text) {
     return Chat.Formatter.formatMessage(Chat.Formatter.formatText(text, true),
       '<b>' + TWDS.scriptname + ':</b>', Date.now(), true, 'from_system')
+  }
+  Chat.Operations['^\\/swap\\s+(\\S+)\\s+(\\S+)$'] = {
+    cmd: 'swap',
+    shorthelp: TWDS._('CHAT_SWAP_SHORTHELP', 'Send swap command'),
+    help: TWDS._('CHAT_SWAP_HELP', 'Generate a swap command for two players'),
+    usage: '/swap search1 search2',
+    func: function (room, msg, param) {
+      console.log(room, msg, param)
+      const out = TWDS.fbchat.swaphelper(param[1], param[2])
+      if (!out[0]) {
+        room.addMessage(F(out[1]))
+        return
+      }
+      const color = window.localStorage.TWDS_chat_color
+      if (color) { out[1] = '/' + color + ' ' + out[1] }
+      Chat.sendMessage(out[1], room)
+    }
   }
   Chat.Operations['^\\/mark\\s+([0-9]+|-)\\s+(.*)$'] = {
     cmd: 'mark',
