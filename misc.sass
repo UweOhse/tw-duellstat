@@ -14,6 +14,22 @@ body.TWDS_fix_tailor_scrollbar {
     }
   }
 }
+body.TWDS_fix_graveyard {
+  .fortoverview-recentbattles .graveyardtable tbody tr {
+    td:nth-child(1),
+    td:nth-child(2),
+    td:nth-child(3),
+    td:nth-child(7) {
+      text-align:left;
+    }
+    td:nth-child(2) {
+      font-size:smaller;
+    }
+    td {
+      white-space:nowrap
+    }
+  }
+}
 @mixin TWDS_bordered {
   border-image-source: linear-gradient(to bottom right, #aa8e69, #745434, #8d6c51, #51361e);
   border-image-slice: 1;
@@ -24,4 +40,11 @@ body.TWDS_fix_tailor_scrollbar {
 }
 .TWDS_bordered {
   @include TWDS_bordered;
+}
+table.TWDS_simpleborder {
+  border-collapse: collapse;                                                                                       
+  td, th {
+    border:1px solid #888;
+    padding:2px;
+  }
 }

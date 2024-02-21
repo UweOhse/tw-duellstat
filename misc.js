@@ -234,6 +234,15 @@ TWDS.registerSetting('bool', 'fixRecruitHealth',
       document.body.appendChild(sty)
     }
   })
+TWDS.registerSetting('bool', 'fixGraveyardtable',
+  TWDS._('RECRUIT_HEALTH_FIX', 'Fix overlong lines in the recent fort battle table.'),
+  false, function (val) {
+    if (val) {
+      document.body.classList.add('TWDS_fix_graveyard')
+    } else {
+      document.body.classList.remove('TWDS_fix_graveyard')
+    }
+  })
 
 TWDS.registerStartFunc(function () {
   west.gui.payHandler.prototype._TWDS_backup_addPayOption = west.gui.payHandler.prototype.addPayOption
