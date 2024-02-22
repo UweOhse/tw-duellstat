@@ -541,7 +541,7 @@ TWDS.getEquipmentContent = function () {
     tr.className = 'headrow'
     tab.appendChild(tr)
     appOne(tr, TWDS._('NAME', 'Name'))
-    appOne(tr, TWDS._('WEAR', ''))
+    appOne(tr, '') // no label, not needed
     appOne(tr, TWDS._('MENU_LEVEL_SHORT', 'Lv'),
       TWDS._('MENU_LEVEL_LONG', 'The character level at the moment the calculations were done.<br>If you open the script again, with this equipment worn, the values will be updated.'))
     appOne(tr, TWDS._('MENU_AIM_SHORT', 'Aim'),
