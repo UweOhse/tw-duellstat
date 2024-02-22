@@ -464,7 +464,7 @@ TWDS.inventory.open2 = function (dw, clickhandler, opts) {
       ele.classList.add('TWDS_maybefiltered')
     }
   }
-  if (filters && !found && TWDS.settings.inventory) {
+  if (filters && !found && (TWDS.settings.inventory || TWDS.settings.inventory_add_filters)) {
     TWDS.createEle({
       nodeName: 'div.TWDS_filter.TWDS_filter_all.TWDS_maybefiltered',
       dataset: { filter: 'all' },
@@ -566,8 +566,7 @@ TWDS.registerStartFunc(function () {
     availableCategories: []
   }
   TWDS.registerSetting('bool', 'inventory',
-    TWDS._('SETTING_INVENTORY',
-      'Provide a larger inventory (TW Inventory Reloaded is better).'),
+    TWDS._('SETTING_INVENTORY', 'Provide a larger inventory.'),
     false, function (v) {
       if (v) {
         document.body.classList.add('TWDS_large_inventory')
@@ -592,6 +591,15 @@ TWDS.registerStartFunc(function () {
           Inventory.latestSize = old.latestSize
           Inventory.availableCategories = old.availableCategories
         }
+      }
+    })
+  TWDS.registerSetting('bool', 'inventory_add_filters',
+    TWDS._('SETTING_INVENTORY_ADD_FILTERS', 'Add filters even to a normal sized inventory.'),
+    false, function (v) {
+      if (v) {
+        document.body.classList.add('TWDS_normal_inventory_filters')
+      } else {
+        document.body.classList.remove('TWDS_normal_inventory_filters')
       }
     })
 })
