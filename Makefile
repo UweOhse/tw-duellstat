@@ -10,16 +10,19 @@ CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js $(LANGSJSON) t
    altinventory.js friends.js calculator.js townlog.js craftwindow.js simulator.js bufflist.js achievements.js \
    iteminfo.js fbchat.js invstat.js pinning.js duelinfo.js calendar.js vipendtime.js inventory.js \
    fbmisc.js townwindow.js profilewindow.js buildwindow.js shopsearch.js ranking.js \
-   quickequipment.js allimap.js stathist.js nightmode.js maphelper.js fortbuild.js \
+   quickequipment.js allimap.js stathist.js nightmode.js maphelper.js fortbuild.js playerlistwindow.js \
+   nextaction.js \
    sortable.js extras.js main.js 
 
 SASS_SOURCES=utils.sass minimap.sass joblist.sass market.sass craftwindow.sass quest.sass jobwindow.sass simulator.sass \
   craftcalc.sass itemsettab.sass extras.sass bufflist.sass achievements.sass items.sass iteminfo.sass storage.sass \
   duelinfo.sass misc.sass pinning.sass calendar.sass vipendtime.sass inventory.sass settingstab.sass fbmisc.sass \
   townwindow.sass profilewindow.sass speedcalc.sass showset.sass buildwindow.sass shopsearch.sass fortbuild.sass \
-  quickequipment.sass overlay.sass stathist.sass calculator.sass playerlistwindow.sass
+  quickequipment.sass overlay.sass stathist.sass calculator.sass playerlistwindow.sass logging.sass
 
-CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp)
+# stuff i load manually sometimes
+CHECK_EXTRA_SOURCES:=$(shell ls _*.js)
+CHECK_STAMPS=$(CHECK_SOURCES:.js=.stamp) $(CHECK_EXTRA_SOURCES:.js=.stamp)
 ALL_SOURCES=prefix.js $(CHECK_SOURCES) postfix.js
 VGET=`git describe --tags --long --dirty --always --broken`
 VERSION:=$(shell git describe --tags --long --dirty --always --broken)
@@ -37,7 +40,7 @@ GLOBALS=--global Game --global TWDS --global Character --global wman --global Ba
 	--global TaskQueue --global GameInject --global jQuery --global Blob --global Quest \
 	--global FortOverviewWindow --global QuestWindow --global QuestEmployerView \
 	--global Node --global BankWindow --global CemeteryWindow --global WestUi \
-	--global localStorage --global sessionStorage
+	--global localStorage --global sessionStorage --global EquipManager --global TaskJob
 all: precheck tw-duellstat.user.js
 
 tw-duellstat.min.user.js: tw-duellstat.user.js
@@ -52,6 +55,8 @@ de.json: de-base.json $(TRANS_DE) Makefile
 	cat $< >>$@.t
 	cat $(TRANS_DE) >>$@.t
 	echo "DUMMY: 'Dummy' }" >>$@.t
+	@echo standard on the temporary 
+	@standard --fix $(GLOBALS) $@.t
 	mv $@.t $@
 
 %.stamp: %.js
