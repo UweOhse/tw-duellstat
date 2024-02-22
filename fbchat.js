@@ -423,7 +423,8 @@ TWDS.fbchat.startfunc3 = function () {
 }
 
 TWDS.fbchat.startfunc2 = function () {
-  const F = function (text) {
+  const F = function (code, text, extra) {
+    if (code) { text = TWDS._(code, text, extra) }
     return Chat.Formatter.formatMessage(Chat.Formatter.formatText(text, true),
       '<b>' + TWDS.scriptname + ':</b>', Date.now(), true, 'from_system')
   }
@@ -436,7 +437,7 @@ TWDS.fbchat.startfunc2 = function () {
       console.log(room, msg, param)
       const out = TWDS.fbchat.swaphelper(param[1], param[2])
       if (!out[0]) {
-        room.addMessage(F(out[1]))
+        room.addMessage(F(null, out[1]))
         return
       }
       const color = window.localStorage.TWDS_chat_color
@@ -446,23 +447,23 @@ TWDS.fbchat.startfunc2 = function () {
   }
   Chat.Operations['^\\/mark\\s+([0-9]+|-)\\s+(.*)$'] = {
     cmd: 'mark',
-    shorthelp: TWDS._('CHAT_MARK_SHORTHELP', 'Mark some player in the fort battleground'),
-    help: TWDS._('CHAT_MARK_HELP', 'Mark a player with an outline'),
-    usage: '/mark colorcode searchstring',
+    shorthelp: TWDS._('CHAT_MARK_SHORTHELP', 'Mark some player'),
+    help: TWDS._('CHAT_MARK_HELP', 'Mark a player with a colored outline'),
+    usage: TWDS._('CHAT_MARK_USAGE', '/mark colorcode searchstring'),
     func: function (room, msg, param) {
       const fortid = room.fortId
       const fbw = TWDS.fbdata.fbw[fortid]
       if (!fbw) {
         console.log('FBW not found', TWDS.fbdata.fbw, fortid)
-        room.addMessage(F('fortbattle window not found'))
+        room.addMessage(F('CHAT_FBW_WINDOW_NOT_FOUND', 'fortbattle window not found'))
         return
       }
 
       if (!('characters' in fbw)) {
         if ('preBattle' in fbw) {
-          room.addMessage(F("can't do that in a prebattle window"))
+          room.addMessage(F('CHAT_MARK_NOT_IN_PREBATTLE', "can't do that in a prebattle window"))
         } else {
-          room.addMessage(F('characters not found'))
+          room.addMessage(F('CHAT_MARK_NO_CHARACTERS', 'characters not found'))
         }
         return
       }
@@ -475,7 +476,7 @@ TWDS.fbchat.startfunc2 = function () {
       } else {
         const rgb = color.match(/^(\d)(\d)(\d)$/)
         if (!rgb) {
-          room.addMessage(F('failed to parse color. use - for unmarking, or NNN for marking, where N is a number from 0 to 9.'))
+          room.addMessage(F('CHAT_MARK_COLORFAIL', 'failed to parse color. use - for unmarking, or NNN for marking, where N is a number from 0 to 9.'))
           return
         }
         color = Math.floor(rgb[1] * 15 / 9).toString(16) +
@@ -493,11 +494,11 @@ TWDS.fbchat.startfunc2 = function () {
             if (color) {
               icon[0].style.outline = '2px solid #' + color
               icon[0].dataset.currentcolor = '#' + color
-              room.addMessage(F('marked ' + ch.name))
+              room.addMessage(F('CHAT_MARK_MARKED', 'marked $name$', { name: ch.name }))
             } else {
               icon[0].style.outline = 'none'
               delete icon[0].dataset.currentcolor
-              room.addMessage(F('removed mark on ' + ch.name))
+              room.addMessage(F('CHAT_MARK_UNMARKED', 'removed mark from $name$', { name: ch.name }))
             }
           }
         }
