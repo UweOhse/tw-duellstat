@@ -32,4 +32,5 @@ INVENTORY_ISNOT: "Ist nicht",
 INVENTORY_IGNORE: "Ignoriere",
 INVENTORY_UP: "+ / aufwärts",
 INVENTORY_DOWN: "- / abwärts",
-
+SETTING_INVENTORY: "Ein größeres Inventarfenster verwenden.",
+SETTING_INVENTORY_ADD_FILTERS: "Auch in einem kleinen Inventarfenster zusätzliche Filter zeigen.",

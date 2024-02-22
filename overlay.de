@@ -1,5 +1,4 @@
 OVERLAY_FB_SECT: "Sektorbonus",
-OVERLAY_FB_BASE_DAMAGE: "Grundschaden",
 OVERLAY_FB_BASE_DAMAGE: "Grundschaden, immun geg. Klam/Set-Widerstand",
 OVERLAY_FB_AVG: "Mittel",
 OVERLAY_FB_DAMAGE: "Schaden",

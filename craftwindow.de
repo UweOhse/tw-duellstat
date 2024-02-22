@@ -21,5 +21,15 @@ CRAFTWINDOW_BLOCKTIME_INFO: "Dieses Rezept hat eine Cooldown-Zeit.",
 CRAFTWINDOW_CHECKBOX_LABEL_BLOCKTIME: "Blockzeit/Cooldown",
 CRAFTWINDOW_BLOCKTIMEFILTER_TITLE: "Zeige nur Rezepte mit einer Blockzeit (Cooldown)",
 
+CRAFTWINDOW_TH_INBAG_TITLE: "Anzahl der Gegenstände in Deinem Inventar",
+CRAFTWINDOW_TH_INBAG: "#",
+
+CRAFTWINDOW_TH_CRAFTORJOB_TITLE: "Entweder der Button zum Herstellen, oder der Name des benötigten Handwerks. Wenn es Dein Handwerk ist, hast Du das Rezept noch nicht gelernt.",
+CRAFTWINDOW_TH_CRAFTORJOB: "Herstellen",
+CRAFTWINDOW_TH_INPUT_TITLE: "Anzahl der Gegenstände, die Du herstellen willst, gefolgt von der Anzahl der Gegenstände, für die Du das Material hast.",
+CRAFTWINDOW_TH_INPUT: "# herzustellen",
+CRAFTWINDOW_TH_POINTS_TITLE: "Handwerkspunkte: Hohe / niedrige / keine Chance auf einen weiteren Punkt.",
+CRAFTWINDOW_TH_POINTS: "Punkte",
+CRAFTWINDOW_TH_PRODUCTNAME: "Produkt",
 
 
