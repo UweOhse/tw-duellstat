@@ -79,20 +79,26 @@ TWDS.duelprotection.updateMouseover = function () {
   let vgl = -1
   if (mand > now) {
     str = 'Duel suspension until ' + (new Date(mand)).toLocaleString()
-    TWDS.duelprotection.hack.css({
-      'background-color': '#f446'
-    })
+    if (TWDS.duelprotection.hack) {
+      TWDS.duelprotection.hack.css({
+        'background-color': '#f446'
+      })
+    }
     vgl = mand
   } else if (opt > now) {
     str = 'Duel protection until ' + (new Date(opt)).toLocaleString()
     vgl = opt
-    TWDS.duelprotection.hack.css({
-      'background-color': '#cc46'
-    })
+    if (TWDS.duelprotection.hack) {
+      TWDS.duelprotection.hack.css({
+        'background-color': '#cc46'
+      })
+    }
   } else {
-    TWDS.duelprotection.hack.css({
-      'background-color': '#4a43'
-    })
+    if (TWDS.duelprotection.hack) {
+      TWDS.duelprotection.hack.css({
+        'background-color': '#4a43'
+      })
+    }
   }
   if (vgl !== -1) {
     const remain = Math.max((vgl - now) / 1000, 0) // ms
@@ -114,7 +120,9 @@ TWDS.duelprotection.updateMouseover = function () {
   str += '<td>' + parseInt(100 * mot2)
   str += '</table>'
   str += '<p>The duel motivation is valid after you opened the duels menu. Unfortunately the data is not updated earlier.</p>'
-  TWDS.duelprotection.hack.addMousePopup(str)
+  if (TWDS.duelprotection.hack) {
+    TWDS.duelprotection.hack.addMousePopup(str)
+  }
 }
 TWDS.duelprotection.init = function (active) {
   if (!active) {
@@ -243,6 +251,84 @@ TWDS.registerSetting('bool', 'fixGraveyardtable',
       document.body.classList.remove('TWDS_fix_graveyard')
     }
   })
+
+TWDS.friendrequestcounter = {}
+TWDS.friendrequestcounter.update = function () {
+  const pa = TWDS.q1('#ui_bottombar .dock-image.friends')
+  if (!pa) return
+  let ele = TWDS.q1('.TWDS_requestcounter', pa)
+  if (!TWDS.settings.friendrequestcounter) {
+    if (ele) ele.remove()
+    return
+  }
+  if (!ele) {
+    ele = TWDS.createEle('div.TWDS_requestcounter', {
+      textContent: '',
+      last: pa,
+      style: {
+        position: 'absolute',
+        bottom: '5px',
+        right: '5px',
+        border: '1px solid ###',
+        backgroundColor: '#ae9c6888',
+        color: 'black',
+        display: 'none',
+        fontSize: 'small',
+        boxShadow: '-1px -1px 2px #000'
+      }
+    })
+  }
+  const n = window.FriendslistWindow.OpenRequestsCounter
+  if (n) {
+    ele.style.display = 'block'
+    ele.textContent = n
+  } else {
+    ele.style.display = 'none'
+  }
+}
+TWDS.friendrequestcounter.setopenrequests = function (n) {
+  window.FriendslistWindow.TWDS_backup_setOpenRequests.call(this, n)
+  TWDS.friendrequestcounter.update()
+}
+TWDS.registerStartFunc(function () {
+  window.FriendslistWindow.TWDS_backup_setOpenRequests = window.FriendslistWindow.TWDS_backup_setOpenRequests || window.FriendslistWindow.setOpenRequests
+  window.FriendslistWindow.setOpenRequests = TWDS.friendrequestcounter.setopenrequests
+  let startupdelay = 7 // avoid thundering heard at the start of the game
+  TWDS.registerSetting('bool', 'friendrequestcounter',
+    TWDS._('SHOW_FRIENDREQUEST_COUNTER', 'Show the number of open friend requests in the bottom bar.'),
+    true, function (val) {
+      if (val) {
+        Ajax.remoteCallMode('character', 'get_friends', {}, function (json) {
+          setTimeout(function () {
+            window.FriendslistWindow.OpenRequestsCounter = json.open_requests
+            TWDS.friendrequestcounter.update()
+            EventHandler.listen('friend_invitation_sent', TWDS.friendrequestcounter.update)
+            startupdelay = 0
+          }, startupdelay * 1000 + 10)
+        })
+      } else {
+        TWDS.updatefriendrequestcounter() // turn off
+        EventHandler.unlisten('friend_invitation_sent', TWDS.friendrequestcounter.update)
+      }
+    })
+
+  // update the open requests counter every 15 minutes. it's not updated when you invite someone or get an invitation.
+  setInterval(function () {
+    Ajax.remoteCallMode('character', 'get_friends', {}, function (json) {
+      window.FriendslistWindow.OpenRequestsCounter = json.open_requests
+      TWDS.friendrequestcounter.update()
+    })
+  }, 15 * 60 * 1000)
+  /*
+  // update the display every minute, because we are not informed
+  setInterval(function() {
+    Ajax.remoteCallMode('character', 'get_friends', {}, function(json) {
+      window.FriendslistWindow.OpenRequestsCounter=json["open_requests"];
+      TWDS.updatefriendrequestcounter();
+    });
+  }, 1*60*1000);
+  */
+})
 
 TWDS.registerStartFunc(function () {
   west.gui.payHandler.prototype._TWDS_backup_addPayOption = west.gui.payHandler.prototype.addPayOption
