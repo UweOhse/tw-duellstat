@@ -1,0 +1,3 @@
+NIGHTMODE_START: "Nachtmodus um diese Stunde beginnen",
+NIGHTMODE_END: "Nachtmodus nach dieser Stunde beenden",
+NIGHTMODE_BRIGHTNESS: "Helligkeit des Nachtmodus in Prozent. 75% könnte ein guter Anfang sein",
