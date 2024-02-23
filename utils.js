@@ -1,4 +1,6 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
+TWDS.utils = {}
+
 TWDS.settingList = []
 TWDS.extraList = []
 TWDS.saveSettings = function () {
@@ -577,4 +579,23 @@ TWDS.createFilteredSelect = function (filltext, allthings) {
     sf.onchange.apply(this)
   }
   return d
+}
+TWDS.utils.stdwindow = function (name, title, minititle, classes) {
+  const iscreated = wman.isWindowCreated(name)
+  if (iscreated) {
+    const ismin = wman.isMinimized(name)
+    if (ismin) {
+      wman.reopen(name)
+    }
+    return wman.getById(name)
+  }
+
+  const win = wman.open(name, title, classes)
+  win.setMiniTitle(minititle || title)
+  const sp = new west.gui.Scrollpane()
+  win.appendToContentPane(sp.getMainDiv())
+  return win
+}
+TWDS.utils.getcontainer = function (win) {
+  return TWDS.q1('.tw2gui_scrollpane_clipper_contentpane', win.getContentPane())
 }
