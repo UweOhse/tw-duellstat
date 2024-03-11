@@ -3,7 +3,7 @@
 TWDS.upshop = {}
 TWDS.upshop.shoprender = function () {
   const thing = west.game.shop.item.view.prototype.TWDS_backup_render.apply(this)
-  console.log('shoprender', thing, this, this.getModel(), this.getModel().getId())
+  // console.log('shoprender', thing, this, this.getModel(), this.getModel().getId())
   const model = this.getModel()
   const iid = model.getId()
   const it = ItemManager.get(iid)
@@ -11,7 +11,10 @@ TWDS.upshop.shoprender = function () {
     const have = Bag.getItemsByBaseItemId(it.item_base_id)
     let n = 0
     if (have && have[0]) {
-      n = have[0].getCount()
+      // go threw all leveled items..
+      for (let i = 0; i < have.length; i++) {
+        n += have[i].getCount()
+      }
     }
     const worn = Wear.wear[it.type]
     if (worn) {
