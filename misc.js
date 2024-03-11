@@ -381,9 +381,11 @@ TWDS.registerStartFunc(function () {
   WestUi.NotiBar.add = function (entry) {
     console.log('NotiBar.add', entry)
     if (TWDS.settings.misc_notibar_remove_sale) {
-      const found = TWDS.q1('.image.shop_sale', entry.element[0])
-      if (found) {
-        return
+      if (entry.element) {
+        const found = TWDS.q1('.image.shop_sale', entry.element[0])
+        if (found) {
+          return
+        }
       }
     }
     WestUi.NotiBar.TWDS_backup_add.call(this, entry)
