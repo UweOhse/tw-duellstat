@@ -293,7 +293,7 @@ TWDS.fbchat.swaphelper = function (name1, name2) {
   } else if (y1 < y2) {
     dir += (y2 - y1) + ' ' + TWDS._('FBCHAT_DOWN', 'down')
   }
-  const str = TWDS._('FBCHAT_SWAPSTRING', '$name1 swap $dir with $name2', {
+  const str = TWDS._('FBCHAT_SWAPSTRING', '$name1$ swap $dir$ with $name2$', {
     name1: ch1.name,
     name2: ch2.name,
     dir: dir
