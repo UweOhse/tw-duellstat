@@ -169,56 +169,54 @@ TWDS.townwindow.showrankingcrafters = function () {
 }
 
 TWDS.townwindow.residentsfillcontent = function () {
-  let dosort=function() {
-    let by="rank"
-    if (this.classList.contains("name_foreign"))
-      by="name_foreign";
+  const dosort = function () {
+    let by = 'rank'
+    if (this.classList.contains('name_foreign')) { by = 'name_foreign' }
 
-    let t=this.closest(".fancytable");
+    const t = this.closest('.fancytable')
     let dir
-    if (t.dataset.sortedby===by) {
-      dir=parseInt(t.dataset.sortdir || 1)*-1
+    if (t.dataset.sortedby === by) {
+      dir = parseInt(t.dataset.sortdir || 1) * -1
     } else {
-      dir=1
+      dir = 1
     }
-    t.dataset.sortdir=dir
-    t.dataset.sortedby=by
-    if (!t) return;
-    let b=TWDS.q1(".tbody",t);
-    if (!b) return;
-    let cp=TWDS.q1(".tw2gui_scrollpane_clipper_contentpane",b);
-    if (!cp) return;
-    let tmp=TWDS.q(".row",cp);
+    t.dataset.sortdir = dir
+    t.dataset.sortedby = by
+    if (!t) return
+    const b = TWDS.q1('.tbody', t)
+    if (!b) return
+    const cp = TWDS.q1('.tw2gui_scrollpane_clipper_contentpane', b)
+    if (!cp) return
+    const tmp = TWDS.q('.row', cp)
 
-    let rows=[]
-    for (let i=0;i<tmp.length;i++) rows.push(tmp[i]);
-    rows.sort(function(a,b) {
-      let av=TWDS.q1("."+by,a).textContent;
-      let bv=TWDS.q1("."+by,b).textContent;
-      if (by==="rank") {
-        return dir * (parseInt(bv)-parseInt(av))
+    const rows = []
+    for (let i = 0; i < tmp.length; i++) rows.push(tmp[i])
+    rows.sort(function (a, b) {
+      const av = TWDS.q1('.' + by, a).textContent
+      const bv = TWDS.q1('.' + by, b).textContent
+      if (by === 'rank') {
+        return dir * (parseInt(bv) - parseInt(av))
       }
       return dir * (av.toLocaleLowerCase().localeCompare(bv.toLocaleLowerCase()))
-    });
-    cp.innerHTML="";
-    for (let i=0;i<rows.length;i++)
-      cp.appendChild(rows[i]);
+    })
+    cp.innerHTML = ''
+    for (let i = 0; i < rows.length; i++) { cp.appendChild(rows[i]) }
   }
   CityhallWindow.Residents.TWDS_backup_fillContent.apply(this, arguments)
 
-  if (!this.table.divMain) return; 
+  if (!this.table.divMain) return
 
-  let main=this.table.divMain[0]
-  main.sortedby="rank";
-  let thead=TWDS.q1(".trows .thead",main);
+  const main = this.table.divMain[0]
+  main.sortedby = 'rank'
+  const thead = TWDS.q1('.trows .thead', main)
 
-  let nf=TWDS.q1(".name_foreign",thead);
-  nf.classList.add("linklike");
-  nf.onclick=dosort
+  const nf = TWDS.q1('.name_foreign', thead)
+  nf.classList.add('linklike')
+  nf.onclick = dosort
 
-  let lv=TWDS.q1(".rank",thead);
-  lv.classList.add("linklike");
-  lv.onclick=dosort
+  const lv = TWDS.q1('.rank', thead)
+  lv.classList.add('linklike')
+  lv.onclick = dosort
 }
 TWDS.townwindow.residentsinit = function () {
   CityhallWindow.Residents.TWDS_backup_init.apply(this, arguments)
@@ -248,7 +246,7 @@ TWDS.townwindow.startfunc = function () {
   CityhallWindow.Residents.TWDS_backup_init = CityhallWindow.Residents.TWDS_backup_init ||
     CityhallWindow.Residents.init
   CityhallWindow.Residents.init = TWDS.townwindow.residentsinit
-  CityhallWindow.Residents.fillContent
+
   CityhallWindow.Residents.TWDS_backup_fillContent = CityhallWindow.Residents.TWDS_backup_fillContent ||
     CityhallWindow.Residents.fillContent
   CityhallWindow.Residents.fillContent = TWDS.townwindow.residentsfillcontent
