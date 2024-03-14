@@ -238,7 +238,7 @@ TWDS.fbchat.findiconbyfortandplayer = function (fortid, pid) {
     }
   }
 }
-TWDS.fbchat.swaphelper = function (name1, name2) {
+TWDS.fbchat.getdirection = function (name1, name2) {
   const chlist1 = TWDS.fbchat.findchar(name1)
   if (chlist1.length === 0) {
     return [false, TWDS._('C_SOMESTRING_NOT_FOUND', '$string$ not found', { string: name1 })]
@@ -293,10 +293,16 @@ TWDS.fbchat.swaphelper = function (name1, name2) {
   } else if (y1 < y2) {
     dir += (y2 - y1) + ' ' + TWDS._('FBCHAT_DOWN', 'down')
   }
+  return [true, dir]
+}
+TWDS.fbchat.swaphelper = function (name1, name2) {
+  const res = TWDS.fbchat.getdirection(name1, name2)
+  if (!res[0]) return res
+
   const str = TWDS._('FBCHAT_SWAPSTRING', '$name1$ swap $dir$ with $name2$', {
-    name1: ch1.name,
-    name2: ch2.name,
-    dir: dir
+    name1: name1,
+    name2: name2,
+    dir: res[1]
   })
 
   return [true, str]
@@ -443,6 +449,63 @@ TWDS.fbchat.startfunc2 = function () {
       const color = window.localStorage.TWDS_chat_color
       if (color) { out[1] = '/' + color + ' ' + out[1] }
       Chat.sendMessage(out[1], room)
+    }
+  }
+  Chat.Operations['^\\/(findplayer|f)\\s+(.*)$'] = {
+    cmd: 'mark',
+    shorthelp: TWDS._('CHAT_FINDPLAYER_SHORTHELP', 'find some player(s)'),
+    help: TWDS._('CHAT_FINDPLAYER_HELP', 'Find players by name'),
+    usage: TWDS._('CHAT_FINDPLAYER_USAGE', '/findplayer searchstring'),
+    func: function (room, msg, param) {
+      const fortid = room.fortId
+      const fbw = TWDS.fbdata.fbw[fortid]
+      if (!fbw) {
+        console.log('FBW not found', TWDS.fbdata.fbw, fortid)
+        room.addMessage(F('CHAT_FBW_WINDOW_NOT_FOUND', 'fortbattle window not found'))
+        return
+      }
+
+      if (!('characters' in fbw)) {
+        if ('preBattle' in fbw) {
+          room.addMessage(F('CHAT_MARK_NOT_IN_PREBATTLE', "can't do that in a prebattle window"))
+        } else {
+          room.addMessage(F('CHAT_MARK_NO_CHARACTERS', 'characters not found'))
+        }
+        return
+      }
+
+      const search = param[2].trim().toLocaleLowerCase()
+      let found = 0
+      for (let i = 0; i < fbw.characters.length; i++) {
+        const ch = fbw.characters[i]
+        const name = ch.name.toLocaleLowerCase()
+        if (name.includes(search)) {
+          const cid = ch.characterid
+          const icon = fbw.charIcons[cid]
+          const dir = TWDS.fbchat.getdirection(Character.name, name)
+          if (dir[0]) {
+            room.addMessage(F(null, name + ': ' + dir[1]))
+          }
+          if (icon && icon[0]) {
+            found++
+            let z = 50
+            const interval = setInterval(function () {
+              if (z % 2) {
+                icon[0].classList.add('highlight')
+              } else {
+                icon[0].classList.remove('highlight')
+              }
+              z--
+              if (z < 1) {
+                clearInterval(interval)
+              }
+            }, 50)
+          }
+        }
+      }
+      if (!found) {
+        room.addMessage(F('CHAT_PLAYER_NOT_FOUND', 'player not found'))
+      }
     }
   }
   Chat.Operations['^\\/mark\\s+([0-9]+|-)\\s+(.*)$'] = {
