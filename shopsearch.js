@@ -628,6 +628,7 @@ TWDS.shopsearch.getcontent = function (win) {
 TWDS.shopsearch.openwindow = function (search) {
   const wid = 'TWDS_shopsearch_window'
   let win
+  let searched = false
   if (wman.isWindowCreated(wid)) {
     win = wman.getById(wid)
     if (wman.isMinimized(wid)) {
@@ -643,11 +644,15 @@ TWDS.shopsearch.openwindow = function (search) {
     const content = TWDS.shopsearch.getcontent(win)
     sp.appendContent(content)
     win.appendToContentPane(sp.getMainDiv())
+    searched=true
   }
   if (search) {
     const input = TWDS.q1('.TWDS_shopsearch_window input', win.divMain)
     if (input) {
       input.value = search
+      if (!searched) {
+        input.onchange();
+      }
     }
   }
 }
