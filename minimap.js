@@ -395,42 +395,48 @@ TWDS.minimap.showtaskjobgroups = function () {
   })
 }
 
+TWDS.minimap.importtext = function (text) {
+  const isnum = function (n) {
+    return !isNaN(parseFloat(n)) && isFinite(n)
+  }
+  const lines = text.split(/[\n,\r,\r\n]/)
+  for (let i = 0; i < lines.length; i++) {
+    // Railroad Ticket Agent; silver; 4815-1121; 165
+    const parts = lines[i].split(';', 4)
+    if (parts.length !== 4 || !isnum(parts[3]) || !JobsModel.getById(Number(parts[3]))) {
+      continue
+    }
+    const pos = String(parts[2]).split('-', 2)
+    if (pos.length !== 2 || !isnum(pos[0]) || !isnum(pos[1])) {
+      continue
+    }
+    const jid = Number(parts[3])
+    const entry = {
+      gold: $.trim(parts[1]) === 'gold',
+      group_id: JobsModel.getById(jid).groupid,
+      job_id: jid,
+      silver: $.trim(parts[1]) !== 'gold',
+      x: Number(pos[0]),
+      y: Number(pos[1]),
+      time: (new Date()).getTime()
+    }
+    const key = Number(pos[0]) + '-' + Number(pos[1])
+    if (!(key in TWDS.minimap.cache)) {
+      TWDS.minimap.cache[key] = {}
+    }
+    TWDS.minimap.cache[key][jid] = entry
+  }
+  TWDS.minimap.savecache()
+  TWDS.minimap.updateIfOpen()
+}
+
 TWDS.minimap.import = function () {
   const textarea = $('<textarea />').css({
     width: '400px',
     minHeight: '100px'
   })
   const doit = function () {
-    const val = textarea.val()
-    const lines = val.split(/[\n,\r,\r\n]/)
-    for (let i = 0; i < lines.length; i++) {
-      // Railroad Ticket Agent; silver; 4815-1121; 165
-      const parts = lines[i].split(';', 4)
-      if (parts.length !== 4 || !jQuery.isNumeric(parts[3]) || !JobsModel.getById(Number(parts[3]))) {
-        continue
-      }
-      const pos = String(parts[2]).split('-', 2)
-      if (pos.length !== 2 || !jQuery.isNumeric(pos[0]) || !jQuery.isNumeric(pos[1])) {
-        continue
-      }
-      const jid = Number(parts[3])
-      const entry = {
-        gold: $.trim(parts[1]) === 'gold',
-        group_id: JobsModel.getById(jid).groupid,
-        job_id: jid,
-        silver: $.trim(parts[1]) !== 'gold',
-        x: Number(pos[0]),
-        y: Number(pos[1]),
-        time: (new Date()).getTime()
-      }
-      const key = Number(pos[0]) + '-' + Number(pos[1])
-      if (!(key in TWDS.minimap.cache)) {
-        TWDS.minimap.cache[key] = {}
-      }
-      TWDS.minimap.cache[key][jid] = entry
-    }
-    TWDS.minimap.savecache()
-    TWDS.minimap.updateIfOpen()
+    TWDS.minimap.importtext(textarea.val)
   };
   (new west.gui.Dialog('Bonus-Jobs Import', textarea)).addButton('ok', doit).addButton('cancel').show()
 }
