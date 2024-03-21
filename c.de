@@ -1,0 +1,6 @@
+C_TOWN: "Stadt",
+C_ALLIANCE:"Allianz",
+C_PLAYERS: "Spieler",
+C_ALL: "Alle",
+C_SOMESTRING_NOT_FOUND: "$string$ not found",
+C_FRIEND: "Freund",
