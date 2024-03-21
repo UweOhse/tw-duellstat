@@ -367,6 +367,7 @@ TWDS.overlay.getnote = function () {
 }
 TWDS.overlay.eventdata = null
 TWDS.overlay.event_item_changed = function (payload) {
+  console.log('overlay item_changed', payload)
   if (!TWDS.overlay.eventdata) return
   for (let i = 0; i < TWDS.overlay.eventdata.length; i++) {
     const d = TWDS.overlay.eventdata[i]
@@ -378,6 +379,7 @@ TWDS.overlay.event_item_changed = function (payload) {
       return
     }
   }
+  if ((Date.now() / 1000) < payload.start_time) { return }
   TWDS.overlay.eventdata.push({
     item_id: payload.item_id,
     limited_count: payload.limited_count,
