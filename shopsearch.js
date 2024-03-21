@@ -644,14 +644,14 @@ TWDS.shopsearch.openwindow = function (search) {
     const content = TWDS.shopsearch.getcontent(win)
     sp.appendContent(content)
     win.appendToContentPane(sp.getMainDiv())
-    searched=true
+    searched = true
   }
   if (search) {
     const input = TWDS.q1('.TWDS_shopsearch_window input', win.divMain)
     if (input) {
       input.value = search
       if (!searched) {
-        input.onchange();
+        input.onchange()
       }
     }
   }
