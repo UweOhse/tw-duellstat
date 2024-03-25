@@ -81,7 +81,7 @@ TWDS.overlay.getregendata = function () {
   return s
 }
 */
-TWDS.overlay.getbattledata = function (badchange) {
+TWDS.overlay.getbattledata = function () {
   const getone = function (x) {
     const y = CharacterSkills.getSkill(x)
     return y.bonus + y.points // bonus: skill. points: attr
@@ -105,11 +105,6 @@ TWDS.overlay.getbattledata = function (badchange) {
   let sectorDefense = 0
   let sectorDamage = 0
   let fortResistance = 0
-  if (Character.charClass === 'worker' && badchange) {
-    console.log('BADCHANGE', hide, trap, build)
-    if (build > hide) hide = build
-    if (build > trap) trap = build
-  }
 
   if ('fort_attack' in bo) {
     multiplayerAttack += bo.fort_attack
@@ -153,27 +148,7 @@ TWDS.overlay.getbattledata = function (badchange) {
   if (Character.charClass === 'soldier') {
     if (prem) { lead = lead * 1.5 } else { lead = lead * 1.25 }
   }
-  /*
-  if (Character.charClass === 'worker') {
-    if (badchange) {
-      if (prem) {
-        aim *= 1.3
-        dodge *= 1.3
-      } else {
-        aim *= 1.15
-        dodge *= 1.15
-      }
-    } else {
-      if (prem) {
-        aim *= 1.4
-        dodge *= 1.4
-      } else {
-        aim *= 1.2
-        dodge *= 1.2
-      }
-    }
-  }
-  */
+
   const beginnerBonus = 15 * (1 - level / 250.0)
 
   let attAttack = Math.pow(lead, 0.5) +
@@ -183,6 +158,7 @@ TWDS.overlay.getbattledata = function (badchange) {
     sectorAttack +
     beginnerBonus +
     10
+  attAttack*=1.15
   let attDefend = Math.pow(lead, 0.5) +
     Math.pow(dodge, 0.5) +
     Math.pow(hide, 0.6) +
@@ -197,6 +173,7 @@ TWDS.overlay.getbattledata = function (badchange) {
     sectorAttack +
     beginnerBonus +
     10
+  defAttack*=1.15
   let defDefend = Math.pow(lead, 0.5) +
     Math.pow(dodge, 0.5) +
     Math.pow(trap, 0.6) +
@@ -209,18 +186,10 @@ TWDS.overlay.getbattledata = function (badchange) {
   const secondaryRes = fortResistance
   if (Character.charClass === 'worker') {
     let f
-    if (badchange) {
-      if (prem) {
-        f = 1.3
-      } else {
-        f = 1.15
-      }
+    if (prem) {
+      f = 1.4
     } else {
-      if (prem) {
-        f = 1.4
-      } else {
-        f = 1.2
-      }
+      f = 1.2
     }
     attAttack *= f
     attDefend *= f
@@ -291,11 +260,6 @@ TWDS.overlay.getbattledata = function (badchange) {
   s += '<td>' + sectorDefense
   s += '<td colspan="2">'
   s += '</table>'
-  /*
-  if (Character.charClass === 'worker' && !badchange) {
-    s+=TWDS.overlay.getbattledata(true); // may change
-  }
-  */
   return s
 }
 TWDS.overlay.getdueldata = function () {
