@@ -25,10 +25,8 @@ TWDS.duelmap.forcetablesort = function () {
   }
 }
 TWDS.duelmap.history = function (id, name) {
-  const key = 'TWDS_p_' + name
-  let d = window.localStorage.getItem(key)
+  const d = TWDS.people.getbyname(name)
   if (!d) return
-  d = JSON.parse(d)
   const wid = 'TWDS_duelmap_history_' + id
   const win = TWDS.utils.stdwindow(wid, name, name)
   const container = TWDS.utils.getcontainer(win)
@@ -58,7 +56,12 @@ TWDS.duelmap.update = function (name) {
   old = TWDS.q1('.TWDS_pbox_' + data.player_id, TWDS.duelmap.map)
   if (old) { old.remove() }
 
-  const box = TWDS.maphelper.drawbox(TWDS.duelmap.map, data.character_x, data.character_y, 6, name, 'red', 0, 'player linklike')
+  let color = 'red'
+  if (TWDS.duelmap.friends[data.player_id]) {
+    color = '#0a0'
+  }
+  const box = TWDS.maphelper.drawbox(TWDS.duelmap.map, data.character_x, data.character_y, 6,
+    name, color, 0, 'player linklike')
   box.onclick = function () {
     window.PlayerProfileWindow.open(data.player_id)
   }
@@ -86,24 +89,44 @@ TWDS.duelmap.update = function (name) {
       box.style.outline = 'none'
     }
   })
+  const getage = function (str) {
+    const m = str.match(/^([0-9]+)-([0-9]+)-([0-9]+)$/)
+    const then = new Date(m[1], parseInt(m[2]) - 1, m[3]).getTime()
+    const now = new Date().getTime()
+    const h = (now - then) / (3600 * 24 * 1000)
+    return Math.round(h) + 'd'
+  }
   if (TWDS.duelmap.friends[data.player_id]) {
     nele.classList.add('friend')
     nele.title = TWDS._('C_FRIEND', 'Friend')
   }
-  const key = 'TWDS_p_' + name
-  const histdata = window.localStorage.getItem(key)
+  const histdata = TWDS.people.getbyname(name)
   if (histdata) {
-    TWDS.createEle('td', {
+    let last = -1
+    let lastcmp = ''
+    for (let i = 0; i < histdata.list.length; i++) {
+      if (last === -1) {
+        lastcmp = histdata.list[i].cmpdate
+        last = i
+      } else {
+        if (histdata.list[i].cmpdate.localeCompare(lastcmp) > 0) {
+          last = i
+          lastcmp = histdata.list[i].cmpdate
+        }
+      }
+    }
+
+    TWDS.createEle('td.hist', {
       last: tr,
-      textContent: 'hist',
-      dataset: { debug: JSON.stringify(TWDS.duelmap.data[name]) },
+      textContent: getage(lastcmp),
+      dataset: { debug: JSON.stringify(TWDS.duelmap.data[name]), sortval: lastcmp },
       onclick: function () {
         TWDS.duelmap.history(data.player_id, name)
         console.log('debug', JSON.parse(this.dataset.debug))
       }
     })
   } else {
-    TWDS.createEle('td', { last: tr })
+    TWDS.createEle('td.hist', { last: tr, dataset: { sortval: '1970-01-01' } })
   }
   TWDS.createEle('td.linklike.town', {
     last: tr,
@@ -184,7 +207,7 @@ TWDS.duelmap.runplayersloaded = 0
 TWDS.duelmap.runplayersmax = TWDS.duelmap.pagesperrun
 TWDS.duelmap.getdata = function (mode) {
   const ts = (new Date()).getTime() / 1000
-  if (mode === 'normal' || mode === 'reload') {
+  if (mode === 'normal') {
     if (ts > TWDS.duelmap.friendsage) {
       TWDS.duelmap.friendsage = ts + 3600
       Ajax.remoteCallMode('friendsbar', 'search', { search_type: 'friends' },
@@ -212,7 +235,7 @@ TWDS.duelmap.getdata = function (mode) {
     return
   }
   let distlimit = TWDS.duelmap.distancelimit ? TWDS.duelmap.distancelimit * 60 : 6 * 3600 * 60
-  if (mode === 'more' || mode === 'reload') { distlimit = 6 * 3600 * 60 }
+  if (mode === 'more') { distlimit = 6 * 3600 * 60 }
   Ajax.remoteCall('duel', 'search_op', {
     next: true,
     order_by: 'ASC',
@@ -284,7 +307,7 @@ TWDS.duelmap.myshowtab = function (win, id) {
 
   TWDS.createEle('span.loaded', { last: p, textContent: '' })
 
-  const more = TWDS.createButton('more', { last: p })
+  const more = TWDS.createButton(TWDS._('DUELMAP_MORE', 'more'), { last: p })
   more.onclick = function () {
     TWDS.duelmap.runplayersmax = TWDS.duelmap.morelimit
     TWDS.duelmap.runplayersloaded = 0
@@ -293,17 +316,47 @@ TWDS.duelmap.myshowtab = function (win, id) {
   }
 
   TWDS.createEle('span.loaddate', { last: p, textContent: '' })
-  const reload = TWDS.createButton('reload', { last: p })
+  const newsearch = TWDS.createButton(TWDS._('DUELMAP_NEWSEARCH', 'new search'), { last: p })
 
   const sel = TWDS.createEle('select.waytime', { last: p })
   const cur = parseInt(localStorage.TWDS_duelmap_filter_waytime) || 10
   TWDS.duelmap.distancelimit = cur
-  TWDS.createEle('option', { last: sel, value: '10', textContent: '10 minutes', selected: cur === 10 })
-  TWDS.createEle('option', { last: sel, value: '15', textContent: '15 minutes', selected: cur === 15 })
-  TWDS.createEle('option', { last: sel, value: '30', textContent: '30 minutes', selected: cur === 30 })
-  TWDS.createEle('option', { last: sel, value: '60', textContent: '60 minutes', selected: cur === 60 })
-  TWDS.createEle('option', { last: sel, value: '120', textContent: '120 minutes', selected: cur === 120 })
-  TWDS.createEle('option', { last: sel, value: '0', textContent: '-- no limit --', selected: cur === 0 })
+  TWDS.createEle('option', {
+    last: sel,
+    value: '10',
+    textContent: TWDS._('DUELMAP_10m', '10 minutes'),
+    selected: cur === 10
+  })
+  TWDS.createEle('option', {
+    last: sel,
+    value: '15',
+    textContent: TWDS._('DUELMAP_15m', '15 minutes'),
+    selected: cur === 15
+  })
+  TWDS.createEle('option', {
+    last: sel,
+    value: '30',
+    textContent: TWDS._('DUELMAP_30m', '30 minutes'),
+    selected: cur === 30
+  })
+  TWDS.createEle('option', {
+    last: sel,
+    value: '60',
+    textContent: TWDS._('DUELMAP_60m', '60 minutes'),
+    selected: cur === 60
+  })
+  TWDS.createEle('option', {
+    last: sel,
+    value: '120',
+    textContent: TWDS._('DUELMAP_120m', '120 minutes'),
+    selected: cur === 120
+  })
+  TWDS.createEle('option', {
+    last: sel,
+    value: '0',
+    textContent: TWDS._('DUELMAP_UNLIMITED', '-- no limit --'),
+    selected: cur === 0
+  })
   sel.onchange = function () {
     localStorage.TWDS_duelmap_filter_waytime = this.value
     TWDS.duelmap.distancelimit = parseInt(this.value)
@@ -329,20 +382,61 @@ TWDS.duelmap.myshowtab = function (win, id) {
   const tr = TWDS.createEle('tr', { last: thead })
   TWDS.createEle('th.linklike.name', {
     last: tr,
-    textContent: 'Name',
+    textContent: TWDS._('C_NAME', 'Name'),
     dataset: { colsel: '.name' },
     onclick: TWDS.sortable.do
   })
-  TWDS.createEle('th', { last: tr, textContent: 'hist' })
-  TWDS.createEle('th.linklike', { last: tr, textContent: 'Town', dataset: { colsel: '.town', secondcolsel: '.name' }, onclick: TWDS.sortable.do })
-  TWDS.createEle('th.linklike', { last: tr, textContent: 'Alliance', dataset: { colsel: '.alliance', secondcolsel: '.name' }, onclick: TWDS.sortable.do })
-  TWDS.createEle('th.linklike', { last: tr, textContent: 'Lv', dataset: { colsel: '.level', secondcolsel: '.name' }, onclick: TWDS.sortable.do })
-  TWDS.createEle('th.linklike', { last: tr, textContent: 'D-Lv', dataset: { colsel: '.duellevel', secondcolsel: '.name' }, onclick: TWDS.sortable.do })
-  TWDS.createEle('th.linklike', { last: tr, textContent: 'dXP', dataset: { colsel: '.xp', sortmode: 'number', secondcolsel: '.name' }, onclick: TWDS.sortable.do })
-  TWDS.createEle('th.linklike', { last: tr, textContent: 'class', dataset: { colsel: '.class', secondcolsel: '.name' }, onclick: TWDS.sortable.do })
   TWDS.createEle('th.linklike', {
     last: tr,
-    textContent: 'Waytime / center',
+    textContent: TWDS._('DUELMAP_WHEN', 'When'),
+    title: TWDS._('DUELMAP_WHEN_TITLE', 'Last duel ... days ago'),
+    dataset: { colsel: '.hist', secondcolel: '.name' },
+    onclick: TWDS.sortable.do
+  })
+  TWDS.createEle('th.linklike', {
+    last: tr,
+    textContent:
+    TWDS._('C_TOWN', 'Town'),
+    dataset: { colsel: '.town', secondcolsel: '.name' },
+    onclick: TWDS.sortable.do
+  })
+  TWDS.createEle('th.linklike', {
+    last: tr,
+    textContent: TWDS._('C_ALLIANCE', 'Alliance'),
+    dataset: { colsel: '.alliance', secondcolsel: '.name' },
+    onclick: TWDS.sortable.do
+  })
+  TWDS.createEle('th.linklike', {
+    last: tr,
+    textContent: TWDS._('DUELMAP_LV', 'Lv'),
+    title: TWDS._('DUELMAP_LV_TITLE', 'The opponents level'),
+    dataset: { colsel: '.level', secondcolsel: '.name' },
+    onclick: TWDS.sortable.do
+  })
+  TWDS.createEle('th.linklike', {
+    last: tr,
+    textContent: TWDS._('DUELMAP_DLV', 'D-Lv'),
+    title: TWDS._('DUELMAP_DLV_TITLE', 'The opponents duelling level'),
+    dataset: { colsel: '.duellevel', secondcolsel: '.name' },
+    onclick: TWDS.sortable.do
+  })
+  TWDS.createEle('th.linklike', {
+    last: tr,
+    textContent: TWDS._('DUELMAP_XP', 'XP'),
+    title: TWDS._('DUELMAP_XP_TITLE', 'The amount of duel experience you can get'),
+    dataset: { colsel: '.xp', sortmode: 'number', secondcolsel: '.name' },
+    onclick: TWDS.sortable.do
+  })
+  TWDS.createEle('th.linklike', {
+    last: tr,
+    textContent: TWDS._('DUELMAP_CLASS', 'class'),
+    dataset: { colsel: '.class', secondcolsel: '.name' },
+    onclick: TWDS.sortable.do
+  })
+  TWDS.createEle('th.linklike', {
+    last: tr,
+    textContent: TWDS._('DUELMAP_WAYTIME', 'Waytime'),
+    title: TWDS._('DUELMAP_WAYTIME_TITLE', 'Click on it to center the map on the opponent'),
     dataset: { colsel: '.wt', sortmode: 'number', secondcolsel: '.name' },
     onclick: TWDS.sortable.do
   })
@@ -364,17 +458,18 @@ TWDS.duelmap.myshowtab = function (win, id) {
     }
   }
 
-  reload.onclick = function () {
-    TWDS.duelmap.timestamp = ts
-    TWDS.duelmap.runplayersloaded = 0
-    TWDS.duelmap.runplayersmax = Object.keys(TWDS.duelmap.data).length
-    TWDS.duelmap.lastpageloaded = 0
+  newsearch.onclick = function () {
+    TWDS.duelmap.data = {}
+    TWDS.duelmap.timestamp = (new Date()).getTime() / 1000
     TWDS.duelmap.win.showLoader()
+    TWDS.duelmap.runplayersmax = TWDS.duelmap.playerlimit
+    TWDS.duelmap.runplayersloaded = 0
+    TWDS.duelmap.lastpageloaded = 0
     // cleanup
     TWDS.duelmap.map.innerHTML = ''
     TWDS.maphelper.drawme(TWDS.duelmap.map)
     tbody.innerHTML = ''
-    TWDS.duelmap.getdata('reload')
+    TWDS.duelmap.getdata('normal')
   }
 }
 
