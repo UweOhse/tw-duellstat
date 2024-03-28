@@ -95,9 +95,8 @@ TWDS.overlay.getbattledata = function () {
   const dodge = getone('dodge')
   const aim = getone('aim')
   let lead = getone('leadership')
-  const build = getone('build')
-  let hide = getone('hide')
-  let trap = getone('pitfall')
+  const hide = getone('hide')
+  const trap = getone('pitfall')
   const bo = TWDS.bonuscalc.getComboBonus()
   let multiplayerAttack = 0
   let multiplayerDefense = 0
@@ -158,7 +157,7 @@ TWDS.overlay.getbattledata = function () {
     sectorAttack +
     beginnerBonus +
     10
-  attAttack*=1.15
+  attAttack *= 1.15
   let attDefend = Math.pow(lead, 0.5) +
     Math.pow(dodge, 0.5) +
     Math.pow(hide, 0.6) +
@@ -173,7 +172,7 @@ TWDS.overlay.getbattledata = function () {
     sectorAttack +
     beginnerBonus +
     10
-  defAttack*=1.15
+  defAttack *= 1.15
   let defDefend = Math.pow(lead, 0.5) +
     Math.pow(dodge, 0.5) +
     Math.pow(trap, 0.6) +
