@@ -12,7 +12,7 @@ CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js $(LANGSJSON) t
    iteminfo.js fbchat.js invstat.js pinning.js duelinfo.js calendar.js vipendtime.js inventory.js \
    fbmisc.js townwindow.js profilewindow.js buildwindow.js shopsearch.js ranking.js \
    quickequipment.js allimap.js stathist.js nightmode.js maphelper.js fortbuild.js playerlistwindow.js \
-   nextaction.js upshop.js ghosttowns.js duelmap.js \
+   nextaction.js upshop.js ghosttowns.js duelmap.js plusminus.js \
    sortable.js extras.js main.js 
 
 SASS_SOURCES=utils.sass minimap.sass joblist.sass market.sass craftwindow.sass quest.sass jobwindow.sass simulator.sass \
