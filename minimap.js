@@ -436,7 +436,7 @@ TWDS.minimap.import = function () {
     minHeight: '100px'
   })
   const doit = function () {
-    TWDS.minimap.importtext(textarea.val)
+    TWDS.minimap.importtext(textarea.val())
   };
   (new west.gui.Dialog('Bonus-Jobs Import', textarea)).addButton('ok', doit).addButton('cancel').show()
 }
