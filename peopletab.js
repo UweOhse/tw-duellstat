@@ -1,3 +1,123 @@
+// vim: tabstop=2 shiftwidth=2 expandtab
+TWDS.people = {}
+TWDS.people.getmon = function (str) {
+  switch (str) {
+    case 'Jan':
+      return 0
+    case 'Feb':
+      return 1
+    case 'Mar':
+    case 'Mär':
+    case 'März':
+      return 2
+    case 'Apr':
+      return 3
+    case 'May':
+    case 'Mai':
+      return 4
+    case 'Jun':
+      return 5
+    case 'Jul':
+      return 6
+    case 'Aug':
+      return 7
+    case 'Sep':
+      return 8
+    case 'Oct':
+    case 'Okt':
+      return 9
+    case 'Nov':
+      return 10
+    case 'Dec':
+    case 'Dez':
+    case 'Dez.':
+      return 11
+  }
+  return -1
+}
+TWDS.people.getbyname = function (name) {
+  const getCmpDate = function (d) {
+    const pad = function (number) {
+      if (number < 10) {
+        return '0' + number
+      }
+      return number
+    }
+    const dt = new Date(d)
+
+    return dt.getFullYear() +
+  '-' + pad(dt.getMonth() + 1) +
+  '-' + pad(dt.getDate())
+  }
+  const key = 'TWDS_p_' + name
+  let histdata = window.localStorage.getItem(key)
+
+  if (!histdata) return false
+  try {
+    histdata = JSON.parse(histdata)
+  } catch (e) {
+    TWDS.error('people.getbyname', 'failed to parse data for ', name)
+    return false
+  }
+  let fixed = false
+  for (let i = 0; i < histdata.list.length; i++) {
+    const d = histdata.list[i]
+    // we need to fix that somewhere, why not directly here?
+    if (d.cmpdate.includes('NaN')) {
+      // i really screwed up here.
+      // 9 Dez 22
+      // 16. Dez. 22
+      // 19 Mär 23 (even on the int servers)
+      // 061223
+      // 28042023
+      const s = d.date
+      let ts = null
+      if (s.length === 6) {
+        ts = new Date('20' + s.substr(4, 2),
+          parseInt(s.substr(2, 2)) - 1,
+          parseInt(s.substr(0, 2)))
+      }
+      if (s.length === 8) {
+        ts = new Date(s.substr(4, 4),
+          parseInt(s.substr(2, 2)) - 1,
+          parseInt(s.substr(0, 2)))
+      }
+      if (!ts) {
+        let t = s.match(/^([0-9]+)\.?\s+(\S+)\s+(\d+)$/)
+        if (!t) {
+          t = s.match(/^ ([0-9])\.?\s+(\S+)\s+(\d+)$/)
+        }
+        if (t) {
+          const mon = TWDS.people.getmon(t[2])
+          if (mon === -1) {
+            console.log('bad mon', t[2])
+          } else {
+            ts = new Date('20' + t[3],
+              mon,
+              t[1])
+            // console.log("FIX",s,t,t[3],mon,t[1],"=>",ts);
+          }
+        } else {
+          console.log('t bad', t)
+        }
+      }
+
+      if (ts) {
+        d.cmpdate = getCmpDate(ts)
+      }
+    }
+    if (d.cmpdate.includes('NaN')) {
+      console.log('unfixed cmpdate', name, d)
+    } else {
+      fixed = true
+    }
+  }
+  if (fixed) {
+    // console.log("FIXED",name,histdata);
+  }
+  return histdata
+}
+
 TWDS.peopleSort = function (tab, key) {
   if (tab == null) { // for ease of debugging
     tab = document.querySelector('#TWDS_people')
@@ -89,13 +209,14 @@ TWDS.initPeopleList = function (tab) {
   tab.appendChild(tbody)
   for (let i = 0; i < window.localStorage.length; i++) {
     const k = window.localStorage.key(i)
+
     let other = k.match(/^TWDS_p_(.*)/)
     if (!other) {
       continue
     }
     other = other[1]
-    let o = window.localStorage.getItem(k)
-    o = JSON.parse(o)
+    const o = TWDS.people.getbyname(other)
+    if (!o) continue // cant happen
 
     const tr = document.createElement('tr')
     tr.classList.add('datarow')
@@ -202,9 +323,11 @@ TWDS.appendSubtable = function (container, dd, other) {
   tr.appendChild(th)
   th.textContent = TWDS._('PEOPLE_SUB_XP', 'XP won')
 
+  // console.log("unsorted",JSON.stringify(dd.list))
   dd.list.sort(function (a, b) {
     return b.cmpdate.localeCompare(a.cmpdate)
   })
+  // console.log("sorted",dd);
 
   for (let i = 0; i < dd.list.length; i++) {
     const d = dd.list[i]
@@ -286,10 +409,8 @@ TWDS.registerStartFunc(function () {
   })
   $(document).on('click', '#TWDS_people .datarow [data-field="name"]', function () {
     // this is the th.name
-    const key = 'TWDS_p_' + this.textContent
-    let d = window.localStorage.getItem(key)
+    const d = TWDS.people.getbyname(this.textContent)
     if (!d) return
-    d = JSON.parse(d)
     const dr = this.closest('.datarow')
     const id = 'TWDS_people_subtab'
     const ele = document.getElementById(id)
