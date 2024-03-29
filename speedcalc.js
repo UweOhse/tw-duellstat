@@ -562,6 +562,7 @@ TWDS.speedcalc.getBonusItems = function () {
   })
   west.common.forEach(Wear.slots, function (sl) {
     const it = Wear.get(sl)
+    if (!it) return
     const value = TWDS.speedcalc.getSpeedyValues(it.obj)
     if ((value.speedBonus || value.ride || value.speed) && it.obj.wearable()) {
       result.push(it.obj)
