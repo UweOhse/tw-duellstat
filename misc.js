@@ -307,7 +307,7 @@ TWDS.registerStartFunc(function () {
           }, startupdelay * 1000 + 10)
         })
       } else {
-        TWDS.updatefriendrequestcounter() // turn off
+        TWDS.friendrequestcounter.update() // turn off
         EventHandler.unlisten('friend_invitation_sent', TWDS.friendrequestcounter.update)
       }
     })
