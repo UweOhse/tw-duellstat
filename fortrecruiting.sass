@@ -1,0 +1,39 @@
+.fort_battle_recruitlist {
+  .fort_battle_recruitlist_list.TWDS_enhanced {
+    .trows {
+      // .count { width: 30px; } , enough for four digits! ==>  24px (-6)  => -6
+      // .name { width: 120px; }                           ==> 120px      
+      // .town { width: 120px; }                           ==>  70px (-50) => -56
+      // .class { width:  70px; }                          ==>  48px  -22  => -78
+      // .status { width:  50px; }                         ==>  24px  -26  =>-104
+      // .evaluated { width:  70px; }                      ==>  60px  -10  =>-114
+      // .hp                                               ==>  76px       
+      // .dist                                             ==>  38px       
+      .count { width: 24px; }
+      .town { width: 70px; }
+      .class { width: 48px; }
+      .status { width: 24px; }
+      .evaluated { width: 60px; padding-left:2px }
+      .hp { 
+        width: 76px;
+        font-size:smaller;
+        text-align:right;
+        &.notfull {
+          color:red;
+        }
+       }
+      .dist { 
+        width: 38px;
+        font-size:smaller;
+        text-align:right;
+        &.away {
+          color:red;
+        }
+       }
+      .row_head .cell {
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+  }
+}
