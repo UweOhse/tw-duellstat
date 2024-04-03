@@ -358,21 +358,21 @@ TWDS.marketwindow.enhanceit = function (thing) {
       const t = window.localStorage.TWDS_marketwindow_rights
       $('#market_rights').guiElement().select(t || 1)
     }
-    let items = $("span#market_rights.tw2gui_combobox", r).guiElement().items;
+    const items = $('span#market_rights.tw2gui_combobox', r).guiElement().items
     if (items.length === 3) {
-      let modes = ["home", "flag", "world"];
+      const modes = ['home', 'flag', 'world']
       for (let i = 0; i < items.length; i++) {
-        items[i].node[0].innerHTML = '<span class="tw2gui-iconset tw2gui-icon-' 
-            + modes[items[i].value] 
-            + '" style="display: inline-block;position: relative;top: 4px;"></span>&nbsp;' 
-            + items[i].node[0].innerHTML
+        items[i].node[0].innerHTML = '<span class="tw2gui-iconset tw2gui-icon-' +
+            modes[items[i].value] +
+            '" style="display: inline-block;position: relative;top: 4px;"></span>&nbsp;' +
+            items[i].node[0].innerHTML
       }
-      let ve=TWDS.q1("#market_rights_value");
+      const ve = TWDS.q1('#market_rights_value')
       if (ve) {
-        let v=ve.value
-        let str=items[v].node[0].innerHTML
-        let te=TWDS.q1("#market_rights .tw2gui_combobox_text span");
-        te.innerHTML=str;
+        const v = ve.value
+        const str = items[v].node[0].innerHTML
+        const te = TWDS.q1('#market_rights .tw2gui_combobox_text span')
+        te.innerHTML = str
       }
     }
   }
