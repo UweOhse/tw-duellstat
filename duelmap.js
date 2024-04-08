@@ -483,7 +483,6 @@ TWDS.duelmap.open = function () {
   window.DuelsWindow.window.addTab(TWDS._('DUELMAP', 'Duelmap'), 'TWDS_DUELMAP', TWDS.duelmap.myshowtab)
   TWDS.createEle('div.duels-TWDS_DUELMAP_CONTAINER', {
     style: { display: 'block' },
-    textContent: 'TEST',
     last: window.DuelsWindow.window.getContentPane()
   })
 }
