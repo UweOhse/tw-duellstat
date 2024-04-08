@@ -3,32 +3,47 @@ TWDS.people = {}
 TWDS.people.getmon = function (str) {
   switch (str) {
     case 'Jan':
+    case 'Jan.':
       return 0
     case 'Feb':
+    case 'Feb.':
       return 1
     case 'Mar':
+    case 'Mar.':
     case 'Mär':
+    case 'Mär.':
     case 'März':
       return 2
     case 'Apr':
+    case 'Apr.':
       return 3
     case 'May':
+    case 'May.':
     case 'Mai':
+    case 'Mai.':
       return 4
     case 'Jun':
+    case 'Jun.':
       return 5
     case 'Jul':
+    case 'Jul.':
       return 6
     case 'Aug':
+    case 'Aug.':
       return 7
     case 'Sep':
+    case 'Sep.:
       return 8
     case 'Oct':
+    case 'Oct.':
     case 'Okt':
+    case 'Okt.':
       return 9
     case 'Nov':
+    case 'Nov.':
       return 10
     case 'Dec':
+    case 'Dec.':
     case 'Dez':
     case 'Dez.':
       return 11
