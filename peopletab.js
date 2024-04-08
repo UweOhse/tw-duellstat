@@ -32,7 +32,7 @@ TWDS.people.getmon = function (str) {
     case 'Aug.':
       return 7
     case 'Sep':
-    case 'Sep.:
+    case 'Sep.':
       return 8
     case 'Oct':
     case 'Oct.':
