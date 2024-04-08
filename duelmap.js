@@ -90,11 +90,16 @@ TWDS.duelmap.update = function (name) {
     }
   })
   const getage = function (str) {
-    const m = str.match(/^([0-9]+)-([0-9]+)-([0-9]+)$/)
-    const then = new Date(m[1], parseInt(m[2]) - 1, m[3]).getTime()
-    const now = new Date().getTime()
-    const h = (now - then) / (3600 * 24 * 1000)
-    return Math.round(h) + 'd'
+    try {
+      const m = str.match(/^([0-9]+)-([0-9]+)-([0-9]+)$/)
+      const then = new Date(m[1], parseInt(m[2]) - 1, m[3]).getTime()
+      const now = new Date().getTime()
+      const h = (now - then) / (3600 * 24 * 1000)
+      return Math.round(h) + 'd'
+    } catch (e) {
+      console.error('getage', str, 'caused', e)
+      return '???'
+    }
   }
   if (TWDS.duelmap.friends[data.player_id]) {
     nele.classList.add('friend')
