@@ -347,7 +347,7 @@ TWDS.itemAnyCraftButton = function (id) {
   if (!it) return null
 
   if (it.type !== 'yield') return null
-  if (it.spec_type !== 'crafting') return null
+  if (!TWDS.utils.iscraftableitem(id)) return null
 
   return TWDS.createElement({
     nodeName: 'span',
@@ -598,4 +598,21 @@ TWDS.utils.stdwindow = function (name, title, minititle, classes) {
 }
 TWDS.utils.getcontainer = function (win) {
   return TWDS.q1('.tw2gui_scrollpane_clipper_contentpane', win.getContentPane())
+}
+// it=itemManager.get(itemid), type=yield && spec_type=crafting should be enough,
+// but isn't, as spec_type isn't set correctly everywhere.
+TWDS.utils.iscraftableitem = function (itemid) {
+  itemid = parseInt(itemid)
+  if (!('cacheactive' in TWDS.utils.iscraftableitem)) {
+    TWDS.utils.iscraftableitem.cache = {}
+    TWDS.utils.iscraftableitem.cacheactive = true
+    const a = ItemManager.getAll()
+    for (const iid of Object.keys(a)) {
+      const it = a[iid]
+      if ('craftitem' in it) {
+        TWDS.utils.iscraftableitem.cache[it.craftitem] = true
+      }
+    }
+  }
+  return TWDS.utils.iscraftableitem.cache[itemid] ?? false
 }
