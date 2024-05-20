@@ -356,7 +356,8 @@ TWDS.marketwindow.enhanceit = function (thing) {
     document.querySelector('#msd_rights').appendChild(saverights)
     if (window.localStorage.TWDS_marketwindow_rights !== null) {
       const t = window.localStorage.TWDS_marketwindow_rights
-      $('#market_rights').guiElement().select(t || 1)
+      console.log('changing rights', t, typeof t)
+      $('#market_rights').guiElement().select(t)
     }
     const items = $('span#market_rights.tw2gui_combobox', r).guiElement().items
     if (items.length === 3) {
@@ -369,10 +370,14 @@ TWDS.marketwindow.enhanceit = function (thing) {
       }
       const ve = TWDS.q1('#market_rights_value')
       if (ve) {
-        const v = ve.value
-        const str = items[v].node[0].innerHTML
-        const te = TWDS.q1('#market_rights .tw2gui_combobox_text span')
-        te.innerHTML = str
+        const v = parseInt(ve.value)
+        for (let i = 0; i < items.length; i++) {
+          if (items[i].value === v) {
+            const str = items[i].node[0].innerHTML
+            const te = TWDS.q1('#market_rights .tw2gui_combobox_text span')
+            te.innerHTML = str
+          }
+        }
       }
     }
   }
