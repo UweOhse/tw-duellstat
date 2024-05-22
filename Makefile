@@ -12,7 +12,7 @@ CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js $(LANGSJSON) t
    iteminfo.js fbchat.js invstat.js pinning.js duelinfo.js calendar.js vipendtime.js inventory.js \
    fbmisc.js townwindow.js profilewindow.js buildwindow.js shopsearch.js ranking.js \
    quickequipment.js allimap.js stathist.js nightmode.js maphelper.js fortbuild.js playerlistwindow.js \
-   nextaction.js upshop.js ghosttowns.js duelmap.js plusminus.js fortrecruiting.js \
+   nextaction.js upshop.js ghosttowns.js duelmap.js plusminus.js fortrecruiting.js grouptele.js \
    sortable.js extras.js main.js 
 
 SASS_SOURCES=utils.sass minimap.sass joblist.sass market.sass craftwindow.sass quest.sass jobwindow.sass simulator.sass \
@@ -20,7 +20,7 @@ SASS_SOURCES=utils.sass minimap.sass joblist.sass market.sass craftwindow.sass q
   duelinfo.sass misc.sass pinning.sass calendar.sass vipendtime.sass inventory.sass settingstab.sass fbmisc.sass \
   townwindow.sass profilewindow.sass speedcalc.sass showset.sass buildwindow.sass shopsearch.sass fortbuild.sass \
   quickequipment.sass overlay.sass stathist.sass calculator.sass playerlistwindow.sass logging.sass upshop.sass \
-  ghosttowns.sass duelmap.sass nextaction.sass fortrecruiting.sass 
+  ghosttowns.sass duelmap.sass nextaction.sass fortrecruiting.sass grouptele.sass
 
 # stuff i load manually sometimes
 CHECK_EXTRA_SOURCES:=$(shell ls _*.js)
