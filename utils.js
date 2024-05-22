@@ -599,6 +599,21 @@ TWDS.utils.stdwindow = function (name, title, minititle, classes) {
 TWDS.utils.getcontainer = function (win) {
   return TWDS.q1('.tw2gui_scrollpane_clipper_contentpane', win.getContentPane())
 }
+TWDS.utils.showhelp = function (key) {
+  const win = TWDS.utils.stdwindow('TWDS_helpwindow', 'Clothcache Help', 'CC Help')
+  const container = TWDS.utils.getcontainer(win)
+  container.innerHTML = ''
+  TWDS.createEle('iframe', {
+    last: container,
+    src: TWDS.baseURL + '/help/' + key + '.html',
+    style: {
+      width: '100%',
+      height: '95%',
+      border: '0',
+      marginBottom: '1px'
+    }
+  })
+}
 // it=itemManager.get(itemid), type=yield && spec_type=crafting should be enough,
 // but isn't, as spec_type isn't set correctly everywhere.
 TWDS.utils.iscraftableitem = function (itemid) {
