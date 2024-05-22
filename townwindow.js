@@ -172,6 +172,7 @@ TWDS.townwindow.residentsfillcontent = function () {
   const dosort = function () {
     let by = 'rank'
     if (this.classList.contains('name_foreign')) { by = 'name_foreign' }
+    if (this.classList.contains('name')) { by = 'name' }
 
     const t = this.closest('.fancytable')
     let dir
@@ -210,7 +211,7 @@ TWDS.townwindow.residentsfillcontent = function () {
   main.sortedby = 'rank'
   const thead = TWDS.q1('.trows .thead', main)
 
-  const nf = TWDS.q1('.name_foreign', thead)
+  const nf = TWDS.q1('.name_foreign, .name', thead)
   nf.classList.add('linklike')
   nf.onclick = dosort
 
