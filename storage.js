@@ -24,9 +24,76 @@ TWDS.storage.save = function () {
   window.localStorage.setItem('TWDS_storage', d)
 }
 
-TWDS.registerSetting('bool', 'storageMapIcon',
-  TWDS._('STORAGE_MARK_JOBGROUPS', 'mark jobgroups for missing items on the map'),
-  true, null, 'Map')
+TWDS.storage.marketsearchwindowworker = function (table, cats, catidx, lookfor) {
+  if (catidx >= cats.length) {
+    return
+  }
+  const cat = cats[catidx]
+  Ajax.remoteCall('building_market', 'search_accordion', {
+    pattern: '',
+    type: cat
+  }, function (json) {
+    if (json.error) {
+      new UserMessage(json.msg, UserMessage.TYPE_ERROR).show()
+      return
+    }
+    console.log('W', cat, json.items, lookfor[cat])
+    for (let i = 0; i < json.items.length; i++) {
+      const mid = json.items[i]
+      if (lookfor[cat].includes(mid)) {
+        const it = ItemManager.get(mid)
+        const tr = TWDS.createEle('tr', { last: table })
+        const mydata = TWDS.storage.getitemdata(mid)
+        const x = TWDS.storage.data[mid]
+
+        TWDS.createEle('td.have', { last: tr, textContent: mydata.have })
+        TWDS.createEle('td', { last: tr, textContent: ' / ' })
+        TWDS.createEle('td.want', {
+          last: tr,
+          textContent: mydata.want,
+          title: x[1]
+        })
+        TWDS.createEle('td', {
+          last: tr,
+          textContent: it.name,
+          title: new ItemPopup(it).popup.text
+        })
+        TWDS.createEle('td', {
+          last: tr,
+          children: [
+            TWDS.marketsearchlink(mid)
+          ]
+        })
+      }
+    }
+    setTimeout(function () {
+      TWDS.storage.marketsearchwindowworker(table, cats, catidx + 1, lookfor)
+    }, 100)
+  })
+}
+TWDS.storage.marketsearchwindow = function () {
+  const win = TWDS.utils.stdwindow('TWDS_storage_marketsearch_window',
+    TWDS._('STORAGE_MARKETSEARCH_WINDOW_TITLE', 'Market search'),
+    TWDS._('STORAGE_MARKETSEARCH_WINDOW_MINITITLE', 'Market'))
+  const container = TWDS.utils.getcontainer(win)
+  container.innerHTML = ''
+
+  TWDS.storage.reload()
+  const lookfor = {}
+  for (const ii of Object.keys(TWDS.storage.data)) {
+    const it = ItemManager.get(ii)
+    if (!it) continue
+    const mydata = TWDS.storage.getitemdata(ii)
+    if (mydata.have >= mydata.want) continue
+    const type = it.type
+    if (!(type in lookfor)) {
+      lookfor[type] = []
+    }
+    lookfor[type].push(parseInt(ii))
+  }
+  const table = TWDS.createEle('table', { last: container })
+  TWDS.storage.marketsearchwindowworker(table, Object.keys(lookfor), 0, lookfor)
+}
 
 TWDS.storage.startSearch = function (name) {
   // var amount = parseInt($('#WTKExtendedItemFinder_searchDialog_targetAmount').val());
@@ -394,6 +461,22 @@ TWDS.storage.initSearchArea = function (container) {
     innerHTML: TWDS._('STORAGE_RECALC_SUMS', '&sum;'),
     title: TWDS._('STORAGE_RECALC_SUMS_TITLE', 'Recalculate the target numbers from the entries in the comments.')
   }))
+  TWDS.createElement({
+    nodeName: 'button',
+    last: div,
+    id: 'TWDS_storage_market_mass_search_button',
+    title: TWDS._('STORAGE_MARKET_MASS_SEARCH_TITLE', 'Search for missing things on the market'),
+    onclick: function () {
+      TWDS.storage.marketsearchwindow()
+    },
+    childNodes: [
+      {
+        nodeName: 'img',
+        src: Game.cdnURL + '/images/icons/bid.png',
+        alt: ''
+      }
+    ]
+  })
 
   const sdiv = TWDS.createElement({
     nodeName: 'div',
@@ -654,6 +737,10 @@ TWDS.storage.importhandler = function () {
 }
 
 TWDS.storageStartFunction = function () {
+  TWDS.registerSetting('bool', 'storageMapIcon',
+    TWDS._('STORAGE_MARK_JOBGROUPS', 'mark jobgroups for missing items on the map'),
+    true, null, 'Map')
+
   TWDS.registerTab('storage',
     TWDS._('TABNAME_STORAGE', 'Storage'),
     TWDS.storage.getContent,
