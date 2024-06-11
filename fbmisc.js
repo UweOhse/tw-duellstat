@@ -158,6 +158,51 @@ TWDS.fbmisc.fortoverviewshowtab = function (id) {
     }
   }
 }
+TWDS.fbmisc.addButtonEvent = function () {
+  if (!TWDS.settings.fbmisc_controlbuttons) {
+    return FortBattleWindow._TWDS_backup_addButtonEvent.apply(this, arguments)
+  }
+  const battlegroundEl = this.battlegroundEl
+  this.window.$('.fort_battle_buttons').on('click', '.layer_toggle', function (e) {
+    const match = e.target.className.match(/button_(\w+)/)
+    if (!match || !match[1]) return
+    const layerElement = $('.battleground_' + match[1], battlegroundEl)
+    const shallbehidden = layerElement.is(':visible')
+    layerElement.toggle(0)
+    if (shallbehidden) {
+      e.target.style.opacity = 0.5
+    } else {
+      e.target.style.opacity = 1
+    }
+    if (match[1] !== 'leader_arrows') {
+      const sn = 'fbmisc_controlbuttons_off_' + match[1]
+      TWDS.settings[sn] = shallbehidden
+      TWDS.saveSettings()
+    }
+  })
+}
+TWDS.fbmisc.getControlButtons = function () {
+  const html = FortBattleWindow._TWDS_backup_getControlButtons.apply(this, arguments)
+  if (!TWDS.settings.fbmisc_controlbuttons) return html
+  // html is a string. Oh well.
+  const div = TWDS.createEle('div', { innerHTML: html })
+  const a = ['sectors', 'cellborders', 'terrain', 'sector_labels'] // leaving out leader_arrows
+  for (const thing of a) {
+    const cl = '.button_' + thing
+    const ele = TWDS.q1(cl, div)
+    const sn = 'fbmisc_controlbuttons_off_' + thing
+    if (TWDS.settings[sn]) {
+      ele.style.opacity = 0.5
+      // layerElement _will_ be drawn. Yes, future.
+      setTimeout(function () {
+        // the future is here.
+        const layerElement = $('.battleground_' + thing, this.battlegroundEl)
+        layerElement.toggle(0)
+      }, 100)
+    }
+  }
+  return div.innerHTML
+}
 
 TWDS.fbmisc.startfunc = function () {
   TWDS.registerSetting('bool', 'fbmisc_fbcount',
@@ -172,6 +217,9 @@ TWDS.fbmisc.startfunc = function () {
   TWDS.registerSetting('bool', 'fbmisc_walk',
     TWDS._('FBMISC_SETTING_WALK', 'Click on the waytime to walk to the fort'),
     true, null, 'fortbattles')
+  TWDS.registerSetting('bool', 'fbmisc_controlbuttons',
+    TWDS._('FBMISC_SETTING_CONTROLBUTTONS', 'Fix the usability of the control buttons'),
+    true, null, 'fortbattles')
 
   FortBattleWindow.TWDS_backup_renderPreBattle = FortBattleWindow.TWDS_backup_renderPreBattle ||
     FortBattleWindow.renderPreBattle
@@ -184,6 +232,13 @@ TWDS.fbmisc.startfunc = function () {
   FortOverviewWindow.TWDS_backup_showTab = FortOverviewWindow.TWDS_backup_showTab ||
     FortOverviewWindow.showTab
   FortOverviewWindow.showTab = TWDS.fbmisc.fortoverviewshowtab
+
+  FortBattleWindow._TWDS_backup_addButtonEvent = FortBattleWindow._TWDS_backup_addButtonEvent ||
+    FortBattleWindow.addButtonEvent
+  FortBattleWindow.addButtonEvent = TWDS.fbmisc.addButtonEvent
+  FortBattleWindow._TWDS_backup_getControlButtons = FortBattleWindow._TWDS_backup_getControlButtons ||
+    FortBattleWindow.getControlButtons
+  FortBattleWindow.getControlButtons = TWDS.fbmisc.getControlButtons
 }
 TWDS.registerStartFunc(function () {
   TWDS.fbmisc.startfunc()
