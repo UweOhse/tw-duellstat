@@ -195,6 +195,10 @@ TWDS.collections.load = function () {
           const name = span.title
           let ii = -1
           if (name in namecache) { ii = namecache[name] }
+          if (ii in TWDS.collections.dropdata && TWDS.collections.dropdata[ii]) {
+            const jobno = TWDS.collections.dropdata[ii]
+            TWDS.collections.collectible_jobs[jobno] = ii
+          }
           if (span.classList.contains('locked')) {
             // missing shit.
             TWDS.collections.missing_items[ii] = title
@@ -202,7 +206,6 @@ TWDS.collections.load = function () {
             if (ii in TWDS.collections.dropdata && TWDS.collections.dropdata[ii]) {
               const jobno = TWDS.collections.dropdata[ii]
               TWDS.collections.missing_collectible_jobs[jobno] = ii
-              TWDS.collections.collectible_jobs[jobno] = ii
             }
           } else {
             TWDS.collections.seen_items[ii] = title
