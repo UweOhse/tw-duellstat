@@ -1,14 +1,14 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 
-TWDS.genCalc = function (bonusNames, skills, include) {
-  const o = TWDS.genCalc.exec(bonusNames, skills, include)
+TWDS.genCalc = function (bonusNames, skills, include, extraItems) {
+  const o = TWDS.genCalc.exec(bonusNames, skills, include, extraItems)
   return o.combos[0][1]
 }
-TWDS.genCalc.exec = function (bonusNames, skills, include) {
+TWDS.genCalc.exec = function (bonusNames, skills, include, extraItems) {
   if (!include) include = 1 // owned
-  const availableSets = TWDS.genCalc.setfilter(include)
+  const availableSets = TWDS.genCalc.setfilter(include, extraItems)
 
-  const bires = TWDS.genCalc.getBestItems(bonusNames, skills, include)
+  const bires = TWDS.genCalc.getBestItems(bonusNames, skills, include, extraItems)
   const bestItems = bires[0]
   const goodItems = bires[1]
   // console.log('bestItems', bestItems)
@@ -176,7 +176,7 @@ TWDS.genCalc.blacklistwindow = function () {
   win.appendToContentPane(sp.getMainDiv())
 }
 
-TWDS.genCalc.setfilter = function (include) {
+TWDS.genCalc.setfilter = function (include, extraItems) {
   // console.log('INC', include)
   const availableSets = []
   TWDS.genCalc.fillblacklist()
@@ -222,6 +222,14 @@ TWDS.genCalc.setfilter = function (include) {
             }
             if (!blacklisted) { o.push(item.getId()) }
             continue
+          }
+        }
+        if (extraItems) {
+          for (let lv = 5; lv >= 0; lv--) {
+            if (extraItems.includes(itemId * 1000 + lv)) {
+              o.push(itemId * 1000 + lv)
+              break
+            }
           }
         }
       }
@@ -367,7 +375,7 @@ TWDS.genCalc.beatsBestItems = function (set, bestItems, bonusNames, skills) {
   return setSpeed > biSpeed // || setData.speedBonus > bestItemSpeedBonus
 }
 
-TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
+TWDS.genCalc.getBestItems = function (bonusNames, skills, include, extraItems) {
   const bestItems = {}
   const result = []
   const itemsByBase = {}
@@ -414,6 +422,14 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include) {
         }
         if (!blacklisted) {
           add(bid, all[bid].item_id)
+        }
+      }
+    }
+    if (extraItems) {
+      for (let lv = 5; lv >= 0; lv--) {
+        if (extraItems.includes(bid * 1000 + lv)) {
+          add(bid, bid * 1000 + lv)
+          break
         }
       }
     }
