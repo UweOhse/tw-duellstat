@@ -293,7 +293,10 @@ TWDS.calculator.exec = function (filterarea, selectarea, resultarea) {
     last: resultarea
   })
 
-  const gc = TWDS.genCalc.exec(sels.bonus, sels.skills, include)
+  // 16th: 53918000 53919000 53920000 53921000 53922000 53923000 53924000 53925000 53926000 53927000 53928000
+  const str = TWDS.q1('#TWDS_CALC_extraitems input').value
+  const extras = str.split(/ /).filter((x) => x > '').map((x) => parseInt(x))
+  const gc = TWDS.genCalc.exec(sels.bonus, sels.skills, include, extras)
   for (let i = 0; i < gc.combos.length; i++) {
     TWDS.createEle({
       nodeName: 'p',
@@ -661,6 +664,17 @@ TWDS.calculator.openwindow = function (calledpreset) {
       { nodeName: 'span', textContent: TWDS._('CALCULATOR_UNWEARABLE', 'unwearable items') }
     ],
     id: 'TWDS_CALC_include_unwearable',
+    beforeend: filterarea
+  })
+  TWDS.createEle({
+    nodeName: 'label',
+    children: [
+      { nodeName: 'span', textContent: TWDS._('CALCULATOR_ADDITIONAL_ITEMS', '. Additional items: ') },
+      { nodeName: 'input', type: 'text', value: '' }
+    ],
+    id: 'TWDS_CALC_extraitems',
+    title: TWDS._('CALCULATOR_EXTRAITEMS_TITLE',
+      'Treat these items as if you have them. Format: a space separated list of (full, long) item ids'),
     beforeend: filterarea
   })
 
