@@ -631,3 +631,30 @@ TWDS.utils.iscraftableitem = function (itemid) {
   }
   return TWDS.utils.iscraftableitem.cache[itemid] ?? false
 }
+TWDS.remoteCallBase = function (fn, window, something, param, view) {
+  const p = new Promise(function (resolve, reject) {
+    const mycb = function (json) {
+      if (json.error) {
+        reject(json.message)
+        return
+      }
+      resolve(json)
+    }
+    fn(window, something, param, mycb, view)
+      .fail(function (jqxhr, status, error) {
+        reject(new Error(status + ': ' + error.toString()))
+      })
+  })
+  return p
+}
+TWDS.remoteCallMode = function (window, mode, param, view) {
+  return TWDS.remoteCallBase(Ajax.remoteCallMode, window, mode, param, view)
+}
+TWDS.remoteCall = function (window, action, param, view) {
+  return TWDS.remoteCallBase(Ajax.remoteCall, window, action, param, view)
+}
+/* that function name...
+TWDS.get=function(window,ajax,param,view) {
+  return TWDS.remoteCallBase(Ajax.get,window,ajax,param,view);
+}
+*/
