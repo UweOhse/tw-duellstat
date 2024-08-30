@@ -204,6 +204,18 @@ TWDS.fbmisc.getControlButtons = function () {
   return div.innerHTML
 }
 
+TWDS.fbmisc.showCellPopupHtml5 = function (x, y, cellIdx) {
+  if (this.popup.idx !== cellIdx) {
+    this.changeCellPopupText(cellIdx)
+  } else {
+    const b = this.window.divMain.getBoundingClientRect()
+    this.popup.updatePosition({
+      clientX: b.left,
+      clientY: b.top
+    }, true)
+  }
+}
+
 TWDS.fbmisc.startfunc = function () {
   TWDS.registerSetting('bool', 'fbmisc_fbcount',
     TWDS._('FBMISC_SETTING_FCOUNT', 'Show the number of declared fort battles.'),
@@ -219,6 +231,9 @@ TWDS.fbmisc.startfunc = function () {
     true, null, 'fortbattles')
   TWDS.registerSetting('bool', 'fbmisc_controlbuttons',
     TWDS._('FBMISC_SETTING_CONTROLBUTTONS', 'Fix the usability of the control buttons'),
+    true, null, 'fortbattles')
+  TWDS.registerSetting('bool', 'fbmisc_movepopup',
+    TWDS._('FBMISC_SETTING_MOVEPOPUP', 'Move the player popup/mouseover to the top of the fortbattle window (LOS)'),
     true, null, 'fortbattles')
 
   FortBattleWindow.TWDS_backup_renderPreBattle = FortBattleWindow.TWDS_backup_renderPreBattle ||
@@ -239,6 +254,10 @@ TWDS.fbmisc.startfunc = function () {
   FortBattleWindow._TWDS_backup_getControlButtons = FortBattleWindow._TWDS_backup_getControlButtons ||
     FortBattleWindow.getControlButtons
   FortBattleWindow.getControlButtons = TWDS.fbmisc.getControlButtons
+
+  FortBattleWindow.TWDS_backup_showCellPopupHtml5 = FortBattleWindow.TWDS_backup_showCellPopupHtml5 ||
+    FortBattleWindow.showCellPopupHtml5
+  FortBattleWindow.showCellPopupHtml5 = TWDS.fbmisc.showCellPopupHtml5
 }
 TWDS.registerStartFunc(function () {
   TWDS.fbmisc.startfunc()
