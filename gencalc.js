@@ -1,16 +1,18 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 
-TWDS.genCalc = function (bonusNames, skills, include, extraItems) {
-  const o = TWDS.genCalc.exec(bonusNames, skills, include, extraItems)
+TWDS.genCalc = function (bonusNames, skills, include, extraItems, abtMode) {
+  const o = TWDS.genCalc.exec(bonusNames, skills, include, extraItems, abtMode)
   return o.combos[0][1]
 }
-TWDS.genCalc.exec = function (bonusNames, skills, include, extraItems) {
+TWDS.genCalc.nomemo = true // debugging
+TWDS.genCalc.exec = function (bonusNames, skills, include, extraItems, abtMode) {
   if (!include) include = 1 // owned
   const availableSets = TWDS.genCalc.setfilter(include, extraItems)
 
-  const bires = TWDS.genCalc.getBestItems(bonusNames, skills, include, extraItems)
+  const bires = TWDS.genCalc.getBestItems(bonusNames, skills, include, extraItems, abtMode) // XXX
   const bestItems = bires[0]
   const goodItems = bires[1]
+  console.log('bestItems', bestItems)
   // console.log('bestItems', bestItems)
   // console.log('goodItems', goodItems)
 
@@ -23,13 +25,16 @@ TWDS.genCalc.exec = function (bonusNames, skills, include, extraItems) {
   for (let i = 0; i < bestItems.length; i++) { bestItemsContainer.addItem(bestItems[i].getId()) }
 
   // console.log('availableSets', availableSets)
-  let sets = TWDS.genCalc.createSubsets(availableSets, bestItems, bonusNames, skills)
+  let sets = TWDS.genCalc.createSubsets(availableSets, bestItems, bonusNames, skills, abtMode)
   // console.log('subsets', sets)
   // klappt nichts, so kann man speed nicht optimieren
   // MUSS man aber vielleicht?
   sets = TWDS.genCalc.filterUneffectiveSets(sets, bonusNames, skills)
   // console.log('subsets after filter', sets)
-  if (sets.length > 1000) { return }
+  if (sets.length > 1000) {
+    new UserMessage('There are ' + sets.length + ' sets after filtering, processing stopped. ask uwe.').show()
+    return
+  }
 
   // Was fehlt: FillEmpty(combinesets, BestItems,AllItemsWithSpeedBonus)
 
@@ -41,7 +46,7 @@ TWDS.genCalc.exec = function (bonusNames, skills, include, extraItems) {
   // let best = null
   const setsandpoints = []
   for (let i = 0; i < sets.length; i++) {
-    const spd = TWDS.genCalc.calcCombinedSet(sets[i], bonusNames, skills)
+    const spd = TWDS.genCalc.calcCombinedSet(sets[i], bonusNames, skills, abtMode)
     setsandpoints[i] = [spd, sets[i]]
     if (spd > bestPoints) {
       bestPoints = spd
@@ -287,8 +292,13 @@ TWDS.genCalc.getItems = function (set) {
   return o
 }
 
-TWDS.genCalc.calcCombinedSet = function (set, bonusNames, skills) {
-  const tmp = TWDS.genCalc.getCombinedSetGenValues(set, bonusNames, skills)
+TWDS.genCalc.calcCombinedSet = function (set, bonusNames, skills, abtMode) {
+  const tmp = TWDS.genCalc.getCombinedSetGenValues(set, bonusNames, skills, abtMode)
+  const a = []
+  Object.values(set.items).each(x => a.push(parseInt(x)))
+  for (let i = 0; i < set.sets.length; i++) {
+    Object.values(set.sets[i].items).each(x => a.push(parseInt(x)))
+  }
   return TWDS.genCalc.calc2(tmp.theBonus, tmp.theSecondary)
 }
 
@@ -317,7 +327,7 @@ TWDS.genCalc.createCombinations = function (items, k) {
   }
   return combs
 }
-TWDS.genCalc.createSubsets = function (fullSets, bestItems, bonusNames, skills) {
+TWDS.genCalc.createSubsets = function (fullSets, bestItems, bonusNames, skills, abtMode) {
   let i; const sets = []; let set; let j; let permutations; let k; let l; let tmpSet
   for (i = 0; i < fullSets.length; i++) {
     set = fullSets[i]
@@ -346,7 +356,7 @@ TWDS.genCalc.createSubsets = function (fullSets, bestItems, bonusNames, skills) 
           items: permutations[k],
           bonus: set.bonus
         })
-        if (!TWDS.genCalc.beatsBestItems(tmpSet, bestItems, bonusNames, skills)) { continue }
+        if (!TWDS.genCalc.beatsBestItems(tmpSet, bestItems, bonusNames, skills, abtMode)) { continue }
         sets.push(tmpSet)
       }
     }
@@ -354,7 +364,7 @@ TWDS.genCalc.createSubsets = function (fullSets, bestItems, bonusNames, skills) 
   return sets
 }
 
-TWDS.genCalc.beatsBestItems = function (set, bestItems, bonusNames, skills) {
+TWDS.genCalc.beatsBestItems = function (set, bestItems, bonusNames, skills, abtMode) {
   // find out what the best items give us.
   let bestItemBonus = 0
   let bestItemSecondary = 0
@@ -362,12 +372,12 @@ TWDS.genCalc.beatsBestItems = function (set, bestItems, bonusNames, skills) {
   const setSlots = set.getUsedSlots()
   for (let i = 0; i < bestItems.length; i++) {
     if (setSlots.indexOf(bestItems[i].getType()) === -1) { continue }
-    const v = TWDS.genCalc.getGenValues(bestItems[i], bonusNames, skills)
+    const v = TWDS.genCalc.getGenValues(bestItems[i], bonusNames, skills, abtMode)
     bestItemBonus += v.theBonus
     bestItemSecondary += v.theSecondary
   }
   const biSpeed = TWDS.genCalc.calc2(bestItemBonus, bestItemSecondary)
-  const setData = TWDS.genCalc.getSetGenValues(set, bonusNames, skills)
+  const setData = TWDS.genCalc.getSetGenValues(set, bonusNames, skills, abtMode)
   if (isNaN(setData.theBonus)) {
     console.log('isNaN trap', 'bBI', set, bonusNames, skills)
   }
@@ -375,7 +385,7 @@ TWDS.genCalc.beatsBestItems = function (set, bestItems, bonusNames, skills) {
   return setSpeed > biSpeed // || setData.speedBonus > bestItemSpeedBonus
 }
 
-TWDS.genCalc.getBestItems = function (bonusNames, skills, include, extraItems) {
+TWDS.genCalc.getBestItems = function (bonusNames, skills, include, extraItems, abtMode) {
   const bestItems = {}
   const result = []
   const itemsByBase = {}
@@ -448,7 +458,6 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include, extraItems) {
 
   delete itemsByBase[41999] // allmighty ...
   delete itemsByBase[1337] // sword of a thousand truths
-  // console.log("TMP",itemsByBase);
 
   west.common.forEach(itemsByBase, function (itemid, baseId) {
     const item = ItemManager.get(itemid)
@@ -463,7 +472,7 @@ TWDS.genCalc.getBestItems = function (bonusNames, skills, include, extraItems) {
     }
     bestItems[type] = bestItems[type] || []
     // const value = item.getValue(skills)
-    const value = TWDS.genCalc.getGenValues(item, bonusNames, skills)
+    const value = TWDS.genCalc.getGenValues(item, bonusNames, skills, abtMode)
     if (item.getId() === 229000 || item.getId() === 229001) {
       // console.log('I', item, item.getId, value)
     }
@@ -507,7 +516,7 @@ TWDS.genCalc.calc2 = function (theBonus, theSecondary) {
 // a modified version of west.item.Item.getValue
 // -jobPoints
 // +speed bonus
-TWDS.genCalc.getGenValues = function (item, bonusNames, skills) {
+TWDS.genCalc.getGenValues = function (item, bonusNames, skills, abtMode) {
   let value = 0
   let theBonus = 0
   const attributes = {}
@@ -517,8 +526,12 @@ TWDS.genCalc.getGenValues = function (item, bonusNames, skills) {
   let skillArr
   let i
   let memo = 'TWDSgC'
-  const debug = false
+  let debug = false
+  if (item.item_id === 1) { debug = true; console.log('keep debug non-const', item) }
   // if (item.item_id === 51006000) { debug = true; console.log('GG', item) }
+  // if (item.item_id === 1) { debug = true; console.log('dummy so standard.js ', item) }
+  // if (item.item_id === 53423000) { debug = true; console.log('Comte Klam', item) }
+  // if (item.item_id === 53210002) { debug = true; console.log('Waupee Hose', item) }
   for (const bonusname in bonusNames) {
     bonusNames[bonusname] = parseInt(bonusNames[bonusname])
     if (bonusNames[bonusname]) {
@@ -558,9 +571,17 @@ TWDS.genCalc.getGenValues = function (item, bonusNames, skills) {
     bonusExtractor = new west.item.BonusExtractor(Character, item.getItemLevel())
     for (i = 0; i < item.bonus.item.length; i++) {
       const b = bonusExtractor.getExportValue(item.bonus.item[i])
-
+      if (debug) console.log('B', i, b, 'abtMode', abtMode)
       if (debug) console.log('IB', i, b.key, b.value)
-      if (b.key in bonusNames) { theBonus += b.value * bonusNames[b.key] } else {
+      if (b.key in bonusNames) {
+        if (CharacterSkills.allAttrKeys.includes(b.key)) {
+          if (!abtMode || item.type === 'left_arm') {
+            theBonus += b.value * bonusNames[b.key]
+          }
+        } else {
+          theBonus += b.value * bonusNames[b.key]
+        }
+      } else {
         const old = theBonus
         if (b.key === 'fort_defense' && 'fbdefense' in bonusNames) {
           theBonus += b.value * bonusNames.fbdefense
@@ -614,35 +635,6 @@ TWDS.genCalc.getGenValues = function (item, bonusNames, skills) {
       theBonus += item.bonus.fortbattlesector.damage * bonusNames.fbdamage
     }
   }
-  /*
-  for (const [k, factor] of Object.entries(bonusNames)) {
-    if (k === 'fbdefense') {
-      if ('fortbattle' in bonus && 'defense' in bonus.fortbattle) { boni.theBonus += bonus.fortbattle.defense * factor }
-    } else if (k === 'fboffense') {
-      if ('fortbattle' in bonus && 'offense' in bonus.fortbattle) { boni.theBonus += bonus.fortbattle.offense * factor }
-    } else if (k === 'fbdefense_sector') {
-      if ('fortbattlesector' in bonus && 'defense' in bonus.fortbattlesector) { boni.theBonus += bonus.fortbattlesector.defense * factor }
-    } else if (k === 'fboffense_sector') {
-      // console.log('NOT IMPL', 'gsBGV0', k, bonus,set, set.key)
-      // console.log('NOT IMPL', 'gsBGV0', k, bonus)
-      if ('fortbattlesector' in bonus && 'offense' in bonus.fortbattlesector) { boni.theBonus += bonus.fortbattlesector.offense * factor }
-    } else if (k === 'fbdamage') {
-      if ('fortbattle' in bonus && 'damage' in bonus.fortbattle) { boni.theBonus += bonus.fortbattle.damage * factor }
-    } else if (k === 'fbresistance') {
-      if ('fortbattle' in bonus && 'resistance' in bonus.fortbattle) { boni.theBonus += bonus.fortbattle.resistance * factor }
-    } else if (k === 'joball') {
-      if ('job' in bonus && 'all' in bonus.job) { boni.theBonus += bonus.job.all * factor }
-    } else if (k === 'melee') { // do nothing
-    } else if (k === 'range') { // do nothing
-    } else {
-      boni.theBonus += bonus[k] * factor
-    }
-    if (isNaN(boni.theBonus)) {
-      console.log('isNaN trap', 'gsBGV0', k, bonus)
-      break
-    }
-  }
-  */
   for (skill in skills) {
     if (item.bonus.skills[skill] || skillAddition[skill]) {
       value += skills[skill] * ((item.bonus.skills[skill] || 0) + (skillAddition[skill] || 0))
@@ -653,52 +645,53 @@ TWDS.genCalc.getGenValues = function (item, bonusNames, skills) {
     theBonus: theBonus,
     theSecondary: value
   }
-  item._memo[memo] = out
+  if (!TWDS.genCalc.nomemo) item._memo[memo] = out
+  if (debug) { console.log(item, 'calculated (item only) as', out) }
   return out
 }
 
-TWDS.genCalc.getCombinedSetGenValues = function (combo, bonusNames, skills) {
+TWDS.genCalc.getCombinedSetGenValues = function (combo, bonusNames, skills, abtMode) {
   const boni = {
     theBonus: 0,
     theSecondary: 0
   }
   for (let i = 0; i < combo.sets.length; i++) {
-    const v = TWDS.genCalc.getSetGenValues(combo.sets[i], bonusNames, skills)
+    const v = TWDS.genCalc.getSetGenValues(combo.sets[i], bonusNames, skills, abtMode)
     boni.theBonus += v.theBonus
     boni.theSecondary += v.theSecondary
   }
   for (let i = 0; i < combo.items.length; i++) {
     const item = ItemManager.get(combo.items[i])
-    const v = TWDS.genCalc.getGenValues(item, bonusNames, skills)
+    const v = TWDS.genCalc.getGenValues(item, bonusNames, skills, abtMode)
     boni.theBonus += v.theBonus
     boni.theSecondary += v.theSecondary
   }
   return boni
 }
 
-TWDS.genCalc.getSetGenValues = function (set, bonusNames, skills) {
+TWDS.genCalc.getSetGenValues = function (set, bonusNames, skills, abtMode) {
   const boni = {
     theBonus: 0,
     theSecondary: 0
   }
-  const v = TWDS.genCalc.getSetBonusGenValues(set, bonusNames, skills)
+  const v = TWDS.genCalc.getSetBonusGenValues(set, bonusNames, skills, abtMode)
   boni.theBonus = v.theBonus
   boni.theSecondary = v.theSecondary
   let i
   for (i = 0; i < set.items.length; i++) {
     const item = ItemManager.get(set.items[i])
-    const v = TWDS.genCalc.getGenValues(item, bonusNames, skills)
+    const v = TWDS.genCalc.getGenValues(item, bonusNames, skills, abtMode)
     boni.theBonus += v.theBonus
     boni.theSecondary += v.theSecondary
   }
   return boni
 }
-TWDS.genCalc.getSetBonusGenValues = function (set, bonusNames, skills) {
+TWDS.genCalc.getSetBonusGenValues = function (set, bonusNames, skills, abtMode) {
   const boni = {
     theBonus: 0,
     theSecondary: 0
   }
-  const bonus = TWDS.genCalc.ItemSet.getMergedBonus(set)
+  const bonus = TWDS.genCalc.ItemSet.getMergedBonus(set, abtMode)
   const memo = 'TWDS.gSBGV.' + JSON.stringify(bonusNames) + '.' + JSON.stringify(skills)
 
   if (!('_memo' in set)) set._memo = {} // this happens for merged sets.
@@ -739,6 +732,10 @@ TWDS.genCalc.getSetBonusGenValues = function (set, bonusNames, skills) {
       if ('job' in bonus && jid in bonus.job) { boni.theBonus += bonus.job[jid] * factor }
     } else if (k === 'melee') { // do nothing
     } else if (k === 'range') { // do nothing
+    } else if (CharacterSkills.allAttrKeys.includes(k)) {
+      if (!abtMode) {
+        if (k in bonus) { boni.theBonus += bonus[k] * factor }
+      }
     } else {
       boni.theBonus += bonus[k] * factor
     }
@@ -751,14 +748,14 @@ TWDS.genCalc.getSetBonusGenValues = function (set, bonusNames, skills) {
   if (isNaN(boni.theBonus)) {
     console.log('isNaN trap', 'gSBGV', boni, set, bonusNames, skills)
   }
-  set._memo[memo] = boni
+  if (!TWDS.genCalc.nomemo) set._memo[memo] = boni
   return boni
 }
 
 // copy of ItemSet.getMergedBonus, with dollar/damage init fixed, and this replaced by set para
 TWDS.genCalc.ItemSet = {}
 
-TWDS.genCalc.ItemSet.getMergedBonus = function (set) {
+TWDS.genCalc.ItemSet.getMergedBonus = function (set, abtMode) {
   if (set._mergedBonus) { return set._mergedBonus }
   const bonus = {
     damage: 0,
@@ -780,6 +777,10 @@ TWDS.genCalc.ItemSet.getMergedBonus = function (set) {
       case 'skill':
       case 'attribute':
       case 'fortbattle':
+        if (abtMode) {
+          if (b.type === 'attribute') break
+          if (b.type === 'skill') break
+        }
         if (b.isSector) {
           if (!('fortbattlesector' in bonus)) {
             bonus.fortbattlesector = {}
@@ -814,7 +815,8 @@ TWDS.genCalc.ItemSet.getMergedBonus = function (set) {
     b = bonusObjects[i]
     merge(b, b.value)
   }
-  return (set._mergedBonus = bonus)
+  if (!TWDS.genCalc.nomemo) set._mergedBonus = bonus
+  return bonus
 }
 
 TWDS.genCalc.ItemSet.getMergedStages = function (set, cntPar) {
