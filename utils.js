@@ -392,7 +392,7 @@ TWDS.delegate = function (root, evname, selector, func) {
   const h = function (ev) {
     const tg = ev.target.closest(selector)
     if (tg) {
-      func.call(tg, ev)
+      return func.call(tg, ev)
     }
   }
   root.removeEventListener(evname, h)
@@ -460,7 +460,6 @@ TWDS.marketsearchlink = function (itemid) {
   })
 }
 TWDS.marketsearchlinkhandler = function (ev) {
-  console.log('MSLH', ev, this, this.dataset)
   if (!Character.homeTown || !Character.homeTown.town_id) { return }
   MarketWindow.open(Character.homeTown.town_id, 0, Character.homeTown.town_name)
   MarketWindow.showTab('buy')
@@ -475,6 +474,8 @@ TWDS.marketsearchlinkhandler = function (ev) {
     })
     y.dispatchEvent(event)
   }
+  ev.stopPropagation()
+  return false
 }
 TWDS.market_item_sell_handler = function (ev) {
   console.log('MISH', ev, this, this.dataset)
