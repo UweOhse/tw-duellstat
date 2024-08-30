@@ -251,6 +251,15 @@ TWDS.registerSetting('bool', 'fixGraveyardtable',
       document.body.classList.remove('TWDS_fix_graveyard')
     }
   })
+TWDS.registerSetting('bool', 'remove_exclamation_marks',
+  TWDS._('REMOVE_SALOON_EXCLAMATION_MARKS', 'Remove the explanation masks in the saloon.'),
+  false, function (val) {
+    if (val) {
+      document.body.classList.add('TWDS_remove_saloon_exclamation_marks')
+    } else {
+      document.body.classList.remove('TWDS_remove_saloon_exclamation_marks')
+    }
+  })
 
 TWDS.friendrequestcounter = {}
 TWDS.friendrequestcounter.update = function () {
@@ -379,7 +388,6 @@ TWDS.registerStartFunc(function () {
 
   WestUi.NotiBar.TWDS_backup_add = WestUi.NotiBar.TWDS_backup_add || WestUi.NotiBar.add
   WestUi.NotiBar.add = function (entry) {
-    console.log('NotiBar.add', entry)
     if (TWDS.settings.misc_notibar_remove_sale) {
       if (entry.element) {
         const found = TWDS.q1('.image.shop_sale', entry.element[0])
@@ -453,6 +461,7 @@ TWDS.misc_sheriff_bounty_namechange2 = function (name) {
 TWDS.misc_sheriff_bounty_namechange = function () {
   TWDS.misc_sheriff_bounty_namechange2(this.value)
 }
+
 TWDS.registerStartFunc(function () {
   window.SheriffWindow._TWDS_backup_open = window.SheriffWindow.open
   window.SheriffWindow.open = TWDS.misc_sheriffwindow_open
