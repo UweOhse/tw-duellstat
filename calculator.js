@@ -36,12 +36,24 @@ TWDS.calculator.presets = [
   { name: 'dmg/att', health: -1, aim: 5, dodge: 0, hide: 6, leadership: 6, fboffense: 10, fboffense_sector: 10, fbdefense: 1, fbdefense_sector: 2, fbresistance: 1, fbdamage: 5, type: 'battle' },
   { name: 'dmg/def', health: -1, aim: 5, dodge: 0, pitfall: 6, leadership: 6, fboffense: 10, fboffense_sector: 10, fbdefense: 1, fbdefense_sector: 2, fbresistance: 1, fbdamage: 5, type: 'battle' },
   { name: 'booster/damage', health: 0, dodge: 0, hide: 3, aim: 3, pitfall: 3, leadership: 3, fboffense: 0, fboffense_sector: 20, fbdefense_sector: 20, fbdamage: 150, type: 'battle' },
-  { name: 'booster/generic', health: 0, dodge: 0, hide: 3, aim: 3, pitfall: 3, leadership: 4, fboffense_sector: 500, fbdefense_sector: 500, fbdamage: 5, type: 'battle' }
+  { name: 'booster/generic', health: 0, dodge: 0, hide: 3, aim: 3, pitfall: 3, leadership: 4, fboffense_sector: 500, fbdefense_sector: 500, fbdamage: 5, type: 'battle' },
+  { name: 'adventures', disabled: true },
+  { name: 'adv. balanced', strength: 1, flexibility: 1, dexterity: 1, charisma: 1, fboffense: 1, fbdefense: 1, type: 'adv' },
+  { name: 'adv. health', strength: 20, flexibility: 1, dexterity: 1, charisma: 1, fboffense: 1, fbdefense: 20, type: 'adv' },
+  { name: 'adv. hit chance', strength: -1, flexibility: 1, dexterity: 1, charisma: 1, fboffense: 20, fbdefense: -1, type: 'adv' },
+  { name: 'adv. damage', strength: 1, flexibility: 1, dexterity: 20, charisma: 1, fboffense: 20, fbdefense: 1, type: 'adv' },
+  { name: 'adv. dodge', strength: -1, flexibility: 20, dexterity: 1, charisma: 1, fboffense: 1, fbdefense: 1, type: 'adv' },
+  { name: 'adv. crit chance', strength: 1, flexibility: 1, dexterity: 1, charisma: 10, fboffense: 1, fbdefense: 1, type: 'adv' }
 ]
 TWDS.calculator.data = [
-  { kind: 'group', name: 'weapontype', cls: 'boostgroup' },
+  { kind: 'group', name: 'weapontype', cls: 'boostgroupweapons' },
   { kind: 'weaponselect' },
-  { kind: 'group', name: 'fortbattle', cls: 'boostgroup' },
+
+  { kind: 'group', name: 'attributes1', cls: 'attrgroup1' },
+  { kind: 'bonus', name: 'strength', img: '/images/window/skills/circle_strength.png', title: TWDS._('CALCULATOR_STRENGTH', 'Strength - only used in adventure mode!') },
+  { kind: 'bonus', name: 'flexibility', img: '/images/window/skills/circle_flexibility.png', title: TWDS._('CALCULATOR_FLEXIBILITY', 'Flexibiliy - only used in adventure mode!') },
+
+  { kind: 'group', name: 'fortbattle', cls: 'boostgroupmps' },
   {
     kind: 'bonus',
     name: 'fboffense',
@@ -78,7 +90,32 @@ TWDS.calculator.data = [
     img: '/images/items/left_arm/golden_rifle.png',
     title: TWDS._('CALCULATOR_SECTOR_DAMAGE', 'sector damage')
   },
-  { kind: 'group', name: 'boost1', cls: 'boostgroup' },
+
+  { kind: 'group', name: 'boost1', cls: 'boostgroupmisc' },
+  {
+    kind: 'bonus',
+    name: 'speed',
+    img: '/images/jobs/walk.png',
+    title: TWDS._('CALCULATOR_SPEED', 'speed (use the calculator in the equipment tab instead)')
+  },
+  {
+    kind: 'bonus',
+    name: 'regen',
+    img: '/images/jobs/sleep.png',
+    title: TWDS._('CALCULATOR_REGEN', 'regeneration')
+  },
+  {
+    kind: 'bonus',
+    name: 'pray',
+    img: '/images/jobs/pray.png',
+    title: TWDS._('CALCULATOR_PRAY', 'pray')
+  },
+
+  { kind: 'group', name: 'attributes', cls: 'attrgroup2' },
+  { kind: 'bonus', name: 'dexterity', img: '/images/window/skills/circle_dexterity.png', title: TWDS._('CALCULATOR_DEXTERITY', 'Dexterity - only used in adventure mode!') },
+  { kind: 'bonus', name: 'charisma', img: '/images/window/skills/circle_charisma.png', title: TWDS._('CALCULATOR_CHARISMA', 'Charisma - only used in adventure mode!') },
+
+  { kind: 'group', name: 'boost2', cls: 'boostgroup' },
   {
     kind: 'bonus',
     name: 'experience',
@@ -109,44 +146,26 @@ TWDS.calculator.data = [
     img: 'images/window/job/jobstar_small_gold.png',
     title: TWDS._('CALCULATOR_JP', 'job points (all jobs only)')
   },
-  { kind: 'group', name: 'boost2', cls: 'boostgroup' },
-  {
-    kind: 'bonus',
-    name: 'speed',
-    img: '/images/jobs/walk.png',
-    title: TWDS._('CALCULATOR_SPEED', 'speed (use the calculator in the equipment tab instead)')
-  },
-  {
-    kind: 'bonus',
-    name: 'regen',
-    img: '/images/jobs/sleep.png',
-    title: TWDS._('CALCULATOR_REGEN', 'regeneration')
-  },
-  {
-    kind: 'bonus',
-    name: 'pray',
-    img: '/images/jobs/pray.png',
-    title: TWDS._('CALCULATOR_PRAY', 'pray')
-  },
-  { kind: 'group', name: 'red', cls: 'attrgroup' },
+
+  { kind: 'group', name: 'red', cls: 'attrskillgroup' },
   { kind: 'skill', name: 'build', img: '/images/window/skills/skillicon_build.png' },
   { kind: 'skill', name: 'punch', img: '/images/window/skills/skillicon_punch.png' },
   { kind: 'skill', name: 'tough', img: '/images/window/skills/skillicon_tough.png' },
   { kind: 'skill', name: 'endurance', img: '/images/window/skills/skillicon_endurance.png' },
   { kind: 'skill', name: 'health', img: '/images/window/skills/skillicon_health.png' },
-  { kind: 'group', name: 'green', cls: 'attrgroup' },
+  { kind: 'group', name: 'green', cls: 'attrskillgroup' },
   { kind: 'skill', name: 'ride', img: '/images/window/skills/skillicon_ride.png' },
   { kind: 'skill', name: 'reflex', img: '/images/window/skills/skillicon_reflex.png' },
   { kind: 'skill', name: 'dodge', img: '/images/window/skills/skillicon_dodge.png' },
   { kind: 'skill', name: 'hide', img: '/images/window/skills/skillicon_hide.png' },
   { kind: 'skill', name: 'swim', img: '/images/window/skills/skillicon_swim.png' },
-  { kind: 'group', name: 'blue', cls: 'attrgroup' },
+  { kind: 'group', name: 'blue', cls: 'attrskillgroup' },
   { kind: 'skill', name: 'aim', img: '/images/window/skills/skillicon_aim.png' },
   { kind: 'skill', name: 'shot', img: '/images/window/skills/skillicon_shot.png' },
   { kind: 'skill', name: 'pitfall', img: '/images/window/skills/skillicon_pitfall.png' },
   { kind: 'skill', name: 'finger_dexterity', img: '/images/window/skills/skillicon_finger_dexterity.png' },
   { kind: 'skill', name: 'repair', img: '/images/window/skills/skillicon_repair.png' },
-  { kind: 'group', name: 'yellow', cls: 'attrgroup' },
+  { kind: 'group', name: 'yellow', cls: 'attrskillgroup' },
   { kind: 'skill', name: 'leadership', img: '/images/window/skills/skillicon_leadership.png' },
   { kind: 'skill', name: 'tactic', img: '/images/window/skills/skillicon_tactic.png' },
   { kind: 'skill', name: 'trade', img: '/images/window/skills/skillicon_trade.png' },
@@ -160,7 +179,7 @@ TWDS.calculator.data = [
   */
 ]
 
-TWDS.calculator.showbonus = function (all, area) {
+TWDS.calculator.showbonus = function (all, area, advgun) {
   const one = function (all, k, str, tr, mult, pre, post) {
     if (mult === undefined) mult = 1
     if (pre === undefined) pre = ''
@@ -172,16 +191,36 @@ TWDS.calculator.showbonus = function (all, area) {
       last: tr,
       textContent: all[k] ? str : ''
     })
-    let v = all[k]
-    if (mult !== 1) {
-      v = (mult * all[k]).toFixed(1)
-    }
+    // let v = all[k]
+    const v = (mult * all[k]).toFixed(1)
+    const co = all[k] ? pre + v + post : ''
     TWDS.createEle('td', {
       last: tr,
-      textContent: all[k] ? pre + v + post : ''
+      textContent: co
     })
   }
-  const tab = TWDS.createEle('table', { last: area, className: 'TWDS_with_border' })
+  if (advgun) {
+    const tab = TWDS.createEle('table.adventures', { last: area, className: 'TWDS_with_border' })
+    let tr = TWDS.createEle('tr', { last: tab })
+    const th = TWDS.createEle('th', { last: tr, textContent: TWDS._('CALCULATOR_TH_ADVENTURE_RELATED_DATA', 'Adventure related data') })
+
+    const bo = new west.item.Factory().create(advgun, '' + advgun.item_id).exportBoni(Character.level) // yes, stringify a number. 1234000.slice() doesn't work, which is a horrible way to do things, inno.
+
+    tr = TWDS.createEle('tr.advline', { last: tab })
+    let n = 4
+    one(bo, 'strength', CharacterSkills.attributes.strength.name, tr)
+    one(bo, 'flexibility', CharacterSkills.attributes.flexibility.name, tr)
+    one(bo, 'dexterity', CharacterSkills.attributes.dexterity.name, tr)
+    one(bo, 'charisma', CharacterSkills.attributes.charisma.name, tr)
+    if (all.fort_offense) { one(all, 'fort_offense', TWDS._('CALCULATOR_MP_ATT', 'MP Att'), tr); n++ }
+    if (all.fort_defense) { one(all, 'fort_defense', TWDS._('CALCULATOR_MP_DEF', 'MP Def'), tr); n++ }
+    th.colSpan = 2 * n
+  }
+  const tab = TWDS.createEle('table.generaldata', { last: area, className: 'TWDS_with_border' })
+  if (advgun) {
+    const tr = TWDS.createEle('tr', { last: tab })
+    TWDS.createEle('th', { last: tr, colSpan: 12, textContent: TWDS._('CALCULATOR_TH_GENERAL_DATA', 'Not adventure specific data') })
+  }
   let tr = TWDS.createEle('tr', { last: tab })
   one(all, 'strength', CharacterSkills.attributes.strength.name, tr)
   one(all, 'build', '-', tr)
@@ -212,38 +251,37 @@ TWDS.calculator.showbonus = function (all, area) {
   one(all, 'appearance', '-', tr)
   tr = TWDS.createEle('tr', { last: tab })
   let flag = 0
-  if (all.experience) { one(all, 'experience', 'Exp', tr, 100, '+', '%'); flag = 1 }
-  if (all.dollar) { one(all, 'dollar', 'Money', tr, 100, '+', '%'); flag = 1 }
-  if (all.luck) { one(all, 'luck', 'Luck', tr, 100, '+', '%'); flag = 1 }
-  if (all.drop) { one(all, 'drop', 'Drop', tr, 100, '+', '%'); flag = 1 }
+  if (all.experience) { one(all, 'experience', TWDS._('CALCULATOR_EXP', 'Exp'), tr, 100, '+', '%'); flag = 1 }
+  if (all.dollar) { one(all, 'dollar', TWDS._('CALCULATOR_MONEY', 'Money'), tr, 100, '+', '%'); flag = 1 }
+  if (all.luck) { one(all, 'luck', TWDS._('CALCULATOR_LUCK', 'Luck'), tr, 100, '+', '%'); flag = 1 }
+  if (all.drop) { one(all, 'drop', TWDS._('CALCULATOR_DROP2', 'Drop'), tr, 100, '+', '%'); flag = 1 }
   if (flag) {
     flag = 0
     tr = TWDS.createEle('tr', { last: tab })
   }
-  if (all.speed) { one(all, 'speed', 'Speed', tr, 100, '+', '%'); flag = 1 }
-  if (all.regen) { one(all, 'regen', 'Regen.', tr, 100, '+', '%'); flag = 1 }
-  if (all.pray) { one(all, 'pray', 'Pray', tr); flag = 1 }
+  if (all.speed) { one(all, 'speed', TWDS._('CALCULATOR_SPEED2', 'Speed'), tr, 100, '+', '%'); flag = 1 }
+  if (all.regen) { one(all, 'regen', TWDS._('CALCULATOR_REGEN2', 'Regen.'), tr, 100, '+', '%'); flag = 1 }
+  if (all.pray) { one(all, 'pray', TWDS._('CALCULATOR_PRAY', 'Pray'), tr); flag = 1 }
   if (flag) {
     flag = 0
     tr = TWDS.createEle('tr', { last: tab })
   }
-  if (all.fort_offense) { one(all, 'fort_offense', 'Off', tr); flag = 1 }
-  if (all.fort_defense) { one(all, 'fort_defense', 'Def', tr); flag = 1 }
-  if (all.fort_resistance) { one(all, 'fort_resistance', 'Res', tr); flag = 1 }
+  if (all.fort_offense) { one(all, 'fort_offense', TWDS._('CALCULATOR_MP_OFF', 'Off'), tr); flag = 1 }
+  if (all.fort_defense) { one(all, 'fort_defense', TWDS._('CALCULATOR_MP_DEF', 'Def'), tr); flag = 1 }
+  if (all.fort_resistance) { one(all, 'fort_resistance', TWDS._('CALCULATOR_RESISTANCE2', 'Res'), tr); flag = 1 }
   if (flag) {
     flag = 0
     tr = TWDS.createEle('tr', { last: tab })
   }
-  if (all.fort_offense_sector) { one(all, 'fort_offense_sector', 'SectorOff', tr); flag = 1 }
-  if (all.fort_defense_sector) { one(all, 'fort_offense_sector', 'SectorDef', tr); flag = 1 }
-  if (all.fort_damage_sector) { one(all, 'fort_damage_sector', 'SectorDmg', tr); flag = 1 }
+  if (all.fort_offense_sector) { one(all, 'fort_offense_sector', TWDS._('CALCULATOR_SECTOR_OFF', 'SectorOff'), tr); flag = 1 }
+  if (all.fort_defense_sector) { one(all, 'fort_offense_sector', TWDS._('CALCULATOR_SECTOR_DEF', 'SectorDef'), tr); flag = 1 }
+  if (all.fort_damage_sector) { one(all, 'fort_damage_sector', TWDS._('CALCULATOR_SECTOR_DMG', 'SectorDmg'), tr); flag = 1 }
 }
 TWDS.calculator.getselections = function (selectarea) {
   const skillweights = { }
   const bonusweights = { }
   for (let i = 0; i < TWDS.calculator.data.length; i++) {
     const d = TWDS.calculator.data[i]
-    // console.log('d', i, d)
     if (d.kind === 'group') continue
     if (d.kind === 'bonus') {
       const inp = TWDS.q1('.onebonus.bonus.' + d.name + ' input.value', selectarea)
@@ -276,7 +314,7 @@ TWDS.calculator.getselections = function (selectarea) {
     bonus: bonusweights
   }
 }
-TWDS.calculator.exec = function (filterarea, selectarea, resultarea) {
+TWDS.calculator.exec = function (filterarea, selectarea, resultarea, advmode) {
   const sels = TWDS.calculator.getselections()
 
   let include = 0
@@ -285,30 +323,61 @@ TWDS.calculator.exec = function (filterarea, selectarea, resultarea) {
     include |= parseInt(x[i].value)
   }
 
+  if (advmode) {
+    const allowed = ['strength', 'flexibility', 'dexterity', 'charisma', 'fboffense', 'fbdefense']
+    Object.keys(sels.bonus).each(function (x) {
+      if (!allowed.includes(x)) {
+        delete sels.bonus[x]
+      }
+    })
+    sels.skills = {}
+  } else {
+    const forbidden = ['strength', 'flexibility', 'dexterity', 'charisma']
+    Object.keys(sels.bonus).each(function (x) {
+      if (forbidden.includes(x)) {
+        delete sels.bonus[x]
+      }
+    })
+  }
+
   console.log('PARA', sels.bonus, sels.skills, include)
   resultarea.textContent = ''
   TWDS.createEle({
     nodeName: 'h2',
     textContent: TWDS._('CALCULATOR_RESULT', 'Result'),
-    last: resultarea
+    last: resultarea,
+    children: [
+      {
+        nodeName: 'span',
+        textContent: advmode ? TWDS._('CALCULATOR_ADVMODE_INFO', ' (adventure mode)') : TWDS._('CALCULATOR_NORMALMODE_INFO', ' (normal mode)')
+      }
+    ]
+
   })
 
   // 16th: 53918000 53919000 53920000 53921000 53922000 53923000 53924000 53925000 53926000 53927000 53928000
   const str = TWDS.q1('#TWDS_CALC_extraitems input').value
   const extras = str.split(/ /).filter((x) => x > '').map((x) => parseInt(x))
-  const gc = TWDS.genCalc.exec(sels.bonus, sels.skills, include, extras)
+  const gc = TWDS.genCalc.exec(sels.bonus, sels.skills, include, extras, advmode)
   for (let i = 0; i < gc.combos.length; i++) {
+    const cd = TWDS.createEle({
+      nodeName: 'div.combodisplay',
+      last: resultarea
+    })
     TWDS.createEle({
       nodeName: 'p',
-      last: resultarea,
+      last: cd,
       textContent: TWDS._('CALCULATOR_RESULTLINE', 'This combination gives $p$ points', { p: gc.combos[i][0] })
     })
     const o = gc.combos[i][1]
+    let gun = null
     for (let j = 0; j < o.length; j++) {
       const id = o[j]
       if (id === undefined) continue
-      const t = new tw2widget.InventoryItem(ItemManager.get(id)).setCharacter(Character).getMainDiv()[0]
-      resultarea.appendChild(t)
+      const it = ItemManager.get(id)
+      const t = new tw2widget.InventoryItem(it).setCharacter(Character).getMainDiv()[0]
+      if (it.type === 'left_arm') { gun = it }
+      cd.appendChild(t)
     }
     if (i < 10) {
       TWDS.createEle('button', {
@@ -320,7 +389,7 @@ TWDS.calculator.exec = function (filterarea, selectarea, resultarea) {
           const x = JSON.parse(this.dataset.ids)
           TWDS.wearItemsHandler(x)
         },
-        last: resultarea
+        last: cd
       })
       TWDS.createEle('button', {
         textContent: TWDS._('CALCULATOR_SIMULATE', 'simulate'),
@@ -332,11 +401,11 @@ TWDS.calculator.exec = function (filterarea, selectarea, resultarea) {
           // TWDS.wearItemsHandler(x)
           TWDS.simulator.openwindow(x)
         },
-        last: resultarea
+        last: cd
       })
     }
     const t = TWDS.bonuscalc.getComboBonus(o, true)
-    TWDS.calculator.showbonus(t, resultarea)
+    TWDS.calculator.showbonus(t, resultarea, advmode ? gun : null)
 
     TWDS.createEle('hr', { last: resultarea, style: { clear: 'both' } })
   }
@@ -505,7 +574,6 @@ TWDS.calculator.openwindow = function (calledpreset) {
     if (!job && parseInt(this.value) === 1000) { // "Build"
       job = TWDS.calculator.buildjob()
     }
-    console.log('S', this.value, job)
     const c = this.closest('.TWDS_calc_container')
     const inp = TWDS.q('.TWDS_calc_selectarea input', c)
     for (let i = 0; i < inp.length; i++) {
@@ -583,7 +651,6 @@ TWDS.calculator.openwindow = function (calledpreset) {
     }
 
     if (preset !== null) {
-      console.log('PRES', preset)
       if (preset.shot) {
         TWDS.q1(".TWDS_calc_wgroup input[value='shot'", selectarea).checked = true
       } else if (preset.melee) {
@@ -743,9 +810,20 @@ TWDS.calculator.openwindow = function (calledpreset) {
       boncb(x, g)
     }
   }
-  const calcbutton = TWDS.createEle('button.doit', {
+  TWDS.createEle('button.doit', {
     textContent: TWDS._('CALCULATOR_DOIT', 'calculate'),
-    last: selectarea
+    last: selectarea,
+    onclick: function () {
+      TWDS.calculator.exec(filterarea, selectarea, resultarea, false)
+    }
+  })
+  TWDS.createEle('button.doitadv', {
+    textContent: TWDS._('CALCULATOR_DOITADV', '... in adventure mode'),
+    title: TWDS._('CALCULATOR_DOITADV_TITLE', 'calculate in adventure mode'),
+    last: selectarea,
+    onclick: function () {
+      TWDS.calculator.exec(filterarea, selectarea, resultarea, true)
+    }
   })
   TWDS.createEle('span.savesearch', {
     last: selectarea,
@@ -788,9 +866,6 @@ TWDS.calculator.openwindow = function (calledpreset) {
   const resultarea = TWDS.createEle('div', {
     last: content
   })
-  calcbutton.onclick = function () {
-    TWDS.calculator.exec(filterarea, selectarea, resultarea)
-  }
 
   if (calledpreset !== null) {
     const found = TWDS.q1(".presetselect option[value='" + calledpreset + "']", presetarea)
@@ -808,7 +883,10 @@ TWDS.calculator.openwindow = function (calledpreset) {
       e.push(item.obj.item_id)
     }
   }
-  TWDS.createEle('h3', { textContent: 'Your current equipment gives', last: resultarea })
+  TWDS.createEle('h3', {
+    textContent: TWDS._('CALCULATOR_CURRENT_GIVES', 'Your current equipment gives'),
+    last: resultarea
+  })
 
   const t = TWDS.bonuscalc.getComboBonus(e, true)
   TWDS.calculator.showbonus(t, resultarea)
