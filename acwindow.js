@@ -56,6 +56,31 @@ TWDS.acwindow.updateContent1 = function (list) {
     }
   }
 }
+TWDS.acwindow.updateContentCollections = function (list) {
+  for (let i = 0; i < list.length; i++) {
+    const col = list[i]
+    const div = TWDS.q1('#achievement_' + col.id)
+    if (!div) continue
+    div.classList.add('TWDS_is_collections')
+
+    const spans = TWDS.q('.achieve_list span.locked', div)
+    for (let j = 0; j < spans.length; j++) {
+      const span = spans[j]
+      span.style.outline = '1px solid #888'
+      TWDS.createEle({
+        nodeName: 'div',
+        style: {
+          display: 'inline-block'
+        },
+        className: 'tw2gui-iconset tw2gui-icon-friends TWDS_marketsearchlink',
+        last: span,
+        dataset: {
+          itemname: span.title
+        }
+      })
+    }
+  }
+}
 TWDS.acwindow.updateContent = function (data) {
   this.TWDS_backup_updateContent(data)
   if (data.folder.id === 'collection_pictures') {
@@ -63,10 +88,12 @@ TWDS.acwindow.updateContent = function (data) {
     TWDS.acwindow.updateContent1(data.achievements.progress)
     TWDS.acwindow.updateContent1(data.achievements.finished)
   }
+  if (data.folder.id === 'collections') {
+    TWDS.acwindow.updateContentCollections(data.achievements.progress)
+  }
 }
 TWDS.acwindow.open = function (userid, tab) {
-  console.log('ACWINDOW.OPEN', 'p', userid, 't', tab)
-  const instance = window.AchievementWindow.TWDS_backup_open.call(userid, tab)
+  const instance = window.AchievementWindow.TWDS_backup_open.call(this, userid, tab)
   instance.Explorer.TWDS_backup_updateContent = instance.Explorer.TWDS_backup_updateContent || instance.Explorer.updateContent
   instance.Explorer.updateContent = TWDS.acwindow.updateContent
 }
