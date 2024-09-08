@@ -222,7 +222,7 @@ TWDS.nextaction.start = function (remove) {
   TWDS.registerSetting('bool', 'taskqueue_nextaction',
     TWDS._('TASKQUEUE_NEXTACTION_SETTING', 'show, below the task queue, the time the next manual action is expected'), true, function (v) {
       TWDS.nextaction.update(!v)
-    }, 'Task Queue')
+    }, 'Task Queue', 'b', 1)
   let fn = 'listen'
   let fn2 = 'on'
   if (remove) {
