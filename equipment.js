@@ -61,10 +61,12 @@ TWDS.describeItemCombo = function (singleItems) {
       name = setlist[i].name
     }
     if (nd > 0) {
-      if (Wear.wear.right_arm.obj.sub_type === 'shot') {
-        name += TWDS._('SHORT_SHOTWEAPON', ' (shot)')
-      } else if (Wear.wear.right_arm.obj.sub_type !== 'shot') {
-        name += TWDS._('SHORT_MELEEWEAPON', ' (melee)')
+      if (Wear.wear.right_arm) {
+        if (Wear.wear.right_arm.obj.sub_type === 'shot') {
+          name += TWDS._('SHORT_SHOTWEAPON', ' (shot)')
+        } else if (Wear.wear.right_arm.obj.sub_type !== 'shot') {
+          name += TWDS._('SHORT_MELEEWEAPON', ' (melee)')
+        }
       }
     }
     names.push(name)
