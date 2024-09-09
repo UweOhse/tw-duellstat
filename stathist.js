@@ -176,6 +176,7 @@ TWDS.stathist.kv = [
   { key: 'xp_number', head: 'XP', name: 'points', headkey: 'xp', format: 'number' },
   { key: 'duel_rank', head: 'Duels', name: 'Rank', headkey: 'duel' },
   { key: 'duel_xp', head: 'Duels', name: 'XP', headkey: 'duel', format: 'number' },
+  { key: 'duelLevel', head: 'Duels', name: 'Level', headkey: 'duel' },
   { key: 'duel_win', head: 'Duels', name: 'Won', headkey: 'duel' },
   { key: 'duel_loss', head: 'Duels', name: 'Lost', headkey: 'duel' },
   { key: 'fort_rank', head: 'Fort Battles', name: 'Rank', headkey: 'fort' },
