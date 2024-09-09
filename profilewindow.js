@@ -10,7 +10,7 @@ TWDS.profilewindow.showbonus = function (worn, level) {
       {
         nodeName: 'th',
         colSpan: 12,
-        textContent: 'Bonusfrom items and sets'
+        textContent: TWDS._('PROFILEWINDOW_BONUS_FROM_ITEMS_AND_SETS', 'Bonus from items and sets')
       }
     ]
   })
