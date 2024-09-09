@@ -24,8 +24,12 @@ TWDS.storage.save = function () {
   window.localStorage.setItem('TWDS_storage', d)
 }
 
-TWDS.storage.marketsearchwindowworker = function (table, cats, catidx, lookfor) {
+TWDS.storage.marketsearchwindowworker = function (table, cats, catidx, lookfor, infoele) {
   if (catidx >= cats.length) {
+    infoele.textContent="";
+    if (table.childNodes.length===0) {
+      infoele.textContent=TWDS._('STORAGE_MARKETSEARCH_NOTFOUND','Nothing found');
+    }
     return
   }
   const cat = cats[catidx]
@@ -37,7 +41,6 @@ TWDS.storage.marketsearchwindowworker = function (table, cats, catidx, lookfor) 
       new UserMessage(json.msg, UserMessage.TYPE_ERROR).show()
       return
     }
-    console.log('W', cat, json.items, lookfor[cat])
     for (let i = 0; i < json.items.length; i++) {
       const mid = json.items[i]
       if (lookfor[cat].includes(mid)) {
@@ -67,13 +70,13 @@ TWDS.storage.marketsearchwindowworker = function (table, cats, catidx, lookfor) 
       }
     }
     setTimeout(function () {
-      TWDS.storage.marketsearchwindowworker(table, cats, catidx + 1, lookfor)
+      TWDS.storage.marketsearchwindowworker(table, cats, catidx + 1, lookfor, infoele)
     }, 100)
   })
 }
 TWDS.storage.marketsearchwindow = function () {
   const win = TWDS.utils.stdwindow('TWDS_storage_marketsearch_window',
-    TWDS._('STORAGE_MARKETSEARCH_WINDOW_TITLE', 'Market search'),
+    TWDS._('STORAGE_MARKETSEARCH_WINDOW_TITLE', 'Storage Market search'),
     TWDS._('STORAGE_MARKETSEARCH_WINDOW_MINITITLE', 'Market'))
   const container = TWDS.utils.getcontainer(win)
   container.innerHTML = ''
@@ -91,8 +94,13 @@ TWDS.storage.marketsearchwindow = function () {
     }
     lookfor[type].push(parseInt(ii))
   }
+  const p = TWDS.createEle('p', { last: container })
+  const infoele = TWDS.createEle('b', { 
+    last: p, 
+    textContent: TWDS._("STORAGE_MARKETSEARCH_PLEASE_WAIT","Please wait, search running")
+  })
   const table = TWDS.createEle('table', { last: container })
-  TWDS.storage.marketsearchwindowworker(table, Object.keys(lookfor), 0, lookfor)
+  TWDS.storage.marketsearchwindowworker(table, Object.keys(lookfor), 0, lookfor, infoele)
 }
 
 TWDS.storage.startSearch = function (name) {
