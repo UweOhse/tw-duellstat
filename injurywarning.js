@@ -210,7 +210,7 @@ TWDS.taskqueue.faviconhandler = function () {
   }
   let did = 0
   if (TWDS.settings.taskqueue_sleep_in_favicon && TaskQueue.queue.length === 1) {
-    if (TaskQueue.queue[0].type === 'sleep') {
+    if (TaskQueue.queue[0].type === 'sleep' || TaskQueue.queue[0].type === 'fortsleep') {
       drawicon('S')
       did = 1
     }
