@@ -6,6 +6,7 @@ TWDS.simulator.fillselectarea = function (area, slot, cur) {
 
   const all = ItemManager.getAll()
   const allthings = []
+  allthings.push([0, '-- empty --'])
   for (const it of Object.values(all)) {
     if (it.type === slot) {
       if (it.usetype === 'none') {
@@ -26,6 +27,7 @@ TWDS.simulator.switchslot = function (area, sl, ii) {
   div.textContent = ''
   let lv = 0
   let upg = false
+  ii = parseInt(ii);
   if (ii === 0) {
     TWDS.createEle({
       nodeName: 'div',
