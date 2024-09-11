@@ -143,6 +143,14 @@ TWDS.createElement = function (par = {}, par2 = null) {
       }
     }
   }
+  const hashpos = par.nodeName.indexOf('#')
+  let id = null
+  if (hashpos !== -1) {
+    const n = par.nodeName.substring(0, hashpos)
+    id = par.nodeName.substring(hashpos + 1)
+    par.nodeName = n
+  }
+
   let dotpos = par.nodeName.indexOf('.')
   let classadd = null
   if (dotpos !== -1) {
@@ -218,6 +226,9 @@ TWDS.createElement = function (par = {}, par2 = null) {
       dotpos = classadd.indexOf('.')
     }
     thing.classList.add(classadd)
+  }
+  if (id !== null) {
+    thing.id = id
   }
   return thing
 }
