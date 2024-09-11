@@ -7,6 +7,9 @@ TWDS.window = null
 TWDS.settings = null
 TWDS.lfd = 0
 TWDS.baseURL = 'https://ohse.de/uwe/tw-duellstat/'
+TWDS.issueURL = 'https://github.com/UweOhse/tw-duellstat/issues'
+TWDS.issueURLText = 'github link'
+TWDS.ingameauthor = 'buchstabensuppe (colo, .net) / xyzabcd (fair, .de)'
 TWDS.version = '@REPLACEMYVERSION@'
 TWDS.crafting = null // to be filled by main.js - async, so don't expect it to be filled.
 

@@ -9,6 +9,20 @@ TWDS.updatetab.getContent1 = function () {
   const d = TWDS.createEle({
     nodeName: 'div',
     children: [
+      {
+        nodeName: 'p',
+        children: [
+          {
+            nodeName: 'span',
+            textContent: TWDS._('UPDATES_REPORT',
+              'Please use the following link to report bugs or request enhancements, as chat, eeles, emails, forum conversions and posts just do not scale: ')
+          }, {
+            nodeName: 'a',
+            href: TWDS.issueURL,
+            textContent: 'report them here'
+          }
+        ]
+      },
       { nodeName: 'h3', textContent: 'Updates' },
       { nodeName: 'div', innerHTML: TWDS.updateinfo }
     ]
