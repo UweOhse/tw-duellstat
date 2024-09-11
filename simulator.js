@@ -27,7 +27,7 @@ TWDS.simulator.switchslot = function (area, sl, ii) {
   div.textContent = ''
   let lv = 0
   let upg = false
-  ii = parseInt(ii);
+  ii = parseInt(ii)
   if (ii === 0) {
     TWDS.createEle({
       nodeName: 'div',
