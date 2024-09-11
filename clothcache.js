@@ -80,23 +80,28 @@ TWDS.clothcache.info = function (ele) {
 TWDS.clothcache.reload = function (mode) {
   const jl = JobList.getSortedJobs()
   const info = document.querySelector('#TWDS_job_reload_info')
+  let cmp = new Date().getTime()
+  if (mode === '1d') {
+    cmp -= 1 * 86400 * 1000
+  }
+  if (mode === '2d') {
+    cmp -= 2 * 86400 * 1000
+  }
+  if (mode === '1w') {
+    cmp -= 7 * 86400 * 1000
+  }
+  if (mode === '30d') {
+    cmp -= 30 * 86400 * 1000
+  }
+  if (mode === 'missing') {
+    cmp = 0
+  }
+
   for (const job of jl) {
     const old = TWDS.getJobBestFromCache(job.id)
     if (old !== null) {
       const ts = old.timestamp
-      if (mode === '1d') {
-        if (ts > new Date().getTime() - 1 * 86400 * 1000) { continue }
-      }
-      if (mode === '2d') {
-        if (ts > new Date().getTime() - 2 * 86400 * 1000) { continue }
-      }
-      if (mode === '1w') {
-        if (ts > new Date().getTime() - 7 * 86400 * 1000) { continue }
-      }
-      if (mode === '30d') {
-        if (ts > new Date().getTime() - 30 * 86400 * 1000) { continue }
-      }
-      if (mode === 'missing') { continue }
+      if (ts > cmp) continue
     }
     // console.log('calc', job.id, job.name, mode, old)
     const out = TWDS.getBestSetWrapper(job.skills, job.id, true)
