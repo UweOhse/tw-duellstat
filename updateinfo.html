@@ -1,4 +1,26 @@
 <dl>
+<dt>0.74 - 2024-09-11
+<dd>New options to show task queue state and a low health warning to the favicon. off by default, you can activate this in the Task Queue settings. [taskqueue_length_in_favicon, taskqueue_length0_in_favicon, taskqueue_sleep_in_favicon, taskqueue_show_health_in_favicon]
+<dd>New option the remove the exclamation marks in the saloon. use if you really hate them. [remove_exclamation_marks]
+<dd>New option to show the intro text of the quests in the quest book. On by default. [questgroup_show_intro]
+<dd>New option to move the player popup/mouseover to the top of the fortbattle window (the default position disturbed the line of sight display). On by default. [fbmisc_movepopup]
+<dd>New option to show the number of friends in the friendship request list window, defaults to on. [misc_enhance_friendslistwindow]
+<dd>Enhancement: The settings tab now has a search function. This is a clear indication of a bad design somewhere.
+<dd>Enhancement: the calculator now has an adventure mode.
+<dd>Enhancement: the calculator has an "extraitems" input field, where you can enter item ids of items you might be interested in, to see how they would change things.
+<dd>Enhancement: the storage window allows to search the market for missing items.
+<dd>Enhancement: show collectibles in the job window even if the player found them already (once i though it smart to not show them if you already had found them, but i learned).
+<dd>Enhancement: the simulator now allows slots to be empty.
+
+<dd>Enhancement/Bugfix: make the duel level available in the statistics. the data has been collected from the start, just the option to show it was missing.
+<dd>In the collector cards list (achievement window) show the items a card can be found in.
+<dd>Bugfix: fixed a mistake causing the display of the players achievements and stats instead of the those of the player whose profile you clicked.
+
+<dt>0.73 - 2024-05-22
+<dd>New: a new extra: managing of recipients list for group telegrams.
+<dd>Bugfix: townwindow member sorting by name didn't work for own town.
+<dd>Bugfix: the market right select box in the sale dialogue sometimes showed the wrong text (in one of three cases, i think - but that may be language dependent).
+<dd>Enhancement: the quest window helper to craft an item wasn't shown for the four new thing (cowboy stew, saddle seat and so on). These things have the wrong subtype in the database of the game servers. I added a workaround.
 <dt>0.72 - 2024-04-08
 <dd>Bugfix: duelmap failed to display all results if a date was unparsable.
 <dt>0.71 - 2024-04-03 - Codename "i hate jerry" (#1).
