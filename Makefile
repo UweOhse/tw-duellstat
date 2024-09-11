@@ -11,16 +11,17 @@ CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js $(LANGSJSON) t
    altinventory.js friends.js calculator.js townlog.js craftwindow.js simulator.js bufflist.js achievements.js \
    iteminfo.js fbchat.js invstat.js pinning.js duelinfo.js calendar.js vipendtime.js inventory.js \
    fbmisc.js townwindow.js profilewindow.js buildwindow.js shopsearch.js ranking.js \
+   questgroupwindow.js friendslistwindow.js \
    quickequipment.js allimap.js stathist.js nightmode.js maphelper.js fortbuild.js playerlistwindow.js \
-   nextaction.js upshop.js ghosttowns.js duelmap.js plusminus.js fortrecruiting.js grouptele.js \
-   sortable.js extras.js main.js 
+   nextaction.js upshop.js ghosttowns.js duelmap.js plusminus.js fortrecruiting.js grouptele.js acwindow.js \
+   sortable.js extras.js main.js
 
 SASS_SOURCES=utils.sass minimap.sass joblist.sass market.sass craftwindow.sass quest.sass jobwindow.sass simulator.sass \
   craftcalc.sass itemsettab.sass extras.sass bufflist.sass achievements.sass items.sass iteminfo.sass storage.sass \
   duelinfo.sass misc.sass pinning.sass calendar.sass vipendtime.sass inventory.sass settingstab.sass fbmisc.sass \
   townwindow.sass profilewindow.sass speedcalc.sass showset.sass buildwindow.sass shopsearch.sass fortbuild.sass \
   quickequipment.sass overlay.sass stathist.sass calculator.sass playerlistwindow.sass logging.sass upshop.sass \
-  ghosttowns.sass duelmap.sass nextaction.sass fortrecruiting.sass grouptele.sass
+  ghosttowns.sass duelmap.sass nextaction.sass fortrecruiting.sass grouptele.sass friendslistwindow.sass
 
 # stuff i load manually sometimes
 CHECK_EXTRA_SOURCES:=$(shell ls _*.js)
@@ -42,7 +43,8 @@ GLOBALS=--global Game --global TWDS --global Character --global wman --global Ba
 	--global TaskQueue --global GameInject --global jQuery --global Blob --global Quest \
 	--global FortOverviewWindow --global QuestWindow --global QuestEmployerView \
 	--global Node --global BankWindow --global CemeteryWindow --global WestUi \
-	--global localStorage --global sessionStorage --global EquipManager --global TaskJob
+	--global localStorage --global sessionStorage --global EquipManager --global TaskJob \
+	--global ItemUse
 all: precheck tw-duellstat.user.js
 
 tw-duellstat.min.user.js: tw-duellstat.user.js
