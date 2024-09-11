@@ -137,6 +137,38 @@ TWDS.main = function () {
   })
   TWDS.createSideButton()
   TWDS.wait2callstartfuncs()
+
+  //
+  const div = TWDS.createEle('div.TWDS_API_TAB')
+  TWDS.createEle('p.aka', {
+    last: div,
+    textContent: 'a.k.a. '
+  })
+  TWDS.createEle('h1', {
+    last: div,
+    textContent: ' the script that totally lost its focus'
+  })
+  TWDS.createEle('p', {
+    last: div,
+    textContent: 'version: ' + TWDS.version
+  })
+  TWDS.createEle('p', {
+    last: div,
+    children: [
+      { nodeName: 'span', textContent: 'Please report bugs and request enhancements there: ' },
+      { nodeName: 'a', href: TWDS.issueURL, textContent: TWDS.issueURLText }
+    ]
+  })
+  TWDS.createEle('p', {
+    last: div,
+    textContent: 'Clothcache, formerly known as duellstat, provides enhancements to many parts of the game.'
+  })
+  window.TheWestApi.register('TWDS',
+    TWDS.scriptnameTitle,
+    Game.version.toString(), // minGame… i don't know.
+    Game.version.toString(), // maxGame… how could i know?
+    TWDS.ingameauthor,
+    TWDS.baseURL).setGui(div)
 }
 
 TWDS.preMain = function () {
