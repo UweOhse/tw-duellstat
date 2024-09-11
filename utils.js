@@ -574,7 +574,6 @@ TWDS.createFilteredSelect = function (filltext, allthings) {
     })
   }
   sf.onchange = function () {
-    console.log('OC', this)
     const searchstring = this.value.toLocaleLowerCase()
     const d = this.closest('.filteredselectcontainer')
     const ss = TWDS.q1('select', d)
