@@ -21,12 +21,14 @@ TWDS.friendslistwindow.requests_initContent = function (data) {
     const ti = TWDS.q1('.friendslist-openrequests .tfoot .row_foot', dm)
     if (!ti) return
     let lvsum = 0
+    let total = 0
     for (let i = 0; i < json.players.length; i++) {
       lvsum += json.players[i].level
+      if (json.players[i].name !== Character.name) { total++ }
     }
     const str = TWDS._('FRIENDSLISTWINDOW_INFOTEXT',
       'You currently have $n$ friends with an average level of $avg$.', {
-        n: json.players.length,
+        n: total,
         avg: Math.round(lvsum / (json.players.length || 1))
       })
     TWDS.createEle('div.TWDS_friendslistwindow_num', {
