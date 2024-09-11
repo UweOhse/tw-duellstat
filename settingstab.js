@@ -7,76 +7,134 @@ TWDS.getSettingsContentReal = function () {
     return thing
   }
   const createCacheThing = function () {
-    const thing = document.createElement('div')
-    thing.className = 'TWDS_settings_cache'
-    let button
-    let p
+    const thing = TWDS.createEle('div.TWDS_settings_cache')
 
-    const h = document.createElement('h2')
-    thing.appendChild(h)
-    h.textContent = 'Clothes cache'
+    TWDS.createEle('h2', {
+      last: thing,
+      textContent: TWDS._('SETTINGS_TITLE', 'Clothes Cache')
+    })
 
-    p = document.createElement('p')
-    thing.appendChild(p)
-    p.textContent = TWDS._('CLOTHECACHE_SETTING_INTRO', 'Results of work cloth calculations are stored in a cache, and can be re-used in the job window. Here you can clear, fill or update many jobs at once, though re-calculating all jobs will take quite a bit of time on slow computers.')
+    TWDS.createEle('p', {
+      last: thing,
+      textContent: TWDS._('CLOTHECACHE_SETTING_INTRO',
+        'Results of work cloth calculations are stored in a cache, and can be re-used in the job window. Here you can clear, fill or update many jobs at once, though re-calculating all jobs will take quite a bit of time on slow computers.')
+    })
 
-    p = document.createElement('p')
-    const info = document.createElement('p')
-    info.id = 'TWDS_job_reload_info'
-    thing.appendChild(info)
+    const info = TWDS.createEle('p#TWDS_job_reload_info', {
+      last: thing
+    })
     TWDS.clothcache.info(info)
 
-    p = document.createElement('p')
-    thing.appendChild(p)
-    button = document.createElement('button')
-    p.appendChild(button)
-    button.textContent = TWDS._('CLOTHCACHE_BUTTON_CLEAR', 'Clear cloth cache')
-    button.onclick = TWDS.clothcache.clear
+    const p = TWDS.createEle('p', { last: thing })
 
-    p = document.createElement('p')
-    thing.appendChild(p)
-    p.textContent = TWDS._('CLOTHCACHE_RELOAD_QUESTION', 'Reload/fill the cache?')
+    TWDS.createEle('button', {
+      last: p,
+      textContent: TWDS._('CLOTHCACHE_BUTTON_CLEAR', 'Clear cloth cache'),
+      onclick: TWDS.clothcache.clear
+    })
 
-    button = document.createElement('button')
-    thing.appendChild(button)
-    button.textContent = TWDS._('CLOTHCACHE_RELOAD_ALL', 'all')
-    button.title = TWDS._('CLOTHCACHE_RELOAD_ALL_MOUSEOVER', 'Reload the cloth cache for all jobs')
-    button.classList.add('TWDS_job_reload')
-    button.dataset.reloadmode = 'all'
+    const label = TWDS.createEle('label', {
+      last: p,
+      textContent: TWDS._('CLOTHCACHE_RELOAD_QUESTION', 'Reload/fill the cache?')
+    })
 
-    button = document.createElement('button')
-    thing.appendChild(button)
-    button.textContent = TWDS._('CLOTHCACHE_RELOAD_MISSING', 'missing')
-    button.title = TWDS._('CLOTHCACHE_RELOAD_MISSING_MOUSEOVER', 'Fills the cloth cache for all jobs not having one')
-    button.classList.add('TWDS_job_reload')
-    button.dataset.reloadmode = 'missing'
+    TWDS.createEle('button.TWDS_job_reload', {
+      last: label,
+      textContent: TWDS._('CLOTHCACHE_RELOAD_ALL', 'all'),
+      title: TWDS._('CLOTHCACHE_RELOAD_ALL_MOUSEOVER', 'Reload the cloth cache for all jobs'),
+      dataset: {
+        reloadmode: 'all'
+      }
+    })
+    TWDS.createEle('button.TWDS_job_reload', {
+      last: label,
+      textContent: TWDS._('CLOTHCACHE_RELOAD_MISSING', 'missing'),
+      title: TWDS._('CLOTHCACHE_RELOAD_MISSING_MOUSEOVER', 'Fills the cloth cache for all jobs not having one'),
+      dataset: {
+        reloadmode: 'missing'
+      }
+    })
+    TWDS.createEle('button.TWDS_job_reload', {
+      last: label,
+      textContent: TWDS._('CLOTHCACHE_RELOAD_1D', '1d'),
+      title: TWDS._('CLOTHCACHE_RELOAD_1D_MOUSEOVER', 'Reload the cloth cache for all jobs where it is older than one day'),
+      dataset: {
+        reloadmode: '1d'
+      }
+    })
+    TWDS.createEle('button.TWDS_job_reload', {
+      last: label,
+      textContent: TWDS._('CLOTHCACHE_RELOAD_1W', '1w'),
+      title: TWDS._('CLOTHCACHE_RELOAD_1W_MOUSEOVER', 'Reload the cloth cache for all jobs where it is older than one week'),
+      dataset: {
+        reloadmode: '1w'
+      }
+    })
 
-    button = document.createElement('button')
-    thing.appendChild(button)
-    button.textContent = TWDS._('CLOTHCACHE_RELOAD_1D', '1d')
-    button.title = TWDS._('CLOTHCACHE_RELOAD_1D_MOUSEOVER', 'Reload the cloth cache for all jobs where it is older than one day')
-    button.classList.add('TWDS_job_reload')
-    button.dataset.reloadmode = '1d'
+    TWDS.createEle('button.TWDS_job_reload', {
+      last: label,
+      textContent: TWDS._('CLOTHCACHE_RELOAD_30D', '30d'),
+      title: TWDS._('CLOTHCACHE_RELOAD_30D_MOUSEOVER', 'Reload the cloth cache for all jobs where it is older than 30 days'),
+      dataset: {
+        reloadmode: '30d'
+      }
+    })
+    const div = TWDS.createEle('div.searchcontainer', {
+      last: p
+    })
+    const search = TWDS.createEle('input.TWDS_settings_search', {
+      type: 'text',
+      onchange: function (ev) {
+        console.log('change', this, ev, this.value)
 
-    button = document.createElement('button')
-    thing.appendChild(button)
-    button.textContent = TWDS._('CLOTHCACHE_RELOAD_1W', '1w')
-    button.title = TWDS._('CLOTHCACHE_RELOAD_1W_MOUSEOVER', 'Reload the cloth cache for all jobs where it is older than one week')
-    button.classList.add('TWDS_job_reload')
-    button.dataset.reloadmode = '1w'
-
-    button = document.createElement('button')
-    thing.appendChild(button)
-    button.textContent = TWDS._('CLOTHCACHE_RELOAD_30D', '30d')
-    button.title = TWDS._('CLOTHCACHE_RELOAD_30D_MOUSEOVER', 'Reload the cloth cache for all jobs where it is older than 30 days')
-    button.classList.add('TWDS_job_reload')
-    button.dataset.reloadmode = '30d'
-
+        const st = TWDS.q1('#TWDS_settings .TWDS_settings_main table')
+        const rows = TWDS.q('tr', st)
+        const val = this.value.trim().toLocaleLowerCase()
+        let found = 0
+        for (let i = 0; i < rows.length; i++) {
+          const r = rows[i]
+          if (val === '') {
+            r.style.display = 'table-row'
+            found++
+            continue
+          }
+          const tdsn = TWDS.q1('.settingname', r)
+          if (!tdsn) {
+            r.style.display = 'none'
+            continue
+          }
+          const sn = tdsn.textContent
+          if (sn.toLocaleLowerCase().includes(val)) {
+            r.style.display = 'table-row'
+            found++
+            continue
+          }
+          r.style.display = 'none'
+        }
+        if (!found) { // display none everything, val>"": search in the normal text
+          for (let i = 0; i < rows.length; i++) {
+            const r = rows[i]
+            if (r.textContent.toLocaleLowerCase().includes(val)) {
+              r.style.display = 'table-row'
+            }
+          }
+        }
+      },
+      last: div,
+      placeholder: 'search'
+    })
+    TWDS.createEle('button.TWDS_settings_searchx', {
+      last: div,
+      textContent: 'x',
+      onclick: function () {
+        search.value = ''
+        search.onchange()
+      }
+    })
     return thing
   }
   const createMainThing = function () {
-    const thing = document.createElement('div')
-    thing.className = 'TWDS_settings_main'
+    const thing = TWDS.createEle('div.TWDS_settings_main')
     const table = TWDS.createEle({
       nodeName: 'table.settings',
       last: thing
