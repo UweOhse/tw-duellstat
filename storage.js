@@ -26,9 +26,9 @@ TWDS.storage.save = function () {
 
 TWDS.storage.marketsearchwindowworker = function (table, cats, catidx, lookfor, infoele) {
   if (catidx >= cats.length) {
-    infoele.textContent="";
-    if (table.childNodes.length===0) {
-      infoele.textContent=TWDS._('STORAGE_MARKETSEARCH_NOTFOUND','Nothing found');
+    infoele.textContent = ''
+    if (table.childNodes.length === 0) {
+      infoele.textContent = TWDS._('STORAGE_MARKETSEARCH_NOTFOUND', 'Nothing found')
     }
     return
   }
@@ -95,9 +95,9 @@ TWDS.storage.marketsearchwindow = function () {
     lookfor[type].push(parseInt(ii))
   }
   const p = TWDS.createEle('p', { last: container })
-  const infoele = TWDS.createEle('b', { 
-    last: p, 
-    textContent: TWDS._("STORAGE_MARKETSEARCH_PLEASE_WAIT","Please wait, search running")
+  const infoele = TWDS.createEle('b', {
+    last: p,
+    textContent: TWDS._('STORAGE_MARKETSEARCH_PLEASE_WAIT', 'Please wait, search running')
   })
   const table = TWDS.createEle('table', { last: container })
   TWDS.storage.marketsearchwindowworker(table, Object.keys(lookfor), 0, lookfor, infoele)
