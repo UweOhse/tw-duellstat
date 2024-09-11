@@ -17,7 +17,7 @@ TWDS.bonuscalc.getSpeed = function (itemids) {
   let animal = null
   for (let i = 0; i < itemids.length; i++) {
     const it = ItemManager.get(itemids[i])
-    if (it.type === 'animal') {
+    if (it && it.type === 'animal') {
       animal = it
     }
   }
