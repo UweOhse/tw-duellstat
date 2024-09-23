@@ -1,8 +1,6 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 
 TWDS.craftwindow = {}
-TWDS.craftwindow.searchitem = function (str) {
-}
 
 TWDS.craftwindow.recalcmax = function (win) {
   // TWDS.delegate(content, 'change', '.search', function (ev) {
@@ -397,7 +395,7 @@ TWDS.craftwindow.getcontent = function (win) {
     TWDS.createEle({
       nodeName: 'span',
       className: 'profinfo',
-      textContent: Game.InfoHandler.getLocalString4ProfessionId(rec.profession_id),
+      textContent: Game.InfoHandler.getLocalString4ProfessionId(rec.profession_id)+" "+rec.min_level,
       last: ccon
     })
     let inbag = Bag.getItemByItemId(it)
@@ -690,9 +688,10 @@ TWDS.craftwindow.updateresourceline = function (tr0, tr1) {
 
 TWDS.craftwindow.open = function (initialid) {
   // load recipes again
-  TWDS.crafting.start(function () {
+  TWDS.crafting.reset()
+  TWDS.crafting.asyncloader().then(function() {
     TWDS.craftwindow.realopen(initialid)
-  })
+  });
 }
 TWDS.craftwindow.realopen = function (initialid) {
   const wid = 'TWDS_craftwindow'
