@@ -1,8 +1,6 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 
 TWDS.craftcalc = {}
-TWDS.craftcalc.searchitem = function (str) {
-}
 TWDS.craftcalc.getcontent = function (win) {
   const content = TWDS.createEle({
     nodeName: 'div',
@@ -460,8 +458,10 @@ TWDS.craftcalc.open = function (key) {
     }
   }
   const sp = new west.gui.Scrollpane()
-  const content = TWDS.craftcalc.getcontent(win)
-  sp.appendContent(content)
+  TWDS.crafting.asyncloader().then(function() {
+    const content = TWDS.craftcalc.getcontent(win)
+    sp.appendContent(content)
+  });
 
   win.appendToContentPane(sp.getMainDiv())
 }
