@@ -278,6 +278,16 @@ TWDS.duelmap.showTab = function (id) {
 
 TWDS.duelmap.myshowtab = function (win, id) {
   TWDS.duelmap.win = win
+  window.DuelsWindow.window.showLoader()
+  TWDS.alliances.getdata().then(function () {
+    window.DuelsWindow.window.hideLoader()
+    TWDS.duelmap.myshowtab2(win, id)
+  }).catch(function () {
+    window.DuelsWindow.window.hideLoader()
+  })
+}
+
+TWDS.duelmap.myshowtab2 = function (win, id) {
   console.log('win', win, 'id', id)
   win.addClass('nocloseall noreload')
   win.dontCloseAll = true
