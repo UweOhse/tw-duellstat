@@ -124,7 +124,7 @@ TWDS.allimap.drawit = function (map, table) {
   Ajax.get('map', 'get_minimap', {}, function (json) {
     // console.log("MM",json);
     if (json.error) {
-      return new UserMessage(json.msg).show()
+      return new UserMessage(json.error).show()
     }
 
     const ainfo = { }
