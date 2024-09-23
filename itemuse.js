@@ -13,7 +13,7 @@ TWDS.itemuse.itemusehandler = function (itemid, resp) {
   for (let i = 0; i < effs.length; i++) {
     const eff = effs[i]
     if (eff.type === 'learn_recipe') {
-      TWDS.crafting.start()
+      TWDS.crafting.reset()
       continue
     }
     if (eff.type !== 'lottery' && eff.type !== 'content') {
