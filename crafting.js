@@ -26,38 +26,38 @@ TWDS.crafting.storemyrecipes = function (json) {
   }
 }
 
-TWDS.crafting.asyncloader = function(resolve,reject) {
+TWDS.crafting.asyncloader = function (resolve, reject) {
   if (TWDS.crafting.ready) {
     if (resolve) {
-      resolve("loaded in another thread")
-      return;
+      resolve('loaded in another thread')
+      return
     }
-    return Promise.resolve("using already loaded result");
+    return Promise.resolve('using already loaded result')
   }
   if (TWDS.crafting.running) {
     if (resolve) {
-      setTimeout(TWDS.crafting.asyncloader,250,resolve,reject);
-      return;
+      setTimeout(TWDS.crafting.asyncloader, 250, resolve, reject)
+      return
     }
-    return new Promise(function(resolve,reject) {                                                                                      
-      setTimeout(TWDS.crafting.asyncloader,250,resolve,reject);
-    });
+    return new Promise(function (resolve, reject) {
+      setTimeout(TWDS.crafting.asyncloader, 250, resolve, reject)
+    })
   }
-  TWDS.crafting.running=1
-  return new Promise(function(resolve,reject) {                                                                                      
-    Ajax.remoteCall('crafting', '', {}, function(json) {
+  TWDS.crafting.running = 1
+  return new Promise(function (resolve, reject) {
+    Ajax.remoteCall('crafting', '', {}, function (json) {
       if (json.error) {
-        reject(new Error(json.error));
+        reject(new Error(json.error))
       }
-      TWDS.crafting.storemyrecipes(json);
-      TWDS.crafting.ready=1
-      resolve("loaded");
-    });
-  });
+      TWDS.crafting.storemyrecipes(json)
+      TWDS.crafting.ready = 1
+      resolve('loaded')
+    })
+  })
 }
 TWDS.crafting.reset = function () {
-  TWDS.crafting.running=0
-  TWDS.crafting.ready=0
+  TWDS.crafting.running = 0
+  TWDS.crafting.ready = 0
 }
 
 // vim: tabstop=2 shiftwidth=2 expandtab
