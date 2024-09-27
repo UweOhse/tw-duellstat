@@ -1,6 +1,97 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 //
 TWDS.quest = {}
+TWDS.quest.questgroups2kb = {}
+TWDS.quest.getquestgroups2kb = function () {
+  if (Object.values(TWDS.quest.questgroups2kb).length) { return }
+  const url = TWDS.baseURL + '/questgroups2kb.json'
+  $.get(url, function (json) {
+    TWDS.quest.questgroups2kb = json
+  }).fail(function (e) {
+    console.log('failed to get ', url, e)
+  })
+}
+TWDS.quest.kbclick = function (ev) {
+  const span = this
+  const gid = parseInt(span.dataset.groupid)
+  const title = span.dataset.grouptitle
+
+  const w = TWDS.quest.questgroups2kb[gid] || { kbid: 0 }
+  w.kbid = parseInt(w.kbid)
+  if (!w.kbid) {
+    return
+  }
+  const sb = (new west.gui.Selectbox(true))
+    .setHeight('347px')
+    .setWidth('260px')
+    .addListener(function (choice) {
+      console.log('choice', choice)
+      const url = 'https://support.innogames.com/kb/TheWest/' + choice + '/' + w.kbid + '/' + title
+      const a = TWDS.createEle('a', {
+        target: '_blank',
+        href: url
+      })
+      a.click()
+
+      sb.hide()
+    })
+  if (Game.locale in w && w[Game.locale]) {
+    sb.addItem(Game.locale, TWDS.createEle('span.TWDS_kbknown', {
+      textContent: Game.locale
+    }))
+  } else {
+    sb.addItem(Game.locale, TWDS.createEle('span.TWDS_kbunknown', {
+      textContent: Game.locale
+    }))
+  }
+  for (const [k, v] of Object.entries(w)) {
+    if (k === 'kbid') continue
+    if (k === 'id') continue
+    if (k === Game.locale) continue // first above
+    if (v) {
+      sb.addItem(k, TWDS.createEle('span.TWDS_kbknown', {
+        textContent: k
+      }))
+    }
+  }
+  const all = ['cs_CZ', 'da_DK', 'nl_NL', 'en_DK', 'fr_FR', 'de_DE', 'el_GR', 'hu_HU', 'it_IT', 'pl_PL', 'pt_PT', 'pt_BR',
+    'ro_RO', 'ru_RU', 'sk_SK', 'es_ES', 'sv_SE', 'tr_TR']
+  for (let i = 0; i < all.length; i++) {
+    const loc = all[i]
+    if (w[loc]) continue
+    sb.addItem(loc, TWDS.createEle('span.TWDS_kbunknown', {
+      textContent: loc
+    }))
+  }
+
+  sb.show(ev)
+}
+
+TWDS.quest.render = function () {
+  Quest._TWDS_backup_render.apply(this, arguments)
+  if (TWDS.settings.quest_add_util_buttons) {
+    const cont = this.el.find('.quest_description_container .strong')
+    if (!cont || cont.length !== 1) return
+    const w = TWDS.quest.questgroups2kb[this.group] || { kbid: 0 }
+    w.kbid = parseInt(w.kbid)
+    if (!w.kbid) {
+      return
+    }
+    // something removes the onclick handler by creating a copy of the element. so do it the complicated way: delegation below.
+    TWDS.createEle('span.TWDS_quest_kb_link.linklike', {
+      last: cont[0],
+      title: 'Knowledge base',
+      dataset: {
+        groupid: this.group,
+        grouptitle: this.groupTitle
+      },
+      children: [
+        { nodeName: 'img', src: 'https://support.innogames.com/favicon.ico', alt: 'kb' }
+      ]
+    })
+  }
+}
+
 // can't reliably use Quest.getMinimaplink, because TW-Calc uses that, and doesn't call the original/backup function.
 TWDS.quest.renderRequirement = function (req, cls) {
   const li = Quest.prototype._TWDS_backup_renderRequirement.apply(this, arguments)
@@ -185,6 +276,9 @@ TWDS.quest.startfunc = function () {
     Quest.prototype.renderRequirement
   Quest.prototype.renderRequirement = TWDS.quest.renderRequirement
 
+  Quest.prototype._TWDS_backup_render = Quest.prototype._TWDS_backup_render || Quest.prototype.render
+  Quest.prototype.render = TWDS.quest.render
+
   QuestWindow._TWDS_backup_cancelQuest = QuestWindow._TWDS_backup_cancelQuest ||
     QuestWindow.cancelQuest
   QuestWindow.cancelQuest = TWDS.quest.cancelQuest
@@ -196,6 +290,11 @@ TWDS.quest.startfunc = function () {
   TWDS.delegate(document.body, 'click', '.quest_requirement.shorten', function () {
     this.classList.remove('shorten')
   })
+  TWDS.delegate(document.body, 'click', '.TWDS_quest_kb_link', function (ev) {
+    console.log('DELEGATE', this, ev)
+    TWDS.quest.kbclick.call(this, ev)
+  })
+  TWDS.quest.getquestgroups2kb()
 }
 TWDS.registerStartFunc(TWDS.quest.startfunc)
 
