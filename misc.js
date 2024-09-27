@@ -471,4 +471,16 @@ TWDS.registerStartFunc(function () {
     true)
   TWDS.delegate(document.body, 'change', '#windows .sheriff .sheriff-create #tbsh_iCharname',
     TWDS.misc_sheriff_bounty_namechange)
+  window.GambleWindow._TWDS_backup_animateIcons = window.GambleWindow._TWDS_backup_animateIcons || window.GambleWindow.animateIcons
+
+  TWDS.registerSetting('bool', 'misc_gamblewindow_speedup',
+    TWDS._('MISC_SETTING_GAMBLEWINDOW_SPEEDUP', 'Make the octoberfest gamble window 10 times as fast.'),
+    false, function () {
+      if (TWDS.settings.misc_gamblewindow_speedup) {
+        const t = window.GambleWindow.animateIcons.toString().replace(/\b200\b/g, 20).replace(/\b500\b/, 50)
+        eval('GambleWindow.animateIcons=' + t) // eslint-disable-line  no-eval
+      } else {
+        window.GambleWindow.animateIcons = window.GambleWindow._TWDS_backup_animateIcons
+      }
+    })
 })
