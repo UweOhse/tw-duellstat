@@ -395,7 +395,7 @@ TWDS.craftwindow.getcontent = function (win) {
     TWDS.createEle({
       nodeName: 'span',
       className: 'profinfo',
-      textContent: Game.InfoHandler.getLocalString4ProfessionId(rec.profession_id)+" "+rec.min_level,
+      textContent: Game.InfoHandler.getLocalString4ProfessionId(rec.profession_id) + ' ' + rec.min_level,
       last: ccon
     })
     let inbag = Bag.getItemByItemId(it)
@@ -689,9 +689,9 @@ TWDS.craftwindow.updateresourceline = function (tr0, tr1) {
 TWDS.craftwindow.open = function (initialid) {
   // load recipes again
   TWDS.crafting.reset()
-  TWDS.crafting.asyncloader().then(function() {
+  TWDS.crafting.asyncloader().then(function () {
     TWDS.craftwindow.realopen(initialid)
-  });
+  })
 }
 TWDS.craftwindow.realopen = function (initialid) {
   const wid = 'TWDS_craftwindow'
