@@ -448,12 +448,12 @@ TWDS.marketwindow.filter = function (mode, cat) {
     console.timeEnd('FILTER')
     return
   }
-  if (mode==="craft") { // load my recipes when needed.
+  if (mode === 'craft') { // load my recipes when needed.
     if (!TWDS.crafting.ready) {
-      TWDS.crafting.asyncloader().then(function() {
-        TWDS.marketwindow.filter(mode,cat);
-      });
-      return;
+      TWDS.crafting.asyncloader().then(function () {
+        TWDS.marketwindow.filter(mode, cat)
+      })
+      return
     }
   }
 
