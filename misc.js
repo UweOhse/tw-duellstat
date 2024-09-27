@@ -483,4 +483,8 @@ TWDS.registerStartFunc(function () {
         window.GambleWindow.animateIcons = window.GambleWindow._TWDS_backup_animateIcons
       }
     })
+  TWDS.registerSetting('int', 'startupdelay',
+    TWDS._('MISC_SETTING_STARTUPDELAY',
+      'Delay the startup of the script by that many milliseconds. Use this if your are experiencing errors or broken scripts at the start of the game (thundering herd effect). 2000 should be a good starting point.'),
+    { default: 0, min: 0, max: 10000 })
 })

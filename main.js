@@ -77,18 +77,19 @@ window.TWDS = TWDS
 
 TWDS.didstartfuncs = false
 TWDS.wait2callstartfuncs = function () {
-  if (TWDS.didstartfuncs) return
-  const dostartfuncs = function () {
-    TWDS.didstartfuncs = true
+  if (TWDS.didstartfuncs) return // at least we are running them.
+
+  const dostartfuncs = function (idx) {
+    if (idx >= TWDS.startFunctions.length) { return }
+    const fn = TWDS.startFunctions[idx]
     try {
-      for (const fn of Object.values(TWDS.startFunctions)) {
-        fn()
-      }
+      fn()
     } catch (e) {
       console.log('Caught exception', e)
       new UserMessage('Caught exception: ' + e).show()
       console.trace(e)
     }
+    setTimeout(dostartfuncs, 25, idx + 1)
   }
   if (!ItemManager.isLoaded()) {
     EventHandler.listen('itemmanager_loaded', TWDS.wait2callstartfuncs)
@@ -98,7 +99,9 @@ TWDS.wait2callstartfuncs = function () {
     EventHandler.listen('char_avatar_changed', TWDS.wait2callstartfuncs)
     return
   }
-  dostartfuncs()
+
+  TWDS.didstartfuncs = true
+  dostartfuncs(0)
   return EventHandler.ONE_TIME_EVENT
 }
 TWDS.main = function () {
@@ -135,7 +138,6 @@ TWDS.main = function () {
     tr.remove()
     TWDS.clothcache.recalcItemUsage()
   })
-  TWDS.createSideButton()
   TWDS.wait2callstartfuncs()
 
   //
@@ -180,8 +182,12 @@ TWDS.preMain = function () {
     window.setTimeout(TWDS.preMain, 100)
     return
   }
-
-  TWDS.main()
+  TWDS.createSideButton()
+  if (TWDS.settings && 'startupdelay' in TWDS.settings && TWDS.settings.startupdelay > 0) {
+    setTimeout(TWDS.main, TWDS.settings.startupdelay)
+  } else {
+    setTimeout(TWDS.main, 1000)
+  }
 }
 
 TWDS.waitready = function () {
