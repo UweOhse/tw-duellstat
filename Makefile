@@ -11,7 +11,7 @@ CHECK_SOURCES=start.js list_jobdata.js utils.js logging.js css.js $(LANGSJSON) t
    altinventory.js friends.js calculator.js townlog.js craftwindow.js simulator.js bufflist.js achievements.js \
    iteminfo.js fbchat.js invstat.js pinning.js duelinfo.js calendar.js vipendtime.js inventory.js \
    fbmisc.js townwindow.js profilewindow.js buildwindow.js shopsearch.js ranking.js \
-   questgroupwindow.js friendslistwindow.js \
+   questgroupwindow.js friendslistwindow.js questexport.js  \
    quickequipment.js allimap.js stathist.js nightmode.js maphelper.js fortbuild.js playerlistwindow.js \
    nextaction.js upshop.js ghosttowns.js duelmap.js plusminus.js fortrecruiting.js grouptele.js acwindow.js \
    sortable.js extras.js main.js
