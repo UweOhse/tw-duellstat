@@ -458,10 +458,10 @@ TWDS.craftcalc.open = function (key) {
     }
   }
   const sp = new west.gui.Scrollpane()
-  TWDS.crafting.asyncloader().then(function() {
+  TWDS.crafting.asyncloader().then(function () {
     const content = TWDS.craftcalc.getcontent(win)
     sp.appendContent(content)
-  });
+  })
 
   win.appendToContentPane(sp.getMainDiv())
 }
