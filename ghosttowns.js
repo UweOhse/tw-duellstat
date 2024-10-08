@@ -62,7 +62,7 @@ TWDS.ghosttowns.openwindow = function () {
           textContent: t.x + '-' + t.y,
           title: TWDS._('GHOSTTOWNS_CENTER', 'Center town on the map'),
           onclick: function () {
-            Map.center(t.x, t.y)
+            GameMap.center(t.x, t.y)
           }
         }
       ]

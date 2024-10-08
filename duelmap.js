@@ -178,8 +178,8 @@ TWDS.duelmap.update = function (name) {
 
   })
   TWDS.createEle('td.class', { last: tr, textContent: data.class })
-  const mypos = Map.getLastQueuePosition()
-  const wt = window.Map.calcWayTime(mypos, {
+  const mypos = GameMap.getLastQueuePosition()
+  const wt = GameMap.calcWayTime(mypos, {
     x: data.character_x,
     y: data.character_y
   }).formatDuration()
@@ -189,7 +189,7 @@ TWDS.duelmap.update = function (name) {
     innerHTML: wt,
     dataset: { sortval: dist },
     onclick: function () {
-      Map.center(data.character_x, data.character_y)
+      GameMap.center(data.character_x, data.character_y)
     }
 
   })

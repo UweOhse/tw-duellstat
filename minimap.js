@@ -85,12 +85,12 @@ TWDS.minimap.deletefromcache = function (silver, gold) {
 }
 
 TWDS.minimap.radialmenu = function (e) {
-  const t = window.Map.Helper.getPosition(e.parent)
+  const t = GameMap.Helper.getPosition(e.parent)
   if (!t || !('x' in t) || !('y' in t)) {
     return
   }
   const key = t.x + '-' + t.y
-  if (!TWDS.minimap.isDefined(window.Map.JobHandler.Featured[key])) {
+  if (!TWDS.minimap.isDefined(GameMap.JobHandler.Featured[key])) {
     // gold job gone?
     delete TWDS.minimap.cache[key]
   } else {
@@ -98,7 +98,7 @@ TWDS.minimap.radialmenu = function (e) {
     for (const i in TWDS.minimap.cache[key]) {
       if (TWDS.minimap.cache[key][i].marked) { marked[TWDS.minimap.cache[key][i].job_id] = true }
     }
-    const r = window.Map.JobHandler.Featured[t.x + '-' + t.y]
+    const r = GameMap.JobHandler.Featured[t.x + '-' + t.y]
     TWDS.minimap.cache[key] = {}
     for (const i in r) {
       if (!Object.prototype.hasOwnProperty.call(r, i)) {
@@ -188,7 +188,7 @@ TWDS.minimap.updateReal = function () {
     ele[0].dataset.posy = y
 
     ele.click(function (e, t) {
-      window.Map.center(
+      GameMap.center(
         e.target.dataset.posx,
         e.target.dataset.posy
       )
@@ -216,7 +216,7 @@ TWDS.minimap.updateReal = function () {
     ele[0].dataset.posy = y
 
     ele.click(function (e, t) {
-      window.Map.center(
+      GameMap.center(
         e.target.dataset.posx,
         e.target.dataset.posy
       )
@@ -348,7 +348,7 @@ TWDS.minimap.showtaskjobgroups = function () {
     countyno = mat[1]
   }
 
-  const displayedCounty = Map.Counties.getCounty(countyno)
+  const displayedCounty = GameMap.Counties.getCounty(countyno)
   const layer = TWDS.q1('#mmap_layer_' + countyno + '_jobs')
   if (!layer) {
     return
@@ -579,7 +579,7 @@ TWDS.minimap.export = function () {
 }
 TWDS.minimap.export_center_handler = function () {
   const pos = this.textContent.split('-', 2)
-  Map.center(pos[0], pos[1])
+  GameMap.center(pos[0], pos[1])
 }
 TWDS.minimap.ajaxCompletehandler = function (event, xhr, settings) {
   const url = settings.url
@@ -602,9 +602,9 @@ TWDS.minimap.init = function () {
     TWDS.minimap.export_center_handler)
   // Radial Menu can tell us about gold/silver jobs
   try {
-    if (!window.Map.Radialmenu.prototype._twds_minimap_open) {
-      window.Map.Radialmenu.prototype._twds_minimap_radial_open = window.Map.Radialmenu.prototype.open
-      window.Map.Radialmenu.prototype.open = function (e) {
+    if (!GameMap.Radialmenu.prototype._twds_minimap_open) {
+      GameMap.Radialmenu.prototype._twds_minimap_radial_open = GameMap.Radialmenu.prototype.open
+      GameMap.Radialmenu.prototype.open = function (e) {
         try {
           this._twds_minimap_radial_open(e)
           TWDS.minimap.radialmenu(this)
@@ -659,8 +659,8 @@ TWDS.minimap.arrowclickhandler = function (ev) {
   TWDS.minimap.arrowclickhandler2(ev)
 }
 TWDS.minimap.arrowclickhandler2 = function (ev) {
-  const w = Map.width
-  const h = Map.height
+  const w = GameMap.width
+  const h = GameMap.height
   let xmod = 0
   let ymod = 0
   if (ev.target.classList.contains('left')) {
@@ -674,14 +674,14 @@ TWDS.minimap.arrowclickhandler2 = function (ev) {
   } else {
     return
   }
-  const cur = Map.getCurrentMid()
+  const cur = GameMap.getCurrentMid()
   cur.x += xmod
   cur.y += ymod
   if (cur.x < 0) cur.x = w / 2
   if (cur.y < 0) cur.y = h / 2
-  if (cur.x > Map.mapWidth) { cur.x = Map.mapWidth - w / 2 }
-  if (cur.y > Map.mapHeight) { cur.y = Map.mapHeight - h / 2 }
-  Map.center(cur.x, cur.y)
+  if (cur.x > GameMap.mapWidth) { cur.x = GameMap.mapWidth - w / 2 }
+  if (cur.y > GameMap.mapHeight) { cur.y = GameMap.mapHeight - h / 2 }
+  GameMap.center(cur.x, cur.y)
 }
 TWDS.minimap.arrowinit = function () {
   const v = TWDS.settings.minimap_add_navigation
@@ -755,9 +755,9 @@ TWDS.minimap.uiinit = function () {
     }, function () {
       const n = $('.display-tile-coords')
       if (n.length) {
-        Map.hideCoords()
+        GameMap.hideCoords()
       } else {
-        Map.showCoords()
+        GameMap.showCoords()
       }
     }))
 
@@ -836,7 +836,7 @@ TWDS.minimap.uiinit = function () {
         if (found !== null) {
           const x = found[1]
           const y = found[2]
-          window.Map.center(x, y)
+          window.GameMap.center(x, y)
           inp.value = ''
         }
         const rx2 = /^\s*(\d+)\s*$/
@@ -855,17 +855,17 @@ TWDS.minimap.uiinit = function () {
               x = 3 * county * 6635 + 3317
               y = 10176
             }
-            window.Map.center(x, y)
+            window.GameMap.center(x, y)
             inp.value = ''
           }
         }
         const rx3 = /^\s*(ghost|g|indian|i|center|c|home|h)\s*$/i
         found = inp.value.toLowerCase().match(rx3)
         if (found !== null) {
-          if (found[1] === 'ghost' || found[1] === 'g') { window.Map.center(1920, 2176) }
-          if (found[1] === 'indian' || found[1] === 'i') { window.Map.center(28060, 16768) }
-          if (found[1] === 'center' || found[1] === 'c') { window.Map.center(3.5 * 6635, 10176) }
-          if (found[1] === 'home' || found[1] === 'h') { window.Map.center(Character.homeTown.x, Character.homeTown.y) }
+          if (found[1] === 'ghost' || found[1] === 'g') { window.GameMap.center(1920, 2176) }
+          if (found[1] === 'indian' || found[1] === 'i') { window.GameMap.center(28060, 16768) }
+          if (found[1] === 'center' || found[1] === 'c') { window.GameMap.center(3.5 * 6635, 10176) }
+          if (found[1] === 'home' || found[1] === 'h') { window.GameMap.center(Character.homeTown.x, Character.homeTown.y) }
           inp.value = ''
           $('.tw2gui_jobsearchbar_results').hide()
         }

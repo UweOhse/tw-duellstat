@@ -5,12 +5,12 @@ TWDS.quicksilver = {}
 
 TWDS.quicksilver.getAdditionalClasses = function (tileX, tileY) {
   const jobs = JobList.getJobsByGroupId(this.groupId)
-  const tileSize = Map.tileSize
+  const tileSize = GameMap.tileSize
   const pos = {
     x: tileX * tileSize + this.left,
     y: tileY * tileSize + this.top
   }
-  const xtra = Map.JobHandler.Featured[pos.x + '-' + pos.y] || {}
+  const xtra = GameMap.JobHandler.Featured[pos.x + '-' + pos.y] || {}
   let flag = 0
   for (const i in jobs) {
     if (!Object.prototype.hasOwnProperty.call(jobs, i)) { continue }
@@ -29,19 +29,19 @@ TWDS.quicksilver.getAdditionalClasses = function (tileX, tileY) {
          add
 }
 TWDS.registerStartFunc(function () {
-  if (!('_twds_backup_getAdditionalClasses' in Map.Component.JobGroup.prototype)) {
-    Map.Component.JobGroup.prototype._twds_backup_getAdditionalClasses =
-      Map.Component.JobGroup.prototype.getAdditionalClasses
+  if (!('_twds_backup_getAdditionalClasses' in GameMap.Component.JobGroup.prototype)) {
+    GameMap.Component.JobGroup.prototype._twds_backup_getAdditionalClasses =
+      GameMap.Component.JobGroup.prototype.getAdditionalClasses
   }
   TWDS.registerSetting('bool', 'quicksilver',
     TWDS._('QUICKSILVER_SETTING',
       'Mark silver and gold jobs on the world map.'),
     false, function (v) {
       if (v) {
-        Map.Component.JobGroup.prototype.getAdditionalClasses = TWDS.quicksilver.getAdditionalClasses
+        GameMap.Component.JobGroup.prototype.getAdditionalClasses = TWDS.quicksilver.getAdditionalClasses
       } else {
-        Map.Component.JobGroup.prototype.getAdditionalClasses =
-          Map.Component.JobGroup.prototype._twds_backup_getAdditionalClasses
+        GameMap.Component.JobGroup.prototype.getAdditionalClasses =
+          GameMap.Component.JobGroup.prototype._twds_backup_getAdditionalClasses
       }
     }, 'Map', null)
   TWDS.registerSetting('bool', 'quicksilver_exclamation_mark',

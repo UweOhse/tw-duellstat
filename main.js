@@ -100,6 +100,12 @@ TWDS.wait2callstartfuncs = function () {
     return
   }
 
+  if (!('GameMap' in window)) {
+    if ('Map' in window && 'center' in window.Map) {
+      window.GameMap = window.Map // prepare for beta
+    }
+  }
+
   TWDS.didstartfuncs = true
   dostartfuncs(0)
   return EventHandler.ONE_TIME_EVENT

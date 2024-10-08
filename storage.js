@@ -864,9 +864,9 @@ TWDS.storageStartFunction = function () {
     TWDS.storage.importhandler()
   })
 
-  Map.Component.JobGroup.TWDS_backup_getMarkers = Map.Component.JobGroup.getMarkers
-  Map.Component.JobGroup.getMarkers = function (groupId) {
-    let s = Map.Component.JobGroup.TWDS_backup_getMarkers(groupId)
+  GameMap.Component.JobGroup.TWDS_backup_getMarkers = GameMap.Component.JobGroup.getMarkers
+  GameMap.Component.JobGroup.getMarkers = function (groupId) {
+    let s = GameMap.Component.JobGroup.TWDS_backup_getMarkers(groupId)
     if (!TWDS.settings.saleProtection) {
       return s
     }

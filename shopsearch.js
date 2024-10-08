@@ -53,7 +53,7 @@ TWDS.shopsearch.townsbydistance = function (towndata) {
     }
     a.push({
       id: town.id,
-      wt: Map.calcWayTime(pos, town)
+      wt: GameMap.calcWayTime(pos, town)
     })
   }
   a.sort(function (a, b) {
@@ -370,7 +370,7 @@ TWDS.shopsearch.updateresult2 = function (infoarea, table, map, item, towns) {
             ]
           })
         }
-        const wt = Map.calcWayTime(Character.position, town)
+        const wt = GameMap.calcWayTime(Character.position, town)
         tr = TWDS.createEle({
           nodeName: 'tr',
           className: 'town' + townid,

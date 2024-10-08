@@ -865,7 +865,7 @@ TWDS.marketwindow.fillmap3 = function (map, table, all) {
 
   const towns = []
   for (const town of Object.values(all)) {
-    const wt = window.Map.calcWayTime(window.Character.position, { x: town.x, y: town.y })
+    const wt = GameMap.calcWayTime(window.Character.position, { x: town.x, y: town.y })
     town.wt = wt
     town.wtf = wt.formatDuration()
     towns.push(town)
@@ -998,7 +998,7 @@ TWDS.marketwindow.fillmap3 = function (map, table, all) {
       title: TWDS._('MARKETMAP_SHOW_TOWN', 'Show town on map'),
       onclick: function () {
         console.log('OC', this)
-        Map.center(town.x, town.y)
+        GameMap.center(town.x, town.y)
       },
       children: [{
         nodeName: 'img',
@@ -1010,7 +1010,7 @@ TWDS.marketwindow.fillmap3 = function (map, table, all) {
       title: TWDS._('MARKETMAP_MOVE_TO_TOWN', 'Move to town'),
       onclick: function () {
         console.log('OC', this)
-        Map.center(town.x, town.y)
+        GameMap.center(town.x, town.y)
       },
       children: [
         {

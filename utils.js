@@ -534,7 +534,7 @@ TWDS.quest_employer_link_handler = function () {
   Ajax.get('map', 'get_minimap', {}, function (data) {
     const pos = data.quest_locations[id]
     if (!pos) return ''
-    Map.center(pos[0][0], pos[0][1])
+    GameMap.center(pos[0][0], pos[0][1])
   })
 }
 

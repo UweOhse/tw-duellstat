@@ -190,32 +190,32 @@ TWDS.map.radialmenu_close = function () {
   this._TWDS_map_backup_close(true)
 }
 TWDS.registerStartFunc(function () {
-  window.Map.Helper.imgPath._TWDS_backup_lookForModification = window.Map.Helper.imgPath.lookForModification
-  window.Map.Helper.imgPath.lookForModification = function (path, ongameload) {
+  window.GameMap.Helper.imgPath._TWDS_backup_lookForModification = window.GameMap.Helper.imgPath.lookForModification
+  window.GameMap.Helper.imgPath.lookForModification = function (path, ongameload) {
     if (TWDS.settings.misc_normal_water_color) {
       return path
     }
-    return window.Map.Helper.imgPath._TWDS_backup_lookForModification(path, ongameload)
+    return window.GameMap.Helper.imgPath._TWDS_backup_lookForModification(path, ongameload)
   }
   // we may already be too late… the damage may be done.
   TWDS.registerSetting('bool', 'misc_normal_water_color',
     'Show normal water colors instead of the pink/red/green ones of the event. You need to reload the page after a change.', false, null, 'Map')
   if (TWDS.settings.misc_normal_water_color) {
-    Map.Helper.imgPath.clearCache()
+    GameMap.Helper.imgPath.clearCache()
   }
 
-  window.Map.Radialmenu.prototype._TWDS_map_backup_close = window.Map.Radialmenu.prototype.close
-  window.Map.Radialmenu.prototype._TWDS_map_backup_open = window.Map.Radialmenu.prototype.open
+  window.GameMap.Radialmenu.prototype._TWDS_map_backup_close = window.GameMap.Radialmenu.prototype.close
+  window.GameMap.Radialmenu.prototype._TWDS_map_backup_open = window.GameMap.Radialmenu.prototype.open
   TWDS.registerSetting('bool', 'no_jobgroup_animation',
     TWDS._('TWDS_SETTING_no_jobgroup_animation',
       'Do not animate the opening and closing of job groups'),
     false, function (v) {
       if (v) {
-        window.Map.Radialmenu.prototype.close = TWDS.map.radialmenu_close
-        window.Map.Radialmenu.prototype.open = TWDS.map.radialmenu_open
+        window.GameMap.Radialmenu.prototype.close = TWDS.map.radialmenu_close
+        window.GameMap.Radialmenu.prototype.open = TWDS.map.radialmenu_open
       } else {
-        window.Map.Radialmenu.prototype.close = window.Map.Radialmenu.prototype._TWDS_map_backup_close
-        window.Map.Radialmenu.prototype.open = window.Map.Radialmenu.prototype._TWDS_map_backup_open
+        window.GameMap.Radialmenu.prototype.close = window.GameMap.Radialmenu.prototype._TWDS_map_backup_close
+        window.GameMap.Radialmenu.prototype.open = window.GameMap.Radialmenu.prototype._TWDS_map_backup_open
       }
     }, 'Map')
   TWDS.registerSetting('bool', 'misc_trader_show_max_button',

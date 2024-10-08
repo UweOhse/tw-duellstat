@@ -77,12 +77,12 @@ TWDS.sleep.open = function (eventdata) {
                 }
               }
             }
-            if (Map.Helper.isForeignFort(loc.fort, loc.townIds, json.towns)) {
+            if (GameMap.Helper.isForeignFort(loc.fort, loc.townIds, json.towns)) {
               continue
             }
-            if (Map.Helper.isAllianceFort(loc.fort, loc.townIds, json.towns)) {
+            if (GameMap.Helper.isAllianceFort(loc.fort, loc.townIds, json.towns)) {
               forts.push(loc.fort)
-            } else if (Map.Helper.isOwnFort(loc.fort, loc.townIds, json.towns)) {
+            } else if (GameMap.Helper.isOwnFort(loc.fort, loc.townIds, json.towns)) {
               forts.push(loc.fort)
             } else {
               console.log('fort', loc.fort, 'with towns', loc.townIds, 'in the void')
@@ -100,12 +100,12 @@ TWDS.sleep.open = function (eventdata) {
         }
       }
       if (json.towns[i].member_count > 0) {
-        json.towns[i]._twds_waytime = Map.calcWayTime(json.towns[i], mypos)
+        json.towns[i]._twds_waytime = GameMap.calcWayTime(json.towns[i], mypos)
         towns.push(json.towns[i])
       }
     }
     for (let i = 0; i < forts.length; i++) {
-      forts[i]._twds_waytime = Map.calcWayTime(forts[i], mypos)
+      forts[i]._twds_waytime = GameMap.calcWayTime(forts[i], mypos)
     }
     forts.sort(function (a, b) {
       if (a._twds_waytime < b._twds_waytime) return -1
@@ -141,7 +141,7 @@ TWDS.sleep.open = function (eventdata) {
       todos.push({
         town_id: Character.homeTown.town_id,
         name: 'Hometown',
-        waytime: Map.calcWayTime(Character.homeTown, mypos)
+        waytime: GameMap.calcWayTime(Character.homeTown, mypos)
       })
     }
     for (let i = 0; i < forts.length; i++) {

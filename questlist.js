@@ -152,8 +152,8 @@ TWDS.questlist.openwindow = function () {
       if (!ql) continue
       if (!ql[0]) continue
       tiles.push([
-        parseInt(ql[0][0] / Map.tileSize),
-        parseInt(ql[0][1] / Map.tileSize)
+        parseInt(ql[0][0] / GameMap.tileSize),
+        parseInt(ql[0][1] / GameMap.tileSize)
       ])
     }
     Ajax.get('map', 'get_complete_data', {

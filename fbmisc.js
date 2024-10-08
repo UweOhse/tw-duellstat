@@ -136,7 +136,7 @@ TWDS.fbmisc.fortoverviewshowtab = function (id) {
     let oc = a.onclick
     if (!oc) continue
     oc = oc.toString()
-    const m = oc.match(/Map.center\(([0-9]+),\s*([0-9]+)\)/)
+    const m = oc.match(/GameMap.center\(([0-9]+),\s*([0-9]+)\)/)
     const wt = TWDS.q1('span[class^=wayTime]', a.parentNode)
     if (wt) {
       const id = wt.className.replace(/wayTime/, '')

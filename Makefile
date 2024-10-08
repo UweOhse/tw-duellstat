@@ -32,7 +32,7 @@ VERSION:=$(shell git describe --tags --long --dirty --always --broken)
 RELEASEFNAME:=$(VGET).user.js
 RELEASEFNAME:=$(VGET).min.user.js
 
-GLOBALS=--global Game --global TWDS --global Character --global wman --global Bag \
+GLOBALS=--global Game --global TWDS --global Character --global wman --global Bag --global GameMap \
 	--global JobList --global CharacterSkills --global west --global Wear \
 	--global $$ --global ItemManager --global Ajax --global MessagesWindow \
 	--global Premium --global Inventory --global ReportWindow --global tw2widget \
