@@ -776,6 +776,35 @@ TWDS.trader.addItemToInv = function (itemid) {
   TWDS.trader.inventory.push(itemid)
   window.Trader._twds_backup_addItemToInv(itemid)
 }
+TWDS.trader.selldialog = function (itemid) {
+  window.Trader._twds_backup_sellDialog.call(this, itemid)
+  const item = Bag.getItemByItemId(itemid)
+  if (item && item.count > 1 && (TWDS.settings.town_shop_maxminus1)) {
+    const popup = TWDS.q1('#sell_popup')
+    if (popup) {
+      const smi = TWDS.q1('#sell_max_item', popup)
+      if (smi) {
+        const pa = smi.parentNode
+        TWDS.createEle('span.linklike', {
+          textContent: ' (' + (item.count - 1) + ')',
+          style: {
+            padding: '0px 4px 0px 12px',
+            fontWeight: 'bold',
+            color: '#33201B'
+          },
+          last: pa,
+          onclick: function () {
+            // avoid localization issues.
+            window.Trader.maxSellCount(item, popup)
+            window.Trader.lowerSellCount(item, popup)
+          }
+        })
+      }
+    }
+  }
+}
+window.Trader.sellDialog = TWDS.trader.selldialog
+
 TWDS.trader.filterchange = function () {
   const search = TWDS.q1('.TWDS_trader_town_shop_search')
   let searchstr
@@ -1189,6 +1218,9 @@ TWDS.registerStartFunc(function () {
   window.Trader.open = function (a, b, c, d) { return TWDS.trader.open(a, b, c, d) }
   window.Trader._twds_backup_addItemToInv = window.Trader.addItemToInv
   window.Trader.addItemToInv = function (a) { return TWDS.trader.addItemToInv(a) }
+  window.Trader._twds_backup_sellDialog = window.Trader._twds_backup_sellDialog || window.Trader.sellDialog
+  window.Trader.sellDialog = TWDS.trader.selldialog
+
   TWDS.delegate(document.body, 'change', '.TWDS_trader_filter_collectibles', function () {
     TWDS.trader.filterchange()
   })
@@ -1202,6 +1234,10 @@ TWDS.registerStartFunc(function () {
   TWDS.registerSetting('bool', 'town_shop_search',
     TWDS._('MARKET_TOWN_SHOP_SEARCH_SETTING',
       'Add a search field to the town traders.'),
+    true, null, 'Market')
+  TWDS.registerSetting('bool', 'town_shop_maxminus1',
+    TWDS._('MARKET_TOWN_SHOP_MAXMINUS1',
+      'Add a max-1 option to the town shop item sales function.'),
     true, null, 'Market')
 })
 
