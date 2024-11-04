@@ -1,0 +1,42 @@
+div#ui_bottomleft { width: auto; overflow: hidden; }
+div#ui_chat { 
+  margin-top: 12px;
+  &.TWDS_minchat {
+    position: relative;
+    left: -10px;
+    top: 4px;
+    width: 39px;
+    div#toggleMinChat { background-position: 0px 0px; border-width: 0px 8px 34px 0px; }
+    div#servertime { display: none; }
+    > div.tabs div { display: none; }
+    div.container div.friend { display: none!important; }
+    div.container div.general { display: block!important; }
+    div.container div.vertical_divider { display: none; }
+    img.leave_channel { display: none!important; }
+    > div.tabs { 
+      width: 40px;
+      background: url(images/interface/chat/chat-top.png?1);
+      transform: rotateY(180deg);
+    }
+    div.chat_channel { 
+      width: 24px;
+      .new_message { left: 2px; top: 0px; }
+      div.online_count { 
+        background: none;
+        position: absolute;
+        right: 0px;
+        top: -1px;
+        line-height: normal;
+        font-size: 8pt;
+        font-weight: bold;
+        text-align: right;
+        text-shadow: -1px 1px 1px #FFF, 0px 0px 2px #FFF; 
+        cursor: default;
+      }
+    }
+    div.container { width: 40px; background-position-x: right; }
+    div.row_title { left: 5px; width: 32px; opacity: 0; }
+    div.tw2gui_scrollpane { width: 50px; }
+  }
+}
+

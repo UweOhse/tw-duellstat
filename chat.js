@@ -346,6 +346,13 @@ TWDS.registerStartFunc(function () {
   TWDS.chat.init3()
   TWDS.chat.init4()
   TWDS.chat.init5()
+  let t=TWDS.q1("#ui_chat .tabs");
+  if (t) {
+    t.onclick=function() {
+      t.parentNode.classList.toggle("TWDS_minchat");
+    };
+    t.classList.add("linklike");
+  }
 })
 
 // vim: tabstop=2 shiftwidth=2 expandtab
