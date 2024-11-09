@@ -37,14 +37,58 @@ TWDS.upshop.shoprender = function () {
   }
   return thing
 }
+TWDS.upshop.showSellDialog=function(itemid) {
+  if (!TWDS.settings.upshop_sell_max_minus_1) return;
+  this.TWDS_backup_showSellDialog.apply(this, arguments);
+  let it= Bag.getItemByItemId(itemid)
+  let n=it.count;
+
+  if (n<3) return;
+
+  let ap = TWDS.q1("div.tw2gui_dialog .item_sell .pricing_container .amount_picker");
+  if (!ap) return;
+  TWDS.createEle("div.input_minus1_value",{
+    last:ap,
+    children:[
+      {nodeName: "span", textContent:"max-1: "},
+      {nodeName: "span", textContent:n-1}
+    ],
+    onclick: function(ev) {
+      console.log("onclick",ev);
+      let cur=parseInt(TWDS.q1(".tw2gui_textfield input",ap).value);
+      let target=n-1;
+      while (cur!==target) {
+        let ar
+        if (cur<target) {
+          ar=TWDS.q1(".arrow_up",ap);
+          cur++
+        } else {
+          ar=TWDS.q1(".arrow_down",ap);
+          cur--
+        }
+        $(ar).trigger("click");
+      }
+    }
+  });
+}
+
 TWDS.upshop.startfunc = function () {
-  west.game.shop.item.view.prototype.TWDS_backup_render = west.game.shop.item.view.prototype.TWDS_backup_render || west.game.shop.item.view.prototype.render
+  west.game.shop.item.view.prototype.TWDS_backup_render = west.game.shop.item.view.prototype.TWDS_backup_render 
+    || west.game.shop.item.view.prototype.render
   west.game.shop.item.view.prototype.render = TWDS.upshop.shoprender
+
+  /*eslint-disable no-proto*/
+  west.window.shop.view.__proto__.TWDS_backup_showSellDialog = west.window.shop.view.__proto__.TWDS_backup_showSellDialog 
+    || west.window.shop.view.__proto__.showSellDialog
+  west.window.shop.view.__proto__.showSellDialog = TWDS.upshop.showSellDialog
 
   TWDS.registerSetting('bool', 'upshop_show_count',
     TWDS._('UPSHOP_SETTING_SHOW_COUNT', 'in the UPC shop show the number of items owned'), true, null, 'Market, shops and traders', 'Union Pacific Shop')
   TWDS.registerSetting('bool', 'upshop_show_collections',
     TWDS._('UPSHOP_SETTING_SHOW_COLLECTIONS', 'in the UPC shop mark items missing from collections'), true, null, 'Market, shops and traders', 'Union Pacific Shop')
+  TWDS.registerSetting('bool', 'upshop_sell_max_minus_1',
+    TWDS._('UPSHOP_SETTING_SELL_MAXMINUS1', '"add a button to sell all but one of the selected item to the Mobile Trader"'), true, null, 
+    'Market, shops and traders', 'Union Pacific Shop')
 }
 
 if (TWDS.didstartfuncs) {
