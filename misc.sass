@@ -30,6 +30,9 @@ body.TWDS_fix_graveyard {
     }
   }
 }
+body.TWDS_noscrollbars {
+  overflow:hidden;
+}
 body.TWDS_remove_saloon_exclamation_marks img[src*="/images/quest/overview/highlights/new_priority_"] {
   display:none;
 }
@@ -62,3 +65,35 @@ table.TWDS_simpleborder {
     font-weight:bold;
   }
 }
+@media (min-width: 1320px) {
+  body.TWDS_move_eventcounters {
+   .custom_unit_counter {top: -1px!important; margin-left: 310px!important;}
+   #hiro_friends_container {top: -1px!important; margin-right: 304px!important;} 
+   #ui_topbar .TWDS_pinning_starter { display:none }
+  }
+}
+body.TWDS_move_avatar_notibar {
+  div#ui_notibar {
+    left:-4px;
+    margin-top:193px;
+  }
+  div.game_notification_area {
+    left:51px;
+    top:193px;
+  }
+  div#ui_character_avatar_container {
+    left:0;
+    margin-top:0;
+    div#ui_character_container {
+      left:-1px;
+      top:-1px;
+    }
+    div#TWDS_ui_character_container_copy {
+      top:14px;
+    }
+    div#ui_char_avatar {
+      left:3px;
+    }
+  }
+}
+

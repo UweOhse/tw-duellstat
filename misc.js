@@ -228,6 +228,16 @@ TWDS.registerStartFunc(function () {
         document.body.classList.remove('TWDS_show_trader_max_value')
       }
     }, 'misc')
+  TWDS.registerSetting('bool', 'misc_noscrollbars',
+    TWDS._('MISC_SETTING_NOSCROLLBARS',
+      'Remove the scrollbars.'),
+    false, function (v) {
+      if (v) {
+        document.body.classList.add('TWDS_noscrollbars')
+      } else {
+        document.body.classList.remove('TWDS_noscrollbars')
+      }
+    }, 'misc')
 })
 
 TWDS.registerSetting('bool', 'fixRecruitHealth',
@@ -258,6 +268,24 @@ TWDS.registerSetting('bool', 'remove_exclamation_marks',
       document.body.classList.add('TWDS_remove_saloon_exclamation_marks')
     } else {
       document.body.classList.remove('TWDS_remove_saloon_exclamation_marks')
+    }
+  })
+TWDS.registerSetting('bool', 'move_event_counters',
+  TWDS._('MOVE_EVENT_COUNTERS', 'Move event counters into the top row of wide screens (event currency, TW friends)'),
+  false, function (val) {
+    if (val) {
+      document.body.classList.add('TWDS_move_eventcounters')
+    } else {
+      document.body.classList.remove('TWDS_move_eventcounters')
+    }
+  })
+TWDS.registerSetting('bool', 'move_avatar_notibar',
+  TWDS._('MOVE_AVATAR_NOTIBAR', 'Move the avatar and notibar containers to the borders of the window.'),
+  false, function (val) {
+    if (val) {
+      document.body.classList.add('TWDS_move_avatar_notibar')
+    } else {
+      document.body.classList.remove('TWDS_move_avatar_notibar')
     }
   })
 
