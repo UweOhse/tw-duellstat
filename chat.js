@@ -346,12 +346,21 @@ TWDS.registerStartFunc(function () {
   TWDS.chat.init3()
   TWDS.chat.init4()
   TWDS.chat.init5()
-  let t=TWDS.q1("#ui_chat .tabs");
+  const t = TWDS.q1('#ui_chat .tabs')
   if (t) {
-    t.onclick=function() {
-      t.parentNode.classList.toggle("TWDS_minchat");
-    };
-    t.classList.add("linklike");
+    t.classList.add('linklike')
+    t.onclick = function () {
+      t.parentNode.classList.toggle('TWDS_minchat')
+      if (t.parentNode.classList.contains('TWDS_minchat')) {
+        TWDS.settings.chat_minimize = true
+      } else {
+        TWDS.settings.chat_minimize = false
+      }
+      TWDS.saveSettings()
+    }
+    if (TWDS.settings.chat_minimize) {
+      t.parentNode.classList.add('TWDS_minchat')
+    }
   }
 })
 
