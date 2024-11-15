@@ -491,6 +491,17 @@ TWDS.misc_sheriff_bounty_namechange = function () {
 }
 
 TWDS.registerStartFunc(function () {
+  window.Inventory.TWDS_backup_firstLoad = window.Inventory.TWDS_backup_firstLoad || window.Inventory.firstLoad
+  window.Inventory.firstLoad = function (opts) {
+    window.Inventory.TWDS_backup_firstLoad.apply(this, arguments)
+    if (TWDS.settings.misc_no_inv_search_maxlength) {
+      Inventory.guiElements.searchTextfield.maxlength(99999)
+    }
+  }
+  TWDS.registerSetting('bool', 'misc_no_inv_search_maxlength',
+    TWDS._('MISC_SETTING_NO_INV_SEARCH_MAXLENGTH', 'Remove the length restriction of the inventory search'),
+    true)
+
   window.SheriffWindow._TWDS_backup_open = window.SheriffWindow.open
   window.SheriffWindow.open = TWDS.misc_sheriffwindow_open
   TWDS.registerSetting('bool', 'misc_sheriff_minbounty',
