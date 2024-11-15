@@ -38,8 +38,8 @@ TWDS.upshop.shoprender = function () {
   return thing
 }
 TWDS.upshop.showSellDialog = function (itemid) {
-  if (!TWDS.settings.upshop_sell_max_minus_1) return
   this.TWDS_backup_showSellDialog.apply(this, arguments)
+  if (!TWDS.settings.upshop_sell_max_minus_1) return
   const it = Bag.getItemByItemId(itemid)
   const n = it.count
 
