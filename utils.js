@@ -110,6 +110,9 @@ TWDS.q1 = function (sel, pa) {
       if (pa.length) { return pa[0].querySelector(sel) }
       return null
     }
+    if (typeof pa === 'object' && 'querySelector' in pa) {
+      return pa.querySelector(sel) // contentDocument.body
+    }
     const x = TWDS.q1(pa)
     if (!x) return null
     return x.querySelector(sel)
@@ -124,6 +127,9 @@ TWDS.q = function (sel, pa) {
     if (pa instanceof jQuery) {
       if (pa.length) { return pa[0].querySelectorAll(sel) }
       return null
+    }
+    if (typeof pa === 'object' && 'querySelectorAll' in pa) {
+      return pa.querySelectorAll(sel) // contentDocument.body
     }
     const x = TWDS.q1(pa)
     if (!x) return null
