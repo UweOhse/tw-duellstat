@@ -28,12 +28,14 @@ TWDS.upshop.shoprender = function () {
       })
     }
   }
-  if (TWDS.collections.isMissing(iid)) {
-    TWDS.createEle('div.TWDS_upshop_collection.TWDS_collection_missing', {
-      textContent: '',
-      last: thing[0],
-      title: TWDS._('UPSHOP_COLLECTION_TITLE', 'This item is needed to complete a collection')
-    })
+  if (TWDS.settings.upshop_show_collections) {
+    if (TWDS.collections.isMissing(iid)) {
+      TWDS.createEle('div.TWDS_upshop_collection.TWDS_collection_missing', {
+        textContent: '',
+        last: thing[0],
+        title: TWDS._('UPSHOP_COLLECTION_TITLE', 'This item is needed to complete a collection')
+      })
+    }
   }
   return thing
 }
