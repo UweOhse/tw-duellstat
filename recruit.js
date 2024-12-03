@@ -227,35 +227,35 @@ TWDS.recruit.load = function (fortid, ranktoshow) {
         last: tr,
         textContent: pl.name,
         dataset: {
-          idx: pl.idx,
+          idx: pl.idx
         },
         onclick: function () {
           window.PlayerProfileWindow.open(pl.player_id)
         },
-        onmouseenter: function() {
-          let idx=this.dataset.idx
-          let bg=TWDS.q1("#fort_battle_"+fortid+"_battleground");
-          if (!bg) { return; }
-          let box=TWDS.q1(".cell-"+idx,bg);
-          if (!box) return;
-          box.style.outline="2px dotted white";
+        onmouseenter: function () {
+          const idx = this.dataset.idx
+          const bg = TWDS.q1('#fort_battle_' + fortid + '_battleground')
+          if (!bg) { return }
+          const box = TWDS.q1('.cell-' + idx, bg)
+          if (!box) return
+          box.style.outline = '2px dotted white'
         },
-        onmouseleave: function() {
-          let idx=this.dataset.idx
-          let bg=TWDS.q1(".fort_battle_battleground");
-          if (!bg) { return; }
-          let box=TWDS.q1(".cell-"+idx,bg);
-          if (!box) return;
-          box.style.outline="none";
-        },
+        onmouseleave: function () {
+          const idx = this.dataset.idx
+          const bg = TWDS.q1('.fort_battle_battleground')
+          if (!bg) { return }
+          const box = TWDS.q1('.cell-' + idx, bg)
+          if (!box) return
+          box.style.outline = 'none'
+        }
       })
       TWDS.createEle('td', { last: tr, textContent: pl.class })
       TWDS.createEle('td', { last: tr, textContent: pl.level })
-      td=TWDS.createEle('td', { last: tr, textContent: pl.currhealth })
-      if (pl.currhealth===pl.maxhealth) td.style.color="green";
-      else if (pl.currhealth >= pl.maxhealth*0.9) td.style.color="olive";
-      else if (pl.currhealth >= pl.maxhealth*0.75) td.style.color="orange";
-      else td.style.color="red";
+      td = TWDS.createEle('td', { last: tr, textContent: pl.currhealth })
+      if (pl.currhealth === pl.maxhealth) td.style.color = 'green'
+      else if (pl.currhealth >= pl.maxhealth * 0.9) td.style.color = 'olive'
+      else if (pl.currhealth >= pl.maxhealth * 0.75) td.style.color = 'orange'
+      else td.style.color = 'red'
 
       TWDS.createEle('td', { last: tr, textContent: pl.maxhealth })
       TWDS.createEle('td', { last: tr, textContent: rec[1] }) // role
