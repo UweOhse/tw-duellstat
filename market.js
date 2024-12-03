@@ -517,9 +517,8 @@ TWDS.marketwindow.handleFilterChange = function () {
     TWDS.marketwindow.filtermode = combo
     TWDS.marketwindow.filter(combo, m[1])
   }
-  let sel="#mpb_marketoffers div.tw2gui_scrollbar_pulley_area";
-  $(sel).trigger("mousedown"); // trigger eleven mousedowns… for all 11 types of stuff (10 equipment types plus recipes).
-
+  const sel = '#mpb_marketoffers div.tw2gui_scrollbar_pulley_area'
+  $(sel).trigger('mousedown') // trigger eleven mousedowns… for all 11 types of stuff (10 equipment types plus recipes).
 }
 TWDS.marketwindow.updateCategory = function (category, data) {
   return TWDS.marketwindow.updateCategoryReal(category, data)
