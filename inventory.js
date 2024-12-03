@@ -527,6 +527,7 @@ TWDS.inventory.showLastItems = function () { // reimplementation, not calling th
   let j = 0
   for (let i = 0; i < pinned.length; i++) {
     const item = Bag.getItemByItemId(pinned[i])
+    item.divMain[0].classList.add("TWDS_pinned");
     if (item) {
       if (j < leftout) {
         list.unshift(item)
