@@ -205,6 +205,7 @@ TWDS.recruit.load = function (fortid, ranktoshow) {
     let atflag = -1
     const inchatstr = ['offline', 'unknown', 'idle', 'active']
     for (let i = 0; i < todo.length; i++) {
+      let td
       const pl = todo[i]
       console.log('todo', i, pl)
       let inchat = 0
@@ -225,13 +226,37 @@ TWDS.recruit.load = function (fortid, ranktoshow) {
       TWDS.createEle('td.linklike', {
         last: tr,
         textContent: pl.name,
+        dataset: {
+          idx: pl.idx,
+        },
         onclick: function () {
           window.PlayerProfileWindow.open(pl.player_id)
-        }
+        },
+        onmouseenter: function() {
+          let idx=this.dataset.idx
+          let bg=TWDS.q1("#fort_battle_"+fortid+"_battleground");
+          if (!bg) { return; }
+          let box=TWDS.q1(".cell-"+idx,bg);
+          if (!box) return;
+          box.style.outline="2px dotted white";
+        },
+        onmouseleave: function() {
+          let idx=this.dataset.idx
+          let bg=TWDS.q1(".fort_battle_battleground");
+          if (!bg) { return; }
+          let box=TWDS.q1(".cell-"+idx,bg);
+          if (!box) return;
+          box.style.outline="none";
+        },
       })
       TWDS.createEle('td', { last: tr, textContent: pl.class })
       TWDS.createEle('td', { last: tr, textContent: pl.level })
-      TWDS.createEle('td', { last: tr, textContent: pl.currhealth })
+      td=TWDS.createEle('td', { last: tr, textContent: pl.currhealth })
+      if (pl.currhealth===pl.maxhealth) td.style.color="green";
+      else if (pl.currhealth >= pl.maxhealth*0.9) td.style.color="olive";
+      else if (pl.currhealth >= pl.maxhealth*0.75) td.style.color="orange";
+      else td.style.color="red";
+
       TWDS.createEle('td', { last: tr, textContent: pl.maxhealth })
       TWDS.createEle('td', { last: tr, textContent: rec[1] }) // role
       TWDS.createEle('td', { last: tr, textContent: inchatstr[inchat] })
@@ -240,7 +265,7 @@ TWDS.recruit.load = function (fortid, ranktoshow) {
         rectd.classList.add('note')
       }
 
-      const td = TWDS.createEle('td.cur', { last: tr, textContent: '' })
+      td = TWDS.createEle('td.cur', { last: tr, textContent: '' })
       const sel = TWDS.createEle('select', { last: td })
       for (let i = 0; i < privs.length; i++) {
         const opt = TWDS.createEle('option', {
