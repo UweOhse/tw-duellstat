@@ -527,7 +527,6 @@ TWDS.inventory.showLastItems = function () { // reimplementation, not calling th
   let j = 0
   for (let i = 0; i < pinned.length; i++) {
     const item = Bag.getItemByItemId(pinned[i])
-    item.divMain[0].classList.add("TWDS_pinned");
     if (item) {
       if (j < leftout) {
         list.unshift(item)
@@ -539,6 +538,11 @@ TWDS.inventory.showLastItems = function () { // reimplementation, not calling th
   }
   for (let i = 0; i < list.length; i++) {
     Inventory.addItemDivToInv(list[i])
+    if (pinned.includes(list[i].obj.item_id)) {
+      console.log('DOIT', list[i])
+      const b = TWDS.q1('#bag .item[data-twds_item_id="' + list[i].obj.item_id + '"] img.tw_item')
+      b.style.outline = '2px solid goldenrod'
+    };
   }
   Inventory.setNavigation('new', 1, 0)
 }
