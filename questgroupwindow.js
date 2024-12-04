@@ -9,7 +9,7 @@ TWDS.questgroupwindow.showSolvedQuest = function (that, ev) {
     const t = TWDS.q('div.window-quest_group div.quest_description_container span')[1]
     const sp = TWDS.createEle('span')
     TWDS.createEle('br', { last: sp })
-    TWDS.createEle('span', { last: sp, textContent: that.description })
+    TWDS.createEle('span', { last: sp, innerHTML: that.description })
     TWDS.createEle('br', { last: sp })
     TWDS.createEle('span', { last: sp, textContent: '[...]' })
     t.parentNode.insertBefore(sp, t)
