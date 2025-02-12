@@ -181,9 +181,9 @@ TWDS.craftwindow.getcontent = function (win) {
   TWDS.createEle({
     nodeName: 'span',
     className: 'goto_calc linklike',
-    textContent: TWDS._("CRAFTWINDOW_GOTO_CALC","=> calc"),
+    textContent: TWDS._('CRAFTWINDOW_GOTO_CALC', '=> calc'),
     last: myhead,
-    onclick: function() {TWDS.craftcalc.open(); }
+    onclick: function () { TWDS.craftcalc.open() }
   })
 
   TWDS.createEle({
