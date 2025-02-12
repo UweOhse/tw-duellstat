@@ -45,7 +45,7 @@ GLOBALS=--global Game --global TWDS --global Character --global wman --global Ba
 	--global FortOverviewWindow --global QuestWindow --global QuestEmployerView \
 	--global Node --global BankWindow --global CemeteryWindow --global WestUi \
 	--global localStorage --global sessionStorage --global EquipManager --global TaskJob \
-	--global ItemUse
+	--global ItemUse --global MessageSuccess --global MessageError
 all: precheck tw-duellstat.user.js
 
 tw-duellstat.min.user.js: tw-duellstat.user.js
