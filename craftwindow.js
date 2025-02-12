@@ -178,6 +178,13 @@ TWDS.craftwindow.getcontent = function (win) {
     textContent: Character.professionSkill,
     last: h3
   })
+  TWDS.createEle({
+    nodeName: 'span',
+    className: 'goto_calc linklike',
+    textContent: TWDS._("CRAFTWINDOW_GOTO_CALC","=> calc"),
+    last: myhead,
+    onclick: function() {TWDS.craftcalc.open(); }
+  })
 
   TWDS.createEle({
     nodeName: 'label',
@@ -738,10 +745,6 @@ TWDS.craftwindow.togglemenu = function (val) {
   } else {
     if (TWDS.craftwindow.togglemenudone) { entry.off('click') }
   }
-}
-TWDS.craftwindow.sorter = function (ev) { TWDS.craftwindow.sorterReal(ev) }
-TWDS.craftwindow.sorterReal = function (ev) {
-
 }
 
 TWDS.craftwindow.reload = function (win) {
