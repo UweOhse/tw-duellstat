@@ -6,6 +6,73 @@ TWDS.getSettingsContentReal = function () {
     thing.textContent = 'Version: @REPLACEMYVERSION@'
     return thing
   }
+  const createCopyThing = function () {
+    const thing = TWDS.createEle('div.TWDS_settings_importexport')
+    TWDS.createEle('h2', {
+      last: thing,
+      textContent: TWDS._('SETTINGS_EXPORT_IMPORT_HEAD', 'Export / Import')
+    })
+    TWDS.createEle('div.importexportwarning', {
+      last: thing,
+      textContent: TWDS._('SETTINGS_EXPORT_IMPORT_WARNING',
+        "Warning: These functions are meant to copy settings from one world to another, and 'settings' are those above and a few more hidden ones. The storage configuration, the duel history, the statistics, pinned items, and such things will not be copied.\nIf you need to copy the whole data for a world from one computer to another then 'The West Perseus Toolkit' might help (i didn't test it).")
+    })
+
+    TWDS.createEle('button', {
+      last: thing,
+      textContent: TWDS._('SETTINGS_EXPORT', 'Export'),
+      title: TWDS._('SETTINGS_EXPORT_TITLE', 'Export all clothcache settings to the clipboard'),
+      onclick: function () {
+        const t = JSON.stringify(TWDS.settings)
+        navigator.clipboard.writeText(t).then(function () {
+          // Promise resolved successfully.
+          MessageSuccess('Settings copied to the clipboard').show()
+        }, function () {
+          // Promise rejected.
+          MessageError('Failed to write to the clipboard').show()
+        })
+      }
+    })
+    TWDS.createEle('button', {
+      last: thing,
+      textContent: TWDS._('SETTINGS_IMPORT', 'Import'),
+      title: TWDS._('SETTINGS_IMPORT_TITLE', 'Import clothcache settings from the clipboard'),
+      onclick: function () {
+        if (!window.confirm(TWDS._('SETTINGS_COPY_WARNING', 'Did you read the warning?'))) {
+          return
+        }
+        const doit = function (str) {
+          try {
+            TWDS.settings = JSON.parse(str)
+            MessageSuccess('Settings imported').show()
+            TWDS.saveSettings()
+            TWDS.activateSettingsTab()
+          } catch (e) {
+            MessageError('Failed to import settings: ' + e).show()
+          }
+        }
+        try {
+          navigator.clipboard.readText().then(function (str) {
+            doit(str)
+          }, function (e) {
+            // Promise rejected.
+            console.log(e)
+            throw (e)
+          })
+        } catch (e) {
+          console.log('e', e)
+          const textarea = $('<textarea />').css({
+            width: '400px',
+            minHeight: '100px'
+          });
+          (new west.gui.Dialog('Import', textarea)).addButton('ok', function () {
+            doit(textarea.val())
+          }).addButton('cancel').show()
+        }
+      }
+    })
+    return thing
+  }
   const createCacheThing = function () {
     const thing = TWDS.createEle('div.TWDS_settings_cache')
 
@@ -260,6 +327,7 @@ TWDS.getSettingsContentReal = function () {
   div.appendChild(createVersionThing())
   div.appendChild(createCacheThing())
   div.appendChild(createMainThing())
+  div.appendChild(createCopyThing())
   return div
 }
 TWDS.activateSettingsTab = function () {

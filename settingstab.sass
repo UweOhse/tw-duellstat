@@ -48,5 +48,17 @@
     margin-bottom:0.5em;                                                                          
     margin-top:1em;                                                                               
   }                                                                                               
+  div.importexportwarning {
+    white-space:pre-wrap;
+  }
+  div.importexportwarning::before {
+    content: "!!!";
+    color:red;
+    display:inline-block;
+    float:left;
+    font-size:300%;
+    margin-right:0.25em;
+  }
+  button { clear:both; }
 }  
 
