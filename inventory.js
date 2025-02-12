@@ -541,8 +541,8 @@ TWDS.inventory.showLastItems = function () { // reimplementation, not calling th
     if (pinned.includes(list[i].obj.item_id)) {
       console.log('DOIT', list[i])
       const b = TWDS.q1('#bag .item[data-twds_item_id="' + list[i].obj.item_id + '"] img.tw_item')
-      if (b) // TWIR doesn't add twds_item_id ...
-        b.style.outline = '2px solid goldenrod'
+      // TWIR doesn't add twds_item_id ...
+      if (b) { b.style.outline = '2px solid goldenrod' }
     };
   }
   Inventory.setNavigation('new', 1, 0)
