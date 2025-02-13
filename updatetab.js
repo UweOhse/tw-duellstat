@@ -15,7 +15,7 @@ TWDS.updatetab.getContent1 = function () {
           {
             nodeName: 'span',
             textContent: TWDS._('UPDATES_REPORT',
-              'Please use the following link to report bugs or request enhancements, as chat, eeles, emails, forum conversions and posts just do not scale: ')
+              'Please use the following link to report bugs or request enhancements, as chat, teles, emails, forum conversions and posts just do not scale: ')
           }, {
             nodeName: 'a',
             href: TWDS.issueURL,
