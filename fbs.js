@@ -10,8 +10,505 @@ if ('fbstmp' in TWDS) {
   TWDS.fbs.data = TWDS.fbstmp
 }
 TWDS.fbs.bsw = null
+TWDS.fbs.sectortitles = { // this is not a thing of beauty.
+  1: 'S1',
+  3: 'S2',
+  5: 'S3',
+  8: 'W2',
+  10: 'W1',
+  11: 'E2',
+  13: 'E1',
+  15: 'S4',
+  16: 'S5',
+  17: 'S6',
+  18: 'S7',
+  19: 'S8',
+  20: 'W5',
+  21: 'W4',
+  22: 'W3',
+  23: 'E5',
+  24: 'E4',
+  25: 'E3',
+  26: 'N1',
+  27: 'N3',
+  29: 'N2',
+  34: 'HQ',
+  68: 'SW1',
+  69: 'SW2',
+  70: 'EW1',
+  71: 'WW1',
+  72: 'NW1',
+  73: 'NW3',
+  74: 'S9',
+  75: 'S10',
+  76: 'S11',
+  77: 'S12',
+  78: 'W7',
+  79: 'W6',
+  80: 'E7',
+  81: 'E6',
+  82: 'N5',
+  83: 'N6',
+  84: 'N7',
+  85: 'N4',
+  88: 'Gate',
+  89: 'Flag',
+  95: 'KS',
+  121: 'W1',
+  123: 'W2',
+  125: 'S1',
+  127: 'S2',
+  129: 'S3',
+  131: 'E2',
+  133: 'E1',
+  135: 'N1',
+  137: 'N2',
+  139: 'N3',
+  140: 'S4',
+  141: 'S5',
+  142: 'S6',
+  143: 'S7',
+  144: 'S8',
+  145: 'W5',
+  146: 'W4',
+  147: 'W3',
+  148: 'E5',
+  149: 'E4',
+  150: 'E3',
+  151: 'N4',
+  152: 'N5',
+  153: 'N6',
+  154: 'N7',
+  160: 'W6',
+  161: 'W7',
+  162: 'E6',
+  163: 'E7',
+  164: 'S9',
+  165: 'S10',
+  166: 'S11',
+  167: 'S12',
+  168: 'W1',
+  170: 'W2',
+  172: 'S1',
+  174: 'E2',
+  176: 'E1',
+  178: 'S3',
+  180: 'S2',
+  182: 'N1',
+  184: 'N2',
+  186: 'N3',
+  187: 'S4',
+  188: 'S5',
+  189: 'S6',
+  190: 'S7',
+  191: 'S8',
+  192: 'W5',
+  193: 'W4',
+  194: 'W3',
+  195: 'E3',
+  196: 'E4',
+  197: 'E5',
+  203: 'S9',
+  204: 'S12',
+  205: 'N7',
+  206: 'N4',
+  211: 'N5',
+  212: 'N6',
+  213: 'S10',
+  214: 'S11',
+  210: 'E6',
+  209: 'E7',
+  207: 'W6',
+  208: 'W7',
+  216: 'Flag',
+  220: 'Flag',
+  343: 'RS',
+  351: 'HQ',
+  358: 'RS',
+  361: 'KS',
+  389: 'WW2',
+  390: 'EW2',
+  391: 'NW1',
+  393: 'SW1',
+  394: 'SW2',
+  395: 'NW2',
+  392: 'NW3',
+  396: 'WW1',
+  397: 'EW1',
+  437: 'WW2',
+  438: 'WW1',
+  441: 'EW2',
+  442: 'EW1',
+  443: 'NW1',
+  444: 'NW2',
+  446: 'NW3',
+  447: 'SW1',
+  448: 'SW2',
+  452: 'Gate',
+  464: 'HQ',
+  470: 'RS',
+  475: 'KS',
+  478: 'HQ',
+  485: 'Gate',
+  486: 'ST',
+  487: 'WT',
+  488: 'DT',
+  489: 'AT',
+  490: 'AT',
+  491: 'DT',
+  492: 'WT',
+  494: 'ST',
+  495: 'AT',
+  496: 'DT',
+  497: 'ET',
+  498: 'ST'
+}
+TWDS.fbs.describesector = function (secno) {
+  const t = TWDS.fbs.data.result.map.sectors[secno].sourceId
+  if (t in TWDS.fbs.sectortitles) {
+    return TWDS.fbs.sectortitles[t]
+  }
+  return secno
+}
+
 TWDS.fbs.graphs = ['healthandguns', 'damage', 'kills', 'moves', 'bumps',
   'shotrate', 'online', 'bonus', 'hits', 'distance']
+
+TWDS.fbs.addlog1 = function (logcontainer, wantround) {
+  logcontainer.textContent = 'want round ' + wantround
+  const battledata = TWDS.fbs.data.result
+  let indef = true
+  let pl = {}
+  const playerstatus = {} // new battle.
+  const pstats = {}
+  let warned = 0
+  let round = 0
+
+  const shorthp = function (hp) {
+    if (hp >= 10000) {
+      hp = (hp / 1000).toFixed(1) + 'k'
+    }
+    return hp
+  }
+  const addpstat = function (pl1, pl2, key, val) {
+    if (!(pl1 in pstats)) {
+      pstats[pl1] = {
+        hitsdone: {},
+        damagedone: {},
+        killsdone: {},
+        missed: {},
+        hitstaken: {},
+        damagetaken: {},
+        dodged: {}
+      }
+    }
+    if (!(pl2 in pstats[pl1][key])) { pstats[pl1][key][pl2] = 0 }
+    pstats[pl1][key][pl2] += val
+    if (isNaN(pstats[pl1][key][pl2]) && warned < 10) {
+      warned++
+      console.log('ISNAN', pl1, pl2, key, val)
+    }
+  }
+
+  const describepos = function (pos) {
+    const map = battledata.map
+    const width = map.width
+    const x = pos % width
+    const y = Math.floor(pos / width)
+    const secno = map.cells[pos]
+    return x + 'x' + y + ' (' + TWDS.fbs.describesector(secno) + ')'
+  }
+
+  const CEpa = function (x, y) { return TWDS.createEle(x, { last: y }) }
+
+  TWDS.fbs.data.result.attackerlist.forEach(function (p) {
+    p.side = 'a'
+    p._curpos = p.firstroundpos
+    p._curhealth = p.starthp
+    playerstatus[p.westid] = p
+  })
+  TWDS.fbs.data.result.defenderlist.forEach(function (p) {
+    p.side = 'd'
+    playerstatus[p.westid] = p
+    p._curhealth = p.starthp
+    p._curpos = p.firstroundpos
+  })
+  const roundstatus = function () {
+    if (round !== wantround) return
+    const docount = function (side, cl) {
+      let n = 0
+      Object.values(playerstatus).forEach(function (s) {
+        if (s.side === side) {
+          if (s.charclass === cl || cl === '*') {
+            if (s._curhealth > 0) { n++ }
+          }
+        }
+      })
+      return n
+    }
+    const dosum = function (side, cl) {
+      let n = 0
+      Object.values(playerstatus).forEach(function (s) {
+        if (s.side === side) {
+          if (s.charclass === cl || cl === '*') {
+            n += s._curhealth
+          }
+        }
+      })
+      return n
+    }
+    const app = function (pa, tag, data) {
+      const ele = CEpa(tag, pa)
+      ele.textContent = data
+    }
+    const li = CEpa('li', logcontainer)
+    CEpa('div', li).textContent = 'The status before round ' + round + ':'
+    const tab = CEpa('table.beforerounddata', li)
+    let tr
+
+    tr = CEpa('tr', tab)
+    app(tr, 'th', 'Side')
+    app(tr, 'th', '')
+    app(tr, 'th', 'Total')
+    app(tr, 'th', 'Advents.')
+    app(tr, 'th', 'Duellers')
+    app(tr, 'th', 'Workers')
+    app(tr, 'th', 'Soldiers')
+    app(tr, 'th', 'Greenh.')
+
+    tr = CEpa('tr', tab)
+    app(tr, 'th', 'Att')
+    app(tr, 'th', 'Guns')
+    app(tr, 'td', docount('a', '*'))
+    app(tr, 'td', docount('a', 0))
+    app(tr, 'td', docount('a', 1))
+    app(tr, 'td', docount('a', 2))
+    app(tr, 'td', docount('a', 3))
+    app(tr, 'td', docount('a', -1))
+
+    tr = CEpa('tr', tab)
+    app(tr, 'th', 'Def')
+    app(tr, 'th', 'Guns')
+    app(tr, 'td', docount('d', '*'))
+    app(tr, 'td', docount('d', 0))
+    app(tr, 'td', docount('d', 1))
+    app(tr, 'td', docount('d', 2))
+    app(tr, 'td', docount('d', 3))
+    app(tr, 'td', docount('d', -1))
+
+    tr = CEpa('tr', tab)
+    app(tr, 'th', 'Att')
+    app(tr, 'th', 'Health')
+    app(tr, 'td', dosum('a', '*'))
+    app(tr, 'td', dosum('a', 0))
+    app(tr, 'td', dosum('a', 1))
+    app(tr, 'td', dosum('a', 2))
+    app(tr, 'td', dosum('a', 3))
+    app(tr, 'td', dosum('a', -1))
+
+    tr = CEpa('tr', tab)
+    app(tr, 'th', 'Def')
+    app(tr, 'th', 'Health')
+    app(tr, 'td', dosum('d', '*'))
+    app(tr, 'td', dosum('d', 0))
+    app(tr, 'td', dosum('d', 1))
+    app(tr, 'td', dosum('d', 2))
+    app(tr, 'td', dosum('d', 3))
+    app(tr, 'td', dosum('d', -1))
+  }
+  const logoneplayersround = function () {
+    if (!pl.westid) return
+    const p = playerstatus[pl.westid]
+    if (!p) return
+
+    let str = ''
+    str += pl.online ? 'online' : 'offline'
+    str += p.side === 'a' ? ' attacker' : ' defender'
+    str += ' ' + p.name
+    str += ' (' + shorthp(pl.health) + 'hp' + ')'
+    str += ' @' + describepos(p._curpos)
+    let did = 0
+    if (pl.shootat) {
+      if (pl.hit) {
+        addpstat(pl.westid, pl.shootat, 'hitsdone', 1)
+        addpstat(pl.westid, pl.shootat, 'damagedone', pl.hit)
+        addpstat(pl.shootat, pl.westid, 'hitstaken', 1)
+        addpstat(pl.shootat, pl.westid, 'damagetaken', pl.hit)
+        str += ' hit ' + playerstatus[pl.shootat].name +
+        ' @' + describepos(playerstatus[pl.shootat]._curpos) +
+        ' for ' + pl.hit + ' hp' +
+        ' (' + shorthp(playerstatus[pl.shootat]._curhealth) +
+        '->' + shorthp(playerstatus[pl.shootat]._curhealth - pl.hit) +
+        ')'
+
+        playerstatus[pl.shootat]._curhealth -= pl.hit
+      } else if (pl.killed) {
+        addpstat(pl.westid, pl.shootat, 'killsdone', 1)
+        addpstat(pl.westid, pl.shootat, 'hitsdone', 1)
+        addpstat(pl.westid, pl.shootat, 'damagedone', pl.killed)
+        addpstat(pl.shootat, pl.westid, 'hitstaken', 1)
+        addpstat(pl.shootat, pl.westid, 'damagetaken', pl.killed)
+        playerstatus[pl.shootat]._curhealth = 0
+        str += ' knocked out ' + playerstatus[pl.shootat].name +
+        ' @' + describepos(playerstatus[pl.shootat]._curpos) +
+        ' with ' + pl.killed + ' hp damage.'
+      } else {
+        addpstat(pl.westid, pl.shootat, 'missed', 1)
+        addpstat(pl.shootat, pl.westid, 'dodged', 1)
+        str += ' missed ' + playerstatus[pl.shootat].name +
+        ' @' + describepos(playerstatus[pl.shootat]._curpos)
+      }
+      did++
+    }
+    if (pl.moved && pl.moved !== p._curpos) {
+      if (did++) {
+        str += ' and'
+      }
+      const s1 = battledata.map.cells[pl.target]
+      const s2 = battledata.map.cells[pl.moved]
+      p._curpos = pl.moved
+      if (pl.moved === pl.target) {
+        str += ' moved to ' +
+          describepos(pl.moved) +
+          ' reaching the target'
+      } else if (s1 !== s2) {
+        str += ' moved to ' +
+          describepos(pl.moved) +
+          ' on the way to ' +
+          describepos(pl.target)
+      } else {
+        str += ' moved to ' +
+          describepos(pl.moved) +
+          ' not reaching the target ' +
+          describepos(pl.target)
+      }
+    }
+    if (!did) {
+      str += ' did nothing'
+    }
+    if (round === wantround) {
+      const li = CEpa('li', logcontainer)
+      li.className = 'playersround'
+      li.textContent = str
+    }
+  }
+
+  const log = TWDS.fbs.data.result.log
+  const logtypes = TWDS.fbs.data.result.logtypes
+
+  for (let i = 0; i < log.length; i += 2) {
+    if (round > wantround) break
+    const what = log[i]
+    const detail = log[i + 1]
+    switch (logtypes[what]) {
+      case 'ROUNDSTART':
+        if (pl.westid) { logoneplayersround(logcontainer, battledata) }
+        pl = {}
+        round = detail
+
+        roundstatus()
+        if (round === wantround) {
+          TWDS.createEle('li.newround', {
+            last: logcontainer,
+            textContent: 'The defenders turn:'
+          })
+        }
+
+        indef = true
+
+        break
+      case 'CHARTURN':
+        if (pl.westid) { logoneplayersround(logcontainer, battledata) }
+        pl = {}
+        pl.westid = detail
+        if (playerstatus[pl.westid].side === 'a' && indef) {
+          indef = false
+          if (round === wantround) {
+            TWDS.createEle('li.newhalfround', {
+              last: logcontainer,
+              textContent: 'The attackers turn:'
+            })
+          }
+        }
+        break
+      case 'CHARTARGET':
+        pl.target = detail
+        break
+      case 'CHARHEALTH':
+        pl.health = detail
+        break
+      case 'CHARONLINE':
+        pl.online = detail
+        break
+      case 'SHOOTAT':
+        pl.shootat = detail
+        break
+      case 'HIT':
+        pl.hit = detail
+        break
+      case 'KILLED':
+        pl.killed = detail
+        break
+      case 'MOVED':
+        pl.moved = detail
+        break
+      default:
+        console.log('unknown log type', what)
+        break
+    }
+  }
+  if (pl.westid) { logoneplayersround(battledata) }
+}
+TWDS.fbs.addlog = function (content) {
+  const battledata = TWDS.fbs.data.result
+
+  content.textContent = ''
+  TWDS.createEle({
+    nodeName: 'h3',
+    last: content,
+    textContent: 'Log'
+  })
+  const uicontainer = TWDS.createEle({
+    nodeName: 'div',
+    last: content
+  })
+  const updatevalues = function (delta) {
+    let val = parseInt(inp.value)
+    val += delta
+    if (val < 2) val = 2
+    if (val > battledata.roundsplayed) val = battledata.roundsplayed
+    inp.value = val
+    prev.disabled = false
+    next.disabled = false
+    if (val < 3) { prev.disabled = true }
+    if (val > battledata.roundsplayed - 1) { next.disabled = true }
+    TWDS.fbs.addlog1(logcontainer, val)
+  }
+  const prev = TWDS.createEle('button.prev', {
+    last: uicontainer,
+    textContent: '<---',
+    disabled: true,
+    onclick: function () { updatevalues(-1) }
+  })
+  const inp = TWDS.createEle('input', {
+    last: uicontainer,
+    value: '2',
+    min: 2,
+    max: battledata.roundsplayed,
+    onchange: function () { updatevalues(0) }
+  })
+  const next = TWDS.createEle('button.next', {
+    last: uicontainer,
+    textContent: '--->',
+    disabled: false,
+    onclick: function () { updatevalues(+1) }
+  })
+  const logcontainer = TWDS.createEle({
+    nodeName: 'ul',
+    last: content
+  })
+  TWDS.fbs.addlog1(logcontainer, 2)
+}
 
 TWDS.fbs.makepersonstats = function (a, r, extra) {
   const fuddle2 = {
@@ -335,45 +832,12 @@ TWDS.fbs.parselog = function () {
   }
   return [rounddata, extradata]
 }
-TWDS.fbs.makebasestats = function () {
+TWDS.fbs.makebasestats_sub = function (whom, content) {
   const _ = TWDS._
-  this.bsw = wman.open('TWDS_fbs_basestats').setMiniTitle(_('FBS_TITLE', 'statistics'))
-  this.bsw.setTitle(_('FBS_TITLE', 'statistics'))
-  this.bsw.setSize(700, 400)
-  const content = TWDS.createEle({
-    nodeName: 'div',
-    className: 'TWDS_fbs_basestats_content'
-  })
+  const res = TWDS.fbs.parselog()
+  const extradata = res[1]
 
-  const [rdata, extradata] = TWDS.fbs.parselog()
-
-  TWDS.q1('.tw2gui_window_content_pane', this.bsw.getMainDiv()).appendChild(content)
-  TWDS.q1('.tw2gui_window_content_pane', this.bsw.getMainDiv()).classList.add('TWDS_scrollbar')
-
-  let outcome = 'Unknown result (' + this.data.battle_outcome + ')'
-  switch (this.data.battle_outcome) {
-    case 'FINALROUND': outcome = _('FBS_OUTCOME_DEFENDED', 'Fort defended'); break
-    case 'FLAGLOST': outcome = _('FBS_OUTCOME_FLAGLOST', 'Flag taken'); break
-    case 'ATTACKER_WIPED': outcome = _('FBS_OUTCOME_ATTACKERS_BEATEN', 'Attackers beaten'); break
-    case 'DEFENDER_WIPED': outcome = _('FBS_OUTCOME_DEFENDERS_BEATEN', 'Defenders beaten'); break
-  }
-  let lc = Game.locale.replace('_', '-')
-  if (lc === 'en-DK') lc = 'en-GB' // en-dk: 16.52.04, en-GB: 16:52:04
-
-  let dt = new Date(this.data.result_date * 1000)
-  dt = dt.toLocaleString(lc)
-
-  const h3 = TWDS.createEle({
-    nodeName: 'h3',
-    textContent: _('FBS_THE_FIGHT_FOR', 'The fight for: ') + this.data.result.fortname
-  })
-  content.appendChild(h3)
-
-  const p = TWDS.createEle({
-    nodeName: 'p',
-    textContent: outcome + ' @ ' + dt
-  })
-  content.appendChild(p)
+  content.textContent = ''
 
   const tab = TWDS.createEle({
     nodeName: 'table'
@@ -535,97 +999,287 @@ TWDS.fbs.makebasestats = function () {
     }
   }
   const clname = ['greenhorn', 'adventurer', 'duelist', 'worker', 'soldier']
-  for (let i = -1; i < 5; i++) {
-    let at
-    let df
-    if (i === -1) {
-      at = atall
-      df = dfall
-    } else {
-      at = atall.byclass[i]
-      df = dfall.byclass[i]
-    }
-    if (at.count + df.count === 0) { continue }
-    if (i === -1) {
-      tbody.appendChild(subhead(_('FBS_OVER_ALL_CLASSES', 'Over all character classes')))
-    } else {
-      tbody.appendChild(subhead(Game.InfoHandler.getLocalString4Charclass(clname[i])))
-    }
-    r(_('FBS_FIGHTERS', 'Fighters'), at.count, df.count, false,
-      'The number of fighters at the start of the battle.')
-    r(_('FBS_SURVIVORS', 'Survivors'), at.survived, df.survived, false,
-      'The number of fighters still standing at the end of the battle.')
-    r(_('FBS_AVERAGE_ALIVE', 'Avg. # of fighters alive.'), at.personroundsalive / rounds, df.personroundsalive / rounds, true,
-      'Counted over time, not a simple average.')
 
-    r(_('FBS_HP_AT_START', 'HP at start'), at.starthp, df.starthp, false)
-    r(_('FBS_HP_AT_END', 'HP at end'), at.finishedhp, df.finishedhp, false)
-    q(_('FBS_MOST_HP', 'Most HP'), at.highest_starthp, df.highest_starthp, false)
-    r(_('FBS_MISSING_HP', 'Missing HP at start'), at.maxhp - at.starthp, df.maxhp - df.starthp, false,
-      'The amount of HP not filled up')
-    r(_('FBS_HP_LOST', 'HP lost'), at.starthp - at.finishedhp, df.starthp - df.finishedhp, false)
-    r(_('FBS_HP_AVERAGE', 'HP average'), at.starthp / at.count, df.starthp / df.count, true, 'Total start HP divided by fighters')
-
-    // sr('totalcauseddamage', 'Damage caused')
-    r(_('FBS_TOTAL_DAMAGE_DONE', 'Total damage done'), at.totalcauseddamage, df.totalcauseddamage, false, 'per fighter')
-    r(_('FBS_AVERAGE_DAMAGE_DONE', 'Average damage done'), at.totalcauseddamage / at.count, df.totalcauseddamage / df.count, true, 'per fighter')
-    r(_('FBS_AVERAGE_DAMAGE_PER_HIT', '... per hit'), at.totalcauseddamage / at.hitcount, df.totalcauseddamage / df.hitcount, true)
-    r(_('FBS_AVERAGE_HITS_DONE', 'Average hits done'), at.hitcount / at.count, df.hitcount / df.count, true)
-    r(_('FBS_AVERAGE_MISSED_SHOTS', 'Average missed shots'), at.misscount / at.count, df.misscount / df.count, true)
-
-    r(_('FBS_AVERAGE_DAMAGE_TAKEN', 'Average damage taken'), df.totalcauseddamage / at.count, at.totalcauseddamage / df.count, true)
-    r(_('FBS_AVERAGE_DODGED_SHOTS', 'Average dodged shots'), at.dodgecount / at.count, df.dodgecount / df.count, true)
-    r(_('FBS_AVERAGE_HITS_TAKEN', 'Average hits taken'), at.takenhits / at.count, df.takenhits / df.count, true)
-
-    r(_('FBS_KOS_ACHIEVED', 'KOs achieved'), at.ko_count, df.ko_count)
-    r(_('FBS_CRITICAL_HITS', 'Critical hits'), at.crithits, df.crithits)
-    r(_('FBS_GHOSTS', 'Ghosts'), at.playdeadcount, df.playdeadcount)
-
-    r(_('FBS_TOTAL_LEVELS', 'Total levels'), at.charlevel, df.charlevel)
-    r(_('FBS_AVERAGE_LEVEL', 'Average level'), at.charlevel / at.count, df.charlevel / df.count, true)
-    q(_('FBS_HIGHEST_LEVEL', 'Highest level'), at.highest_charlevel, df.highest_charlevel, true)
-    // r('Highest level by', at.highest_charlevel.by, df.highest_charlevel.by, false)
-    // r('Avg. # of levels alive.', at.personlevelroundsalive/rounds, df.personlevelroundsalive/rounds, true)
-
-    r(_('FBS_AVERAGE_MAX_WEAPON_DMG', 'Average max weapon. dmg.'), at.weaponmaxdmg / at.count, df.weaponmaxdmg / df.count, true)
-    r(_('FBS_AVERAGE_MIN_WEAPON_DMG', 'Average min weapon. dmg.'), at.weaponmindmg / at.count, df.weaponmindmg / df.count, true)
-    //
-    q(_('FBS_HIGHEST_DMG_BY_1', 'Highest damage by one fighter'), at.highest_totalcauseddamage,
-      df.highest_totalcauseddamage, false)
-    q(_('FBS_HIGHEST_SINGLE_SHOT_DMG', 'Highest single shot damage'), at.highest_maxdamage, df.highest_maxdamage, false)
-    q(_('FBS_MOST_HITS', 'Most hits'), at.highest_hitcount, df.highest_hitcount, false)
-    q(_('FBS_HIGHEST_HIT_PERCENT', 'Highest hits %'), at.highest_hitquote, df.highest_hitquote, true)
-
-    q(_('FBS_MOST_DODGES', 'Most dodges'), at.highest_dodgecount, df.highest_dodgecount, false)
-    q(_('FBS_HIGHEST_DODGE_PERCENT', 'Highest dodge %'), at.highest_dodgequote, df.highest_dodgequote, true)
-    q(_('FBS_MOST_HITS_TAKEN', 'Most hits taken'), at.highest_takenhits, df.highest_takenhits, false)
-
-    q(_('FBS_MOST_KOS', 'Most KOs'), at.highest_ko_count, df.highest_ko_count, false)
-    q(_('FBS_MOST_CRITS', 'Most critical hits'), at.highest_crithits, df.highest_crithits, false)
-    q(_('FBS_MOST_GHOSTS', 'Most Ghosts'), at.highest_playdeadcount, df.highest_playdeadcount, false)
-    q(_('FBS_MOST_MOVES', 'Most moves'), at.highest_moves, df.highest_moves, false)
-    q(_('FBS_MOST_FIELDS_MOVED', 'Most fields moved'), at.highest_fieldsmoved, df.highest_fieldsmoved, true)
-    q(_('FBS_MOST_SECTORS_MOVED', 'Most sectors moved'), at.highest_sectorsmoved, df.highest_sectorsmoved, false)
-
-    r(_('FBS_SHOTS_FIRED', 'Shots fired'), at.hitcount + at.misscount, df.hitcount + df.misscount)
-    r(_('FBS_SHOTS_FIRED_PERCENT', 'Shots fired%'),
-      100.0 * (at.hitcount + at.misscount) / at.personroundsalive54,
-      100.0 * (df.hitcount + df.misscount) / df.personroundsalive54, true,
-      'Percent of the possible shots fired (assuming at least one target in the line of sight in each round)')
-    r(_('FBS_ONLINE_PERCENT', 'Online %'),
-      100.0 * (at.onlinecount) / at.personroundsalive54,
-      100.0 * (df.onlinecount) / df.personroundsalive54, true,
-      'Counting every round online, divided by the number of fighters alive')
+  let at
+  let df
+  if (whom === -1) {
+    at = atall
+    df = dfall
+  } else {
+    at = atall.byclass[whom]
+    df = dfall.byclass[whom]
   }
 
-  TWDS.fbs.addgraphs(content, rdata)
+  if (whom === -1) {
+    tbody.appendChild(subhead(_('FBS_OVER_ALL_CLASSES', 'Over all character classes')))
+  } else {
+    tbody.appendChild(subhead(Game.InfoHandler.getLocalString4Charclass(clname[whom])))
+  }
+  r(_('FBS_FIGHTERS', 'Fighters'), at.count, df.count, false,
+    'The number of fighters at the start of the battle.')
+  if (at.count + df.count === 0) {
+    return
+  }
+  r(_('FBS_SURVIVORS', 'Survivors'), at.survived, df.survived, false,
+    'The number of fighters still standing at the end of the battle.')
+  r(_('FBS_AVERAGE_ALIVE', 'Avg. # of fighters alive.'), at.personroundsalive / rounds, df.personroundsalive / rounds, true,
+    'Counted over time, not a simple average.')
+
+  r(_('FBS_HP_AT_START', 'HP at start'), at.starthp, df.starthp, false)
+  r(_('FBS_HP_AT_END', 'HP at end'), at.finishedhp, df.finishedhp, false)
+  q(_('FBS_MOST_HP', 'Most HP'), at.highest_starthp, df.highest_starthp, false)
+  r(_('FBS_MISSING_HP', 'Missing HP at start'), at.maxhp - at.starthp, df.maxhp - df.starthp, false,
+    'The amount of HP not filled up')
+  r(_('FBS_HP_LOST', 'HP lost'), at.starthp - at.finishedhp, df.starthp - df.finishedhp, false)
+  r(_('FBS_HP_AVERAGE', 'HP average'), at.starthp / at.count, df.starthp / df.count, true, 'Total start HP divided by fighters')
+
+  // sr('totalcauseddamage', 'Damage caused')
+  r(_('FBS_TOTAL_DAMAGE_DONE', 'Total damage done'), at.totalcauseddamage, df.totalcauseddamage, false, 'per fighter')
+  r(_('FBS_AVERAGE_DAMAGE_DONE', 'Average damage done'), at.totalcauseddamage / at.count, df.totalcauseddamage / df.count, true, 'per fighter')
+  r(_('FBS_AVERAGE_DAMAGE_PER_HIT', '... per hit'), at.totalcauseddamage / at.hitcount, df.totalcauseddamage / df.hitcount, true)
+  r(_('FBS_AVERAGE_HITS_DONE', 'Average hits done'), at.hitcount / at.count, df.hitcount / df.count, true)
+  r(_('FBS_AVERAGE_MISSED_SHOTS', 'Average missed shots'), at.misscount / at.count, df.misscount / df.count, true)
+
+  r(_('FBS_AVERAGE_DAMAGE_TAKEN', 'Average damage taken'), df.totalcauseddamage / at.count, at.totalcauseddamage / df.count, true)
+  r(_('FBS_AVERAGE_DODGED_SHOTS', 'Average dodged shots'), at.dodgecount / at.count, df.dodgecount / df.count, true)
+  r(_('FBS_AVERAGE_HITS_TAKEN', 'Average hits taken'), at.takenhits / at.count, df.takenhits / df.count, true)
+
+  r(_('FBS_KOS_ACHIEVED', 'KOs achieved'), at.ko_count, df.ko_count)
+  r(_('FBS_CRITICAL_HITS', 'Critical hits'), at.crithits, df.crithits)
+  r(_('FBS_GHOSTS', 'Ghosts'), at.playdeadcount, df.playdeadcount)
+
+  r(_('FBS_TOTAL_LEVELS', 'Total levels'), at.charlevel, df.charlevel)
+  r(_('FBS_AVERAGE_LEVEL', 'Average level'), at.charlevel / at.count, df.charlevel / df.count, true)
+  q(_('FBS_HIGHEST_LEVEL', 'Highest level'), at.highest_charlevel, df.highest_charlevel, true)
+  // r('Highest level by', at.highest_charlevel.by, df.highest_charlevel.by, false)
+  // r('Avg. # of levels alive.', at.personlevelroundsalive/rounds, df.personlevelroundsalive/rounds, true)
+
+  r(_('FBS_AVERAGE_MAX_WEAPON_DMG', 'Average max weapon. dmg.'), at.weaponmaxdmg / at.count, df.weaponmaxdmg / df.count, true)
+  r(_('FBS_AVERAGE_MIN_WEAPON_DMG', 'Average min weapon. dmg.'), at.weaponmindmg / at.count, df.weaponmindmg / df.count, true)
+  //
+  q(_('FBS_HIGHEST_DMG_BY_1', 'Highest damage by one fighter'), at.highest_totalcauseddamage,
+    df.highest_totalcauseddamage, false)
+  q(_('FBS_HIGHEST_SINGLE_SHOT_DMG', 'Highest single shot damage'), at.highest_maxdamage, df.highest_maxdamage, false)
+  q(_('FBS_MOST_HITS', 'Most hits'), at.highest_hitcount, df.highest_hitcount, false)
+  q(_('FBS_HIGHEST_HIT_PERCENT', 'Highest hits %'), at.highest_hitquote, df.highest_hitquote, true)
+
+  q(_('FBS_MOST_DODGES', 'Most dodges'), at.highest_dodgecount, df.highest_dodgecount, false)
+  q(_('FBS_HIGHEST_DODGE_PERCENT', 'Highest dodge %'), at.highest_dodgequote, df.highest_dodgequote, true)
+  q(_('FBS_MOST_HITS_TAKEN', 'Most hits taken'), at.highest_takenhits, df.highest_takenhits, false)
+
+  q(_('FBS_MOST_KOS', 'Most KOs'), at.highest_ko_count, df.highest_ko_count, false)
+  q(_('FBS_MOST_CRITS', 'Most critical hits'), at.highest_crithits, df.highest_crithits, false)
+  q(_('FBS_MOST_GHOSTS', 'Most Ghosts'), at.highest_playdeadcount, df.highest_playdeadcount, false)
+  q(_('FBS_MOST_MOVES', 'Most moves'), at.highest_moves, df.highest_moves, false)
+  q(_('FBS_MOST_FIELDS_MOVED', 'Most fields moved'), at.highest_fieldsmoved, df.highest_fieldsmoved, true)
+  q(_('FBS_MOST_SECTORS_MOVED', 'Most sectors moved'), at.highest_sectorsmoved, df.highest_sectorsmoved, false)
+
+  r(_('FBS_SHOTS_FIRED', 'Shots fired'), at.hitcount + at.misscount, df.hitcount + df.misscount)
+  r(_('FBS_SHOTS_FIRED_PERCENT', 'Shots fired%'),
+    100.0 * (at.hitcount + at.misscount) / at.personroundsalive54,
+    100.0 * (df.hitcount + df.misscount) / df.personroundsalive54, true,
+    'Percent of the possible shots fired (assuming at least one target in the line of sight in each round)')
+  r(_('FBS_ONLINE_PERCENT', 'Online %'),
+    100.0 * (at.onlinecount) / at.personroundsalive54,
+    100.0 * (df.onlinecount) / df.personroundsalive54, true,
+    'Counting every round online, divided by the number of fighters alive')
+}
+
+TWDS.fbs.makebasestats_base = function (content, rdata, extradata) {
+  const _ = TWDS._
+  const rounds = this.data.result.roundsplayed - 1
+  const atall = this.makepersonstats(this.data.result.attackerlist, rounds, extradata.at)
+  const dfall = this.makepersonstats(this.data.result.defenderlist, rounds, extradata.def)
+
+  content.textContent = ''
+
+  let outcome = 'Unknown result (' + this.data.battle_outcome + ')'
+  switch (this.data.battle_outcome) {
+    case 'FINALROUND': outcome = _('FBS_OUTCOME_DEFENDED', 'Fort defended'); break
+    case 'FLAGLOST': outcome = _('FBS_OUTCOME_FLAGLOST', 'Flag taken'); break
+    case 'ATTACKER_WIPED': outcome = _('FBS_OUTCOME_ATTACKERS_BEATEN', 'Attackers beaten'); break
+    case 'DEFENDER_WIPED': outcome = _('FBS_OUTCOME_DEFENDERS_BEATEN', 'Defenders beaten'); break
+  }
+  let lc = Game.locale.replace('_', '-')
+  if (lc === 'en-DK') lc = 'en-GB' // en-dk: 16.52.04, en-GB: 16:52:04
+
+  let dt = new Date(this.data.result_date * 1000)
+  dt = dt.toLocaleString(lc)
+
+  TWDS.createEle({
+    nodeName: 'p',
+    last: content,
+    textContent: outcome + ' @ ' + dt
+  })
+
+  const tab = TWDS.createEle({
+    nodeName: 'table',
+    last: content
+  })
+
+  TWDS.createEle({
+    nodeName: 'thead',
+    last: tab,
+    children: [
+      {
+        nodeName: 'tr',
+        children: [
+          { nodeName: 'th', textContent: _('FBS_ATT_SIDE', 'Attacking side'), className: 'tw_red' },
+          { nodeName: 'th', textContent: '' },
+          { nodeName: 'th', textContent: _('FBS_DEF_SIDE', 'Defending side'), className: 'tw_blue' }
+        ]
+      }
+    ]
+  })
+
+  const tbody = TWDS.createEle({
+    nodeName: 'tbody',
+    last: tab
+  })
+
+  TWDS.createEle({
+    nodeName: 'tr',
+    last: tbody,
+    children: [
+      { nodeName: 'td', textContent: this.data.result.attackertownname },
+      { nodeName: 'th', textContent: 'Town' },
+      { nodeName: 'td', textContent: this.data.result.defendertownname }
+    ]
+  })
+
+  const r = function (t, a, d, transform, hint) {
+    const dotnull = "<span class='dotnull'>&nbsp;&nbsp;</span>"
+    if (a instanceof Array) {
+      a = a.join(', ')
+      d = d.join(', ')
+      if (a === '' && d === '') { return }
+    } else {
+      if (a === 0 && d === 0) return // soldiers ghosting :-)
+    }
+    if (transform) {
+      if (isNaN(a) || !isFinite(a)) {
+        a = '-' + dotnull
+      } else {
+        a = a.toFixed(1)
+      }
+      if (isNaN(d) || !isFinite(d)) {
+        d = '-' + dotnull
+      } else {
+        d = d.toFixed(1)
+      }
+    } else {
+      if (typeof a === 'number') {
+        if (isNaN(a) || !isFinite(a)) {
+          a = '-'
+        }
+        if (isNaN(d) || !isFinite(d)) {
+          d = '-'
+        }
+      }
+      a += dotnull
+      d += dotnull
+    }
+    if (hint === null) hint = ''
+    const e = TWDS.createEle({
+      nodeName: 'tr',
+      children: [
+        { nodeName: 'td', innerHTML: a },
+        { nodeName: 'th', textContent: t },
+        { nodeName: 'td', innerHTML: d }
+      ]
+    })
+    if (hint > '') {
+      TWDS.q1('th', e).title = hint
+    }
+    tbody.appendChild(e)
+  }
+
+  const at = atall
+  const df = dfall
+
+  r(_('FBS_FIGHTERS', 'Fighters'), at.count, df.count, false,
+    'The number of fighters at the start of the battle.')
+  r(_('FBS_SURVIVORS', 'Survivors'), at.survived, df.survived, false,
+    'The number of fighters still standing at the end of the battle.')
+
+  r(_('FBS_HP_AT_START', 'HP at start'), at.starthp, df.starthp, false)
+  r(_('FBS_HP_AT_END', 'HP at end'), at.finishedhp, df.finishedhp, false)
+  r(_('FBS_HP_LOST', 'HP lost'), at.starthp - at.finishedhp, df.starthp - df.finishedhp, false)
+
+  // sr('totalcauseddamage', 'Damage caused')
+  r(_('FBS_TOTAL_DAMAGE_DONE', 'Total damage done'), at.totalcauseddamage, df.totalcauseddamage, false, 'per fighter')
+
+  r(_('FBS_AVERAGE_LEVEL', 'Average level'), at.charlevel / at.count, df.charlevel / df.count, true)
+
+  r(_('FBS_ONLINE_PERCENT', 'Online %'),
+    100.0 * (at.onlinecount) / at.personroundsalive54,
+    100.0 * (df.onlinecount) / df.personroundsalive54, true,
+    'Counting every round online, divided by the number of fighters alive')
+}
+TWDS.fbs.makebasestats = function () {
+  const _ = TWDS._
+  const [rdata, extradata] = TWDS.fbs.parselog()
+  this.bsw = wman.open('TWDS_fbs_basestats').setMiniTitle(_('FBS_TITLE', 'Statistics'))
+  const content = TWDS.createEle({
+    nodeName: 'div',
+    className: 'TWDS_fbs_basestats_content'
+  })
+  TWDS.q1('.tw2gui_window_content_pane', this.bsw.getMainDiv()).appendChild(content)
+  TWDS.q1('.tw2gui_window_content_pane', this.bsw.getMainDiv()).classList.add('TWDS_scrollbar')
+  this.bsw.addTab('base', 'TWDS_FBS_TAB_BASE', function () {
+    TWDS.fbs.bsw.showLoader()
+    TWDS.fbs.makebasestats_base(content, rdata, extradata)
+    TWDS.fbs.bsw.activateTab('TWDS_FBS_TAB_BASE')
+    TWDS.fbs.bsw.hideLoader()
+  })
+  this.bsw.addTab('all', 'TWDS_FBS_TAB_ALL', function () {
+    TWDS.fbs.bsw.showLoader()
+    TWDS.fbs.makebasestats_sub(-1, content)
+    TWDS.fbs.bsw.activateTab('TWDS_FBS_TAB_ALL')
+    TWDS.fbs.bsw.hideLoader()
+  })
+  this.bsw.setTitle(_('FBS_THE_FIGHT_FOR', 'The fight for: ') + this.data.result.fortname)
+  this.bsw.setSize(700, 400)
+  TWDS.fbs.bsw.activateTab('TWDS_FBS_TAB_BASE')
+
+  TWDS.fbs.makebasestats_base(content, rdata, extradata)
+
+  const rounds = this.data.result.roundsplayed - 1
+  const atall = this.makepersonstats(this.data.result.attackerlist, rounds, extradata.at)
+  const dfall = this.makepersonstats(this.data.result.defenderlist, rounds, extradata.def)
+
+  const clname = ['greenhorn', 'adventurer', 'duelist', 'worker', 'soldier']
+  for (let i = 0; i < 5; i++) {
+    const at = atall.byclass[i]
+    const df = dfall.byclass[i]
+    if (at.count + df.count === 0) { continue }
+    this.bsw.addTab(clname[i], 'TWDS_FBS_TAB_' + clname[i], function () {
+      TWDS.fbs.bsw.showLoader()
+      TWDS.fbs.makebasestats_sub(i, content)
+      TWDS.fbs.bsw.activateTab('TWDS_FBS_TAB_' + clname[i])
+      TWDS.fbs.bsw.hideLoader()
+    })
+  }
+  this.bsw.addTab('graphs', 'TWDS_FBS_TAB_GRAPHS', function () {
+    TWDS.fbs.bsw.showLoader()
+    TWDS.fbs.addgraphs(content, rdata)
+    TWDS.fbs.bsw.activateTab('TWDS_FBS_TAB_GRAPHS')
+    TWDS.fbs.bsw.hideLoader()
+  })
+  this.bsw.addTab('log', 'TWDS_FBS_TAB_LOG', function () {
+    TWDS.fbs.bsw.showLoader()
+    TWDS.fbs.addlog(content)
+    TWDS.fbs.bsw.activateTab('TWDS_FBS_TAB_LOG')
+    TWDS.fbs.bsw.hideLoader()
+  })
 }
 TWDS.fbs.addgraphs = function (content, rdata) {
-  const h3 = TWDS.createEle({
+  content.textContent = ''
+  TWDS.createEle({
     nodeName: 'h3',
+    last: content,
     textContent: 'Graphs'
   })
-  content.appendChild(h3)
   // content.appendChild(can)
   for (let i = 0; i < TWDS.fbs.graphs.length; i++) {
     const k = 'graph_' + TWDS.fbs.graphs[i]

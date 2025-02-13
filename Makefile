@@ -22,7 +22,7 @@ SASS_SOURCES=utils.sass minimap.sass joblist.sass market.sass craftwindow.sass q
   townwindow.sass profilewindow.sass speedcalc.sass showset.sass buildwindow.sass shopsearch.sass fortbuild.sass \
   quickequipment.sass overlay.sass stathist.sass calculator.sass playerlistwindow.sass logging.sass upshop.sass \
   ghosttowns.sass duelmap.sass nextaction.sass fortrecruiting.sass grouptele.sass friendslistwindow.sass recruit.sass \
-  chat.sass recruit.sass
+  chat.sass recruit.sass fbs.sass
 
 # stuff i load manually sometimes
 CHECK_EXTRA_SOURCES:=$(shell ls _*.js)
