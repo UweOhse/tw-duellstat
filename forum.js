@@ -1,12 +1,29 @@
 // vim: tabstop=2 shiftwidth=2 expandtab
 //
 TWDS.forum = {}
+TWDS.forum.tries = 0
 TWDS.forum.onload = function (ev, data) {
   const iframe = TWDS.q1("iframe[src='forum.php']")
   if (!iframe) return
   const body = iframe.contentDocument.body
   if (!body) return
   const overview = TWDS.q1('#thread_overview', body)
+  if (!overview) {
+    const f = TWDS.q('#content .fancytable', body)
+    if (f.length) {
+      // that's a thread display.
+      return
+    }
+    TWDS.forum.tries++
+    console.log('TWDS.forum.onload tried #', TWDS.forum.tries)
+    if (TWDS.forum.tries < 4) {
+      setTimeout(TWDS.forum.onload, TWDS.forum.tries * 250)
+    } else {
+      console.log('forum still has no thread overview after 3 tries, giving up.')
+    }
+    return
+  }
+
   if (!overview) {
     // we are in a thread
     const blp = TWDS.q1('.fancytable.thread .button.lastPage', body)
@@ -54,8 +71,10 @@ TWDS.forum.onload = function (ev, data) {
     }
   })
 }
+
 TWDS.forum.open = function () {
   const out = window.ForumWindow.TWDS_backup_open.apply(this, arguments)
+  TWDS.forum.tries = 0
   const iframe = TWDS.q1("iframe[src='forum.php']")
   if (iframe) {
     iframe.onload = TWDS.forum.onload
