@@ -522,8 +522,27 @@ TWDS.registerStartFunc(function () {
         window.GambleWindow.animateIcons = window.GambleWindow._TWDS_backup_animateIcons
       }
     })
+
   TWDS.registerSetting('int', 'startupdelay',
     TWDS._('MISC_SETTING_STARTUPDELAY',
       'Delay the startup of the script by that many milliseconds. Use this if your are experiencing errors or broken scripts at the start of the game (thundering herd effect). 2000 should be a good starting point.'),
     { default: 0, min: 0, max: 10000 })
+
+  TWDS.registerSetting('bool', 'misc_wof_showcount',
+    TWDS._('MISC_SETTING_WOF_SHOWCOUNT', 'Show item count in the WOF reword dialog.'),
+    false)
+  tw2widget.WoFPrizesItemSmall.prototype.TWDS_backup_init =
+      tw2widget.WoFPrizesItemSmall.prototype.TWDS_backup_init || tw2widget.WoFPrizesItemSmall.prototype.init
+  tw2widget.WoFPrizesItemSmall.prototype.init = function (obj, opts) {
+    tw2widget.WoFPrizesItemSmall.prototype.TWDS_backup_init.apply(this, arguments)
+    if (!TWDS.settings.misc_wof_showcount) { return }
+    const d = this.getMainDiv()
+    let n = Bag.getItemCount(obj.item_id)
+    const w = Wear.get(obj.type)
+    if (w && w.obj.item_id === obj.item_id) { n++ }
+    TWDS.createEle('div.TWDS_wof_count', {
+      last: d[0],
+      textContent: n
+    })
+  }
 })
