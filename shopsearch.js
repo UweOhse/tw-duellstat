@@ -18,7 +18,7 @@ TWDS.shopsearch.gettowns = async function () {
       const out = {}
       for (const town of Object.values(towns)) {
         const id = town.town_id
-        if (!town.member_count) continue
+        if (!town.member_count && !town.npctown) continue
         out[id] = {
           id: id,
           x: town.x,
@@ -51,6 +51,7 @@ TWDS.shopsearch.townsbydistance = function (towndata) {
     if (town.id === Character.town_id) {
       continue
     }
+    if (town.points<=600) continue;
     a.push({
       id: town.id,
       wt: GameMap.calcWayTime(pos, town)
