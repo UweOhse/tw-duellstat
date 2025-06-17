@@ -72,13 +72,13 @@ TWDS.quest.render = function () {
   if (TWDS.settings.quest_add_util_buttons) {
     const cont = this.el.find('.quest_description_container .strong')
     if (!cont || cont.length !== 1) {
-      TWDS.info("Tqr not adding KB link, because no .strong found");
+      TWDS.info('Tqr not adding KB link, because no .strong found')
       return
     }
     const w = TWDS.quest.questgroups2kb[this.group] || { kbid: 0 }
     w.kbid = parseInt(w.kbid)
     if (!w.kbid) {
-      TWDS.info("Tqr not adding KB link, because kbid is 0");
+      TWDS.info('Tqr not adding KB link, because kbid is 0')
       return
     }
     // something removes the onclick handler by creating a copy of the element. so do it the complicated way: delegation below.
