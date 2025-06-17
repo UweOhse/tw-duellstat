@@ -115,6 +115,23 @@ TWDS.jobwindow.initView2 = function () {
       out.appendChild(ins)
     }
   }
+  if (TWDS.settings.jobwindow_add_optim_link) {
+    if (this.jobId) {
+      const out = TWDS.q1('.tw2gui_inner_window_title', d)
+      TWDS.createEle('span.TWDS_jobwindow_optim_link.linklike', {
+        last: out,
+        textContent: '++',
+        dataset: {
+          jobid: this.jobId
+        },
+        title: TWDS._('JOBWINDOW_SEARCH_BETTER_EQUIPMENT', 'search for better equipment'),
+        onclick: function () {
+          const jid = this.dataset.jobid
+          TWDS.calculator.openwindow(null, jid)
+        }
+      })
+    }
+  }
   // annotation
   if (TWDS.settings.jobwindow_offer_note) {
     const out = TWDS.q1('.tw2gui_window_content_pane', d)
