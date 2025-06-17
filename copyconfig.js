@@ -96,7 +96,7 @@ TWDS.copyclothcachedata.save = function () {
 
 TWDS.copyclothcachedata.openwindow = function () {
   const win = TWDS.utils.stdwindow('TWDS_copyconfigwindow', 'Copy Clothcache Data', 'CCcD')
-  const text = 'These functions allow you to all data clothcache has to another browser.' +
+  const text = 'These functions allow you to copy all data clothcache has to another browser.' +
             'It is a multi step process:<br>' +
   '<ol>' +
   '<li>1. open the game in the old browser.' +
@@ -145,6 +145,6 @@ TWDS.copyclothcachedata.openwindow = function () {
     onclick: TWDS.copyclothcachedata.load
   })
 }
-TWDS.registerExtra('TWDS.copyclothcachedata.openwindow', 'Code Clothcache data', 'Copy any clothcache data to another browser')
+TWDS.registerExtra('TWDS.copyclothcachedata.openwindow', 'Copy Clothcache data', 'Copy any clothcache data to another browser')
 
 // vim: tabstop=2 shiftwidth=2 expandtab
