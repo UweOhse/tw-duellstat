@@ -530,21 +530,19 @@ TWDS.registerStartFunc(function () {
 
   TWDS.registerSetting('bool', 'misc_wof_showcount',
     TWDS._('MISC_SETTING_WOF_SHOWCOUNT', 'Show item count in the wheel of fortune / event reward dialog.'),
-    false);
-  tw2widget.WoFPrizesItemSmall.prototype.TWDS_backup_init=
-      tw2widget.WoFPrizesItemSmall.prototype.TWDS_backup_init || tw2widget.WoFPrizesItemSmall.prototype.init;
-  tw2widget.WoFPrizesItemSmall.prototype.init=function(obj,opts) { 
-    tw2widget.WoFPrizesItemSmall.prototype.TWDS_backup_init.apply(this,arguments); 
-    if (!TWDS.settings.misc_wof_showcount)
-      return;
-    let d=this.getMainDiv(); 
-    let n=Bag.getItemCount(obj.item_id)
-    let w=Wear.get(obj.type);
-    if (w && w.obj.item_id===obj.item_id)
-      n++;
-    TWDS.createEle("div.TWDS_wof_count",{
-      last:d[0],
-      textContent:n
-    });
-  };
+    false)
+  tw2widget.WoFPrizesItemSmall.prototype.TWDS_backup_init =
+      tw2widget.WoFPrizesItemSmall.prototype.TWDS_backup_init || tw2widget.WoFPrizesItemSmall.prototype.init
+  tw2widget.WoFPrizesItemSmall.prototype.init = function (obj, opts) {
+    tw2widget.WoFPrizesItemSmall.prototype.TWDS_backup_init.apply(this, arguments)
+    if (!TWDS.settings.misc_wof_showcount) { return }
+    const d = this.getMainDiv()
+    let n = Bag.getItemCount(obj.item_id)
+    const w = Wear.get(obj.type)
+    if (w && w.obj.item_id === obj.item_id) { n++ }
+    TWDS.createEle('div.TWDS_wof_count', {
+      last: d[0],
+      textContent: n
+    })
+  }
 })
