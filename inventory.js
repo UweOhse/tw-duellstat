@@ -464,7 +464,7 @@ TWDS.inventory.open2 = function (dw, clickhandler, opts) {
       ele.classList.add('TWDS_maybefiltered')
     }
   }
-  if (filters && !found && (TWDS.settings.inventory || TWDS.settings.inventory_add_filters)) {
+  if (filters && !found && TWDS.settings.inventory_add_filters) {
     TWDS.createEle({
       nodeName: 'div.TWDS_filter.TWDS_filter_all.TWDS_maybefiltered',
       dataset: { filter: 'all' },
@@ -564,48 +564,22 @@ TWDS.registerStartFunc(function () {
   t = Bag.removeItem.toString().replace(/this.getItemsIdsByType/, 'Bag.TWDS_backup_i_getItemsIdsByType')
   eval('Bag.removeItem=' + t) // eslint-disable-line  no-eval
 
-  const old = {
-    size: -1,
-    sizeSearch: -1,
-    sizeCustom: -1,
-    latestSize: -1,
-    availableCategories: []
-  }
-  TWDS.registerSetting('bool', 'inventory',
-    TWDS._('SETTING_INVENTORY', 'Provide a larger inventory.'),
+  TWDS.registerSetting('bool', 'inventory_large_early',
+    TWDS._('SETTING_LARGE_INVENTORY_EARLY', 'Provide early access to the in-game larger inventory.'),
     false, function (v) {
       if (v) {
-        document.body.classList.add('TWDS_large_inventory')
-        if (old.size === -1) {
-          old.size = Inventory.size
-          old.sizeSearch = Inventory.sizeSearch
-          old.latestSize = Inventory.latestSize
-          old.sizeCustom = Inventory.sizeCustom
-          old.availableCategories = Inventory.availableCategories
-        }
-        Inventory.size = 66
-        Inventory.sizeSearch = 55
-        Inventory.sizeCustom = 55
-        Inventory.availableCategories = ['new', 'belt', 'body', 'foot', 'head', 'neck', 'pants', 'animal', 'right_arm', 'left_arm', 'yield', 'upgradeable']
-        Inventory.latestSize = 66
+        document.body.classList.add('TWDS_inventory_early_large')
       } else {
-        document.body.classList.remove('TWDS_large_inventory')
-        if (old.size !== -1) {
-          Inventory.size = old.size
-          Inventory.sizeSearch = old.sizeSearch
-          Inventory.sizeCustom = old.sizeCustom
-          Inventory.latestSize = old.latestSize
-          Inventory.availableCategories = old.availableCategories
-        }
+        document.body.classList.remove('TWDS_inventory_early_large')
       }
     })
   TWDS.registerSetting('bool', 'inventory_add_filters',
-    TWDS._('SETTING_INVENTORY_ADD_FILTERS', 'Add filters even to a normal sized inventory.'),
+    TWDS._('SETTING_INVENTORY_ADD_FILTERS', 'Add filters even to the expanded inventory.'),
     false, function (v) {
       if (v) {
-        document.body.classList.add('TWDS_normal_inventory_filters')
+        document.body.classList.add('TWDS_inventory_add_filters')
       } else {
-        document.body.classList.remove('TWDS_normal_inventory_filters')
+        document.body.classList.remove('TWDS_inventory_add_filters')
       }
     })
 })

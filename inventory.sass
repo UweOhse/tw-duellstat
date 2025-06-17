@@ -1,6 +1,14 @@
+body.TWDS_inventory_early_large {
+  .tw2gui_window.inventory .bag_resize {
+    display:inline-block;
+  }
+  .TWDS_pinned {
+    outline:2px solid goldenrod;
+  }
+}
 body.TWDS_large_inventory,
-body.TWDS_normal_inventory_filters {
-  #windows .inventory {
+body.TWDS_inventory_add_filters {
+  #windows .inventory.expanded {
     &.TWDS_filters_active {
       .TWDS_filter_configure {
         outline:2px solid red;
@@ -8,9 +16,6 @@ body.TWDS_normal_inventory_filters {
       .TWDS_maybefiltered {
         box-shadow: 0 2px red
       }
-    }
-    .TWDS_pinned {
-      outline:2px solid goldenrod;
     }
     .filters {
       .TWDS_filter_configure {
@@ -99,7 +104,7 @@ body.TWDS_normal_inventory_filters {
     }
   }
 }
-body.TWDS_large_inventory {
+body.oldTWDS_large_inventory {
   #windows .inventory {
     width: 724px;
     .tw2gui_inner_window_bg {
