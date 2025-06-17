@@ -51,7 +51,7 @@ TWDS.shopsearch.townsbydistance = function (towndata) {
     if (town.id === Character.town_id) {
       continue
     }
-    if (town.points<=600) continue;
+    if (town.points <= 600) continue
     a.push({
       id: town.id,
       wt: GameMap.calcWayTime(pos, town)
