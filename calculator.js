@@ -359,6 +359,7 @@ TWDS.calculator.exec = function (filterarea, selectarea, resultarea, advmode) {
   const str = TWDS.q1('#TWDS_CALC_extraitems input').value
   const extras = str.split(/ /).filter((x) => x > '').map((x) => parseInt(x))
   const gc = TWDS.genCalc.exec(sels.bonus, sels.skills, include, extras, advmode)
+  console.log('gc result', gc)
   for (let i = 0; i < gc.combos.length; i++) {
     const cd = TWDS.createEle({
       nodeName: 'div.combodisplay',
@@ -524,7 +525,7 @@ TWDS.calculator.openmaintainwindow = function () {
     textContent: TWDS._('CALCULATOR_MAINTAIN_INFO', 'Click on a name to see the search in the calculator.')
   })
 }
-TWDS.calculator.openwindow = function (calledpreset) {
+TWDS.calculator.openwindow = function (calledpreset, calledjob) {
   const myname = 'TWDS_calc_window'
   const win = wman.open(myname, TWDS._('CALCULATOR_TITLE', 'Calculator'), 'TWDS_calc_window')
   win.setMiniTitle('Calculator')
@@ -872,6 +873,13 @@ TWDS.calculator.openwindow = function (calledpreset) {
     if (found) {
       found.selected = true
       presetselect.onchange()
+    }
+  }
+  if (calledjob !== null) {
+    const found = TWDS.q1(".jobselect option[value='" + calledjob + "']", presetarea)
+    if (found) {
+      found.selected = true
+      jobselect.onchange()
     }
   }
 
