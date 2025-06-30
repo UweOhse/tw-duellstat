@@ -438,7 +438,9 @@ TWDS.minimap.import = function () {
   const doit = function () {
     TWDS.minimap.importtext(textarea.val())
   };
-  (new west.gui.Dialog('Bonus-Jobs Import', textarea)).addButton('ok', doit).addButton('cancel').show()
+  (new west.gui.Dialog('Bonus-Jobs Import', textarea))
+    .addButton(TWDS._('MINIMAP_FROM_COLLAB', 'from collaboration service'), TWDS.minimap.importfromcbjs)
+    .addButton('ok', doit).addButton('cancel').show()
 }
 
 TWDS.minimap.export = function () {
@@ -575,7 +577,11 @@ TWDS.minimap.export = function () {
   content.append(head123)
   content.append(ta2);
 
-  (new west.gui.Dialog('Bonus-Jobs Export', $('<div />').append(content))).addButton('ok').show()
+  (new west.gui.Dialog('Bonus-Jobs Export', $('<div />').append(content)))
+    .addButton(TWDS._('MINIMAP_TO_COLLAB', 'to collaboration service'), function () {
+      TWDS.minimap.exporttocbjs()
+    })
+    .addButton('ok').show()
 }
 TWDS.minimap.export_center_handler = function () {
   const pos = this.textContent.split('-', 2)
@@ -905,6 +911,75 @@ TWDS.minimap.mousedownhandlerReal = function (ev) {
 }
 TWDS.minimap.mousedownhandler = function (ev) {
   TWDS.minimap.mousedownhandlerReal(ev)
+}
+TWDS.minimap.exporttocbjs = function () {
+  const d = {
+    data: []
+  }
+  for (const poskey in TWDS.minimap.cache) {
+    console.log('poskey', poskey)
+    console.log('ov', Object.values(TWDS.minimap.cache[poskey]))
+    Object.values(TWDS.minimap.cache[poskey]).forEach(function (v) {
+      console.log('v', v)
+      if (v.silver) {
+        d.data.push([v.x, v.y, v.job_id, JobList.getJobById(v.job_id).name])
+      }
+    })
+  }
+
+  (async function () {
+    let url = 'https://ohse.de/uwe/dynamic/cbjs.php?mode=save'
+    url += '&w=' + Game.worldName
+    url += '&m=' + Game.marketId
+    url += '&p=' + Character.playerId
+    const res = await window.fetch(url, { method: 'POST', body: JSON.stringify(d) })
+    if (res.ok) {
+      new UserMessage('Bonus job data saved on the server.').show()
+      return
+    }
+    let err = await res.text()
+    if (!err) err = 'unknown error'
+    new UserMessage('Failed to save: ' + err, UserMessage.TYPE_ERROR).show()
+  })()
+}
+TWDS.minimap.importfromcbjs = function () {
+  (async function () {
+    let url = 'https://ohse.de/uwe/dynamic/cbjs.php?mode=load'
+    url += '&w=' + Game.worldName
+    url += '&m=' + Game.marketId
+    url += '&p=' + Character.playerId
+    const res = await window.fetch(url, { method: 'GET' })
+    console.log('res', res)
+    if (!res.ok) {
+      const err = await res.text()
+      new UserMessage('Failed to load: ' + err, UserMessage.TYPE_ERROR).show()
+      return
+    }
+    let json = await res.text()
+    json = JSON.parse(json)
+    console.log(json)
+    TWDS.minimap.loadcache()
+    for (let i = 0; i < json.data.length; i++) {
+      const e = json.data[i]
+      const x = e[0]
+      const y = e[1]
+      const j = e[2]
+      const poskey = x + '-' + y
+      const fakedata = {
+        x: x,
+        y: y,
+        job_id: j,
+        silver: true,
+        gold: false,
+        time: new Date().getTime()
+      }
+      if (!(poskey in TWDS.minimap.cache)) { TWDS.minimap.cache[poskey] = {} }
+      TWDS.minimap.cache[poskey][j] = fakedata
+    }
+    TWDS.minimap.savecache()
+    MinimapWindow.open()
+    new UserMessage('Bonus job data loaded from the server.').show()
+  })()
 }
 
 TWDS.registerStartFunc(function () {
