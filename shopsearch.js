@@ -455,7 +455,7 @@ TWDS.shopsearch.dosearch = function (inputarea, infoarea, table, search, map) {
   for (const item of Object.values(all)) {
     const name = item.name
     const lname = name.toLocaleLowerCase()
-    if (item.tradeable && item.traderlevel < 66 && item.item_id !== 0) {
+    if ((item.tradeable || (item.traderlevel > 0 && item.traderlevel < 66)) && item.item_id !== 0) {
       if (lname.includes(lsearch)) {
         found.push(item)
       }
