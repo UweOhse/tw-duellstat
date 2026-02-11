@@ -8,8 +8,7 @@ TWDS.achievements.search = function (str, tab) {
     rx = new RegExp(str)
   }
   const rows = TWDS.q('tbody tr', tab)
-  for (let i = 0; i < rows.length; i++) {
-    const tr = rows[i]
+  for (const tr of rows) {
     const text = TWDS.q1('.title', tr).textContent.toLocaleLowerCase()
     if (str === '') {
       tr.style.display = 'table-row'
@@ -33,9 +32,9 @@ TWDS.achievements.openwindowReal = function (data) {
     className: 'TWDS_achievements_container'
   })
   let total = 0
-  for (let i = 0; i < data.menu.length; i++) {
+  for (const part of data.menu) {
     total++
-    total += data.menu[i].sub.length
+    total += part.sub.length
   }
   TWDS.createEle('div', {
     last: content,
