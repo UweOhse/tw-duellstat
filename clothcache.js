@@ -178,6 +178,9 @@ TWDS.clothcache.invItemInitDisplay = function () {
   let iu = window.localStorage.getItem('TWDS_itemusage')
   if (iu !== null) {
     iu = JSON.parse(iu)
+    if (typeof iu !== 'object') {
+      iu = {}
+    }
 
     let title = ''
     let count = 0
