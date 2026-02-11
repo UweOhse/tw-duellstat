@@ -303,7 +303,7 @@ TWDS.simulator.updateresult = function (win) {
     if (combo1.length) {
       e = calcit(jobid, bo1)
     } else if (best) {
-      e = calcit(jobid, TWDS.bonuscalc.getComboBonus(best.items), true)
+      e = calcit(jobid, TWDS.bonuscalc.getComboBonus(best.items))
     }
 
     const tr = TWDS.createEle('tr', {
