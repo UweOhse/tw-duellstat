@@ -402,7 +402,7 @@ TWDS.fbs.addlog1 = function (logcontainer, wantround) {
     const detail = log[i + 1]
     switch (logtypes[what]) {
       case 'ROUNDSTART':
-        if (pl.westid) { logoneplayersround(logcontainer, battledata) }
+        if (pl.westid) { logoneplayersround() }
         pl = {}
         round = detail
 
@@ -418,7 +418,7 @@ TWDS.fbs.addlog1 = function (logcontainer, wantround) {
 
         break
       case 'CHARTURN':
-        if (pl.westid) { logoneplayersround(logcontainer, battledata) }
+        if (pl.westid) { logoneplayersround() }
         pl = {}
         pl.westid = detail
         if (playerstatus[pl.westid].side === 'a' && indef) {
@@ -457,7 +457,7 @@ TWDS.fbs.addlog1 = function (logcontainer, wantround) {
         break
     }
   }
-  if (pl.westid) { logoneplayersround(battledata) }
+  if (pl.westid) { logoneplayersround() }
 }
 TWDS.fbs.addlog = function (content) {
   const battledata = TWDS.fbs.data.result
