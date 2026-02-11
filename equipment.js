@@ -71,7 +71,7 @@ TWDS.describeItemCombo = function (singleItems) {
     }
     names.push(name)
   }
-  setNames.sort()
+  setNames.sort((a, b) => a.localeCompare(b))
 
   for (let i = 0; i < singleItems.length; i++) {
     const item = singleItems[i]
@@ -82,7 +82,7 @@ TWDS.describeItemCombo = function (singleItems) {
     }
   }
 
-  names.sort()
+  names.sort((a, b) => a.localeCompare(b))
   let is = ''
   for (let i = 0; i < setNames.length; i++) {
     if (is > '') { is += ', ' }
@@ -171,7 +171,7 @@ TWDS.getEquipmentData = function (noskills) {
     }
     names.push(name)
   }
-  setNames.sort()
+  setNames.sort((a, b) => a.localeCompare(b))
 
   for (let i = 0; i < singleItems.length; i++) {
     const item = singleItems[i]
@@ -181,7 +181,7 @@ TWDS.getEquipmentData = function (noskills) {
     }
   }
 
-  names.sort()
+  names.sort((a, b) => a.localeCompare(b))
   let is = ''
   for (let i = 0; i < setNames.length; i++) {
     if (is > '') { is += ', ' }
@@ -192,7 +192,7 @@ TWDS.getEquipmentData = function (noskills) {
     is += names[i]
   }
 
-  ids.sort()
+  ids.sort((a, b) => a.localeCompare(b))
   let hashstr = ''
   for (let i = 0; i < ids.length; i++) {
     hashstr += ',' + ids[i]
