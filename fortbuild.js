@@ -206,21 +206,21 @@ TWDS.fortbuild.addItem = function (id, count) {
   // console.log('MATS', mats)
   if (mats) mats = JSON.parse(mats)
   const all = TWDS.q('.item_fortstorage', droparea)
-  if (!all) return ret
-  if (!all.length) return ret
-  const last = all[all.length - 1]
-  last.dataset.twds_itemid = id
-  last.classList.add('TWDS_fortbuild_rs')
-  // console.log('MATS', mats)
-  if (mats && mats[id / 1000]) {
-    const x = TWDS.q1("[data-twds_itemid='" + (id) + "'", droparea)
-    // console.log('aI', id, count, x)
-    if (x) {
-      const c = TWDS.q1('.count-required', x)
-      if (c) {
-        c.classList.add('TWDS_has_required')
-        // console.log('C add', c, c.classList)
-        c.textContent = mats[id / 1000]
+  if (all && all.length) {
+    const last = all[all.length - 1]
+    last.dataset.twds_itemid = id
+    last.classList.add('TWDS_fortbuild_rs')
+    // console.log('MATS', mats)
+    if (mats && mats[id / 1000]) {
+      const x = TWDS.q1("[data-twds_itemid='" + (id) + "'", droparea)
+      // console.log('aI', id, count, x)
+      if (x) {
+        const c = TWDS.q1('.count-required', x)
+        if (c) {
+          c.classList.add('TWDS_has_required')
+          // console.log('C add', c, c.classList)
+          c.textContent = mats[id / 1000]
+        }
       }
     }
   }
