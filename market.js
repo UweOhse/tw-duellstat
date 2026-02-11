@@ -737,41 +737,37 @@ TWDS.registerStartFunc(function () {
 TWDS.trader = {}
 TWDS.trader.currenttrader = null
 TWDS.trader.inventory = []
+// this wraps around the town trader open functions.
 TWDS.trader.open = function (type, townid, coordX, coordY) {
   TWDS.trader.currenttrader = type
   TWDS.trader.inventory = []
-  const retcode = window.Trader._twds_backup_open(type, townid, coordX, coordY)
-  if (type !== 'general' && type !== 'gunsmith' && type !== 'tailor') {
-    return retcode
-  }
+  const originalRetcode = window.Trader._twds_backup_open(type, townid, coordX, coordY)
   const w = wman.getById(type)
-  if (!w) {
-    return retcode
-  }
-  const cp = TWDS.q1('.tw2gui_window_content_pane', w.divMain)
-  console.log('ts', cp)
-  if (cp) {
-    if (TWDS.settings.town_shop_collect_switch) {
-      TWDS.createEle({
-        nodeName: 'input',
-        className: 'TWDS_trader_filter_collectibles',
-        type: 'checkbox',
-        title: TWDS._('MARKET_TOWN_SHOP_FILTER_COLLECTIBLES', 'show only collectibles'),
-        beforeend: cp
-      })
-    }
-    if (TWDS.settings.town_shop_search) {
-      TWDS.createEle({
-        nodeName: 'input',
-        className: 'TWDS_trader_town_shop_search',
-        type: 'text',
-        title: TWDS._('MARKET_TOWN_SHOP_SEARCH', 'Search'),
-        placeholder: 'search',
-        beforeend: cp
-      })
+  if (w && ['general', 'gunsmith', 'tailor'].includes(type)) {
+    const cp = TWDS.q1('.tw2gui_window_content_pane', w.divMain)
+    if (cp) {
+      if (TWDS.settings.town_shop_collect_switch) {
+        TWDS.createEle({
+          nodeName: 'input',
+          className: 'TWDS_trader_filter_collectibles',
+          type: 'checkbox',
+          title: TWDS._('MARKET_TOWN_SHOP_FILTER_COLLECTIBLES', 'show only collectibles'),
+          beforeend: cp
+        })
+      }
+      if (TWDS.settings.town_shop_search) {
+        TWDS.createEle({
+          nodeName: 'input',
+          className: 'TWDS_trader_town_shop_search',
+          type: 'text',
+          title: TWDS._('MARKET_TOWN_SHOP_SEARCH', 'Search'),
+          placeholder: 'search',
+          beforeend: cp
+        })
+      }
     }
   }
-  return retcode
+  return originalRetcode
 }
 
 TWDS.trader.addItemToInv = function (itemid) {
