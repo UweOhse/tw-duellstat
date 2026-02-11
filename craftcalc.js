@@ -332,31 +332,9 @@ TWDS.craftcalc.getcontent = function (win) {
       })
     }
   }
-  /* damned, only one sell dialog possible.
-  if (allitems.length && allsellable) {
-    TWDS.createEle({
-      nodeName: 'p',
-      last: resultarea,
-      textContent: "sell all this",
-      className: "TWDS_clickable",
-      dataset: {
-        allitems: JSON.stringify(allitems),
-        name: cit.name
-      },
-      onclick: function() {
-        let allitems=JSON.parse(this.dataset.allitems);
-        console.log("OC AI",this,allitems,this.dataset.name);
-        for (let i = 0; i < allitems.length; i++) {
-          const sb = TWDS.itemSellButton(allitems[i][0], allitems[i][1], this.dataset.name)
-          console.log("OC I",i,allitems[i],sb);
-          if (sb) {
-             TWDS.market_item_sell_handler.apply(sb);
-          }
-        }
-      }
-    })
-  }
-  */
+  /*
+   * Note: it is not possibly to open more than one sell window at the same time
+   */
   TWDS.createEle({ nodeName: 'hr', last: resultarea })
   TWDS.createEle({
     nodeName: 'h2',
